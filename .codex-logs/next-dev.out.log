@@ -1,0 +1,9 @@
+  Attempting to generate self signed certificate. This may prompt for your password
+  CA Root certificate created in C:\Users\irfan\AppData\Local\mkcert
+  Certificates created in D:\kasir\kasir-digital\certificates
+▲ Next.js 16.2.4 (Turbopack)
+- Local:         https://localhost:3001
+- Network:       https://0.0.0.0:3001
+- Environments: .env
+✓ Ready in 1255ms
+[?25h

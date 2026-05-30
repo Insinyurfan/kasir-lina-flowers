@@ -1,0 +1,95 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../lib/generated/prisma"
+}
+
+model User {
+  id           Int     @id @default(autoincrement())
+  username     String  @unique
+  fullName     String  @default("")
+  profilePhoto String? @db.Text
+  password     String
+  role         String
+}
+
+model Product {
+  id               Int               @id @default(autoincrement())
+  nama_produk      String
+  harga            Int
+  stok             Int
+  barcode          String?           @unique
+  gambar           String?
+  TransactionItems TransactionItem[]
+}
+
+model Transaction {
+  id                Int               @id @default(autoincrement())
+  tanggal           DateTime          @default(now())
+  total_harga       Int
+  metode_pembayaran String
+  status            String            @default("Paid")
+  nama_pembeli      String?
+  nama_kasir        String?
+  status_pengiriman String            @default("Diproses")
+  items             TransactionItem[]
+  notifications     Notification[]
+}
+
+model TransactionItem {
+  id            Int         @id @default(autoincrement())
+  transactionId Int
+  transaction   Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+  productId     Int
+  product       Product     @relation(fields: [productId], references: [id])
+  jumlah        Int
+  subtotal      Int
+}
+
+model StoreSetting {
+  id          Int     @id @default(1)
+  brand       String  @default("Lina Flowers")
+  address     String
+  footer      String
+  logo        String? @db.Text
+  receiptLogo String? @db.Text
+}
+
+model Notification {
+  id               Int          @id @default(autoincrement())
+  transactionId    Int?
+  transaction      Transaction? @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+  targetRole       String
+  senderRole       String
+  senderName       String?
+  statusPengiriman String
+  message          String
+  isRead           Boolean      @default(false)
+  hidden           Boolean      @default(false)
+  createdAt        DateTime     @default(now())
+
+  @@unique([transactionId, targetRole, senderRole, statusPengiriman])
+  @@index([targetRole, isRead, createdAt])
+}
+
+model ActivityLog {
+  id          Int      @id @default(autoincrement())
+  action      String
+  entity      String
+  entityId    String?
+  title       String
+  description String
+  actorId     Int?
+  actorName   String?
+  actorRole   String?
+  metadata    Json?
+  createdAt   DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([entity, action])
+  @@index([actorRole, createdAt])
+}

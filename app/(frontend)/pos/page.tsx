@@ -538,17 +538,16 @@ export default function PosPage() {
           </div>
         </div>
 
-        {/* GRID PRODUK */}
-        {/* Mobile: list (1 kolom), Desktop: grid (4-5 kolom) */}
-        <div className="p-3 overflow-y-auto grid grid-cols-1 md:grid-cols-4 xl:grid-cols-5 gap-2 md:gap-3 flex-1 content-start pb-32">
+        {/* GRID PRODUK: 1 kolom (mobile list), 4 kolom tetap (desktop) */}
+        <div className="p-3 overflow-y-auto grid grid-cols-1 md:grid-cols-4 gap-2 md:gap-3 flex-1 content-start pb-36">
           {filteredProduk.map((p) => (
             <article
               key={p.id}
               onClick={(e) => handleProductClick(e, p)}
               className="group flex flex-row md:flex-col items-center md:items-stretch rounded-2xl bg-white border border-pink-100 overflow-hidden shadow-sm hover:shadow-md hover:border-pink-300 transition-all duration-200 cursor-pointer active:scale-[0.97]"
             >
-              {/* FOTO: kecil di kiri (mobile), full-width di atas (desktop) */}
-              <div className="relative w-16 h-16 md:w-full md:h-44 overflow-hidden bg-pink-50 flex-shrink-0 rounded-xl md:rounded-none m-2 md:m-0">
+              {/* FOTO: lingkaran kecil di kiri (mobile), penuh di atas (desktop) */}
+              <div className="relative w-16 h-16 md:w-full md:h-48 overflow-hidden bg-pink-50 flex-shrink-0 rounded-full md:rounded-none m-2 md:m-0">
                 {p.gambar ? (
                   <img
                     src={p.gambar}
@@ -564,14 +563,14 @@ export default function PosPage() {
               </div>
 
               {/* INFO: rata kiri (mobile), rata tengah (desktop) */}
-              <div className="flex-1 flex flex-col justify-center px-2 py-1 md:items-center md:text-center md:p-3 md:gap-1 min-w-0">
+              <div className="flex-1 md:flex-none flex flex-col justify-center px-2 py-1 md:items-center md:text-center md:px-3 md:pb-3 md:pt-2 md:gap-0.5 min-w-0">
                 <h3
-                  className="font-semibold text-sm line-clamp-2 text-slate-900 leading-snug md:min-h-[2.4em]"
+                  className="font-semibold text-sm line-clamp-2 text-slate-900 leading-snug md:font-bold md:text-sm md:min-h-[2.6em]"
                   title={p.nama_produk}
                 >
                   {p.nama_produk}
                 </h3>
-                <p className="font-extrabold text-sm md:text-base text-pink-600 mt-0.5 md:mt-0 leading-none">
+                <p className="font-black text-sm md:text-lg mt-0.5 md:mt-1 leading-none" style={{ color: '#c2185b' }}>
                   Rp {p.harga.toLocaleString("id-ID")}
                 </p>
                 {(p.satuanHarga ?? "pcs") !== "pcs" && (
@@ -586,7 +585,7 @@ export default function PosPage() {
       </div>
 
       {/* FLOATING ACTION BUTTON & POP-UP KERANJANG DI POJOK KANAN BAWAH */}
-      <div className="fixed bottom-6 right-6 md:bottom-8 md:right-8 z-50 flex flex-col items-end">
+      <div className="fixed bottom-[4.5rem] right-5 md:bottom-8 md:right-8 z-50 flex flex-col items-end">
          
          {/* POP-UP KERANJANG */}
          {isCartOpen && (

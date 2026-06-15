@@ -703,7 +703,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           children
         ) : (
           <div className="lina-app-shell flex h-screen flex-col md:flex-row overflow-hidden relative w-full">
-            {!isGuest && <div className="fixed top-4 right-4 z-50">
+            {!isGuest && <div className="hidden md:block fixed top-4 right-4 z-50">
               <div className="relative">
                 <button
                   type="button"
@@ -796,13 +796,46 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </div>
             )}
 
-            {/* TOMBOL HAMBURGER MOBILE */}
-            <button
-              onClick={openMobileMenu}
-              className="md:hidden fixed top-4 left-4 z-50 p-2.5 bg-pink-600 text-white rounded-xl shadow-lg shadow-pink-200"
-            >
-              <Menu size={24} />
-            </button>
+            {/* MOBILE HEADER BAR: hamburger | profil + sapaan | notifikasi */}
+            <div className="md:hidden fixed top-0 left-0 right-0 h-14 z-50 bg-white/95 border-b border-pink-100 backdrop-blur-md shadow-sm flex items-center px-3 gap-2">
+              <button
+                onClick={openMobileMenu}
+                className="p-2 rounded-xl bg-pink-50 text-pink-600 border border-pink-100 flex-shrink-0"
+              >
+                <Menu size={22} />
+              </button>
+
+              <div className="flex items-center gap-2 flex-1 min-w-0">
+                <div className="w-8 h-8 rounded-full bg-pink-50 border-2 border-pink-200 flex items-center justify-center overflow-hidden text-pink-400 flex-shrink-0">
+                  {user?.profilePhoto ? (
+                    <img src={user.profilePhoto} alt="" className="w-full h-full object-cover" />
+                  ) : (
+                    <UserRound size={16} />
+                  )}
+                </div>
+                <div className="min-w-0">
+                  <p className="text-[9px] text-slate-400 font-medium leading-none">Selamat datang,</p>
+                  <p className="text-xs font-bold text-slate-800 truncate leading-tight">{user?.fullName || user?.username || "Pengguna"}</p>
+                </div>
+              </div>
+
+              {!isGuest && (
+                <div className="relative flex-shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => setIsNotifOpen(!isNotifOpen)}
+                    className="w-9 h-9 rounded-xl bg-pink-50 text-pink-600 border border-pink-100 flex items-center justify-center"
+                  >
+                    <Bell size={18} className={unreadNotifications > 0 ? "animate-[lina-bell-ring_1.6s_ease-in-out_infinite]" : ""} />
+                  </button>
+                  {unreadNotifications > 0 && (
+                    <span className="absolute -top-1.5 -right-1.5 min-w-5 h-5 px-1 rounded-full bg-red-500 text-white text-[9px] font-bold flex items-center justify-center ring-2 ring-white z-10">
+                      {unreadNotifications}
+                    </span>
+                  )}
+                </div>
+              )}
+            </div>
 
             {/* OVERLAY HITAM UNTUK MOBILE */}
             {isMobileMenuRendered && (
@@ -926,12 +959,24 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </aside>
 
             {/* KONTEN UTAMA */}
-            {/* Ditambahkan pt-20 untuk mobile agar tidak tertutup tombol Hamburger */}
-            <main className="lina-app-content flex-1 overflow-y-auto p-4 md:p-8 pt-20 md:pt-8 pb-24 md:pb-8">
+            <main className="lina-app-content flex-1 overflow-y-auto p-4 md:p-8 pt-14 md:pt-8 pb-20 md:pb-8">
               {children}
             </main>
 
           </div>
+
+          {/* BOTTOM NAV - Mobile Only */}
+          {!isGuest && user && (
+            <nav className="md:hidden fixed bottom-0 left-0 right-0 h-16 z-40 bg-white/95 border-t border-pink-100 backdrop-blur-md shadow-[0_-4px_20px_rgba(219,39,119,0.1)]">
+              <div className="flex h-full">
+                <BottomNavItem href="/dashboard" icon={<House size={20} />} label="Dashboard" pathname={pathname} />
+                <BottomNavItem href="/pos" icon={<ShoppingCart size={20} />} label="Kasir" pathname={pathname} />
+                <BottomNavItem href="/produk" icon={<Package size={20} />} label="Produk" pathname={pathname} />
+                <BottomNavItem href="/status-pesanan" icon={<ClipboardCheck size={20} />} label="Pesanan" pathname={pathname} />
+                <BottomNavItem href="/penjualan" icon={<ReceiptHistoryIcon />} label="Riwayat" pathname={pathname} />
+              </div>
+            </nav>
+          )}
         )}
         {isProfilePreviewOpen && user?.profilePhoto && (
           <div className="fixed inset-0 z-[100] bg-black/85 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setIsProfilePreviewOpen(false)}>
@@ -989,6 +1034,19 @@ function NavItem({ href, icon, label, pathname, onClick }: { href: string, icon:
       <span className="whitespace-nowrap overflow-hidden transition-all duration-300 md:max-w-0 md:opacity-0 md:group-hover/sidebar:max-w-44 md:group-hover/sidebar:opacity-100">
         {label}
       </span>
+    </Link>
+  );
+}
+
+function BottomNavItem({ href, icon, label, pathname }: { href: string, icon: React.ReactNode, label: string, pathname: string }) {
+  const isActive = pathname === href;
+  return (
+    <Link
+      href={href}
+      className={`flex-1 flex flex-col items-center justify-center gap-0.5 py-1 transition-colors ${isActive ? 'text-pink-600' : 'text-slate-400 hover:text-pink-400'}`}
+    >
+      <span className="flex-shrink-0">{icon}</span>
+      <span className={`text-[9px] font-bold leading-none ${isActive ? 'text-pink-600' : ''}`}>{label}</span>
     </Link>
   );
 }

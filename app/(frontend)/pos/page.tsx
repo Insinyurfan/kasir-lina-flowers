@@ -80,7 +80,6 @@ export default function PosPage() {
   const animationIdRef = useRef(0);
   
   const { cart, addToCart, removeFromCart, updateQuantity, updatePrice, updateSatuanPesan, setCart, getTotal, clearCart } = useCartStore();
-  const [unitPickerProduct, setUnitPickerProduct] = useState<Product | null>(null);
 
   // MENGHITUNG TOTAL BARANG DI KERANJANG UNTUK BADGE
   const totalBarang = cart.reduce((total, item) => total + item.quantity, 0);
@@ -327,19 +326,10 @@ export default function PosPage() {
     }, 700);
   };
 
-  // TRIGGER ANIMASI SAAT PRODUK DIKLIK
+  // Klik produk → langsung masuk keranjang dengan satuan default produk + animasi terbang
   const handleProductClick = (e: React.MouseEvent, p: Product) => {
-    if ((p.satuanHarga ?? "pcs") !== "pcs") {
-      setUnitPickerProduct(p);
-      return;
-    }
     triggerFlyAnimation(e, p);
-    addToCart({ ...p, satuanPesan: "pcs", hargaBase: p.harga });
-  };
-
-  const handleUnitPick = (p: Product, satuanPesan: string) => {
-    addToCart({ ...p, satuanPesan, hargaBase: p.harga });
-    setUnitPickerProduct(null);
+    addToCart({ ...p, satuanPesan: p.satuanHarga ?? "pcs", hargaBase: p.harga });
   };
 
   const filteredProduk = produk.filter(p => 
@@ -522,57 +512,6 @@ export default function PosPage() {
         </div>
       )}
 
-      {/* UNIT PICKER MODAL */}
-      {unitPickerProduct && (
-        <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-black/55 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-sm rounded-3xl bg-white shadow-2xl overflow-hidden">
-            <div className="bg-pink-600 px-5 py-4 text-white">
-              <p className="text-xs font-black uppercase tracking-widest text-pink-200">Pilih Satuan Pembelian</p>
-              <h3 className="text-base font-black mt-0.5 leading-snug">{unitPickerProduct.nama_produk}</h3>
-              <p className="text-xs text-pink-200 mt-1">
-                Harga dasar: Rp {unitPickerProduct.harga.toLocaleString("id-ID")} / {SATUAN_LABELS[unitPickerProduct.satuanHarga] ?? unitPickerProduct.satuanHarga}
-              </p>
-            </div>
-            <div className="p-4 space-y-2">
-              {(["gross", "lusin", "pcs"] as const).map((satuan) => {
-                const harga = hitungHargaSatuan(unitPickerProduct.harga, unitPickerProduct.satuanHarga, satuan);
-                const inCart = cart.find(i => i.id === unitPickerProduct.id);
-                const isActive = inCart?.satuanPesan === satuan;
-                return (
-                  <button
-                    key={satuan}
-                    onClick={() => handleUnitPick(unitPickerProduct, satuan)}
-                    className={`w-full flex items-center justify-between rounded-2xl px-4 py-3.5 font-bold transition-all ${
-                      isActive
-                        ? "bg-pink-600 text-white shadow-lg shadow-pink-200"
-                        : "bg-pink-50 text-slate-700 hover:bg-pink-100"
-                    }`}
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className={`text-xs font-black uppercase tracking-widest w-12 ${isActive ? "text-pink-200" : "text-pink-500"}`}>
-                        {SATUAN_LABELS[satuan]}
-                      </span>
-                      <span className={`text-[10px] ${isActive ? "text-pink-200" : "text-slate-400"}`}>
-                        {satuan === "gross" ? "144 pcs" : satuan === "lusin" ? "12 pcs" : "1 pcs"}
-                      </span>
-                    </div>
-                    <span className={`text-sm font-black ${isActive ? "text-white" : "text-pink-600"}`}>
-                      Rp {harga.toLocaleString("id-ID")}
-                    </span>
-                  </button>
-                );
-              })}
-              <button
-                onClick={() => setUnitPickerProduct(null)}
-                className="w-full mt-2 py-3 rounded-2xl bg-slate-100 text-slate-500 text-sm font-bold hover:bg-slate-200 transition-colors"
-              >
-                Batal
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* AREA UTAMA: KATALOG PRODUK */}
       <div className="lina-panel flex-1 flex flex-col rounded-2xl border overflow-hidden w-full">
         <div className="lina-panel-header p-4 border-b flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -603,47 +542,39 @@ export default function PosPage() {
             <div
               key={p.id}
               onClick={(e) => handleProductClick(e, p)}
-              className="bg-white border border-pink-100 rounded-2xl cursor-pointer hover:shadow-xl hover:border-pink-300 transition-all active:scale-[0.97] group flex flex-col overflow-hidden shadow-sm"
+              className="bg-white border border-pink-100 rounded-2xl cursor-pointer hover:border-pink-400 hover:shadow-lg transition-all active:scale-95 group flex flex-col overflow-hidden shadow-sm"
             >
-              {/* FOTO — fixed height agar konsisten di semua device */}
-              <div className="relative w-full h-32 sm:h-36 md:h-40 bg-slate-50 flex items-center justify-center overflow-hidden shrink-0">
+              {/* FOTO — paddingBottom trick: reliable di semua browser & device */}
+              <div className="relative w-full overflow-hidden bg-pink-50" style={{ paddingBottom: '90%' }}>
                 {p.gambar ? (
                   <img
                     src={p.gambar}
                     alt={p.nama_produk}
-                    className="absolute inset-0 w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
+                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                   />
                 ) : (
-                  <Flower2 size={40} className="text-pink-200" />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <Flower2 size={40} className="text-pink-200 group-hover:scale-110 transition-transform duration-300" />
+                  </div>
                 )}
-                <div className="absolute top-2 right-2 bg-pink-600 text-white text-[10px] font-black px-2 py-0.5 rounded-full shadow">
-                  {p.stok}
-                </div>
               </div>
 
               {/* INFO */}
-              <div className="p-2.5 sm:p-3 flex flex-col gap-1.5 bg-white">
+              <div className="p-2.5 sm:p-3 text-center bg-white">
                 <h3
-                  className="font-extrabold text-[11px] sm:text-xs text-slate-800 uppercase tracking-tight leading-snug line-clamp-2 min-h-[2.2rem]"
+                  className="font-bold text-[11px] sm:text-xs line-clamp-2 text-slate-800 uppercase tracking-tight leading-snug min-h-[2rem]"
                   title={p.nama_produk}
                 >
                   {p.nama_produk}
                 </h3>
-                <div className="flex items-end justify-between gap-1">
-                  <div>
-                    <p className="text-pink-600 font-black text-[13px] sm:text-sm leading-none">
-                      Rp {p.harga.toLocaleString("id-ID")}
-                    </p>
-                    {(p.satuanHarga ?? "pcs") !== "pcs" && (
-                      <p className="text-[9px] text-pink-400 font-semibold mt-0.5">
-                        /{SATUAN_LABELS[p.satuanHarga]}
-                      </p>
-                    )}
-                  </div>
-                  <div className="shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-pink-50 flex items-center justify-center text-pink-400 group-hover:bg-pink-600 group-hover:text-white transition-colors">
-                    <Plus size={14} />
-                  </div>
-                </div>
+                <p className="text-pink-600 font-extrabold text-[13px] sm:text-sm mt-1 leading-none">
+                  Rp {p.harga.toLocaleString("id-ID")}
+                </p>
+                {(p.satuanHarga ?? "pcs") !== "pcs" && (
+                  <p className="text-[9px] text-pink-400 font-semibold mt-0.5">
+                    /{SATUAN_LABELS[p.satuanHarga]}
+                  </p>
+                )}
               </div>
             </div>
           ))}

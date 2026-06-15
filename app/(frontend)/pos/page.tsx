@@ -539,15 +539,16 @@ export default function PosPage() {
         </div>
 
         {/* GRID PRODUK */}
-        <div className="p-3 overflow-y-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-3 flex-1 content-start pb-32">
+        {/* Mobile: list (1 kolom), Desktop: grid (4-5 kolom) */}
+        <div className="p-3 overflow-y-auto grid grid-cols-1 md:grid-cols-4 xl:grid-cols-5 gap-2 md:gap-3 flex-1 content-start pb-32">
           {filteredProduk.map((p) => (
             <article
               key={p.id}
               onClick={(e) => handleProductClick(e, p)}
-              className="group flex flex-col rounded-2xl bg-white border border-pink-100 overflow-hidden shadow-sm hover:shadow-lg hover:shadow-pink-100 hover:border-pink-300 transition-all duration-200 cursor-pointer active:scale-[0.97]"
+              className="group flex flex-row md:flex-col items-center md:items-stretch rounded-2xl bg-white border border-pink-100 overflow-hidden shadow-sm hover:shadow-md hover:border-pink-300 transition-all duration-200 cursor-pointer active:scale-[0.97]"
             >
-              {/* FOTO */}
-              <div className="relative w-full h-36 sm:h-44 overflow-hidden bg-pink-50 flex-shrink-0">
+              {/* FOTO: kecil di kiri (mobile), full-width di atas (desktop) */}
+              <div className="relative w-16 h-16 md:w-full md:h-44 overflow-hidden bg-pink-50 flex-shrink-0 rounded-xl md:rounded-none m-2 md:m-0">
                 {p.gambar ? (
                   <img
                     src={p.gambar}
@@ -557,24 +558,24 @@ export default function PosPage() {
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
-                    <Flower2 size={40} className="text-pink-200 group-hover:scale-110 transition-transform duration-300" />
+                    <Flower2 size={24} className="text-pink-200" />
                   </div>
                 )}
               </div>
 
-              {/* INFO */}
-              <div className="flex flex-col items-center justify-center p-2.5 sm:p-3 text-center gap-1 flex-1">
+              {/* INFO: rata kiri (mobile), rata tengah (desktop) */}
+              <div className="flex-1 flex flex-col justify-center px-2 py-1 md:items-center md:text-center md:p-3 md:gap-1 min-w-0">
                 <h3
-                  className="font-semibold text-xs sm:text-sm line-clamp-2 text-slate-900 leading-snug min-h-[2.4em]"
+                  className="font-semibold text-sm line-clamp-2 text-slate-900 leading-snug md:min-h-[2.4em]"
                   title={p.nama_produk}
                 >
                   {p.nama_produk}
                 </h3>
-                <p className="font-extrabold text-sm sm:text-base text-pink-600 leading-none">
+                <p className="font-extrabold text-sm md:text-base text-pink-600 mt-0.5 md:mt-0 leading-none">
                   Rp {p.harga.toLocaleString("id-ID")}
                 </p>
                 {(p.satuanHarga ?? "pcs") !== "pcs" && (
-                  <p className="text-[9px] text-pink-400 font-medium">
+                  <p className="text-[9px] text-pink-400 font-medium mt-0.5">
                     /{SATUAN_LABELS[p.satuanHarga]}
                   </p>
                 )}

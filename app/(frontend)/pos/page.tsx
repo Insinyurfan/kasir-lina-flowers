@@ -544,10 +544,10 @@ export default function PosPage() {
             <article
               key={p.id}
               onClick={(e) => handleProductClick(e, p)}
-              className="group rounded-2xl bg-white border border-pink-100 overflow-hidden shadow-sm hover:shadow-lg hover:shadow-pink-100 hover:border-pink-300 transition-all duration-200 cursor-pointer active:scale-[0.97]"
+              className="group flex flex-col rounded-2xl bg-white border border-pink-100 overflow-hidden shadow-sm hover:shadow-lg hover:shadow-pink-100 hover:border-pink-300 transition-all duration-200 cursor-pointer active:scale-[0.97]"
             >
               {/* FOTO */}
-              <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-pink-50 to-rose-50">
+              <div className="relative w-full h-36 sm:h-44 overflow-hidden bg-pink-50 flex-shrink-0">
                 {p.gambar ? (
                   <img
                     src={p.gambar}
@@ -563,18 +563,18 @@ export default function PosPage() {
               </div>
 
               {/* INFO */}
-              <div className="p-2.5 sm:p-3 text-center">
+              <div className="flex flex-col items-center justify-center p-2.5 sm:p-3 text-center gap-1 flex-1">
                 <h3
-                  className="font-bold text-[11px] sm:text-xs line-clamp-2 text-slate-800 uppercase tracking-tight leading-snug min-h-[2rem]"
+                  className="font-semibold text-xs sm:text-sm line-clamp-2 text-slate-900 leading-snug min-h-[2.4em]"
                   title={p.nama_produk}
                 >
                   {p.nama_produk}
                 </h3>
-                <p className="text-pink-600 font-extrabold text-[13px] sm:text-sm mt-1 leading-none">
+                <p className="font-extrabold text-sm sm:text-base text-pink-600 leading-none">
                   Rp {p.harga.toLocaleString("id-ID")}
                 </p>
                 {(p.satuanHarga ?? "pcs") !== "pcs" && (
-                  <p className="text-[9px] text-pink-400 font-semibold mt-0.5">
+                  <p className="text-[9px] text-pink-400 font-medium">
                     /{SATUAN_LABELS[p.satuanHarga]}
                   </p>
                 )}

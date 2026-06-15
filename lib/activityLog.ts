@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
 
-export type ActivityAction = "TAMBAH" | "UPDATE" | "HAPUS" | "LOGIN" | "KIRIM" | "BACA";
+export type ActivityAction = "TAMBAH" | "UPDATE" | "HAPUS" | "LOGIN" | "KIRIM" | "BACA" | "ARSIP" | "PULIHKAN";
 
 export type ActivityActor = {
   id?: number | string | null;

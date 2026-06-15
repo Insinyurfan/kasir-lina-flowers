@@ -523,10 +523,11 @@ export default function RiwayatPenjualanPage() {
       image.src = url;
     });
 
-  const createImagePdfBlob = (imageBytes: Uint8Array, imageWidth: number, imageHeight: number) => {
+  const createImagePdfBlob = (imageBytes: Uint8Array, imageWidth: number, imageHeight: number, pageWidthMm = 58) => {
     const encoder = new TextEncoder();
-    const pageWidthPt = 58 * 72 / 25.4;
-    const pageHeightPt = Math.max(30 * 72 / 25.4, pageWidthPt * imageHeight / imageWidth);
+    const pageWidthPt = pageWidthMm * 72 / 25.4;
+    const minHeightPt = pageWidthMm > 100 ? 297 * 72 / 25.4 : 30 * 72 / 25.4;
+    const pageHeightPt = Math.max(minHeightPt, pageWidthPt * imageHeight / imageWidth);
     const content = `q\n${pageWidthPt.toFixed(2)} 0 0 ${pageHeightPt.toFixed(2)} 0 0 cm\n/Im0 Do\nQ`;
     const contentBytes = encoder.encode(content);
     const chunks: Uint8Array[] = [];
@@ -711,7 +712,6 @@ export default function RiwayatPenjualanPage() {
   const handleDownloadJpg = async () => {
     const blob = await createReceiptImageBlob("thermal", "image/jpeg");
     if (!blob) return;
-
     downloadBlobFile(blob, getPrintFileName("jpg"));
   };
 
@@ -719,16 +719,249 @@ export default function RiwayatPenjualanPage() {
     try {
       const imageBlob = await createReceiptImageBlob("thermal", "image/jpeg");
       if (!imageBlob) return;
-
       const [imageBytes, imageSize] = await Promise.all([
         imageBlob.arrayBuffer().then((buffer) => new Uint8Array(buffer)),
         getBlobImageSize(imageBlob),
       ]);
-
       const pdfBlob = createImagePdfBlob(imageBytes, imageSize.width, imageSize.height);
       downloadBlobFile(pdfBlob, getPrintFileName("pdf"));
     } catch {
       alert("Gagal membuat PDF struk.");
+    }
+  };
+
+  const createA4DocumentBlob = async (
+    t: PrintTransaction,
+    documentType: PrintDocumentType,
+    mimeType: "image/jpeg" | "image/png" = "image/jpeg"
+  ): Promise<Blob | null> => {
+    const isNota = documentType === "nota";
+    // A4 at ~150 dpi: 210mm × 5.906px/mm ≈ 1240px wide
+    const W = 1240;
+    const MARGIN = 95;
+    const CW = W - MARGIN * 2;
+    const estimatedH = 1754 + (t.items || []).length * 55;
+
+    const canvas = document.createElement("canvas");
+    canvas.width = W;
+    canvas.height = estimatedH;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return null;
+
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, W, estimatedH);
+    ctx.textBaseline = "top";
+
+    let y = MARGIN;
+
+    // --- HEADER: logo + brand + doc title ---
+    const LOGO_SIZE = 90;
+    const logoSrc = storeInfo.receiptLogo || storeInfo.logo;
+    let logoImg: HTMLImageElement | null = null;
+    if (logoSrc) {
+      try { logoImg = await loadImage(logoSrc); } catch { /* no logo */ }
+    }
+
+    const headerTopY = y;
+    if (logoImg) ctx.drawImage(logoImg, MARGIN, y, LOGO_SIZE, LOGO_SIZE);
+
+    const brandX = MARGIN + (logoImg ? LOGO_SIZE + 18 : 0);
+    const brandMaxW = Math.floor(CW * 0.55);
+    ctx.fillStyle = "#db2777";
+    ctx.font = "bold 30px Arial, sans-serif";
+    let brandBottomY = wrapCanvasText(ctx, storeInfo.brand || "Lina Flowers", brandX, y, brandMaxW, 36);
+    if (storeInfo.address) {
+      ctx.fillStyle = "#64748b";
+      ctx.font = "18px Arial, sans-serif";
+      brandBottomY = wrapCanvasText(ctx, storeInfo.address, brandX, brandBottomY + 6, brandMaxW, 23);
+    }
+
+    const docTitle = isNota ? "NOTA PESANAN" : "SURAT JALAN";
+    ctx.fillStyle = "#0f172a";
+    ctx.font = "bold 28px Arial, sans-serif";
+    ctx.textAlign = "right";
+    ctx.fillText(docTitle, MARGIN + CW, headerTopY);
+    ctx.font = "bold 20px Arial, sans-serif";
+    ctx.fillStyle = "#64748b";
+    ctx.fillText(formatTransactionCode(t.id), MARGIN + CW, headerTopY + 38);
+    ctx.textAlign = "left";
+
+    y = Math.max(headerTopY + LOGO_SIZE, brandBottomY) + 16;
+
+    // pink divider
+    ctx.fillStyle = "#f9a8d4";
+    ctx.fillRect(MARGIN, y, CW, 3);
+    y += 20;
+
+    // --- META GRID (2×2) ---
+    const META_CELL_H = 70;
+    const COL_W = Math.floor(CW / 2);
+    const metaFields: [string, string][] = [
+      ["No. Transaksi", formatTransactionCode(t.id)],
+      ["Tanggal", new Date(t.tanggal).toLocaleDateString("id-ID", { day: "2-digit", month: "long", year: "numeric" })],
+      ["Pelanggan", t.nama_pembeli || "-"],
+      ["Kasir", t.nama_kasir || "-"],
+    ];
+
+    ctx.fillStyle = "#fdf8fb";
+    ctx.fillRect(MARGIN, y, CW, META_CELL_H * 2);
+    ctx.strokeStyle = "#fbcfe8";
+    ctx.lineWidth = 1;
+    ctx.strokeRect(MARGIN, y, CW, META_CELL_H * 2);
+
+    metaFields.forEach(([label, value], i) => {
+      const col = i % 2;
+      const row = Math.floor(i / 2);
+      const cx = MARGIN + col * COL_W;
+      const cy = y + row * META_CELL_H;
+      ctx.strokeStyle = "#fbcfe8";
+      ctx.lineWidth = 0.5;
+      ctx.strokeRect(cx, cy, COL_W, META_CELL_H);
+      ctx.fillStyle = "#be185d";
+      ctx.font = "bold 13px Arial, sans-serif";
+      ctx.fillText(label.toUpperCase(), cx + 14, cy + 12);
+      ctx.fillStyle = "#1e293b";
+      ctx.font = "bold 18px Arial, sans-serif";
+      ctx.fillText(value, cx + 14, cy + 34);
+    });
+    y += META_CELL_H * 2 + 20;
+
+    // --- TABLE ---
+    const THEAD_H = 40;
+    const ROW_H = 48;
+    const QTY_W = 120;
+    const SUB_W = isNota ? 160 : 0;
+    const PROD_W = CW - QTY_W - SUB_W;
+
+    ctx.fillStyle = "#fce7f3";
+    ctx.fillRect(MARGIN, y, CW, THEAD_H);
+    ctx.strokeStyle = "#e2e8f0";
+    ctx.lineWidth = 1;
+    ctx.strokeRect(MARGIN, y, CW, THEAD_H);
+    ctx.fillStyle = "#be185d";
+    ctx.font = "bold 14px Arial, sans-serif";
+    ctx.fillText("PRODUK", MARGIN + 14, y + 13);
+    ctx.textAlign = "center";
+    ctx.fillText("JUMLAH", MARGIN + PROD_W + QTY_W / 2, y + 13);
+    if (isNota) {
+      ctx.textAlign = "right";
+      ctx.fillText("SUBTOTAL", MARGIN + CW - 14, y + 13);
+    }
+    ctx.textAlign = "left";
+    y += THEAD_H;
+
+    (t.items || []).forEach((item, idx) => {
+      if (idx % 2 === 1) {
+        ctx.fillStyle = "#fdf8fb";
+        ctx.fillRect(MARGIN, y, CW, ROW_H);
+      }
+      ctx.strokeStyle = "#e2e8f0";
+      ctx.lineWidth = 0.5;
+      ctx.strokeRect(MARGIN, y, CW, ROW_H);
+
+      const prodName = item.product?.nama_produk || "-";
+      ctx.fillStyle = "#334155";
+      ctx.font = "bold 16px Arial, sans-serif";
+      ctx.fillText(prodName.length > 50 ? prodName.slice(0, 49) + "…" : prodName, MARGIN + 14, y + 16);
+
+      ctx.fillStyle = "#64748b";
+      ctx.font = "16px Arial, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText(`${item.jumlah} Pcs`, MARGIN + PROD_W + QTY_W / 2, y + 16);
+
+      if (isNota) {
+        ctx.fillStyle = "#334155";
+        ctx.font = "bold 16px Arial, sans-serif";
+        ctx.textAlign = "right";
+        ctx.fillText(`Rp ${Number(item.subtotal || 0).toLocaleString("id-ID")}`, MARGIN + CW - 14, y + 16);
+      }
+      ctx.textAlign = "left";
+      y += ROW_H;
+    });
+
+    // total row
+    if (isNota) {
+      const TOTAL_H = 56;
+      ctx.fillStyle = "#fdf2f8";
+      ctx.fillRect(MARGIN, y, CW, TOTAL_H);
+      ctx.strokeStyle = "#fbcfe8";
+      ctx.lineWidth = 1;
+      ctx.strokeRect(MARGIN, y, CW, TOTAL_H);
+      ctx.fillStyle = "#be185d";
+      ctx.font = "bold 20px Arial, sans-serif";
+      ctx.fillText("TOTAL PESANAN", MARGIN + 14, y + 16);
+      ctx.textAlign = "right";
+      ctx.font = "bold 24px Arial, sans-serif";
+      ctx.fillText(`Rp ${Number(t.total_harga || 0).toLocaleString("id-ID")}`, MARGIN + CW - 14, y + 14);
+      ctx.textAlign = "left";
+      y += TOTAL_H + 20;
+    } else {
+      y += 20;
+    }
+
+    // notes box
+    const NOTES_H = 88;
+    ctx.strokeStyle = "#cbd5e1";
+    ctx.setLineDash([8, 6]);
+    ctx.lineWidth = 1;
+    ctx.strokeRect(MARGIN, y, CW, NOTES_H);
+    ctx.setLineDash([]);
+    ctx.fillStyle = "#64748b";
+    ctx.font = "bold 14px Arial, sans-serif";
+    ctx.fillText(isNota ? "CATATAN:" : "CATATAN PENGIRIMAN:", MARGIN + 14, y + 14);
+    y += NOTES_H + 20;
+
+    // footer
+    if (storeInfo.footer) {
+      ctx.strokeStyle = "#f1f5f9";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(MARGIN, y);
+      ctx.lineTo(MARGIN + CW, y);
+      ctx.stroke();
+      y += 16;
+      ctx.fillStyle = "#64748b";
+      ctx.font = "italic 15px Arial, sans-serif";
+      y = wrapCanvasText(ctx, storeInfo.footer, MARGIN, y, CW, 22, "center");
+      y += 16;
+    }
+
+    // trim to actual content height
+    const finalCanvas = document.createElement("canvas");
+    finalCanvas.width = W;
+    finalCanvas.height = Math.ceil(y + MARGIN);
+    const finalCtx = finalCanvas.getContext("2d");
+    if (!finalCtx) return null;
+    finalCtx.fillStyle = "#ffffff";
+    finalCtx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
+    finalCtx.drawImage(canvas, 0, 0);
+
+    return new Promise<Blob | null>((resolve) => {
+      finalCanvas.toBlob((blob) => resolve(blob), mimeType, 0.95);
+    });
+  };
+
+  const handleDownloadA4Jpg = async () => {
+    if (!selectedTrx) return;
+    const blob = await createA4DocumentBlob(selectedTrx as PrintTransaction, printType as PrintDocumentType, "image/jpeg");
+    if (!blob) return alert("Gagal membuat gambar dokumen.");
+    downloadBlobFile(blob, getPrintFileName("jpg"));
+  };
+
+  const handleDownloadA4Pdf = async () => {
+    if (!selectedTrx) return;
+    try {
+      const imageBlob = await createA4DocumentBlob(selectedTrx as PrintTransaction, printType as PrintDocumentType, "image/jpeg");
+      if (!imageBlob) return alert("Gagal membuat gambar dokumen.");
+      const [imageBytes, imageSize] = await Promise.all([
+        imageBlob.arrayBuffer().then((b) => new Uint8Array(b)),
+        getBlobImageSize(imageBlob),
+      ]);
+      // A4 width = 210mm
+      const pdfBlob = createImagePdfBlob(imageBytes, imageSize.width, imageSize.height, 210);
+      downloadBlobFile(pdfBlob, getPrintFileName("pdf"));
+    } catch {
+      alert("Gagal membuat PDF dokumen.");
     }
   };
 
@@ -1948,6 +2181,24 @@ export default function RiwayatPenjualanPage() {
                       </button>
                     </div>
                   </>
+                )}
+                {(printType === "nota" || printType === "surat-jalan") && (
+                  <div className="grid grid-cols-2 gap-3 mb-3">
+                    <button
+                      type="button"
+                      onClick={handleDownloadA4Pdf}
+                      className="bg-slate-800 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-slate-900 active:scale-[0.98] transition-all"
+                    >
+                      <FileText size={18} /> PDF
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleDownloadA4Jpg}
+                      className="bg-slate-800 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-slate-900 active:scale-[0.98] transition-all"
+                    >
+                      <Download size={18} /> JPG
+                    </button>
+                  </div>
                 )}
                 <button
                   type="button"

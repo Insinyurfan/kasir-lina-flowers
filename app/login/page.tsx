@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Flower2, Lock, Sparkles, User } from "lucide-react";
 import { getSavedUserSession, saveUserSession } from "@/lib/userSession";
@@ -47,7 +48,7 @@ export default function LoginPage() {
     const res = await fetch("/api/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username: username.trim(), password }),
+      body: JSON.stringify({ username: username.trim(), password, rememberMe }),
     });
     const data = await res.json();
 
@@ -57,21 +58,6 @@ export default function LoginPage() {
     } else {
       alert(data.error || "Login Gagal!");
     }
-  };
-
-  const handleGuestLogin = () => {
-    saveUserSession(
-      {
-        id: 0,
-        username: "tamu-produk",
-        fullName: "Tamu Produk",
-        profilePhoto: null,
-        role: "Tamu",
-        isGuest: true,
-      },
-      false
-    );
-    router.push("/produk");
   };
 
   const logoMarkup = (className: string, fallbackSize: number) => (
@@ -165,9 +151,9 @@ export default function LoginPage() {
             </label>
 
             <button type="submit" className="login-submit">Masuk Sekarang</button>
-            <button type="button" onClick={handleGuestLogin} className="product-order-button">
-              Lihat Produk / Pemesanan Produk
-            </button>
+            <Link href="/" className="product-order-button !flex !items-center !justify-center">
+              Lihat Katalog Produk
+            </Link>
           </form>
         </div>
       </section>

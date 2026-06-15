@@ -30,6 +30,14 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
+# dev server logs
+next-*.log
+*.out.log
+*.err.log
+
+# prisma temp files
+lib/generated/prisma/*.tmp*
+
 # env files (can opt-in for committing if needed)
 .env*
 

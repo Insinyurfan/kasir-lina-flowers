@@ -2,10 +2,11 @@
 
 import { Fragment, useState, useEffect, useMemo, useRef } from "react";
 import { useSearchParams } from "next/navigation";
-import { ReceiptText, Filter, X, Printer, Settings, Save, User, Trash2, Camera, Calendar, AlertCircle, Search, Plus, Pencil, Download, BellRing, Check, ArrowDown, ArrowUp, ArrowUpDown, FileText } from "lucide-react";
+import { ReceiptText, Filter, X, Printer, Settings, Save, User, Trash2, Camera, Calendar, Search, Plus, Pencil, Download, Check, ArrowDown, ArrowUp, ArrowUpDown, FileText } from "lucide-react";
 import ManualTransactionModal, { type ManualTransaction } from "@/components/ManualTransactionModal";
 import { getSavedUserSession } from "@/lib/userSession";
 
+const MOBILE_TRANSACTION_BATCH_SIZE = 25;
 const pengirimanOptions = ["Diproses", "Siap Kirim", "Dikirim", "Selesai"];
 const pengirimanLevels: Record<string, number> = {
   Diproses: 0,
@@ -13,7 +14,6 @@ const pengirimanLevels: Record<string, number> = {
   Dikirim: 2,
   Selesai: 3,
 };
-const MOBILE_TRANSACTION_BATCH_SIZE = 25;
 
 type RiwayatSortKey = "tanggal" | "pelanggan" | "kasir";
 type SortDirection = "asc" | "desc";
@@ -90,6 +90,8 @@ const createTransactionSignature = (items: any[]) =>
         transaction.status_pengiriman,
         transaction.nama_pembeli,
         transaction.nama_kasir,
+        transaction.orderRequest?.code,
+        transaction.orderRequest?.phone,
         productSignature,
         notificationSignature,
       ].join(":");
@@ -98,7 +100,7 @@ const createTransactionSignature = (items: any[]) =>
 
 export default function RiwayatPenjualanPage() {
   const searchParams = useSearchParams();
-  const [user, setUser] = useState<any>(null);
+  const [user] = useState<any>(() => getSavedUserSession<any>());
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [transaksi, setTransaksi] = useState<any[]>([]);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -111,7 +113,6 @@ export default function RiwayatPenjualanPage() {
   });
   const [filterPelanggan, setFilterPelanggan] = useState("");
 
-  const [filterStatus, setFilterStatus] = useState("Semua");
   const [filterMetode, setFilterMetode] = useState("Semua");
   const [filterPengiriman, setFilterPengiriman] = useState("Semua");
   const [startDate, setStartDate] = useState("");
@@ -119,7 +120,7 @@ export default function RiwayatPenjualanPage() {
 
   const [printModalOpen, setPrintModalOpen] = useState(false);
   const [selectedTrx, setSelectedTrx] = useState<any>(null);
-  const [printType, setPrintType] = useState<"struk" | "surat-jalan">("struk");
+  const [printType, setPrintType] = useState<"struk" | "surat-jalan" | "nota">("struk");
   const [printerProfile, setPrinterProfile] = useState<PrinterProfile>("bluetooth");
   const [manualModalOpen, setManualModalOpen] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<any>(null);
@@ -147,11 +148,6 @@ export default function RiwayatPenjualanPage() {
   };
 
   useEffect(() => {
-    const savedUser = getSavedUserSession<any>();
-    if (savedUser) setUser(savedUser);
-  }, []);
-
-  useEffect(() => {
     const savedProfile = localStorage.getItem("lina_printer_profile");
     if (savedProfile === "usb" || savedProfile === "bluetooth") setPrinterProfile(savedProfile);
   }, []);
@@ -177,9 +173,7 @@ export default function RiwayatPenjualanPage() {
 
   const buildTransaksiUrl = () => {
     let url = `/api/transaksi?sort=${sortOrder}&`;
-    if (filterStatus !== "Semua") url += `status=${filterStatus}&`;
     if (filterMetode !== "Semua") url += `metode=${filterMetode}&`;
-    if (filterPengiriman !== "Semua") url += `pengiriman=${filterPengiriman}&`;
     if (filterPelanggan) url += `pelanggan=${filterPelanggan}&`;
     if (startDate && endDate) url += `startDate=${startDate}&endDate=${endDate}&`;
     return url;
@@ -215,59 +209,6 @@ export default function RiwayatPenjualanPage() {
     }
   };
 
-  const getAdminLockedLevel = (transaction: any) => {
-    return (transaction.notifications || [])
-      .filter((notification: any) => notification.senderRole === "Admin")
-      .reduce((highest: number, notification: any) => Math.max(highest, pengirimanLevels[notification.statusPengiriman] ?? 0), 0);
-  };
-
-  const hasSentCurrentNotification = (transaction: any) => {
-    return (transaction.notifications || []).some(
-      (notification: any) => notification.senderRole === user?.role && notification.statusPengiriman === transaction.status_pengiriman
-    );
-  };
-
-  const canSendNotification = (transaction: any) => {
-    if (!user?.role) return false;
-    if (transaction.status_pengiriman === "Diproses") return user.role === "Owner";
-    if (user.role === "Admin" && hasSentCurrentNotification(transaction)) return false;
-    return user.role === "Owner" || user.role === "Admin";
-  };
-
-  const getNotificationButtonTitle = (sent: boolean) => {
-    if (!sent) return "Kirim notifikasi pengingat";
-    return user?.role === "Owner" ? "Kirim ulang notifikasi ini" : "Notifikasi status ini sudah pernah dikirim";
-  };
-
-  const markTransactionNotificationSent = (transaction: any) => {
-    const senderRole = user?.role;
-    if (!senderRole) return;
-
-    const nextNotification = {
-      id: Date.now(),
-      transactionId: transaction.id,
-      targetRole: user?.role || "",
-      senderRole,
-      senderName: user?.fullName || user?.username || null,
-      statusPengiriman: transaction.status_pengiriman,
-      message: "",
-      isRead: false,
-      createdAt: new Date().toISOString(),
-    };
-
-    setTransaksi((current) =>
-      current.map((item) => {
-        if (item.id !== transaction.id) return item;
-        const notifications = (item.notifications || []).filter(
-          (notification: any) =>
-            notification.senderRole !== senderRole || notification.statusPengiriman !== transaction.status_pengiriman
-        );
-
-        return { ...item, notifications: [nextNotification, ...notifications] };
-      })
-    );
-  };
-
   const updateStatusTransaksi = async (id: number, field: string, value: string) => {
     if ((field === "status" || field === "metode_pembayaran") && user?.role !== "Owner") {
       alert("Hanya Owner yang dapat mengubah data ini!");
@@ -275,14 +216,6 @@ export default function RiwayatPenjualanPage() {
     }
 
     const currentTrx = transaksi.find((t) => t.id === id);
-
-    if (field === "status_pengiriman" && user?.role === "Admin" && currentTrx) {
-      const lockedLevel = getAdminLockedLevel(currentTrx);
-      if ((pengirimanLevels[value] ?? 0) < lockedLevel) {
-        alert("Status ini sudah dikunci karena notifikasi tahap lebih lanjut sudah pernah dikirim.");
-        return;
-      }
-    }
 
     const payload: any = { id, [field]: value, ...actorPayload };
 
@@ -316,35 +249,6 @@ export default function RiwayatPenjualanPage() {
     }
   };
 
-  const handleSendNotification = async (transaction: any) => {
-    if (!canSendNotification(transaction)) return;
-
-    const res = await fetch("/api/notifikasi", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        transactionId: transaction.id,
-        senderRole: user?.role,
-        senderName: user?.username,
-        actorId: user?.id,
-        actorName: user?.fullName || user?.username,
-        actorRole: user?.role,
-        statusPengiriman: transaction.status_pengiriman,
-      }),
-    });
-
-    if (res.ok) {
-      markTransactionNotificationSent(transaction);
-      localStorage.setItem("lina_notifications_refresh_at", String(Date.now()));
-      window.dispatchEvent(new Event("lina_notifications_updated"));
-      alert("Notifikasi berhasil dikirim.");
-      fetchTransaksi({ keepFilterOpen: true });
-    } else {
-      const data = await res.json();
-      alert(data.error || "Gagal mengirim notifikasi.");
-    }
-  };
-
   useEffect(() => {
     fetchTransaksi();
     fetchPengaturan();
@@ -357,7 +261,7 @@ export default function RiwayatPenjualanPage() {
     }
 
     fetchTransaksi({ keepFilterOpen: true });
-  }, [sortOrder, filterStatus, filterMetode, filterPengiriman, filterPelanggan, startDate, endDate]);
+  }, [sortOrder, filterMetode, filterPelanggan, startDate, endDate]);
 
   useEffect(() => {
     const intervalId = window.setInterval(() => {
@@ -366,7 +270,7 @@ export default function RiwayatPenjualanPage() {
     }, 5000);
 
     return () => window.clearInterval(intervalId);
-  }, [sortOrder, filterStatus, filterMetode, filterPengiriman, filterPelanggan, startDate, endDate, printModalOpen, manualModalOpen]);
+  }, [sortOrder, filterMetode, filterPelanggan, startDate, endDate, printModalOpen, manualModalOpen]);
 
   const applySavedStoreInfo = (data: StoreSettingResponse | null) => {
     if (!data) return;
@@ -490,9 +394,7 @@ export default function RiwayatPenjualanPage() {
   };
 
   const resetFilter = () => {
-    setFilterStatus("Semua");
     setFilterMetode("Semua");
-    setFilterPengiriman("Semua");
     setFilterPelanggan("");
     setSortOrder("desc");
     setQuickSort({ key: "tanggal", direction: "desc" });
@@ -799,6 +701,27 @@ export default function RiwayatPenjualanPage() {
     }
   };
 
+  const printOrderNote = (t: any) => {
+    const printWindow = window.open("", "_blank", "width=900,height=700");
+    if (!printWindow) return alert("Popup cetak diblokir browser.");
+    const itemRows = (t.items || []).map((item: any) => `
+      <tr><td>${item.product?.nama_produk || "-"}</td><td>${item.jumlah}</td><td>Rp ${item.subtotal.toLocaleString("id-ID")}</td></tr>
+    `).join("");
+    printWindow.document.write(`<!doctype html><html><head><title>Nota TRX-${String(t.id).padStart(4, "0")}</title><style>
+      body{font-family:Arial,sans-serif;color:#1e293b;margin:36px}h1{margin:0;color:#db2777}.meta{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:24px 0;padding:18px;background:#fdf2f8;border-radius:14px}
+      table{width:100%;border-collapse:collapse;margin-top:20px}th,td{padding:12px;border:1px solid #e2e8f0;text-align:left}th{background:#fce7f3}.total{text-align:right;font-size:20px;font-weight:800;margin-top:18px}
+      .notes{margin-top:28px;border:1px dashed #94a3b8;padding:18px;min-height:90px}@media print{body{margin:18mm}}
+    </style></head><body>
+      <h1>NOTA PRODUKSI PESANAN</h1><p>${storeInfo.brand || "Lina Flowers"}</p>
+      <div class="meta"><div><b>No. Transaksi</b><br>TRX-${String(t.id).padStart(4, "0")}</div><div><b>Tanggal</b><br>${new Date(t.tanggal).toLocaleString("id-ID")}</div><div><b>Pelanggan</b><br>${t.nama_pembeli || "-"}</div><div><b>Pengrajin</b><br>${t.nama_pengrajin || "Belum ditentukan"}</div></div>
+      <table><thead><tr><th>Produk</th><th>Jumlah</th><th>Subtotal</th></tr></thead><tbody>${itemRows}</tbody></table>
+      <div class="total">Total: Rp ${t.total_harga.toLocaleString("id-ID")}</div>
+      <div class="notes"><b>Catatan Produksi:</b></div>
+      <script>window.onload=()=>window.print();</script>
+    </body></html>`);
+    printWindow.document.close();
+  };
+
   const shouldUseMobilePrintBridge = () => {
     const userAgent = navigator.userAgent || "";
     const isAndroid = /Android/i.test(userAgent);
@@ -1018,9 +941,13 @@ export default function RiwayatPenjualanPage() {
         const paddedTransactionId = transactionId.padStart(4, "0");
         const trxCode = `trx-${paddedTransactionId}`;
         const compactTrxCode = `trx${paddedTransactionId}`;
+        const requestCode = String(t.orderRequest?.code || "").toLowerCase();
+        const requestPhone = user?.role === "Owner" ? String(t.orderRequest?.phone || "").toLowerCase() : "";
 
         return (
           buyerName.includes(keyword) ||
+          requestCode.includes(keyword) ||
+          requestPhone.includes(keyword) ||
           trxCode.includes(keyword) ||
           compactTrxCode.includes(compactKeyword) ||
           transactionId.includes(numericKeyword)
@@ -1075,7 +1002,7 @@ export default function RiwayatPenjualanPage() {
 
   useEffect(() => {
     setMobileVisibleCount(MOBILE_TRANSACTION_BATCH_SIZE);
-  }, [filterMetode, filterPelanggan, filterPengiriman, filterStatus, quickSort.direction, quickSort.key, search, sortOrder, startDate, endDate]);
+  }, [filterMetode, filterPelanggan, quickSort.direction, quickSort.key, search, sortOrder, startDate, endDate]);
 
   const allVisibleTransactionsSelected =
     filteredTransaksi.length > 0 && filteredTransaksi.every((t) => selectedIds.includes(t.id));
@@ -1168,7 +1095,7 @@ export default function RiwayatPenjualanPage() {
           <h2 className="text-2xl font-bold flex items-center gap-2">
             <ReceiptText className="text-pink-500" /> Riwayat Penjualan
           </h2>
-          <p className="text-slate-500 text-sm mt-1">Kelola status pembayaran dan pengiriman pesanan.</p>
+          <p className="text-slate-500 text-sm mt-1">Arsip transaksi penjualan yang sudah tercatat.</p>
         </div>
 
         <div className="flex flex-col md:flex-row items-center gap-3 w-full md:w-auto">
@@ -1291,16 +1218,7 @@ export default function RiwayatPenjualanPage() {
               ? new Date(mobileVisibleTransaksi[index - 1].tanggal).toLocaleDateString("id-ID", { month: "long", year: "numeric" })
               : "";
             const showMonthSeparator = index === 0 || currentMonth !== previousMonth;
-            const adminLockedLevel = getAdminLockedLevel(t);
-            const notificationSent = hasSentCurrentNotification(t);
-            const notificationAllowed = canSendNotification(t);
-            const cardTone = t.status === "Unpaid"
-              ? "border-red-100 bg-red-50/60"
-              : t.status_pengiriman === "Diproses"
-                ? "border-orange-100 bg-orange-50/60"
-                : t.status_pengiriman === "Siap Kirim"
-                  ? "border-blue-100 bg-blue-50/60"
-                  : "border-pink-100 bg-white";
+            const cardTone = "border-pink-100 bg-white";
 
             return (
               <Fragment key={t.id}>
@@ -1335,6 +1253,8 @@ export default function RiwayatPenjualanPage() {
                       <p className="mt-0.5 text-[11px] text-slate-500">
                         Kasir: <span className="font-semibold text-slate-700">{t.nama_kasir || "-"}</span>
                       </p>
+                      {t.orderRequest?.code && <p className="mt-1 text-[11px] font-bold text-violet-600">REQ: {t.orderRequest.code}</p>}
+                      {user?.role === "Owner" && t.orderRequest?.phone && <p className="mt-1 text-[11px] font-bold text-slate-500">No. HP: {t.orderRequest.phone}</p>}
                     </div>
 
                     <div className="text-right shrink-0">
@@ -1366,19 +1286,30 @@ export default function RiwayatPenjualanPage() {
                       <p className="text-[11px] font-bold uppercase tracking-wide text-slate-400">Total</p>
                       <p className="text-lg font-black text-pink-600">Rp {t.total_harga.toLocaleString("id-ID")}</p>
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setSelectedTrx(t);
-                        setPrintModalOpen(true);
-                      }}
-                      className="inline-flex items-center gap-2 rounded-xl bg-white px-3 py-2 text-xs font-bold text-slate-700 border border-slate-200 shadow-sm active:scale-95"
-                    >
-                      <Printer size={16} /> Cetak
-                    </button>
+                    <div className="flex items-center gap-2">
+                      {t.orderRequest?.code && (
+                        <button
+                          type="button"
+                          onClick={() => printOrderNote(t)}
+                          className="inline-flex items-center gap-2 rounded-xl bg-violet-50 px-3 py-2 text-xs font-bold text-violet-700 border border-violet-200 shadow-sm active:scale-95"
+                        >
+                          <FileText size={16} /> Nota
+                        </button>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSelectedTrx(t);
+                          setPrintModalOpen(true);
+                        }}
+                        className="inline-flex items-center gap-2 rounded-xl bg-white px-3 py-2 text-xs font-bold text-slate-700 border border-slate-200 shadow-sm active:scale-95"
+                      >
+                        <Printer size={16} /> Cetak
+                      </button>
+                    </div>
                   </div>
 
-                  <div className="grid grid-cols-1 gap-3">
+                  <div>
                     <div>
                       <p className="mb-1 text-[11px] font-bold uppercase tracking-wide text-slate-400">Metode</p>
                       {user?.role === "Owner" ? (
@@ -1401,74 +1332,9 @@ export default function RiwayatPenjualanPage() {
                         </p>
                       )}
                     </div>
-
-                    <div className="grid grid-cols-2 gap-3">
-                      <div>
-                        <p className="mb-1 text-[11px] font-bold uppercase tracking-wide text-slate-400">Bayar</p>
-                        {user?.role === "Owner" ? (
-                          <select
-                            value={t.status}
-                            onChange={(e) => updateStatusTransaksi(t.id, "status", e.target.value)}
-                            className={`w-full font-bold rounded-xl px-3 py-2 outline-none text-xs cursor-pointer transition-colors ${t.status === "Paid"
-                                ? "bg-green-100 text-green-700 border border-green-200"
-                                : "bg-red-500 text-white border border-red-500 shadow-sm shadow-red-200"
-                              }`}
-                          >
-                            <option value="Paid">Lunas</option>
-                            <option value="Unpaid">Belum Lunas</option>
-                          </select>
-                        ) : (
-                          <span
-                            className={`flex h-9 items-center justify-center rounded-xl px-3 text-xs font-bold ${t.status === "Paid" ? "bg-green-100 text-green-700" : "bg-red-500 text-white shadow-sm shadow-red-200"
-                              }`}
-                          >
-                            {t.status === "Paid" ? "Lunas" : "Belum Lunas"}
-                          </span>
-                        )}
-                      </div>
-
-                      <div>
-                        <p className="mb-1 text-[11px] font-bold uppercase tracking-wide text-slate-400">Pengiriman</p>
-                        <select
-                          value={t.status_pengiriman}
-                          onChange={(e) => updateStatusTransaksi(t.id, "status_pengiriman", e.target.value)}
-                          className={`w-full border rounded-xl px-3 py-2 outline-none text-xs font-bold cursor-pointer transition-colors ${t.status_pengiriman === "Diproses"
-                              ? "bg-orange-500 text-white border-orange-600 shadow-sm shadow-orange-200"
-                              : t.status_pengiriman === "Siap Kirim"
-                                ? "bg-blue-500 text-white border-blue-600 shadow-sm shadow-blue-200"
-                              : "bg-white border-slate-200 text-slate-600"
-                            }`}
-                        >
-                          {pengirimanOptions.map((option) => (
-                            <option
-                              key={option}
-                              value={option}
-                              disabled={user?.role === "Admin" && (pengirimanLevels[option] ?? 0) < adminLockedLevel}
-                            >
-                              {option}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                    </div>
                   </div>
 
                   <div className="flex flex-wrap justify-end gap-2 border-t border-white pt-3">
-                    {(user?.role === "Owner" || user?.role === "Admin") && (
-                      <button
-                        type="button"
-                        onClick={() => handleSendNotification(t)}
-                        disabled={!notificationAllowed}
-                        title={getNotificationButtonTitle(notificationSent)}
-                        className={`inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-xs font-bold shadow-sm transition-all ${
-                          notificationAllowed
-                            ? "bg-pink-50 border-pink-100 text-pink-600 active:scale-95"
-                            : "bg-slate-50 border-slate-100 text-slate-400 opacity-60"
-                        }`}
-                      >
-                        <BellRing size={15} /> Notif
-                      </button>
-                    )}
                     {user?.role === "Owner" && (
                       <>
                         <button
@@ -1508,7 +1374,7 @@ export default function RiwayatPenjualanPage() {
 
       {isDesktopView && (
       <div className="relative z-0 overflow-x-auto rounded-xl border border-pink-100">
-        <table className="w-full min-w-[1050px] text-left">
+        <table className="w-full min-w-[820px] text-left">
           <thead className="bg-pink-50 text-pink-900 text-sm border-b border-pink-100">
             <tr>
               <th className="p-4 w-10 text-center">
@@ -1537,42 +1403,33 @@ export default function RiwayatPenjualanPage() {
                 </button>
               </th>
               <th className="p-4 font-semibold">Total & Metode</th>
-              <th className="p-4 font-semibold">Status Bayar</th>
-              <th className="p-4 font-semibold">Pengiriman</th>
               <th className="p-4 font-semibold text-center min-w-[80px]">Aksi</th>
             </tr>
           </thead>
           <tbody className="text-sm">
             {filteredTransaksi.length === 0 ? (
               <tr>
-                <td colSpan={8} className="text-center py-10 text-slate-400">
+                <td colSpan={6} className="text-center py-10 text-slate-400">
                   Pencarian tidak ditemukan...
                 </td>
               </tr>
             ) : (
               filteredTransaksi.map((t, index) => {
-                let rowStyle = "border-b border-pink-50 hover:bg-pink-50/30 transition-colors";
-                if (t.status === "Unpaid")
-                  rowStyle = "border-b border-red-100 bg-red-50/50 hover:bg-red-100/50 transition-colors";
-                else if (t.status_pengiriman === "Diproses")
-                  rowStyle = "border-b border-orange-100 bg-orange-50/50 hover:bg-orange-100/50 transition-colors";
-                else if (t.status_pengiriman === "Siap Kirim")
-                  rowStyle = "border-b border-blue-100 bg-blue-50/50 hover:bg-blue-100/50 transition-colors";
+                const rowStyle = "border-b border-pink-50 hover:bg-pink-50/30 transition-colors";
 
                 const currentMonth = new Date(t.tanggal).toLocaleDateString("id-ID", { month: "long", year: "numeric" });
                 const previousMonth = index > 0
                   ? new Date(filteredTransaksi[index - 1].tanggal).toLocaleDateString("id-ID", { month: "long", year: "numeric" })
                   : "";
                 const showMonthSeparator = index === 0 || currentMonth !== previousMonth;
-                const adminLockedLevel = getAdminLockedLevel(t);
-                const notificationSent = hasSentCurrentNotification(t);
-                const notificationAllowed = canSendNotification(t);
-
+                const adminLockedLevel = (t.notifications || [])
+                  .filter((notification: any) => notification.senderRole === "Admin")
+                  .reduce((highest: number, notification: any) => Math.max(highest, pengirimanLevels[notification.statusPengiriman] ?? 0), 0);
                 return (
                   <Fragment key={t.id}>
                   {showMonthSeparator && (
                     <tr className="bg-white">
-                      <td colSpan={8} className="px-4 py-3">
+                      <td colSpan={6} className="px-4 py-3">
                         <div className="flex items-center gap-3">
                           <div className="h-px flex-1 bg-pink-100" />
                           <span className="rounded-full border border-pink-100 bg-pink-50 px-3 py-1 text-xs font-black uppercase tracking-wide text-pink-700">
@@ -1598,12 +1455,8 @@ export default function RiwayatPenjualanPage() {
                       )}
                     </td>
                     <td className="p-4">
-                      <div className={`font-bold flex items-center gap-1 ${t.status === "Unpaid" ? "text-red-600" : "text-slate-700"}`}>
-                        {t.status === "Unpaid" ? (
-                          <AlertCircle size={14} className="text-red-500" />
-                        ) : (
-                          <Calendar size={14} className="text-pink-400" />
-                        )}
+                      <div className="font-bold flex items-center gap-1 text-slate-700">
+                        <Calendar size={14} className="text-pink-400" />
                         {new Date(t.tanggal).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" })}
                       </div>
                       <div className="text-[10px] text-slate-400 mt-0.5 ml-5">
@@ -1617,6 +1470,8 @@ export default function RiwayatPenjualanPage() {
                       <div className="text-[10px] text-slate-500 font-mono mt-0.5">
                         #TRX-{t.id.toString().padStart(4, "0")}
                       </div>
+                      {t.orderRequest?.code && <div className="mt-1 text-[10px] font-bold text-violet-600">{t.orderRequest.code}</div>}
+                      {user?.role === "Owner" && t.orderRequest?.phone && <div className="mt-1 text-[10px] font-bold text-slate-500">HP: {t.orderRequest.phone}</div>}
                     </td>
                     <td className="p-4">
                       <div className="font-bold text-slate-800 text-[13px]">{t.nama_kasir || "-"}</div>
@@ -1644,29 +1499,7 @@ export default function RiwayatPenjualanPage() {
                         </div>
                       )}
                     </td>
-                    <td className="p-4">
-                      {user?.role === "Owner" ? (
-                        <select
-                          value={t.status}
-                          onChange={(e) => updateStatusTransaksi(t.id, "status", e.target.value)}
-                          className={`font-bold rounded-lg px-2 py-1 outline-none text-xs cursor-pointer transition-colors ${t.status === "Paid"
-                              ? "bg-green-100 text-green-700 border border-green-200 hover:bg-green-200"
-                              : "bg-red-500 text-white shadow-sm shadow-red-200 hover:bg-red-600"
-                            }`}
-                        >
-                          <option value="Paid">Lunas</option>
-                          <option value="Unpaid">Belum Lunas</option>
-                        </select>
-                      ) : (
-                        <span
-                          className={`px-2 py-1 rounded-full text-xs font-bold ${t.status === "Paid" ? "bg-green-100 text-green-700" : "bg-red-500 text-white shadow-sm shadow-red-200"
-                            }`}
-                        >
-                          {t.status === "Paid" ? "Lunas" : "Belum Lunas"}
-                        </span>
-                      )}
-                    </td>
-                    <td className="p-4">
+                    {false && <td className="p-4">
                       <select
                         value={t.status_pengiriman}
                         onChange={(e) => updateStatusTransaksi(t.id, "status_pengiriman", e.target.value)}
@@ -1688,9 +1521,19 @@ export default function RiwayatPenjualanPage() {
                           </option>
                         ))}
                       </select>
-                    </td>
+                    </td>}
                     <td className="p-4 text-center">
                       <div className="flex items-center justify-center gap-2">
+                        {t.orderRequest?.code && (
+                          <button
+                            type="button"
+                            onClick={() => printOrderNote(t)}
+                            title="Cetak Nota Produksi"
+                            className="inline-flex items-center justify-center bg-violet-50 border border-violet-200 p-2 rounded-lg hover:bg-violet-100 shadow-sm transition-all cursor-pointer"
+                          >
+                            <FileText size={18} className="text-violet-600" />
+                          </button>
+                        )}
                         <button
                           type="button"
                           onClick={() => {
@@ -1703,19 +1546,6 @@ export default function RiwayatPenjualanPage() {
                         </button>
                         {user?.role === "Owner" && (
                           <>
-                            <button
-                              type="button"
-                              onClick={() => handleSendNotification(t)}
-                              disabled={!notificationAllowed}
-                              title={getNotificationButtonTitle(notificationSent)}
-                              className={`inline-flex items-center justify-center border p-2 rounded-lg shadow-sm transition-all ${
-                                notificationAllowed
-                                  ? "bg-pink-50 border-pink-100 hover:bg-pink-100 cursor-pointer"
-                                  : "bg-slate-50 border-slate-100 opacity-50 cursor-not-allowed"
-                              }`}
-                            >
-                              <BellRing size={18} className={notificationAllowed ? "text-pink-600" : "text-slate-400"} />
-                            </button>
                             <button
                               type="button"
                               onClick={() => openEditManual(t)}
@@ -1731,21 +1561,6 @@ export default function RiwayatPenjualanPage() {
                               <Trash2 size={18} className="text-red-500" />
                             </button>
                           </>
-                        )}
-                        {user?.role === "Admin" && (
-                          <button
-                            type="button"
-                            onClick={() => handleSendNotification(t)}
-                            disabled={!notificationAllowed}
-                            title={getNotificationButtonTitle(notificationSent)}
-                            className={`inline-flex items-center justify-center border p-2 rounded-lg shadow-sm transition-all ${
-                              notificationAllowed
-                                ? "bg-pink-50 border-pink-100 hover:bg-pink-100 cursor-pointer"
-                                : "bg-slate-50 border-slate-100 opacity-50 cursor-not-allowed"
-                            }`}
-                          >
-                            <BellRing size={18} className={notificationAllowed ? "text-pink-600" : "text-slate-400"} />
-                          </button>
                         )}
                       </div>
                     </td>
@@ -1779,8 +1594,9 @@ export default function RiwayatPenjualanPage() {
                 <h3 className="font-bold text-lg mb-4 text-slate-800 md:hidden">Cetak Dokumen</h3>
 
                 <div className="flex gap-2 p-1 bg-pink-50 rounded-xl mb-6">
-                  <button onClick={() => setPrintType("struk")} className={`flex-1 py-2.5 text-sm font-bold rounded-lg transition-all ${printType === 'struk' ? 'bg-white shadow text-pink-600' : 'text-slate-500'}`}>Struk Harga</button>
-                  <button onClick={() => setPrintType("surat-jalan")} className={`flex-1 py-2.5 text-sm font-bold rounded-lg transition-all ${printType === 'surat-jalan' ? 'bg-white shadow text-pink-600' : 'text-slate-500'}`}>Surat Jalan</button>
+                  <button onClick={() => setPrintType("struk")} className={`flex-1 py-2.5 text-sm font-bold rounded-lg transition-all ${printType === 'struk' ? 'bg-white shadow text-pink-600' : 'text-slate-500 hover:text-slate-700'}`}>Struk Harga</button>
+                  <button onClick={() => setPrintType("surat-jalan")} className={`flex-1 py-2.5 text-sm font-bold rounded-lg transition-all ${printType === 'surat-jalan' ? 'bg-white shadow text-pink-600' : 'text-slate-500 hover:text-slate-700'}`}>Surat Jalan</button>
+                  <button onClick={() => setPrintType("nota")} className={`flex-1 py-2.5 text-sm font-bold rounded-lg transition-all ${printType === 'nota' ? 'bg-white shadow text-pink-600' : 'text-slate-500 hover:text-slate-700'}`}>Nota</button>
                 </div>
 
                 <div className="space-y-5">
@@ -1842,8 +1658,9 @@ export default function RiwayatPenjualanPage() {
                 <div className="flex justify-between items-center p-4 md:p-6 bg-white border-b sticky top-0 z-10 shadow-sm">
                   <h3 className="font-bold text-slate-800 text-lg hidden md:block">Pratinjau Pesanan</h3>
                   <div className="flex gap-2 p-1 bg-pink-50 rounded-xl w-full md:w-auto mt-6 md:mt-0 mr-8 md:mr-0">
-                    <button onClick={() => setPrintType("struk")} className={`flex-1 md:w-32 py-2 text-xs font-bold rounded-lg transition-all ${printType === 'struk' ? 'bg-white shadow text-pink-600' : 'text-slate-500'}`}>Struk Harga</button>
-                    <button onClick={() => setPrintType("surat-jalan")} className={`flex-1 md:w-32 py-2 text-xs font-bold rounded-lg transition-all ${printType === 'surat-jalan' ? 'bg-white shadow text-pink-600' : 'text-slate-500'}`}>Surat Jalan</button>
+                    <button onClick={() => setPrintType("struk")} className={`flex-1 md:w-24 py-2 text-xs font-bold rounded-lg transition-all ${printType === 'struk' ? 'bg-white shadow text-pink-600' : 'text-slate-500 hover:text-slate-700'}`}>Struk Harga</button>
+                    <button onClick={() => setPrintType("surat-jalan")} className={`flex-1 md:w-24 py-2 text-xs font-bold rounded-lg transition-all ${printType === 'surat-jalan' ? 'bg-white shadow text-pink-600' : 'text-slate-500 hover:text-slate-700'}`}>Surat Jalan</button>
+                    <button onClick={() => setPrintType("nota")} className={`flex-1 md:w-24 py-2 text-xs font-bold rounded-lg transition-all ${printType === 'nota' ? 'bg-white shadow text-pink-600' : 'text-slate-500 hover:text-slate-700'}`}>Nota</button>
                   </div>
                 </div>
               )}
@@ -1854,113 +1671,165 @@ export default function RiwayatPenjualanPage() {
                 </div>
               )}
 
-              {/* AREA KERTAS STRUK — hanya preview di layar */}
+              {/* AREA PREVIEW DOKUMEN */}
               <div className="flex-1 p-6 md:p-8 flex justify-center items-start min-h-[50vh]">
-                <div
-                  id="receipt-print-area"
-                  className="bg-white shadow-xl w-full max-w-[80mm] p-6 text-[11px] font-mono border border-slate-200 text-black leading-tight mx-auto"
-                >
-                  <div className="text-center">
-                    {storeInfo.receiptLogo && (
-                      <img
-                        src={storeInfo.receiptLogo}
-                        style={{ width: "50px", height: "50px", objectFit: "contain", margin: "0 auto 8px" }}
-                        alt="Logo Struk Lina Flowers"
-                      />
-                    )}
-                    <div className="font-bold text-[14px]">{storeInfo.brand}</div>
-                    <div className="whitespace-pre-wrap mt-1">{storeInfo.address}</div>
-                  </div>
-                  <div style={{ borderTop: "1.5px dashed #000", margin: "12px 0" }}></div>
-                  <div className="text-center font-bold uppercase tracking-widest">
-                    {printType === "struk" ? "STRUK PENJUALAN" : "SURAT JALAN"}
-                  </div>
-
-                  <div className="receipt-meta mt-4 space-y-1">
-                    <div>DATE      : {new Date(selectedTrx.tanggal).toLocaleDateString("id-ID")}</div>
-                    <div>TIME      : {new Date(selectedTrx.tanggal).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}</div>
-                    <div>CASHIER   : {selectedTrx.nama_kasir}</div>
-                    <div>PELANGGAN : <span className="font-bold">{selectedTrx.nama_pembeli}</span></div>
-                    <div>NO TRX    : TRX-{selectedTrx.id.toString().padStart(4, "0")}</div>
-                  </div>
-
-                  <div style={{ borderTop: "1.5px dashed #000", margin: "12px 0" }}></div>
-                  <div className="space-y-3">
-                    {selectedTrx.items.map((item: { id: number; jumlah: number; subtotal: number; product: { nama_produk: string } }) => (
-                      <div key={item.id}>
-                        <div className="font-bold uppercase">{item.product.nama_produk}</div>
-                        <div className="receipt-row flex justify-between mt-0.5">
-                          <span>
-                            {item.jumlah} x{" "}
-                            {printType === "struk"
-                              ? (item.subtotal / item.jumlah).toLocaleString("id-ID")
-                              : "Pcs"}
-                          </span>
-                          {printType === "struk" && <span className="receipt-amount">Rp {item.subtotal.toLocaleString("id-ID")}</span>}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div style={{ borderTop: "1.5px dashed #000", margin: "12px 0" }}></div>
-                  {printType === "struk" && (
-                    <div className="receipt-row receipt-total-row flex justify-between font-bold text-[14px] mt-2 mb-2">
-                      <span>TOTAL</span>
-                      <span className="receipt-amount">Rp {selectedTrx.total_harga.toLocaleString("id-ID")}</span>
+                {printType !== "nota" ? (
+                  <div
+                    id="receipt-print-area"
+                    className="bg-white shadow-xl w-full max-w-[80mm] p-6 text-[11px] font-mono border border-slate-200 text-black leading-tight mx-auto"
+                  >
+                    <div className="text-center">
+                      {storeInfo.receiptLogo && (
+                        <img
+                          src={storeInfo.receiptLogo}
+                          style={{ width: "50px", height: "50px", objectFit: "contain", margin: "0 auto 8px" }}
+                          alt="Logo Struk Lina Flowers"
+                        />
+                      )}
+                      <div className="font-bold text-[14px]">{storeInfo.brand}</div>
+                      <div className="whitespace-pre-wrap mt-1">{storeInfo.address}</div>
                     </div>
-                  )}
-                  <div style={{ borderTop: "1.5px dashed #000", margin: "12px 0" }}></div>
-                  <div className="text-center mt-4 italic whitespace-pre-wrap">{storeInfo.footer}</div>
-                </div>
+                    <div style={{ borderTop: "1.5px dashed #000", margin: "12px 0" }}></div>
+                    <div className="text-center font-bold uppercase tracking-widest">
+                      {printType === "struk" ? "STRUK PENJUALAN" : "SURAT JALAN"}
+                    </div>
+
+                    <div className="receipt-meta mt-4 space-y-1">
+                      <div>DATE      : {new Date(selectedTrx.tanggal).toLocaleDateString("id-ID")}</div>
+                      <div>TIME      : {new Date(selectedTrx.tanggal).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}</div>
+                      <div>CASHIER   : {selectedTrx.nama_kasir}</div>
+                      <div>PELANGGAN : <span className="font-bold">{selectedTrx.nama_pembeli}</span></div>
+                      <div>NO TRX    : TRX-{selectedTrx.id.toString().padStart(4, "0")}</div>
+                    </div>
+
+                    <div style={{ borderTop: "1.5px dashed #000", margin: "12px 0" }}></div>
+                    <div className="space-y-3">
+                      {selectedTrx.items.map((item: { id: number; jumlah: number; subtotal: number; product: { nama_produk: string } }) => (
+                        <div key={item.id}>
+                          <div className="font-bold uppercase">{item.product.nama_produk}</div>
+                          <div className="receipt-row flex justify-between mt-0.5">
+                            <span>
+                              {item.jumlah} x{" "}
+                              {printType === "struk"
+                                ? (item.subtotal / item.jumlah).toLocaleString("id-ID")
+                                : "Pcs"}
+                            </span>
+                            {printType === "struk" && <span className="receipt-amount">Rp {item.subtotal.toLocaleString("id-ID")}</span>}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div style={{ borderTop: "1.5px dashed #000", margin: "12px 0" }}></div>
+                    {printType === "struk" && (
+                      <div className="receipt-row receipt-total-row flex justify-between font-bold text-[14px] mt-2 mb-2">
+                        <span>TOTAL</span>
+                        <span className="receipt-amount">Rp {selectedTrx.total_harga.toLocaleString("id-ID")}</span>
+                      </div>
+                    )}
+                    <div style={{ borderTop: "1.5px dashed #000", margin: "12px 0" }}></div>
+                    <div className="text-center mt-4 italic whitespace-pre-wrap">{storeInfo.footer}</div>
+                  </div>
+                ) : (
+                  /* PREVIEW NOTA PRODUKSI */
+                  <div className="bg-white shadow-xl w-full max-w-[340px] border border-slate-200 text-black text-[11px] mx-auto overflow-hidden rounded-lg">
+                    <div className="bg-pink-600 px-5 py-4">
+                      <h2 className="font-black text-white text-[13px] tracking-wide">NOTA PRODUKSI PESANAN</h2>
+                      <p className="text-pink-200 text-[10px] mt-0.5">{storeInfo.brand}</p>
+                    </div>
+                    <div className="grid grid-cols-2 gap-px bg-pink-100 border-b border-pink-100">
+                      {[
+                        ["No. Transaksi", `TRX-${selectedTrx.id.toString().padStart(4, "0")}`],
+                        ["Tanggal", new Date(selectedTrx.tanggal).toLocaleDateString("id-ID")],
+                        ["Pelanggan", selectedTrx.nama_pembeli || "-"],
+                        ["Pengrajin", selectedTrx.nama_pengrajin || "Belum ditentukan"],
+                      ].map(([label, value]) => (
+                        <div key={label} className="bg-white px-4 py-3">
+                          <p className="text-[9px] font-black uppercase tracking-wider text-pink-400">{label}</p>
+                          <p className="font-bold text-slate-800 mt-0.5 text-[11px] leading-snug">{value}</p>
+                        </div>
+                      ))}
+                    </div>
+                    <table className="w-full text-[10px]">
+                      <thead>
+                        <tr className="bg-pink-50 border-b border-pink-100">
+                          <th className="px-4 py-2 text-left font-black text-pink-700">Produk</th>
+                          <th className="px-2 py-2 text-center font-black text-pink-700">Jml</th>
+                          <th className="px-4 py-2 text-right font-black text-pink-700">Subtotal</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {selectedTrx.items.map((item: { id: number; jumlah: number; subtotal: number; product: { nama_produk: string } }) => (
+                          <tr key={item.id} className="border-b border-slate-50">
+                            <td className="px-4 py-2 font-semibold text-slate-700 leading-snug">{item.product.nama_produk}</td>
+                            <td className="px-2 py-2 text-center text-slate-600">{item.jumlah}</td>
+                            <td className="px-4 py-2 text-right text-slate-700">Rp {item.subtotal.toLocaleString("id-ID")}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                    <div className="flex justify-between items-center px-4 py-3 bg-pink-50 border-t border-pink-100">
+                      <span className="font-black text-pink-700 text-[10px] uppercase tracking-wider">Total</span>
+                      <span className="font-black text-pink-700 text-[13px]">Rp {selectedTrx.total_harga.toLocaleString("id-ID")}</span>
+                    </div>
+                    <div className="mx-4 my-3 border border-dashed border-pink-200 rounded-lg px-3 py-2 min-h-[40px]">
+                      <p className="text-[9px] font-black text-pink-400 uppercase tracking-wider mb-1">Catatan Produksi</p>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* TOMBOL CETAK */}
               <div className="p-4 bg-white border-t mt-auto md:sticky md:bottom-0 z-10 shadow-[0_-10px_20px_-10px_rgba(0,0,0,0.05)]">
-                <div className="mb-3 hidden md:block">
-                  <p className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-500">Mode Printer Windows</p>
-                  <div className="grid grid-cols-2 gap-2 rounded-xl bg-pink-50 p-1">
-                    <button
-                      type="button"
-                      onClick={() => updatePrinterProfile("bluetooth")}
-                      className={`rounded-lg px-3 py-2 text-xs font-bold transition-all ${
-                        printerProfile === "bluetooth" ? "bg-white text-pink-600 shadow-sm" : "text-slate-500 hover:text-slate-700"
-                      }`}
-                    >
-                      Bluetooth
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => updatePrinterProfile("usb")}
-                      className={`rounded-lg px-3 py-2 text-xs font-bold transition-all ${
-                        printerProfile === "usb" ? "bg-white text-pink-600 shadow-sm" : "text-slate-500 hover:text-slate-700"
-                      }`}
-                    >
-                      USB Center
-                    </button>
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-3 mb-3">
-                  <button
-                    type="button"
-                    onClick={handleDownloadPdf}
-                    className="bg-slate-800 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-slate-900 active:scale-[0.98] transition-all"
-                  >
-                    <FileText size={18} /> PDF
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleDownloadJpg}
-                    className="bg-slate-800 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-slate-900 active:scale-[0.98] transition-all"
-                  >
-                    <Download size={18} /> JPG
-                  </button>
-                </div>
+                {printType !== "nota" && (
+                  <>
+                    <div className="mb-3 hidden md:block">
+                      <p className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-500">Mode Printer Windows</p>
+                      <div className="grid grid-cols-2 gap-2 rounded-xl bg-pink-50 p-1">
+                        <button
+                          type="button"
+                          onClick={() => updatePrinterProfile("bluetooth")}
+                          className={`rounded-lg px-3 py-2 text-xs font-bold transition-all ${
+                            printerProfile === "bluetooth" ? "bg-white text-pink-600 shadow-sm" : "text-slate-500 hover:text-slate-700"
+                          }`}
+                        >
+                          Bluetooth
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => updatePrinterProfile("usb")}
+                          className={`rounded-lg px-3 py-2 text-xs font-bold transition-all ${
+                            printerProfile === "usb" ? "bg-white text-pink-600 shadow-sm" : "text-slate-500 hover:text-slate-700"
+                          }`}
+                        >
+                          USB Center
+                        </button>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3 mb-3">
+                      <button
+                        type="button"
+                        onClick={handleDownloadPdf}
+                        className="bg-slate-800 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-slate-900 active:scale-[0.98] transition-all"
+                      >
+                        <FileText size={18} /> PDF
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleDownloadJpg}
+                        className="bg-slate-800 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-slate-900 active:scale-[0.98] transition-all"
+                      >
+                        <Download size={18} /> JPG
+                      </button>
+                    </div>
+                  </>
+                )}
                 <button
                   type="button"
-                  onClick={handlePrint}
+                  onClick={printType === "nota" ? () => printOrderNote(selectedTrx) : handlePrint}
                   className="w-full bg-pink-600 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-pink-200 hover:bg-pink-700 active:scale-[0.98] transition-all"
                 >
-                  <Printer size={20} /> Cetak {printType === "struk" ? "Struk" : "Surat Jalan"} Sekarang
+                  <Printer size={20} /> Cetak {printType === "struk" ? "Struk" : printType === "nota" ? "Nota" : "Surat Jalan"} Sekarang
                 </button>
               </div>
             </div>
@@ -2006,18 +1875,6 @@ export default function RiwayatPenjualanPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Status Bayar</label>
-                <select
-                  value={filterStatus}
-                  onChange={(e) => setFilterStatus(e.target.value)}
-                  className="w-full border border-slate-200 rounded-lg p-2.5 outline-none focus:border-pink-500"
-                >
-                  <option value="Semua">Semua Status</option>
-                  <option value="Paid">Lunas</option>
-                  <option value="Unpaid">Belum Lunas</option>
-                </select>
-              </div>
-              <div>
                 <label className="block text-sm font-medium mb-1">Metode Pembayaran</label>
                 <select
                   value={filterMetode}
@@ -2031,7 +1888,7 @@ export default function RiwayatPenjualanPage() {
                   <option value="Belum Bayar">Belum Bayar</option>
                 </select>
               </div>
-              <div>
+              {false && <div>
                 <label className="block text-sm font-medium mb-1">Status Pengiriman</label>
                 <select
                   value={filterPengiriman}
@@ -2044,7 +1901,7 @@ export default function RiwayatPenjualanPage() {
                   <option value="Dikirim">🚚 Dikirim</option>
                   <option value="Selesai">✅ Selesai</option>
                 </select>
-              </div>
+              </div>}
               <div className="flex gap-4">
                 <div className="flex-1">
                   <label className="block text-sm font-medium mb-1">Tanggal Mulai</label>

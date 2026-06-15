@@ -1,14 +1,44 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getActorFromPayload, recordActivityLog } from "@/lib/activityLog";
+import { deleteProductImageFromStorage } from "@/lib/supabaseStorage";
 
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
+const cleanupProductImage = async (imageUrl?: string | null) => {
   try {
-    const products = await prisma.product.findMany({ orderBy: { id: "desc" } });
-    return NextResponse.json(products);
+    await deleteProductImageFromStorage(imageUrl);
   } catch (error) {
+    console.error("Gagal menghapus foto produk dari Supabase Storage", error);
+  }
+};
+
+export async function GET(request: Request) {
+  try {
+    const url = new URL(request.url);
+    const isPublicCatalog = url.searchParams.get("public") === "1";
+    const showArsip = url.searchParams.get("arsip") === "1";
+
+    if (isPublicCatalog) {
+      const products = await prisma.product.findMany({
+        where: { isArchived: false },
+        orderBy: { id: "desc" },
+        select: {
+          id: true,
+          nama_produk: true,
+          stok: true,
+          gambar: true,
+        },
+      });
+      return NextResponse.json(products);
+    }
+
+    const products = await prisma.product.findMany({
+      where: { isArchived: showArsip },
+      orderBy: { id: "desc" },
+    });
+    return NextResponse.json(products);
+  } catch {
     return NextResponse.json({ error: "Gagal memuat produk" }, { status: 500 });
   }
 }
@@ -17,8 +47,7 @@ export async function POST(request: Request) {
   try {
     const data = await request.json();
     const actor = getActorFromPayload(data);
-    
-    // Auto-generate barcode jika kosong (Contoh: LINA-171510293)
+
     let finalBarcode = data.barcode;
     if (!finalBarcode || finalBarcode.trim() === "") {
       finalBarcode = `LINA-${Date.now().toString().slice(-6)}`;
@@ -47,7 +76,7 @@ export async function POST(request: Request) {
       },
     });
     return NextResponse.json(newProduct, { status: 201 });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Gagal membuat produk" }, { status: 500 });
   }
 }
@@ -56,8 +85,28 @@ export async function PATCH(request: Request) {
   try {
     const data = await request.json();
     const actor = getActorFromPayload(data);
+
+    if (data.action === "arsipkan" || data.action === "batalkanArsip") {
+      const isArchived = data.action === "arsipkan";
+      const updated = await prisma.product.update({
+        where: { id: Number(data.id) },
+        data: { isArchived },
+      });
+      const actionLabel = isArchived ? "diarsipkan" : "dipulihkan dari arsip";
+      await recordActivityLog({
+        action: isArchived ? "ARSIP" : "PULIHKAN",
+        entity: "Produk",
+        entityId: updated.id,
+        title: `Produk ${actionLabel}: ${updated.nama_produk}`,
+        description: `${actor.name} ${actionLabel} produk ${updated.nama_produk}.`,
+        actor,
+        metadata: { isArchived },
+      });
+      return NextResponse.json(updated);
+    }
+
     const before = await prisma.product.findUnique({ where: { id: Number(data.id) } });
-    
+
     let finalBarcode = data.barcode;
     if (!finalBarcode || finalBarcode.trim() === "") {
       finalBarcode = `LINA-${Date.now().toString().slice(-6)}`;
@@ -73,6 +122,9 @@ export async function PATCH(request: Request) {
         gambar: data.gambar || null,
       },
     });
+    if (before?.gambar && before.gambar !== updatedProduct.gambar) {
+      await cleanupProductImage(before.gambar);
+    }
     await recordActivityLog({
       action: "UPDATE",
       entity: "Produk",
@@ -100,7 +152,7 @@ export async function PATCH(request: Request) {
       },
     });
     return NextResponse.json(updatedProduct);
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Gagal memperbarui produk" }, { status: 500 });
   }
 }
@@ -111,13 +163,20 @@ export async function DELETE(request: Request) {
     const { id } = data;
     const actor = getActorFromPayload(data);
     const product = await prisma.product.findUnique({ where: { id: Number(id) } });
-    await prisma.product.delete({ where: { id: Number(id) } });
+
+    await prisma.$transaction(async (tx) => {
+      await tx.orderRequestItem.deleteMany({ where: { productId: Number(id) } });
+      await tx.transactionItem.deleteMany({ where: { productId: Number(id) } });
+      await tx.product.delete({ where: { id: Number(id) } });
+    });
+
+    await cleanupProductImage(product?.gambar);
     await recordActivityLog({
       action: "HAPUS",
       entity: "Produk",
       entityId: id,
       title: `Produk dihapus: ${product?.nama_produk || `ID ${id}`}`,
-      description: `${actor.name} menghapus produk ${product?.nama_produk || `ID ${id}`}.`,
+      description: `${actor.name} menghapus produk ${product?.nama_produk || `ID ${id}`} secara permanen.`,
       actor,
       metadata: product
         ? {
@@ -129,7 +188,7 @@ export async function DELETE(request: Request) {
         : null,
     });
     return NextResponse.json({ success: true });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Gagal menghapus produk" }, { status: 500 });
   }
 }

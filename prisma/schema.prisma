@@ -1,6 +1,7 @@
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 generator client {
@@ -9,22 +10,26 @@ generator client {
 }
 
 model User {
-  id           Int     @id @default(autoincrement())
-  username     String  @unique
-  fullName     String  @default("")
-  profilePhoto String? @db.Text
+  id           Int        @id @default(autoincrement())
+  username     String     @unique
+  fullName     String     @default("")
+  profilePhoto String?    @db.Text
   password     String
   role         String
+  carts        UserCart[]
 }
 
 model Product {
-  id               Int               @id @default(autoincrement())
-  nama_produk      String
-  harga            Int
-  stok             Int
-  barcode          String?           @unique
-  gambar           String?
-  TransactionItems TransactionItem[]
+  id                Int                @id @default(autoincrement())
+  nama_produk       String
+  harga             Int
+  stok              Int
+  barcode           String?            @unique
+  gambar            String?
+  isArchived        Boolean            @default(false)
+  TransactionItems  TransactionItem[]
+  cartItems         UserCartItem[]
+  orderRequestItems OrderRequestItem[]
 }
 
 model Transaction {
@@ -36,8 +41,10 @@ model Transaction {
   nama_pembeli      String?
   nama_kasir        String?
   status_pengiriman String            @default("Diproses")
+  nama_pengrajin    String?
   items             TransactionItem[]
   notifications     Notification[]
+  orderRequest      OrderRequest?
 }
 
 model TransactionItem {
@@ -92,4 +99,81 @@ model ActivityLog {
   @@index([createdAt])
   @@index([entity, action])
   @@index([actorRole, createdAt])
+}
+
+model UserCart {
+  id            Int            @id @default(autoincrement())
+  userId        Int
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  scope         String         @default("produk")
+  customerName  String?
+  paymentMethod String?
+  sessionActive Boolean        @default(false)
+  items         UserCartItem[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  @@unique([userId, scope])
+  @@index([userId, scope])
+}
+
+model UserCartItem {
+  id            Int      @id @default(autoincrement())
+  cartId        Int
+  cart          UserCart @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  productId     Int
+  product       Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  quantity      Int
+  priceOverride Int?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([cartId, productId])
+  @@index([cartId])
+  @@index([productId])
+}
+
+model OrderRequest {
+  id              Int                  @id @default(autoincrement())
+  code            String               @unique
+  customerName    String
+  phone           String
+  status          String               @default("Menunggu")
+  rejectionReason String?
+  totalPrice      Int
+  transactionId   Int?                 @unique
+  transaction     Transaction?         @relation(fields: [transactionId], references: [id], onDelete: SetNull)
+  items           OrderRequestItem[]
+  statusHistory   OrderStatusHistory[]
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
+
+  @@index([status, createdAt])
+  @@index([phone])
+}
+
+model OrderStatusHistory {
+  id             Int          @id @default(autoincrement())
+  orderRequestId Int
+  orderRequest   OrderRequest @relation(fields: [orderRequestId], references: [id], onDelete: Cascade)
+  status         String
+  description    String?
+  createdAt      DateTime     @default(now())
+
+  @@index([orderRequestId, createdAt])
+}
+
+model OrderRequestItem {
+  id             Int          @id @default(autoincrement())
+  orderRequestId Int
+  orderRequest   OrderRequest @relation(fields: [orderRequestId], references: [id], onDelete: Cascade)
+  productId      Int
+  product        Product      @relation(fields: [productId], references: [id])
+  productName    String
+  quantity       Int
+  unitPrice      Int
+  subtotal       Int
+
+  @@index([orderRequestId])
+  @@index([productId])
 }

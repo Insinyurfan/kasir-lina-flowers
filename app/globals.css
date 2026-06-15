@@ -748,6 +748,10 @@ body {
 
 .login-submit,
 .product-order-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
   height: 56px;
   border-radius: 9px;
   font-size: 14px;

@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
 import { useCartStore } from "@/lib/store";
 import { Search, Plus, Minus, Trash2, ShoppingCart, Flower2, Wallet, User, UserCheck, LogOut, Camera, X, Pencil, Check } from "lucide-react";
 import { getSavedUserSession } from "@/lib/userSession";
@@ -55,7 +54,6 @@ const FlyingItem = ({ startX, startY, img }: { startX: number, startY: number, i
 };
 
 export default function PosPage() {
-  const router = useRouter();
   const [user, setUser] = useState<UserSession | null>(null);
   const cashierDisplayName = user?.fullName || user?.username || "Admin";
   const actorPayload = {
@@ -74,15 +72,26 @@ export default function PosPage() {
   const [isCheckoutConfirmOpen, setIsCheckoutConfirmOpen] = useState(false);
   const [isPriceAdjustOpen, setIsPriceAdjustOpen] = useState(false);
   const [priceDraft, setPriceDraft] = useState<Record<number, string>>({});
+  const [isPosCartLoaded, setIsPosCartLoaded] = useState(false);
   
   const [isCartOpen, setIsCartOpen] = useState(false); // STATE BUKA/TUTUP KERANJANG
   const [animations, setAnimations] = useState<{id: number, x: number, y: number, img: string | null}[]>([]); // STATE ANIMASI TERBANG
   const animationIdRef = useRef(0);
   
-  const { cart, addToCart, removeFromCart, updateQuantity, updatePrice, getTotal, clearCart } = useCartStore();
+  const { cart, addToCart, removeFromCart, updateQuantity, updatePrice, setCart, getTotal, clearCart } = useCartStore();
 
   // MENGHITUNG TOTAL BARANG DI KERANJANG UNTUK BADGE
   const totalBarang = cart.reduce((total, item) => total + item.quantity, 0);
+
+  const clearSavedPosCart = async () => {
+    if (!user?.id) return;
+
+    await fetch("/api/cart", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId: user.id, scope: "pos" }),
+    });
+  };
 
   const fetchProduk = useCallback(async () => {
     const res = await fetch("/api/produk");
@@ -163,8 +172,64 @@ export default function PosPage() {
     }
   }, [namaPembeli, isSessionStarted]);
 
+  useEffect(() => {
+    if (!user?.id) {
+      const timeoutId = window.setTimeout(() => setIsPosCartLoaded(true), 0);
+      return () => window.clearTimeout(timeoutId);
+    }
+
+    let isCancelled = false;
+
+    const fetchSavedCart = async () => {
+      try {
+        const res = await fetch(`/api/cart?userId=${user.id}&scope=pos`, { cache: "no-store" });
+        const data = await res.json();
+        if (!isCancelled && Array.isArray(data.items)) {
+          setCart(data.items);
+          setNamaPembeli(data.customerName || "");
+          setMetodePembayaran(data.paymentMethod || "Tunai");
+          setIsSessionStarted(Boolean(data.sessionActive || data.customerName || data.items.length > 0));
+        }
+      } finally {
+        if (!isCancelled) setIsPosCartLoaded(true);
+      }
+    };
+
+    fetchSavedCart();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [setCart, user?.id]);
+
+  useEffect(() => {
+    if (!user?.id || !isPosCartLoaded || isProcessing) return;
+
+    const timeoutId = window.setTimeout(() => {
+      fetch("/api/cart", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: user.id,
+          scope: "pos",
+          items: cart,
+          customerName: namaPembeli,
+          paymentMethod: metodePembayaran,
+          sessionActive: isSessionStarted,
+        }),
+      }).catch(() => {
+        console.error("Gagal menyimpan keranjang kasir");
+      });
+    }, 350);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [cart, isPosCartLoaded, isProcessing, isSessionStarted, metodePembayaran, namaPembeli, user?.id]);
+
   const handleLogoutSession = () => {
     if (confirm("Apakah Anda ingin menutup sesi pesanan ini?")) {
+      clearSavedPosCart().catch(() => {
+        console.error("Gagal menghapus sesi keranjang kasir");
+      });
       localStorage.removeItem("pos_customer_name");
       localStorage.removeItem("pos_session_active");
       setNamaPembeli("");
@@ -230,20 +295,20 @@ export default function PosPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
           cart, metode_pembayaran: metodePembayaran, nama_pembeli: namaPembeli,
-          nama_kasir: cashierDisplayName, status: statusTransaksi, status_pengiriman: "Diproses",
+          nama_kasir: cashierDisplayName, status: statusTransaksi, status_pengiriman: "Sedang Disiapkan",
           ...actorPayload,
         }),
       });
 
       if (res.ok) {
-        const transaction = await res.json();
+        await res.json();
+        await clearSavedPosCart();
         alert(`🎉 Transaksi atas nama ${namaPembeli} Berhasil!`);
         localStorage.removeItem("pos_customer_name");
         localStorage.removeItem("pos_session_active");
         window.dispatchEvent(new Event("lina_notifications_updated"));
         localStorage.setItem("lina_notifications_refresh_at", String(Date.now()));
         clearCart(); setNamaPembeli(""); setMetodePembayaran("Tunai"); setIsSessionStarted(false); setIsCartOpen(false); resetCheckoutFlow();
-        router.push(`/penjualan?highlight=${transaction.id}`);
       } else {
         alert("Gagal memproses transaksi.");
       }

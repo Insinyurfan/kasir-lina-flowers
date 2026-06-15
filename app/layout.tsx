@@ -25,6 +25,7 @@ import {
   X,
   Bell,
   ClipboardList,
+  ClipboardCheck,
   Eye,
   Minus,
   RotateCcw,
@@ -39,7 +40,8 @@ const NOTIFICATION_POLL_INTERVAL = 5000;
 const NOTIFICATION_FETCH_TIMEOUT = 8000;
 const NOTIFICATION_MAX_BACKOFF = 60000;
 const DISMISSED_NOTIFICATION_POPUPS_KEY = "lina_dismissed_notification_popups";
-const POPUP_NOTIFICATION_STATUSES = new Set(["Order Baru", "Siap Kirim"]);
+const POPUP_NOTIFICATION_STATUSES = new Set(["Order Baru", "Request Pesanan", "Siap Kirim", "Siap Dikirim"]);
+const PUBLIC_ROUTES = ["/", "/login"];
 
 type UserSession = {
   id: number;
@@ -102,6 +104,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const pathname = usePathname();
   const router = useRouter();
   const isStandaloneReceipt = pathname.startsWith("/struk");
+  const isPublicPage = PUBLIC_ROUTES.some((route) => pathname === route || pathname.startsWith(`${route}/`));
   const [logo, setLogo] = useState<string | null>(null);
   const [user, setUser] = useState<UserSession | null>(() => getStoredUser());
   const [isLoading, setIsLoading] = useState(pathname !== "/login");
@@ -140,7 +143,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     let loadingTimer: number | null = null;
     let userTimer: number | null = null;
 
-    if (pathname === "/login" || isStandaloneReceipt) {
+    if (isPublicPage || isStandaloneReceipt) {
       userTimer = window.setTimeout(() => setUser(null), 0);
       loadingTimer = window.setTimeout(() => setIsLoading(false), 0);
       return () => {
@@ -166,7 +169,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       if (userTimer) window.clearTimeout(userTimer);
       if (loadingTimer) window.clearTimeout(loadingTimer);
     };
-  }, [isStandaloneReceipt, pathname, router]);
+  }, [isPublicPage, isStandaloneReceipt, pathname, router]);
 
   useEffect(() => {
     if (!user?.role || user.role === "Tamu" || hasLoadedSettingsRef.current) return;
@@ -233,6 +236,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   };
 
   const handleLogout = () => {
+    void fetch("/api/login", { method: "DELETE" });
     clearSavedUserSession();
     setUser(null);
     setIsAccountMenuOpen(false);
@@ -429,11 +433,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   };
 
   const openNewOrderSource = () => {
-    if (!newOrderPopup?.transactionId) return;
+    if (!newOrderPopup) return;
 
     rememberDismissedNewOrderPopup(newOrderPopup.id);
     markNotificationsRead([newOrderPopup.id]);
-    const targetUrl = `/penjualan?highlight=${newOrderPopup.transactionId}`;
+    const targetUrl = newOrderPopup.transactionId
+      ? `/status-pesanan?highlight=${newOrderPopup.transactionId}`
+      : "/status-pesanan";
     setNewOrderPopup(null);
     router.push(targetUrl);
   };
@@ -523,7 +529,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         (notification) =>
           shouldShowNotificationPopup(notification) &&
           !notification.isRead &&
-          !!notification.transactionId &&
           !dismissedNewOrderPopupIdsRef.current.has(notification.id)
       );
 
@@ -536,13 +541,21 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     return () => window.clearTimeout(timeoutId);
   }, [notifications, user?.role]);
 
+  useEffect(() => {
+    if (!newOrderPopup) return;
+    const timeoutId = window.setTimeout(closeNewOrderPopup, 5000);
+    return () => window.clearTimeout(timeoutId);
+    // The popup timer restarts only when a different notification is shown.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [newOrderPopup?.id]);
+
   const unreadNotifications = notifications.filter((notification) => !notification.isRead).length;
   const selectedVisibleNotificationIds = selectedNotificationIds.filter((id) =>
     notifications.some((notification) => notification.id === id)
   );
   const allNotificationsSelected =
     notifications.length > 0 && notifications.every((notification) => selectedNotificationIds.includes(notification.id));
-  const shouldHoldAuthCheck = pathname !== "/login" && !isStandaloneReceipt && !user;
+  const shouldHoldAuthCheck = !isPublicPage && !isStandaloneReceipt && !user;
   const shouldHoldGuestRedirect = isGuest && pathname !== "/produk" && pathname !== "/login" && !isStandaloneReceipt;
 
   const renderNotificationPanel = (className: string) => (
@@ -606,11 +619,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               className={`flex items-start border-b border-slate-50 hover:bg-pink-50/50 ${notification.isRead ? "bg-white" : "bg-pink-50"}`}
             >
               <Link
-                href={notification.transactionId ? `/penjualan?highlight=${notification.transactionId}` : "/penjualan"}
+                href={notification.transactionId
+                  ? `/status-pesanan?highlight=${notification.transactionId}`
+                  : "/status-pesanan"}
                 data-notification-id={notification.id}
                 className="block min-w-0 flex-1 py-4 pl-4"
                 onClick={(event) => {
-                  if (notification.transactionId && shouldShowNotificationPopup(notification)) {
+                  if (shouldShowNotificationPopup(notification)) {
                     event.preventDefault();
                     openNotificationPopup(notification);
                     return;
@@ -684,7 +699,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <p className="font-bold">Memuat Sistem...</p>
             </div>
           </div>
-        ) : pathname === "/login" || isStandaloneReceipt ? (
+        ) : isPublicPage || isStandaloneReceipt ? (
           children
         ) : (
           <div className="lina-app-shell flex h-screen flex-col md:flex-row overflow-hidden relative w-full">
@@ -840,6 +855,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 {!isGuest && <NavItem href="/dashboard" icon={<House />} label="Dashboard" pathname={pathname} onClick={closeMobileMenu} />}
                 {!isGuest && <NavItem href="/pos" icon={<ShoppingCart />} label="Kasir (POS)" pathname={pathname} onClick={closeMobileMenu} />}
                 <NavItem href="/produk" icon={<Package />} label="Data Produk" pathname={pathname} onClick={closeMobileMenu} />
+                {!isGuest && <NavItem href="/status-pesanan" icon={<ClipboardCheck />} label="Status Pesanan" pathname={pathname} onClick={closeMobileMenu} />}
                 {!isGuest && <NavItem href="/penjualan" icon={<ReceiptHistoryIcon />} label="Riwayat Penjualan" pathname={pathname} onClick={closeMobileMenu} />}
                 {!isGuest && <NavItem href="/laporan" icon={<LineChart />} label="Laporan" pathname={pathname} onClick={closeMobileMenu} />}
                 {!isGuest && <NavItem href="/log-aktivitas" icon={<ClipboardList />} label="Log Aktivitas" pathname={pathname} onClick={closeMobileMenu} />}

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { recordActivityLog } from "@/lib/activityLog";
+import { createServerSessionToken, serverSessionCookie } from "@/lib/serverSession";
 
 type LoginUserRow = {
   id: number;
@@ -14,7 +15,7 @@ type LoginUserRow = {
 
 export async function POST(request: Request) {
   try {
-    const { username, password } = await request.json();
+    const { username, password, rememberMe } = await request.json();
     const cleanUsername = String(username || "").trim();
 
     if (!cleanUsername || !password) {
@@ -61,7 +62,7 @@ export async function POST(request: Request) {
       metadata: { username: user.username, role: user.role },
     });
 
-    return NextResponse.json(
+    const response = NextResponse.json(
       {
         id: user.id,
         username: user.username,
@@ -71,8 +72,28 @@ export async function POST(request: Request) {
       },
       { status: 200 }
     );
+    response.cookies.set(serverSessionCookie.name, createServerSessionToken(user.id, Boolean(rememberMe)), {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+      ...(rememberMe ? { maxAge: serverSessionCookie.maxAge } : {}),
+    });
+    return response;
   } catch (error) {
     console.error("Login error:", error);
     return NextResponse.json({ error: "Terjadi kesalahan server" }, { status: 500 });
   }
+}
+
+export async function DELETE() {
+  const response = NextResponse.json({ success: true });
+  response.cookies.set(serverSessionCookie.name, "", {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+    maxAge: 0,
+  });
+  return response;
 }

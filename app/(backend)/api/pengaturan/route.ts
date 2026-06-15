@@ -23,7 +23,7 @@ type StoreSettingRequestPayload = StoreSettingPayload & {
 const defaultStoreSetting: StoreSettingRow = {
   id: 1,
   brand: "Lina Flowers",
-  address: "Jl. Bunga Melati No. 123, Bekasi",
+  address: "Pasar Pagi Asemka, Jakarta Barat",
   footer: "Terima Kasih Atas Kunjungan Anda",
   logo: null,
   receiptLogo: null,

@@ -11,12 +11,17 @@ export type CartItem = {
   gambar?: string | null;
 };
 
+type CartProduct = Omit<CartItem, "quantity" | "hargaAwal"> & {
+  hargaAwal?: number;
+};
+
 interface CartState {
   cart: CartItem[];
-  addToCart: (product: any) => void;
+  addToCart: (product: CartProduct) => void;
   removeFromCart: (id: number) => void;
   updateQuantity: (id: number, quantity: number) => void;
   updatePrice: (id: number, price: number) => void;
+  setCart: (cart: CartItem[]) => void;
   clearCart: () => void;
   getTotal: () => number;
 }
@@ -69,6 +74,7 @@ export const useCartStore = create<CartState>()(
             item.id === id ? { ...item, harga: Math.max(0, Math.round(price)) } : item
           ),
         })),
+      setCart: (cart) => set({ cart }),
       clearCart: () => set({ cart: [] }),
       getTotal: () => get().cart.reduce((total, item) => total + item.harga * item.quantity, 0),
     }),

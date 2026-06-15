@@ -2,12 +2,17 @@ import { NextResponse } from "next/server";
 import { Prisma } from "@/lib/generated/prisma";
 import prisma from "@/lib/prisma";
 import { getActorFromPayload, recordActivityLog } from "@/lib/activityLog";
+import { getServerSessionUser } from "@/lib/serverSession";
 
 // Paksa Next.js agar TIDAK menyimpan cache untuk API ini
 export const dynamic = 'force-dynamic';
 
 const toLocalStartOfDay = (date: string) => new Date(`${date}T00:00:00`);
 const toLocalEndOfDay = (date: string) => new Date(`${date}T23:59:59.999`);
+const maskPhone = (value: string) => {
+  if (value.length <= 6) return `${value.slice(0, 2)}****`;
+  return `${value.slice(0, 4)}${"*".repeat(Math.max(4, value.length - 7))}${value.slice(-3)}`;
+};
 const pengirimanOrder = ["Diproses", "Siap Kirim", "Dikirim", "Selesai"];
 
 const getPengirimanLevel = (status?: string) => {
@@ -86,6 +91,12 @@ const transactionInclude = (includeProductImage = false) => ({
       },
     },
   },
+  orderRequest: {
+    select: {
+      code: true,
+      phone: true,
+    },
+  },
 });
 
 const attachNotifications = async <T extends { id: number }>(transactions: T[]) => {
@@ -117,15 +128,19 @@ const createNewOrderNotifications = async (transaction: {
   id: number;
   nama_pembeli?: string | null;
   nama_kasir?: string | null;
+  senderRole?: string | null;
+  senderName?: string | null;
 }) => {
   const trxNumber = `TRX-${String(transaction.id).padStart(4, "0")}`;
   const message = `Orderan baru ${trxNumber} - ${transaction.nama_pembeli || "Tanpa nama"}`;
-  const targetRoles = await getNotificationTargetRoles();
+  const senderRole = transaction.senderRole || "Kasir";
+  const senderName = transaction.senderName || transaction.nama_kasir || null;
+  const targetRoles = (await getNotificationTargetRoles()).filter((targetRole) => targetRole !== senderRole);
 
   for (const targetRole of targetRoles) {
     await prisma.$executeRaw`
       INSERT INTO "Notification" ("transactionId", "targetRole", "senderRole", "senderName", "statusPengiriman", message, "isRead", "hidden", "createdAt")
-      VALUES (${transaction.id}, ${targetRole}, 'Kasir', ${transaction.nama_kasir || null}, 'Order Baru', ${message}, false, false, NOW())
+      VALUES (${transaction.id}, ${targetRole}, ${senderRole}, ${senderName}, 'Order Baru', ${message}, false, false, NOW())
       ON CONFLICT ("transactionId", "targetRole", "senderRole", "statusPengiriman")
       DO UPDATE SET
         "senderName" = EXCLUDED."senderName",
@@ -180,7 +195,20 @@ export async function GET(request: Request) {
       // FITUR BARU: Mengurutkan berdasarkan tanggal
       orderBy: { tanggal: sort === "asc" ? "asc" : "desc" },
     });
-    return NextResponse.json(await attachNotifications(transaksi));
+    const viewer = await getServerSessionUser(request);
+    const canSeePhone = viewer?.role === "Owner";
+    const withNotifications = await attachNotifications(transaksi);
+    return NextResponse.json(
+      withNotifications.map((transaction) => ({
+        ...transaction,
+        orderRequest: transaction.orderRequest
+          ? {
+              ...transaction.orderRequest,
+              phone: canSeePhone ? transaction.orderRequest.phone : maskPhone(transaction.orderRequest.phone),
+            }
+          : null,
+      }))
+    );
   } catch {
     return NextResponse.json({ error: "Gagal mengambil data" }, { status: 500 });
   }
@@ -202,7 +230,7 @@ export async function POST(request: Request) {
         nama_pembeli,
         nama_kasir,
         status: status || "Paid",
-        status_pengiriman: status_pengiriman || "Diproses",
+        status_pengiriman: status_pengiriman || "Sedang Disiapkan",
         items: {
           create: mapCartToItems(cart || []),
         },
@@ -217,7 +245,11 @@ export async function POST(request: Request) {
       });
     }
 
-    await createNewOrderNotifications(newTransaction);
+    await createNewOrderNotifications({
+      ...newTransaction,
+      senderRole: actor.role,
+      senderName: actor.name,
+    });
     await recordActivityLog({
       action: "TAMBAH",
       entity: "Transaksi",

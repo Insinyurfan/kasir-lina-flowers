@@ -598,47 +598,51 @@ export default function PosPage() {
         </div>
 
         {/* GRID PRODUK */}
-        <div className="p-3 overflow-y-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 flex-1 content-start pb-32">
+        <div className="p-3 overflow-y-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-3 flex-1 content-start pb-32">
           {filteredProduk.map((p) => (
             <div
               key={p.id}
               onClick={(e) => handleProductClick(e, p)}
-              className="bg-white border-2 border-pink-100 rounded-2xl cursor-pointer hover:border-pink-400 hover:shadow-lg transition-all active:scale-95 group flex flex-col overflow-hidden shadow-sm"
+              className="bg-white border border-pink-100 rounded-2xl cursor-pointer hover:shadow-xl hover:border-pink-300 transition-all active:scale-[0.97] group flex flex-col overflow-hidden shadow-sm"
             >
-              {/* FOTO PRODUK — object-contain agar tidak terpotong */}
-              <div className="w-full aspect-square bg-white relative flex items-center justify-center overflow-hidden border-b-2 border-pink-50">
+              {/* FOTO — fixed height agar konsisten di semua device */}
+              <div className="relative w-full h-32 sm:h-36 md:h-40 bg-slate-50 flex items-center justify-center overflow-hidden shrink-0">
                 {p.gambar ? (
                   <img
                     src={p.gambar}
                     alt={p.nama_produk}
-                    className="w-full h-full object-contain p-1 group-hover:scale-105 transition-transform duration-300"
+                    className="absolute inset-0 w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
                   />
                 ) : (
-                  <div className="flex flex-col items-center gap-1 text-pink-200">
-                    <Flower2 size={44} />
-                  </div>
+                  <Flower2 size={40} className="text-pink-200" />
                 )}
-                {/* Badge stok — pojok kanan atas, lebih terlihat */}
-                <div className="absolute top-1.5 right-1.5 bg-pink-600 text-white px-1.5 py-0.5 rounded-md text-[9px] font-black shadow">
+                <div className="absolute top-2 right-2 bg-pink-600 text-white text-[10px] font-black px-2 py-0.5 rounded-full shadow">
                   {p.stok}
                 </div>
               </div>
 
-              {/* INFO PRODUK */}
-              <div className="p-2.5 flex flex-col flex-1 bg-white">
+              {/* INFO */}
+              <div className="p-2.5 sm:p-3 flex flex-col gap-1.5 bg-white">
                 <h3
-                  className="font-bold text-[11px] line-clamp-2 text-slate-800 uppercase tracking-tight leading-tight flex-1"
+                  className="font-extrabold text-[11px] sm:text-xs text-slate-800 uppercase tracking-tight leading-snug line-clamp-2 min-h-[2.2rem]"
                   title={p.nama_produk}
                 >
                   {p.nama_produk}
                 </h3>
-                <div className="mt-1.5">
-                  <p className="text-pink-600 font-extrabold text-[13px] leading-tight">
-                    Rp {p.harga.toLocaleString("id-ID")}
-                  </p>
-                  {(p.satuanHarga ?? "pcs") !== "pcs" && (
-                    <p className="text-[9px] text-pink-400 font-bold">/{SATUAN_LABELS[p.satuanHarga]}</p>
-                  )}
+                <div className="flex items-end justify-between gap-1">
+                  <div>
+                    <p className="text-pink-600 font-black text-[13px] sm:text-sm leading-none">
+                      Rp {p.harga.toLocaleString("id-ID")}
+                    </p>
+                    {(p.satuanHarga ?? "pcs") !== "pcs" && (
+                      <p className="text-[9px] text-pink-400 font-semibold mt-0.5">
+                        /{SATUAN_LABELS[p.satuanHarga]}
+                      </p>
+                    )}
+                  </div>
+                  <div className="shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-pink-50 flex items-center justify-center text-pink-400 group-hover:bg-pink-600 group-hover:text-white transition-colors">
+                    <Plus size={14} />
+                  </div>
                 </div>
               </div>
             </div>

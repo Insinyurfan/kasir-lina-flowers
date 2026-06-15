@@ -15,6 +15,8 @@ type Account = {
 
 type AccountForm = Account & {
   password: string;
+  confirmPassword: string;
+  oldPassword: string;
 };
 
 const emptyForm: AccountForm = {
@@ -23,6 +25,8 @@ const emptyForm: AccountForm = {
   fullName: "",
   profilePhoto: "",
   password: "",
+  confirmPassword: "",
+  oldPassword: "",
   role: "Admin",
 };
 
@@ -75,6 +79,8 @@ export default function ManajemenAkunPage() {
       fullName: akun.fullName || akun.username,
       profilePhoto: akun.profilePhoto || "",
       password: "",
+      confirmPassword: "",
+      oldPassword: "",
       role: akun.role,
     });
     setIsModalOpen(true);
@@ -151,14 +157,33 @@ export default function ManajemenAkunPage() {
     e.preventDefault();
     if (!currentUser) return;
 
+    const isChangingPassword = formData.password.trim() !== "";
+    const isSelfEdit = isEdit && formData.id === currentUser.id;
+
+    if (isChangingPassword) {
+      if (formData.password !== formData.confirmPassword) {
+        alert("Konfirmasi password baru tidak cocok. Periksa kembali.");
+        return;
+      }
+      if (isSelfEdit && !formData.oldPassword.trim()) {
+        alert("Password lama wajib diisi untuk mengubah password.");
+        return;
+      }
+    }
+
     setIsLoading(true);
 
     try {
       const method = isEdit ? "PATCH" : "POST";
       const payload = {
-        ...formData,
-        actorId: currentUser.id,
+        id: formData.id,
+        username: formData.username,
+        fullName: formData.fullName,
+        profilePhoto: formData.profilePhoto,
+        password: formData.password,
+        oldPassword: formData.oldPassword,
         role: currentUser.role === "Owner" ? formData.role : currentUser.role,
+        actorId: currentUser.id,
       };
 
       const res = await fetch("/api/akun", {
@@ -463,20 +488,90 @@ export default function ManajemenAkunPage() {
                 />
               </div>
 
-              <div>
-                <label className="block text-xs font-bold text-slate-500 mb-1">
-                  Password {isEdit && <span className="text-pink-500 font-normal">(Kosongkan jika tidak ingin mengubah)</span>}
-                </label>
-                <input
-                  type="password"
-                  required={!isEdit}
-                  value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  placeholder={isEdit ? "Ketik sandi baru untuk mereset..." : "Masukkan password..."}
-                  className="w-full border border-slate-200 rounded-xl px-4 py-2.5 outline-none focus:border-pink-500 text-sm font-medium"
-                  autoComplete="new-password"
-                />
-              </div>
+              {isEdit ? (
+                <>
+                  {formData.id === currentUser.id && (
+                    <div>
+                      <label className="block text-xs font-bold text-slate-500 mb-1">Password Lama</label>
+                      <input
+                        type="password"
+                        value={formData.oldPassword}
+                        onChange={(e) => setFormData({ ...formData, oldPassword: e.target.value })}
+                        placeholder="Masukkan password lama..."
+                        className="w-full border border-slate-200 rounded-xl px-4 py-2.5 outline-none focus:border-pink-500 text-sm font-medium"
+                        autoComplete="current-password"
+                      />
+                    </div>
+                  )}
+                  <div>
+                    <label className="block text-xs font-bold text-slate-500 mb-1">
+                      Password Baru <span className="text-pink-500 font-normal">(Kosongkan jika tidak ingin mengubah)</span>
+                    </label>
+                    <input
+                      type="password"
+                      value={formData.password}
+                      onChange={(e) => setFormData({ ...formData, password: e.target.value, confirmPassword: "" })}
+                      placeholder="Ketik password baru..."
+                      className="w-full border border-slate-200 rounded-xl px-4 py-2.5 outline-none focus:border-pink-500 text-sm font-medium"
+                      autoComplete="new-password"
+                    />
+                  </div>
+                  {formData.password && (
+                    <div>
+                      <label className="block text-xs font-bold text-slate-500 mb-1">Konfirmasi Password Baru</label>
+                      <input
+                        type="password"
+                        value={formData.confirmPassword}
+                        onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                        placeholder="Ulangi password baru..."
+                        className={`w-full border rounded-xl px-4 py-2.5 outline-none focus:border-pink-500 text-sm font-medium ${
+                          formData.confirmPassword && formData.password !== formData.confirmPassword
+                            ? "border-red-300 bg-red-50"
+                            : "border-slate-200"
+                        }`}
+                        autoComplete="new-password"
+                      />
+                      {formData.confirmPassword && formData.password !== formData.confirmPassword && (
+                        <p className="text-xs text-red-500 mt-1 font-medium">Password tidak cocok.</p>
+                      )}
+                    </div>
+                  )}
+                </>
+              ) : (
+                <>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-500 mb-1">Password</label>
+                    <input
+                      type="password"
+                      required
+                      value={formData.password}
+                      onChange={(e) => setFormData({ ...formData, password: e.target.value, confirmPassword: "" })}
+                      placeholder="Masukkan password..."
+                      className="w-full border border-slate-200 rounded-xl px-4 py-2.5 outline-none focus:border-pink-500 text-sm font-medium"
+                      autoComplete="new-password"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-500 mb-1">Konfirmasi Password</label>
+                    <input
+                      type="password"
+                      required
+                      value={formData.confirmPassword}
+                      onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                      placeholder="Ulangi password..."
+                      className={`w-full border rounded-xl px-4 py-2.5 outline-none focus:border-pink-500 text-sm font-medium ${
+                        formData.confirmPassword && formData.password !== formData.confirmPassword
+                          ? "border-red-300 bg-red-50"
+                          : "border-slate-200"
+                      }`}
+                      autoComplete="new-password"
+                    />
+                    {formData.confirmPassword && formData.password !== formData.confirmPassword && (
+                      <p className="text-xs text-red-500 mt-1 font-medium">Password tidak cocok.</p>
+                    )}
+                  </div>
+                </>
+              )}
 
               <div>
                 <label className="block text-xs font-bold text-slate-500 mb-1">Hak Akses (Role)</label>

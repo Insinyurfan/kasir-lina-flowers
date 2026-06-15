@@ -29,6 +29,13 @@ const findAccountById = async (id: number) => {
   return rows[0] ?? null;
 };
 
+const findAccountPasswordById = async (id: number) => {
+  const rows = await prisma.$queryRaw<{ password: string }[]>`
+    SELECT password FROM "User" WHERE id = ${id} LIMIT 1
+  `;
+  return rows[0]?.password ?? null;
+};
+
 const findAccountByUsername = async (username: string, ignoredId?: number) => {
   const rows = ignoredId
     ? await prisma.$queryRaw<AccountRow[]>`
@@ -128,7 +135,7 @@ export async function POST(request: Request) {
 
 export async function PATCH(request: Request) {
   try {
-    const { id, username, fullName, profilePhoto, password, role, actorId } = await request.json();
+    const { id, username, fullName, profilePhoto, password, oldPassword, role, actorId } = await request.json();
     const targetId = Number(id);
     const actor = await findAccountById(Number(actorId));
     const target = await findAccountById(targetId);
@@ -162,9 +169,25 @@ export async function PATCH(request: Request) {
     const nextRole = canChangeRole ? normalizeRole(role) : target.role;
     const nextProfilePhoto = profilePhoto || null;
 
+    const isChangingPassword = password && password.trim() !== "";
+
+    if (isChangingPassword && actor.id === target.id) {
+      if (!oldPassword) {
+        return NextResponse.json({ error: "Password lama wajib diisi untuk mengubah password." }, { status: 400 });
+      }
+      const currentHash = await findAccountPasswordById(targetId);
+      if (!currentHash) {
+        return NextResponse.json({ error: "Akun tidak ditemukan." }, { status: 404 });
+      }
+      const isMatch = await bcrypt.compare(oldPassword, currentHash);
+      if (!isMatch) {
+        return NextResponse.json({ error: "Password lama tidak sesuai." }, { status: 401 });
+      }
+    }
+
     let rows: AccountRow[];
 
-    if (password && password.trim() !== "") {
+    if (isChangingPassword) {
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
       rows = await prisma.$queryRaw<AccountRow[]>`
@@ -209,7 +232,7 @@ export async function PATCH(request: Request) {
           fullName: updated.fullName,
           role: updated.role,
           punyaFoto: Boolean(updated.profilePhoto),
-          passwordDiubah: Boolean(password && password.trim() !== ""),
+          passwordDiubah: Boolean(isChangingPassword),
         },
       },
     });

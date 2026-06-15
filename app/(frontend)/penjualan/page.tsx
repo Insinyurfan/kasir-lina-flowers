@@ -29,6 +29,23 @@ type StoreSettingResponse = Partial<StoreInfo> & {
   error?: string;
   detail?: string;
 };
+type PrintDocumentType = "nota" | "surat-jalan";
+type PrintTransactionItem = {
+  id?: number;
+  jumlah: number;
+  subtotal: number;
+  product?: {
+    nama_produk?: string | null;
+  } | null;
+};
+type PrintTransaction = {
+  id: number;
+  tanggal: string;
+  total_harga: number;
+  nama_kasir?: string | null;
+  nama_pembeli?: string | null;
+  items?: PrintTransactionItem[];
+};
 
 const riwayatSortOptions: Array<{
   key: RiwayatSortKey;
@@ -97,6 +114,16 @@ const createTransactionSignature = (items: any[]) =>
       ].join(":");
     })
     .join("|");
+
+const formatTransactionCode = (id: number) => `TRX-${String(id).padStart(4, "0")}`;
+
+const escapeHtml = (value: unknown) =>
+  String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 
 export default function RiwayatPenjualanPage() {
   const searchParams = useSearchParams();
@@ -468,7 +495,7 @@ export default function RiwayatPenjualanPage() {
   };
 
   const getPrintFileName = (extension = "jpg") =>
-    `${printType === "struk" ? "struk" : "surat-jalan"}-TRX-${selectedTrx?.id.toString().padStart(4, "0") || "0000"}.${extension}`;
+    `${printType === "struk" ? "struk" : printType === "nota" ? "nota" : "surat-jalan"}-TRX-${selectedTrx?.id.toString().padStart(4, "0") || "0000"}.${extension}`;
 
   const downloadBlobFile = (blob: Blob, filename: string) => {
     const url = URL.createObjectURL(blob);
@@ -605,7 +632,11 @@ export default function RiwayatPenjualanPage() {
 
     ctx.font = `bold ${titleFont}px 'Courier New', monospace`;
     ctx.textAlign = "center";
-    ctx.fillText(printType === "struk" ? "STRUK PENJUALAN" : "SURAT JALAN", width / 2, y);
+    ctx.fillText(
+      printType === "struk" ? "STRUK PENJUALAN" : printType === "nota" ? "NOTA PESANAN" : "SURAT JALAN",
+      width / 2,
+      y
+    );
     ctx.textAlign = "left";
     y += isThermal ? 30 : 44;
 
@@ -628,7 +659,7 @@ export default function RiwayatPenjualanPage() {
     drawDashedLine(ctx, y, width, margin);
     y += isThermal ? 16 : 24;
 
-    selectedTrx.items.forEach((item: { jumlah: number; subtotal: number; product: { nama_produk: string } }) => {
+    (selectedTrx.items || []).forEach((item: { jumlah: number; subtotal: number; product: { nama_produk: string } }) => {
       ctx.font = `bold ${bodyFont}px 'Courier New', monospace`;
       y = wrapCanvasText(ctx, String(item.product.nama_produk || "").toUpperCase(), margin, y, contentWidth, bodyLineHeight);
 
@@ -701,23 +732,73 @@ export default function RiwayatPenjualanPage() {
     }
   };
 
-  const printOrderNote = (t: any) => {
+  const printOrderDocument = (t: PrintTransaction, documentType: PrintDocumentType) => {
     const printWindow = window.open("", "_blank", "width=900,height=700");
-    if (!printWindow) return alert("Popup cetak diblokir browser.");
-    const itemRows = (t.items || []).map((item: any) => `
-      <tr><td>${item.product?.nama_produk || "-"}</td><td>${item.jumlah}</td><td>Rp ${item.subtotal.toLocaleString("id-ID")}</td></tr>
+    if (!printWindow) return alert("Popup cetak diblokir browser. Izinkan pop-up lalu coba lagi.");
+    const isNota = documentType === "nota";
+    const documentTitle = isNota ? "NOTA PESANAN" : "SURAT JALAN";
+    const transactionDate = new Date(t.tanggal);
+    const logoSrc = storeInfo.receiptLogo || storeInfo.logo;
+    const itemRows = (t.items || []).map((item) => `
+      <tr>
+        <td>${escapeHtml(item.product?.nama_produk || "-")}</td>
+        <td class="qty">${escapeHtml(item.jumlah)} Pcs</td>
+        ${isNota ? `<td class="money">Rp ${Number(item.subtotal || 0).toLocaleString("id-ID")}</td>` : ""}
+      </tr>
     `).join("");
-    printWindow.document.write(`<!doctype html><html><head><title>Nota TRX-${String(t.id).padStart(4, "0")}</title><style>
-      body{font-family:Arial,sans-serif;color:#1e293b;margin:36px}h1{margin:0;color:#db2777}.meta{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:24px 0;padding:18px;background:#fdf2f8;border-radius:14px}
-      table{width:100%;border-collapse:collapse;margin-top:20px}th,td{padding:12px;border:1px solid #e2e8f0;text-align:left}th{background:#fce7f3}.total{text-align:right;font-size:20px;font-weight:800;margin-top:18px}
-      .notes{margin-top:28px;border:1px dashed #94a3b8;padding:18px;min-height:90px}@media print{body{margin:18mm}}
+
+    printWindow.document.write(`<!doctype html><html><head><title>${escapeHtml(documentTitle)} ${formatTransactionCode(t.id)}</title><meta charset="UTF-8"><style>
+      *{box-sizing:border-box}
+      body{font-family:Arial,sans-serif;color:#1e293b;margin:0;background:#f8fafc}
+      .sheet{width:210mm;min-height:297mm;margin:0 auto;background:#fff;padding:16mm 18mm}
+      .header{display:flex;align-items:flex-start;gap:16px;border-bottom:3px solid #f9a8d4;padding-bottom:14px;margin-bottom:0}
+      .logo{width:68px;height:68px;object-fit:contain;border:1px solid #e2e8f0;border-radius:10px;padding:5px;flex-shrink:0}
+      .brand{flex:1}.brand h1{margin:0;color:#db2777;font-size:22px;line-height:1.2}.brand p{margin:5px 0 0;color:#475569;white-space:pre-line;line-height:1.45;font-size:13px}
+      .doc-title{text-align:right;flex-shrink:0}.doc-title h2{margin:0;color:#0f172a;font-size:20px;letter-spacing:.04em;font-weight:800}.doc-title p{margin:6px 0 0;color:#64748b;font-weight:700;font-size:13px}
+      .meta{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:18px 0;border:1px solid #fbcfe8;border-radius:12px;overflow:hidden}
+      .meta-cell{padding:12px 16px;background:#fff;font-size:13px;border-right:1px solid #fbcfe8;border-bottom:1px solid #fbcfe8}
+      .meta-cell:nth-child(2n){border-right:none}.meta-cell:nth-last-child(-n+2){border-bottom:none}
+      .meta-cell b{display:block;margin-bottom:3px;color:#be185d;text-transform:uppercase;font-size:10px;letter-spacing:.07em}
+      table{width:100%;border-collapse:collapse;margin-top:16px;font-size:13px}
+      th,td{padding:11px 14px;border:1px solid #e2e8f0;text-align:left;vertical-align:top}
+      th{background:#fce7f3;color:#be185d;text-transform:uppercase;font-size:11px;letter-spacing:.05em;font-weight:700}
+      tr:nth-child(even) td{background:#fdf8fb}
+      .qty{text-align:center;white-space:nowrap;width:80px}.money{text-align:right;white-space:nowrap;width:120px}
+      .total-row{display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding:13px 16px;background:#fdf2f8;border:1px solid #fbcfe8;border-radius:10px;color:#be185d;font-size:18px;font-weight:800}
+      .notes{margin-top:24px;border:1px dashed #cbd5e1;padding:14px 16px;min-height:72px;border-radius:10px}
+      .notes b{color:#475569;font-size:12px;display:block;margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em}
+      .footer-text{margin-top:24px;text-align:center;color:#64748b;white-space:pre-line;font-style:italic;line-height:1.55;font-size:12px;border-top:1px solid #f1f5f9;padding-top:14px}
+      @media print{body{background:#fff}.sheet{width:auto;min-height:auto;margin:0;padding:10mm 14mm}@page{size:A4;margin:0}}
     </style></head><body>
-      <h1>NOTA PRODUKSI PESANAN</h1><p>${storeInfo.brand || "Lina Flowers"}</p>
-      <div class="meta"><div><b>No. Transaksi</b><br>TRX-${String(t.id).padStart(4, "0")}</div><div><b>Tanggal</b><br>${new Date(t.tanggal).toLocaleString("id-ID")}</div><div><b>Pelanggan</b><br>${t.nama_pembeli || "-"}</div><div><b>Pengrajin</b><br>${t.nama_pengrajin || "Belum ditentukan"}</div></div>
-      <table><thead><tr><th>Produk</th><th>Jumlah</th><th>Subtotal</th></tr></thead><tbody>${itemRows}</tbody></table>
-      <div class="total">Total: Rp ${t.total_harga.toLocaleString("id-ID")}</div>
-      <div class="notes"><b>Catatan Produksi:</b></div>
-      <script>window.onload=()=>window.print();</script>
+      <main class="sheet">
+        <section class="header">
+          ${logoSrc ? `<img class="logo" src="${logoSrc}" alt="Logo">` : ""}
+          <div class="brand">
+            <h1>${escapeHtml(storeInfo.brand || "Lina Flowers")}</h1>
+            <p>${escapeHtml(storeInfo.address || "")}</p>
+          </div>
+          <div class="doc-title">
+            <h2>${escapeHtml(documentTitle)}</h2>
+            <p>${formatTransactionCode(t.id)}</p>
+          </div>
+        </section>
+        <section class="meta">
+          <div class="meta-cell"><b>No. Transaksi</b>${formatTransactionCode(t.id)}</div>
+          <div class="meta-cell"><b>Tanggal</b>${escapeHtml(transactionDate.toLocaleDateString("id-ID", { day: "2-digit", month: "long", year: "numeric" }))}</div>
+          <div class="meta-cell"><b>Pelanggan</b>${escapeHtml(t.nama_pembeli || "-")}</div>
+          <div class="meta-cell"><b>Kasir</b>${escapeHtml(t.nama_kasir || "-")}</div>
+        </section>
+        <table>
+          <thead>
+            <tr><th>Produk</th><th class="qty">Jumlah</th>${isNota ? '<th class="money">Subtotal</th>' : ""}</tr>
+          </thead>
+          <tbody>${itemRows}</tbody>
+        </table>
+        ${isNota ? `<div class="total-row"><span>Total Pesanan</span><span>Rp ${Number(t.total_harga || 0).toLocaleString("id-ID")}</span></div>` : ""}
+        <div class="notes"><b>${isNota ? "Catatan" : "Catatan Pengiriman"}:</b></div>
+        ${storeInfo.footer ? `<div class="footer-text">${escapeHtml(storeInfo.footer)}</div>` : ""}
+      </main>
+      <script>window.onload=function(){window.print();};</script>
     </body></html>`);
     printWindow.document.close();
   };
@@ -730,6 +811,11 @@ export default function RiwayatPenjualanPage() {
   };
 
   const handlePrint = () => {
+    if (printType !== "struk" && selectedTrx) {
+      printOrderDocument(selectedTrx, printType);
+      return;
+    }
+
     if (shouldUseMobilePrintBridge() && selectedTrx) {
       const receiptUrl = `/struk/${selectedTrx.id}?type=${printType}`;
       const receiptWindow = window.open(receiptUrl, "_blank");
@@ -1290,7 +1376,7 @@ export default function RiwayatPenjualanPage() {
                       {t.orderRequest?.code && (
                         <button
                           type="button"
-                          onClick={() => printOrderNote(t)}
+                          onClick={() => printOrderDocument(t, "nota")}
                           className="inline-flex items-center gap-2 rounded-xl bg-violet-50 px-3 py-2 text-xs font-bold text-violet-700 border border-violet-200 shadow-sm active:scale-95"
                         >
                           <FileText size={16} /> Nota
@@ -1527,7 +1613,7 @@ export default function RiwayatPenjualanPage() {
                         {t.orderRequest?.code && (
                           <button
                             type="button"
-                            onClick={() => printOrderNote(t)}
+                            onClick={() => printOrderDocument(t, "nota")}
                             title="Cetak Nota Produksi"
                             className="inline-flex items-center justify-center bg-violet-50 border border-violet-200 p-2 rounded-lg hover:bg-violet-100 shadow-sm transition-all cursor-pointer"
                           >
@@ -1605,7 +1691,7 @@ export default function RiwayatPenjualanPage() {
                     <button onClick={handleSimpanPengaturan} disabled={isSavingSetting} className="bg-pink-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 shadow-md hover:bg-pink-700 active:scale-95 disabled:opacity-50"><Save size={14} /> {isSavingSetting ? "Menyimpan..." : "Simpan"}</button>
                   </div>
                   <div>
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Logo Struk & Surat Jalan</label>
+                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Logo Dokumen Cetak</label>
                     <div className="flex items-center gap-3 mt-2">
                       {storeInfo.receiptLogo ? (
                         <img
@@ -1627,7 +1713,7 @@ export default function RiwayatPenjualanPage() {
                         onClick={() => receiptLogoInputRef.current?.click()}
                         className="text-xs font-bold border border-slate-200 text-slate-600 px-4 py-2.5 rounded-xl hover:bg-slate-50 transition-colors"
                       >
-                        Ubah Logo Struk
+                        Ubah Logo
                       </button>
                       {storeInfo.receiptLogo && (
                         <button
@@ -1673,7 +1759,7 @@ export default function RiwayatPenjualanPage() {
 
               {/* AREA PREVIEW DOKUMEN */}
               <div className="flex-1 p-6 md:p-8 flex justify-center items-start min-h-[50vh]">
-                {printType !== "nota" ? (
+                {printType === "struk" ? (
                   <div
                     id="receipt-print-area"
                     className="bg-white shadow-xl w-full max-w-[80mm] p-6 text-[11px] font-mono border border-slate-200 text-black leading-tight mx-auto"
@@ -1731,57 +1817,96 @@ export default function RiwayatPenjualanPage() {
                     <div className="text-center mt-4 italic whitespace-pre-wrap">{storeInfo.footer}</div>
                   </div>
                 ) : (
-                  /* PREVIEW NOTA PRODUKSI */
-                  <div className="bg-white shadow-xl w-full max-w-[340px] border border-slate-200 text-black text-[11px] mx-auto overflow-hidden rounded-lg">
-                    <div className="bg-pink-600 px-5 py-4">
-                      <h2 className="font-black text-white text-[13px] tracking-wide">NOTA PRODUKSI PESANAN</h2>
-                      <p className="text-pink-200 text-[10px] mt-0.5">{storeInfo.brand}</p>
+                  /* PREVIEW DOKUMEN A4 */
+                  <div className="bg-white shadow-xl w-full max-w-[560px] border border-slate-200 text-black text-[11px] mx-auto overflow-hidden rounded-lg">
+                    {/* HEADER */}
+                    <div className="flex items-start gap-4 border-b-[3px] border-pink-200 px-5 py-4">
+                      {(storeInfo.receiptLogo || storeInfo.logo) && (
+                        <img
+                          src={storeInfo.receiptLogo || storeInfo.logo}
+                          alt="Logo dokumen cetak"
+                          className="h-14 w-14 shrink-0 rounded-xl border border-slate-200 bg-white object-contain p-1"
+                        />
+                      )}
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[16px] font-black leading-tight text-pink-600">{storeInfo.brand || "Lina Flowers"}</p>
+                        {storeInfo.address && (
+                          <p className="mt-1 whitespace-pre-wrap text-[10px] leading-snug text-slate-500">{storeInfo.address}</p>
+                        )}
+                      </div>
+                      <div className="text-right shrink-0">
+                        <h2 className="text-[13px] font-black uppercase tracking-wide text-slate-900">
+                          {printType === "nota" ? "NOTA PESANAN" : "SURAT JALAN"}
+                        </h2>
+                        <p className="mt-1 text-[10px] font-bold text-slate-500">{formatTransactionCode(selectedTrx.id)}</p>
+                      </div>
                     </div>
+
+                    {/* META */}
                     <div className="grid grid-cols-2 gap-px bg-pink-100 border-b border-pink-100">
-                      {[
-                        ["No. Transaksi", `TRX-${selectedTrx.id.toString().padStart(4, "0")}`],
-                        ["Tanggal", new Date(selectedTrx.tanggal).toLocaleDateString("id-ID")],
+                      {([
+                        ["No. Transaksi", formatTransactionCode(selectedTrx.id)],
+                        ["Tanggal", new Date(selectedTrx.tanggal).toLocaleDateString("id-ID", { day: "2-digit", month: "long", year: "numeric" })],
                         ["Pelanggan", selectedTrx.nama_pembeli || "-"],
-                        ["Pengrajin", selectedTrx.nama_pengrajin || "Belum ditentukan"],
-                      ].map(([label, value]) => (
+                        ["Kasir", selectedTrx.nama_kasir || "-"],
+                      ] as [string, string][]).map(([label, value]) => (
                         <div key={label} className="bg-white px-4 py-3">
                           <p className="text-[9px] font-black uppercase tracking-wider text-pink-400">{label}</p>
                           <p className="font-bold text-slate-800 mt-0.5 text-[11px] leading-snug">{value}</p>
                         </div>
                       ))}
                     </div>
+
+                    {/* TABEL ITEM */}
                     <table className="w-full text-[10px]">
                       <thead>
                         <tr className="bg-pink-50 border-b border-pink-100">
                           <th className="px-4 py-2 text-left font-black text-pink-700">Produk</th>
-                          <th className="px-2 py-2 text-center font-black text-pink-700">Jml</th>
-                          <th className="px-4 py-2 text-right font-black text-pink-700">Subtotal</th>
+                          <th className="px-2 py-2 text-center font-black text-pink-700 w-16">Jumlah</th>
+                          {printType === "nota" && <th className="px-4 py-2 text-right font-black text-pink-700 w-28">Subtotal</th>}
                         </tr>
                       </thead>
                       <tbody>
-                        {selectedTrx.items.map((item: { id: number; jumlah: number; subtotal: number; product: { nama_produk: string } }) => (
-                          <tr key={item.id} className="border-b border-slate-50">
-                            <td className="px-4 py-2 font-semibold text-slate-700 leading-snug">{item.product.nama_produk}</td>
-                            <td className="px-2 py-2 text-center text-slate-600">{item.jumlah}</td>
-                            <td className="px-4 py-2 text-right text-slate-700">Rp {item.subtotal.toLocaleString("id-ID")}</td>
+                        {(selectedTrx.items || []).map((item: { id: number; jumlah: number; subtotal: number; product: { nama_produk: string } }) => (
+                          <tr key={item.id} className="border-b border-slate-50 even:bg-pink-50/30">
+                            <td className="px-4 py-2 font-semibold text-slate-700 leading-snug">{item.product?.nama_produk || "-"}</td>
+                            <td className="px-2 py-2 text-center text-slate-600">{item.jumlah} Pcs</td>
+                            {printType === "nota" && (
+                              <td className="px-4 py-2 text-right text-slate-700">Rp {Number(item.subtotal || 0).toLocaleString("id-ID")}</td>
+                            )}
                           </tr>
                         ))}
                       </tbody>
                     </table>
-                    <div className="flex justify-between items-center px-4 py-3 bg-pink-50 border-t border-pink-100">
-                      <span className="font-black text-pink-700 text-[10px] uppercase tracking-wider">Total</span>
-                      <span className="font-black text-pink-700 text-[13px]">Rp {selectedTrx.total_harga.toLocaleString("id-ID")}</span>
-                    </div>
+
+                    {/* TOTAL (nota only) */}
+                    {printType === "nota" && (
+                      <div className="flex justify-between items-center px-4 py-3 bg-pink-50 border-t border-pink-100">
+                        <span className="font-black text-pink-700 text-[10px] uppercase tracking-wider">Total Pesanan</span>
+                        <span className="font-black text-pink-700 text-[13px]">Rp {Number(selectedTrx.total_harga || 0).toLocaleString("id-ID")}</span>
+                      </div>
+                    )}
+
+                    {/* KOLOM CATATAN */}
                     <div className="mx-4 my-3 border border-dashed border-pink-200 rounded-lg px-3 py-2 min-h-[40px]">
-                      <p className="text-[9px] font-black text-pink-400 uppercase tracking-wider mb-1">Catatan Produksi</p>
+                      <p className="text-[9px] font-black text-pink-400 uppercase tracking-wider mb-1">
+                        {printType === "nota" ? "Catatan" : "Catatan Pengiriman"}
+                      </p>
                     </div>
+
+                    {/* FOOTER */}
+                    {storeInfo.footer && (
+                      <div className="border-t border-slate-100 px-4 py-3 text-center text-[10px] italic leading-snug text-slate-500 whitespace-pre-wrap">
+                        {storeInfo.footer}
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
 
               {/* TOMBOL CETAK */}
               <div className="p-4 bg-white border-t mt-auto md:sticky md:bottom-0 z-10 shadow-[0_-10px_20px_-10px_rgba(0,0,0,0.05)]">
-                {printType !== "nota" && (
+                {printType === "struk" && (
                   <>
                     <div className="mb-3 hidden md:block">
                       <p className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-500">Mode Printer Windows</p>
@@ -1826,7 +1951,7 @@ export default function RiwayatPenjualanPage() {
                 )}
                 <button
                   type="button"
-                  onClick={printType === "nota" ? () => printOrderNote(selectedTrx) : handlePrint}
+                  onClick={handlePrint}
                   className="w-full bg-pink-600 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-pink-200 hover:bg-pink-700 active:scale-[0.98] transition-all"
                 >
                   <Printer size={20} /> Cetak {printType === "struk" ? "Struk" : printType === "nota" ? "Nota" : "Surat Jalan"} Sekarang

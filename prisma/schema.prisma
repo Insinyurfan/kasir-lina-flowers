@@ -24,6 +24,7 @@ model Product {
   id                Int                @id @default(autoincrement())
   nama_produk       String
   harga             Int
+  satuanHarga       String             @default("pcs")
   stok              Int
   barcode           String?            @unique
   gambar            String?
@@ -126,6 +127,7 @@ model UserCartItem {
   product       Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   quantity      Int
   priceOverride Int?
+  satuanPesan   String   @default("pcs")
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 

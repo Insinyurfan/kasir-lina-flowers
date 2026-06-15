@@ -18,6 +18,7 @@ type Product = {
   id: number;
   nama_produk: string;
   harga: number;
+  satuanHarga?: string;
   stok: number;
   barcode?: string | null;
   gambar?: string | null;
@@ -58,6 +59,7 @@ export default function ManajemenProdukPage() {
     id: 0,
     nama_produk: "",
     harga: "",
+    satuanHarga: "pcs",
     stok: "",
     barcode: "",
     gambar: ""
@@ -153,7 +155,7 @@ export default function ManajemenProdukPage() {
     if (isGuest) return;
     setIsEdit(false);
     setSelectedImageFile(null);
-    setFormData({ id: 0, nama_produk: "", harga: "", stok: "", barcode: "", gambar: "" });
+    setFormData({ id: 0, nama_produk: "", harga: "", satuanHarga: "pcs", stok: "", barcode: "", gambar: "" });
     setIsModalOpen(true);
   };
 
@@ -165,6 +167,7 @@ export default function ManajemenProdukPage() {
       id: produk.id,
       nama_produk: produk.nama_produk,
       harga: produk.harga.toString(),
+      satuanHarga: produk.satuanHarga || "pcs",
       stok: produk.stok.toString(),
       barcode: produk.barcode || "",
       gambar: produk.gambar || ""
@@ -908,15 +911,41 @@ export default function ManajemenProdukPage() {
                 />
               </div>
 
-              <div className="flex gap-4">
-                <div className="flex-1">
-                  <label className="block text-xs font-bold text-slate-500 mb-1 uppercase">Harga (Rp)</label>
-                  <input type="number" required value={formData.harga} onChange={(e) => setFormData({ ...formData, harga: e.target.value })} className="w-full border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-pink-500 text-sm font-bold text-slate-700" placeholder="0" />
+              <div>
+                <label className="block text-xs font-bold text-slate-500 mb-1 uppercase">Harga (Rp)</label>
+                <div className="flex gap-2">
+                  <input
+                    type="number"
+                    required
+                    value={formData.harga}
+                    onChange={(e) => setFormData({ ...formData, harga: e.target.value })}
+                    className="flex-1 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-pink-500 text-sm font-bold text-slate-700"
+                    placeholder="0"
+                  />
+                  <select
+                    value={formData.satuanHarga}
+                    onChange={(e) => setFormData({ ...formData, satuanHarga: e.target.value })}
+                    className="border border-slate-200 rounded-xl px-3 py-3 outline-none focus:border-pink-500 text-sm font-bold text-slate-700 bg-white min-w-[96px]"
+                  >
+                    <option value="pcs">/ Pcs</option>
+                    <option value="lusin">/ Lusin</option>
+                    <option value="gross">/ Gross</option>
+                  </select>
                 </div>
-                <div className="w-1/3">
-                  <label className="block text-xs font-bold text-slate-500 mb-1 uppercase">Stok</label>
-                  <input type="number" required value={formData.stok} onChange={(e) => setFormData({ ...formData, stok: e.target.value })} className="w-full border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-pink-500 text-sm font-bold text-slate-700" placeholder="0" />
-                </div>
+                {formData.satuanHarga !== "pcs" && formData.harga && (
+                  <p className="text-[11px] text-pink-600 mt-1.5 font-semibold">
+                    {formData.satuanHarga === "gross" && (
+                      <>= Rp {Math.round(Number(formData.harga) / 12).toLocaleString("id-ID")} / lusin &nbsp;·&nbsp; Rp {Math.round(Number(formData.harga) / 144).toLocaleString("id-ID")} / pcs</>
+                    )}
+                    {formData.satuanHarga === "lusin" && (
+                      <>= Rp {Math.round(Number(formData.harga) / 12).toLocaleString("id-ID")} / pcs &nbsp;·&nbsp; Rp {(Number(formData.harga) * 12).toLocaleString("id-ID")} / gross</>
+                    )}
+                  </p>
+                )}
+              </div>
+              <div className="w-full">
+                <label className="block text-xs font-bold text-slate-500 mb-1 uppercase">Stok (dalam satuan {formData.satuanHarga})</label>
+                <input type="number" required value={formData.stok} onChange={(e) => setFormData({ ...formData, stok: e.target.value })} className="w-full border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-pink-500 text-sm font-bold text-slate-700" placeholder="0" />
               </div>
 
               {/* BARCODE */}

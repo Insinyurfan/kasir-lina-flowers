@@ -57,6 +57,7 @@ export async function POST(request: Request) {
       data: {
         nama_produk: data.nama_produk,
         harga: Number(data.harga),
+        satuanHarga: data.satuanHarga || "pcs",
         stok: Number(data.stok),
         barcode: finalBarcode,
         gambar: data.gambar || null,
@@ -117,6 +118,7 @@ export async function PATCH(request: Request) {
       data: {
         nama_produk: data.nama_produk,
         harga: Number(data.harga),
+        satuanHarga: data.satuanHarga || before?.satuanHarga || "pcs",
         stok: Number(data.stok),
         barcode: finalBarcode,
         gambar: data.gambar || null,

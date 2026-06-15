@@ -11,6 +11,7 @@ type CartPayloadItem = {
   quantity?: number;
   harga?: number;
   hargaAwal?: number;
+  satuanPesan?: string;
 };
 
 const normalizeScope = (value: string | null | undefined): CartScope =>
@@ -47,6 +48,9 @@ const getCartItems = async (userId: number, scope: CartScope) => {
       nama_produk: string;
       harga: number;
       hargaAwal: number;
+      hargaBase: number;
+      satuanHarga: string;
+      satuanPesan: string;
       quantity: number;
       stok: number;
       barcode: string | null;
@@ -58,6 +62,9 @@ const getCartItems = async (userId: number, scope: CartScope) => {
       p."nama_produk",
       COALESCE(ci."priceOverride", p."harga")::int AS "harga",
       p."harga"::int AS "hargaAwal",
+      p."harga"::int AS "hargaBase",
+      COALESCE(p."satuanHarga", 'pcs') AS "satuanHarga",
+      COALESCE(ci."satuanPesan", 'pcs') AS "satuanPesan",
       LEAST(ci."quantity", p."stok")::int AS "quantity",
       p."stok"::int AS "stok",
       p."barcode",
@@ -143,10 +150,12 @@ export async function PUT(request: Request) {
         const quantity = Math.max(0, Math.floor(Number(item.quantity || 0)));
         const price = Number(item.harga);
         const basePrice = Number(item.hargaAwal);
+        const satuanPesan = typeof item.satuanPesan === "string" && item.satuanPesan ? item.satuanPesan : "pcs";
 
         return {
           productId,
           quantity,
+          satuanPesan,
           priceOverride:
             scope === "pos" && Number.isFinite(price) && Number.isFinite(basePrice) && price !== basePrice
               ? Math.max(0, Math.round(price))
@@ -162,12 +171,13 @@ export async function PUT(request: Request) {
 
       for (const item of normalizedItems) {
         await tx.$executeRaw`
-          INSERT INTO "UserCartItem" ("cartId", "productId", "quantity", "priceOverride", "createdAt", "updatedAt")
-          VALUES (${cartId}, ${item.productId}, ${item.quantity}, ${item.priceOverride}, NOW(), NOW())
+          INSERT INTO "UserCartItem" ("cartId", "productId", "quantity", "priceOverride", "satuanPesan", "createdAt", "updatedAt")
+          VALUES (${cartId}, ${item.productId}, ${item.quantity}, ${item.priceOverride}, ${item.satuanPesan}, NOW(), NOW())
           ON CONFLICT ("cartId", "productId")
           DO UPDATE SET
             "quantity" = EXCLUDED."quantity",
             "priceOverride" = EXCLUDED."priceOverride",
+            "satuanPesan" = EXCLUDED."satuanPesan",
             "updatedAt" = NOW()
         `;
       }

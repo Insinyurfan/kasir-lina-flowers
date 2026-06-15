@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useCartStore } from "@/lib/store";
+import { useCartStore, PCS_PER_UNIT, SATUAN_LABELS, hitungHargaSatuan } from "@/lib/store";
 import { Search, Plus, Minus, Trash2, ShoppingCart, Flower2, Wallet, User, UserCheck, LogOut, Camera, X, Pencil, Check } from "lucide-react";
 import { getSavedUserSession } from "@/lib/userSession";
 
@@ -9,6 +9,7 @@ type Product = {
   id: number;
   nama_produk: string;
   harga: number;
+  satuanHarga: string;
   stok: number;
   barcode: string | null;
   gambar: string | null;
@@ -78,7 +79,8 @@ export default function PosPage() {
   const [animations, setAnimations] = useState<{id: number, x: number, y: number, img: string | null}[]>([]); // STATE ANIMASI TERBANG
   const animationIdRef = useRef(0);
   
-  const { cart, addToCart, removeFromCart, updateQuantity, updatePrice, setCart, getTotal, clearCart } = useCartStore();
+  const { cart, addToCart, removeFromCart, updateQuantity, updatePrice, updateSatuanPesan, setCart, getTotal, clearCart } = useCartStore();
+  const [unitPickerProduct, setUnitPickerProduct] = useState<Product | null>(null);
 
   // MENGHITUNG TOTAL BARANG DI KERANJANG UNTUK BADGE
   const totalBarang = cart.reduce((total, item) => total + item.quantity, 0);
@@ -315,19 +317,29 @@ export default function PosPage() {
     } finally { setIsProcessing(false); }
   };
 
-  // TRIGGER ANIMASI SAAT PRODUK DIKLIK
-  const handleProductClick = (e: React.MouseEvent, p: Product) => {
+  const triggerFlyAnimation = (e: React.MouseEvent, p: Product) => {
     const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
     animationIdRef.current += 1;
     const newAnim = { id: animationIdRef.current, x: rect.left + rect.width / 2 - 40, y: rect.top + rect.height / 2 - 40, img: p.gambar };
-    
     setAnimations(prev => [...prev, newAnim]);
-    addToCart(p); // Masukkan ke keranjang
-
-    // Hapus elemen animasi setelah 700ms agar tidak menumpuk di memori
     setTimeout(() => {
       setAnimations(prev => prev.filter(anim => anim.id !== newAnim.id));
     }, 700);
+  };
+
+  // TRIGGER ANIMASI SAAT PRODUK DIKLIK
+  const handleProductClick = (e: React.MouseEvent, p: Product) => {
+    if ((p.satuanHarga ?? "pcs") !== "pcs") {
+      setUnitPickerProduct(p);
+      return;
+    }
+    triggerFlyAnimation(e, p);
+    addToCart({ ...p, satuanPesan: "pcs", hargaBase: p.harga });
+  };
+
+  const handleUnitPick = (p: Product, satuanPesan: string) => {
+    addToCart({ ...p, satuanPesan, hargaBase: p.harga });
+    setUnitPickerProduct(null);
   };
 
   const filteredProduk = produk.filter(p => 
@@ -404,7 +416,9 @@ export default function PosPage() {
                 <div key={item.id} className="flex items-center justify-between gap-3 rounded-xl bg-white px-3 py-2 shadow-sm">
                   <div className="min-w-0">
                     <p className="truncate text-xs font-bold text-slate-800">{item.nama_produk}</p>
-                    <p className="text-[11px] font-semibold text-slate-400">{item.quantity} x Rp {item.harga.toLocaleString("id-ID")}</p>
+                    <p className="text-[11px] font-semibold text-slate-400">
+                      {item.quantity} {SATUAN_LABELS[item.satuanPesan ?? "pcs"] ?? item.satuanPesan} x Rp {item.harga.toLocaleString("id-ID")}
+                    </p>
                   </div>
                   <p className="shrink-0 text-sm font-black text-pink-600">Rp {(item.harga * item.quantity).toLocaleString("id-ID")}</p>
                 </div>
@@ -469,7 +483,7 @@ export default function PosPage() {
                       <div className="min-w-0">
                         <p className="truncate text-sm font-black text-slate-800">{item.nama_produk}</p>
                         <p className="mt-1 text-[11px] font-semibold text-slate-400">
-                          Harga produk: Rp {basePrice.toLocaleString("id-ID")} / Qty {item.quantity}
+                          {item.quantity} {SATUAN_LABELS[item.satuanPesan ?? "pcs"] ?? item.satuanPesan} · harga awal Rp {basePrice.toLocaleString("id-ID")}
                         </p>
                       </div>
                       <p className="shrink-0 text-xs font-black text-pink-600">
@@ -502,6 +516,57 @@ export default function PosPage() {
                 className="w-full rounded-2xl bg-pink-600 py-4 text-sm font-black text-white shadow-lg shadow-pink-200 transition-colors hover:bg-pink-700"
               >
                 Simpan Penyesuaian
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* UNIT PICKER MODAL */}
+      {unitPickerProduct && (
+        <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-black/55 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-sm rounded-3xl bg-white shadow-2xl overflow-hidden">
+            <div className="bg-pink-600 px-5 py-4 text-white">
+              <p className="text-xs font-black uppercase tracking-widest text-pink-200">Pilih Satuan Pembelian</p>
+              <h3 className="text-base font-black mt-0.5 leading-snug">{unitPickerProduct.nama_produk}</h3>
+              <p className="text-xs text-pink-200 mt-1">
+                Harga dasar: Rp {unitPickerProduct.harga.toLocaleString("id-ID")} / {SATUAN_LABELS[unitPickerProduct.satuanHarga] ?? unitPickerProduct.satuanHarga}
+              </p>
+            </div>
+            <div className="p-4 space-y-2">
+              {(["gross", "lusin", "pcs"] as const).map((satuan) => {
+                const harga = hitungHargaSatuan(unitPickerProduct.harga, unitPickerProduct.satuanHarga, satuan);
+                const inCart = cart.find(i => i.id === unitPickerProduct.id);
+                const isActive = inCart?.satuanPesan === satuan;
+                return (
+                  <button
+                    key={satuan}
+                    onClick={() => handleUnitPick(unitPickerProduct, satuan)}
+                    className={`w-full flex items-center justify-between rounded-2xl px-4 py-3.5 font-bold transition-all ${
+                      isActive
+                        ? "bg-pink-600 text-white shadow-lg shadow-pink-200"
+                        : "bg-pink-50 text-slate-700 hover:bg-pink-100"
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className={`text-xs font-black uppercase tracking-widest w-12 ${isActive ? "text-pink-200" : "text-pink-500"}`}>
+                        {SATUAN_LABELS[satuan]}
+                      </span>
+                      <span className={`text-[10px] ${isActive ? "text-pink-200" : "text-slate-400"}`}>
+                        {satuan === "gross" ? "144 pcs" : satuan === "lusin" ? "12 pcs" : "1 pcs"}
+                      </span>
+                    </div>
+                    <span className={`text-sm font-black ${isActive ? "text-white" : "text-pink-600"}`}>
+                      Rp {harga.toLocaleString("id-ID")}
+                    </span>
+                  </button>
+                );
+              })}
+              <button
+                onClick={() => setUnitPickerProduct(null)}
+                className="w-full mt-2 py-3 rounded-2xl bg-slate-100 text-slate-500 text-sm font-bold hover:bg-slate-200 transition-colors"
+              >
+                Batal
               </button>
             </div>
           </div>
@@ -555,6 +620,9 @@ export default function PosPage() {
               <div className="p-3 text-center bg-white flex flex-col justify-center">
                  <h3 className="font-bold text-[12px] mb-1 line-clamp-1 text-slate-800 uppercase tracking-tight" title={p.nama_produk}>{p.nama_produk}</h3>
                  <p className="text-pink-600 font-extrabold text-sm">Rp {p.harga.toLocaleString("id-ID")}</p>
+                 {(p.satuanHarga ?? "pcs") !== "pcs" && (
+                   <p className="text-[10px] text-pink-400 font-bold mt-0.5">per {SATUAN_LABELS[p.satuanHarga]}</p>
+                 )}
               </div>
             </div>
           ))}
@@ -576,21 +644,43 @@ export default function PosPage() {
               <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-pink-50/50">
                 {cart.length > 0 ? (
                   cart.map((item) => (
-                    <div key={item.id} className="flex justify-between items-center bg-white shadow-sm p-3 rounded-2xl border border-pink-50">
-                      <div className="flex-1 min-w-0 mr-2">
-                        <h4 className="font-bold text-xs text-slate-800 truncate">{item.nama_produk}</h4>
-                        <p className="text-pink-600 text-[11px] font-extrabold">
-                          Rp {(item.harga * item.quantity).toLocaleString("id-ID")}
-                        </p>
-                        <p className="text-[10px] font-semibold text-slate-400">Harga: Rp {item.harga.toLocaleString("id-ID")} / pcs</p>
+                    <div key={item.id} className="bg-white shadow-sm p-3 rounded-2xl border border-pink-50 space-y-2">
+                      <div className="flex justify-between items-start gap-2">
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-bold text-xs text-slate-800 truncate">{item.nama_produk}</h4>
+                          <p className="text-pink-600 text-[11px] font-extrabold mt-0.5">
+                            Rp {(item.harga * item.quantity).toLocaleString("id-ID")}
+                          </p>
+                          <p className="text-[10px] font-semibold text-slate-400">
+                            Rp {item.harga.toLocaleString("id-ID")} / {SATUAN_LABELS[item.satuanPesan ?? "pcs"] ?? item.satuanPesan ?? "pcs"}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-0.5">
+                          <button onClick={openPriceAdjustment} className="p-1.5 text-slate-400 hover:bg-pink-50 hover:text-pink-600 rounded-lg" title="Sesuaikan harga"><Pencil size={13} /></button>
+                          <button onClick={() => removeFromCart(item.id)} className="p-1.5 text-red-400 hover:bg-red-50 rounded-lg"><Trash2 size={14} /></button>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-1.5 bg-slate-50 p-1 rounded-xl border border-slate-100">
-                        <button onClick={() => updateQuantity(item.id, item.quantity - 1)} className="p-1.5 bg-white shadow-sm rounded-lg text-slate-500"><Minus size={12}/></button>
-                        <span className="text-xs font-bold w-5 text-center">{item.quantity}</span>
-                        <button onClick={() => updateQuantity(item.id, item.quantity + 1)} className="p-1.5 bg-white shadow-sm rounded-lg text-pink-600"><Plus size={12}/></button>
+                      <div className="flex items-center gap-2">
+                        {/* Ganti satuan (hanya untuk produk non-pcs) */}
+                        {(item.satuanHarga ?? "pcs") !== "pcs" && (
+                          <select
+                            value={item.satuanPesan ?? item.satuanHarga ?? "pcs"}
+                            onChange={(e) => updateSatuanPesan(item.id, e.target.value)}
+                            className="text-[11px] font-bold border border-pink-200 rounded-lg px-2 py-1 bg-pink-50 text-pink-600 outline-none cursor-pointer"
+                          >
+                            {(["gross", "lusin", "pcs"] as const).map(s => (
+                              <option key={s} value={s}>
+                                {SATUAN_LABELS[s]} — Rp {hitungHargaSatuan(item.hargaBase ?? item.harga, item.satuanHarga ?? "pcs", s).toLocaleString("id-ID")}
+                              </option>
+                            ))}
+                          </select>
+                        )}
+                        <div className="flex items-center gap-1 bg-slate-50 p-1 rounded-xl border border-slate-100 ml-auto">
+                          <button onClick={() => updateQuantity(item.id, item.quantity - 1)} className="p-1.5 bg-white shadow-sm rounded-lg text-slate-500"><Minus size={12}/></button>
+                          <span className="text-xs font-bold w-6 text-center">{item.quantity}</span>
+                          <button onClick={() => updateQuantity(item.id, item.quantity + 1)} className="p-1.5 bg-white shadow-sm rounded-lg text-pink-600"><Plus size={12}/></button>
+                        </div>
                       </div>
-                      <button onClick={openPriceAdjustment} className="ml-2 p-2 text-slate-400 hover:bg-pink-50 hover:text-pink-600 rounded-xl" title="Sesuaikan harga"><Pencil size={15} /></button>
-                      <button onClick={() => removeFromCart(item.id)} className="ml-3 p-2 text-red-400 hover:bg-red-50 rounded-xl"><Trash2 size={16} /></button>
                     </div>
                   ))
                 ) : (

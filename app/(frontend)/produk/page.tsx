@@ -61,7 +61,7 @@ export default function ManajemenProdukPage() {
     id: 0,
     nama_produk: "",
     harga: "",
-    satuanHarga: "pcs",
+    satuanHarga: "gross",
     stok: "",
     barcode: "",
     gambar: "",
@@ -159,7 +159,7 @@ export default function ManajemenProdukPage() {
     if (isGuest) return;
     setIsEdit(false);
     setSelectedImageFile(null);
-    setFormData({ id: 0, nama_produk: "", harga: "", satuanHarga: "pcs", stok: "", barcode: "", gambar: "", gambarPosX: 50, gambarPosY: 50 });
+    setFormData({ id: 0, nama_produk: "", harga: "", satuanHarga: "gross", stok: "", barcode: "", gambar: "", gambarPosX: 50, gambarPosY: 50 });
     setIsModalOpen(true);
   };
 

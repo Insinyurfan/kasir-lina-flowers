@@ -87,7 +87,6 @@ export const getActorFromPayload = (payload: Record<string, unknown> = {}): Requ
 
 export const recordActivityLog = async (input: ActivityLogInput) => {
   try {
-    await ensureActivityLogTable();
     const actor = buildActor(input.actor);
     const actorId = actor.id === null || actor.id === undefined ? null : Number(actor.id);
     const safeActorId = Number.isFinite(actorId) ? actorId : null;

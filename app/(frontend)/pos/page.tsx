@@ -597,32 +597,49 @@ export default function PosPage() {
           </div>
         </div>
 
-        {/* GRID PRODUK FULL WIDTH IMAGE */}
-        <div className="p-4 overflow-y-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 flex-1 content-start pb-32">
+        {/* GRID PRODUK */}
+        <div className="p-3 overflow-y-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 flex-1 content-start pb-32">
           {filteredProduk.map((p) => (
-            <div 
-              key={p.id} 
-              onClick={(e) => handleProductClick(e, p)} 
-              className="bg-white border border-pink-100 rounded-2xl cursor-pointer hover:border-pink-400 hover:shadow-lg transition-all active:scale-95 group flex flex-col overflow-hidden relative"
+            <div
+              key={p.id}
+              onClick={(e) => handleProductClick(e, p)}
+              className="bg-white border-2 border-pink-100 rounded-2xl cursor-pointer hover:border-pink-400 hover:shadow-lg transition-all active:scale-95 group flex flex-col overflow-hidden shadow-sm"
             >
-              {/* Gambar Full Width di Atas */}
-              <div className="w-full aspect-square bg-pink-50 relative overflow-hidden flex items-center justify-center border-b border-pink-50">
-                 {p.gambar ? (
-                   <img src={p.gambar} alt={p.nama_produk} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110" />
-                 ) : (
-                   <Flower2 size={40} className="text-pink-300 transition-transform duration-300 group-hover:scale-110" />
-                 )}
-                 <div className="absolute bottom-2 right-2 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-lg text-[10px] font-bold text-pink-600 shadow-sm">
-                    STOK: {p.stok}
-                 </div>
+              {/* FOTO PRODUK — object-contain agar tidak terpotong */}
+              <div className="w-full aspect-square bg-white relative flex items-center justify-center overflow-hidden border-b-2 border-pink-50">
+                {p.gambar ? (
+                  <img
+                    src={p.gambar}
+                    alt={p.nama_produk}
+                    className="w-full h-full object-contain p-1 group-hover:scale-105 transition-transform duration-300"
+                  />
+                ) : (
+                  <div className="flex flex-col items-center gap-1 text-pink-200">
+                    <Flower2 size={44} />
+                  </div>
+                )}
+                {/* Badge stok — pojok kanan atas, lebih terlihat */}
+                <div className="absolute top-1.5 right-1.5 bg-pink-600 text-white px-1.5 py-0.5 rounded-md text-[9px] font-black shadow">
+                  {p.stok}
+                </div>
               </div>
-              {/* Info Produk di Bawah */}
-              <div className="p-3 text-center bg-white flex flex-col justify-center">
-                 <h3 className="font-bold text-[12px] mb-1 line-clamp-1 text-slate-800 uppercase tracking-tight" title={p.nama_produk}>{p.nama_produk}</h3>
-                 <p className="text-pink-600 font-extrabold text-sm">Rp {p.harga.toLocaleString("id-ID")}</p>
-                 {(p.satuanHarga ?? "pcs") !== "pcs" && (
-                   <p className="text-[10px] text-pink-400 font-bold mt-0.5">per {SATUAN_LABELS[p.satuanHarga]}</p>
-                 )}
+
+              {/* INFO PRODUK */}
+              <div className="p-2.5 flex flex-col flex-1 bg-white">
+                <h3
+                  className="font-bold text-[11px] line-clamp-2 text-slate-800 uppercase tracking-tight leading-tight flex-1"
+                  title={p.nama_produk}
+                >
+                  {p.nama_produk}
+                </h3>
+                <div className="mt-1.5">
+                  <p className="text-pink-600 font-extrabold text-[13px] leading-tight">
+                    Rp {p.harga.toLocaleString("id-ID")}
+                  </p>
+                  {(p.satuanHarga ?? "pcs") !== "pcs" && (
+                    <p className="text-[9px] text-pink-400 font-bold">/{SATUAN_LABELS[p.satuanHarga]}</p>
+                  )}
+                </div>
               </div>
             </div>
           ))}

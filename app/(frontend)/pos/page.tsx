@@ -538,47 +538,90 @@ export default function PosPage() {
           </div>
         </div>
 
-        {/* GRID PRODUK: 1 kolom (mobile list), 4 kolom tetap (desktop) */}
-        <div className="p-3 overflow-y-auto grid grid-cols-1 md:grid-cols-4 gap-2 md:gap-3 flex-1 content-start pb-36">
-          {filteredProduk.map((p) => (
-            <article
-              key={p.id}
-              onClick={(e) => handleProductClick(e, p)}
-              className="group flex flex-row md:flex-col items-center md:items-stretch rounded-2xl bg-white border border-pink-100 overflow-hidden shadow-sm hover:shadow-md hover:border-pink-300 transition-all duration-200 cursor-pointer active:scale-[0.97]"
-            >
-              {/* FOTO: lingkaran kecil di kiri (mobile), penuh di atas (desktop) */}
-              <div className="relative w-16 h-16 md:w-full md:h-48 overflow-hidden bg-pink-50 flex-shrink-0 rounded-full md:rounded-none m-2 md:m-0">
-                {p.gambar ? (
-                  <img
-                    src={p.gambar}
-                    alt={p.nama_produk}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    style={{ objectPosition: `${p.gambarPosX ?? 50}% ${p.gambarPosY ?? 50}%` }}
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <Flower2 size={24} className="text-pink-200" />
-                  </div>
-                )}
-              </div>
+      {/* GRID PRODUK: 2 kolom (mobile), 4 kolom (desktop) - Disamakan dengan halaman Katalog */}
+<div
+  className="
+    p-3
+    overflow-y-auto
+    grid
+    grid-cols-2
+    sm:grid-cols-3
+    lg:grid-cols-4
+    xl:grid-cols-5
+    gap-4
+    auto-rows-max
+    items-start
+    pb-36
+  "
+>          {filteredProduk.map((p) => (
+           <article
+  key={p.id}
+  onClick={(e) => handleProductClick(e, p)}
+  className="
+    group
+    flex
+    flex-col
+    rounded-2xl
+    bg-white
+    border
+    border-pink-100
+    overflow-hidden
+    shadow-sm
+    hover:shadow-lg
+    hover:border-pink-300
+    transition-all
+    duration-200
+    cursor-pointer
+    h-full
+  "
+>
+              {/* FOTO: Menggunakan aspect-square persis seperti halaman utama */}
+              <div className="relative w-full aspect-square bg-pink-50 overflow-hidden shrink-0">
+  {p.gambar ? (
+    <img
+      src={p.gambar}
+      alt={p.nama_produk}
+      className="
+        absolute
+        inset-0
+        w-full
+        h-full
+        object-cover
+        transition-transform
+        duration-300
+        group-hover:scale-105
+      "
+      style={{
+        objectPosition: `${p.gambarPosX ?? 50}% ${p.gambarPosY ?? 50}%`,
+      }}
+    />
+  ) : (
+    <div className="w-full h-full flex items-center justify-center">
+      <Flower2 size={42} className="text-pink-200" />
+    </div>
+  )}
+</div>
 
-              {/* INFO: rata kiri (mobile), rata tengah (desktop) */}
-              <div className="flex-1 md:flex-none flex flex-col justify-center px-2 py-1 md:items-center md:text-center md:px-3 md:pb-3 md:pt-2 md:gap-0.5 min-w-0">
-                <h3
-                  className="font-semibold text-sm line-clamp-2 text-slate-900 leading-snug md:font-bold md:text-sm md:min-h-[2.6em]"
-                  title={p.nama_produk}
-                >
-                  {p.nama_produk}
-                </h3>
-                <p className="font-black text-sm md:text-lg mt-0.5 md:mt-1 leading-none" style={{ color: '#c2185b' }}>
-                  Rp {p.harga.toLocaleString("id-ID")}
-                </p>
-                {(p.satuanHarga ?? "pcs") !== "pcs" && (
-                  <p className="text-[9px] text-pink-400 font-medium mt-0.5">
-                    /{SATUAN_LABELS[p.satuanHarga]}
-                  </p>
-                )}
-              </div>
+              {/* INFO PRODUK & HARGA */}
+          <div className="p-3 flex flex-col flex-1">
+  <p
+    className="
+      text-sm
+      font-bold
+      text-slate-800
+      line-clamp-2
+      min-h-[40px]
+    "
+  >
+    {p.nama_produk}
+  </p>
+
+  <div className="mt-auto">
+    <p className="font-black text-pink-600">
+      Rp {p.harga.toLocaleString("id-ID")}
+    </p>
+  </div>
+</div>
             </article>
           ))}
         </div>

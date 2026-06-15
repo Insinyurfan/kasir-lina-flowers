@@ -963,20 +963,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               {children}
             </main>
 
-          </div>
+            {/* BOTTOM NAV - Mobile Only */}
+            {!isGuest && user && (
+              <nav className="md:hidden fixed bottom-0 left-0 right-0 h-16 z-40 bg-white/95 border-t border-pink-100 backdrop-blur-md shadow-[0_-4px_20px_rgba(219,39,119,0.1)]">
+                <div className="flex h-full">
+                  <BottomNavItem href="/dashboard" icon={<House size={20} />} label="Dashboard" pathname={pathname} />
+                  <BottomNavItem href="/pos" icon={<ShoppingCart size={20} />} label="Kasir" pathname={pathname} />
+                  <BottomNavItem href="/produk" icon={<Package size={20} />} label="Produk" pathname={pathname} />
+                  <BottomNavItem href="/status-pesanan" icon={<ClipboardCheck size={20} />} label="Pesanan" pathname={pathname} />
+                  <BottomNavItem href="/penjualan" icon={<ReceiptHistoryIcon />} label="Riwayat" pathname={pathname} />
+                </div>
+              </nav>
+            )}
 
-          {/* BOTTOM NAV - Mobile Only */}
-          {!isGuest && user && (
-            <nav className="md:hidden fixed bottom-0 left-0 right-0 h-16 z-40 bg-white/95 border-t border-pink-100 backdrop-blur-md shadow-[0_-4px_20px_rgba(219,39,119,0.1)]">
-              <div className="flex h-full">
-                <BottomNavItem href="/dashboard" icon={<House size={20} />} label="Dashboard" pathname={pathname} />
-                <BottomNavItem href="/pos" icon={<ShoppingCart size={20} />} label="Kasir" pathname={pathname} />
-                <BottomNavItem href="/produk" icon={<Package size={20} />} label="Produk" pathname={pathname} />
-                <BottomNavItem href="/status-pesanan" icon={<ClipboardCheck size={20} />} label="Pesanan" pathname={pathname} />
-                <BottomNavItem href="/penjualan" icon={<ReceiptHistoryIcon />} label="Riwayat" pathname={pathname} />
-              </div>
-            </nav>
-          )}
+          </div>
         )}
         {isProfilePreviewOpen && user?.profilePhoto && (
           <div className="fixed inset-0 z-[100] bg-black/85 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setIsProfilePreviewOpen(false)}>

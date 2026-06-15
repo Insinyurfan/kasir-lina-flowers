@@ -9,6 +9,8 @@ type Product = {
   nama_produk: string;
   stok: number;
   gambar: string | null;
+  gambarPosX?: number;
+  gambarPosY?: number;
 };
 
 type StoreInfo = {
@@ -144,6 +146,7 @@ export default function KatalogPage() {
                         src={product.gambar}
                         alt={product.nama_produk}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        style={{ objectPosition: `${product.gambarPosX ?? 50}% ${product.gambarPosY ?? 50}%` }}
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
@@ -182,6 +185,7 @@ export default function KatalogPage() {
                   src={selectedProduct.gambar}
                   alt={selectedProduct.nama_produk}
                   className="w-full h-full object-cover"
+                  style={{ objectPosition: `${selectedProduct.gambarPosX ?? 50}% ${selectedProduct.gambarPosY ?? 50}%` }}
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center">

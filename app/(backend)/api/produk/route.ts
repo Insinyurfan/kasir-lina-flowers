@@ -28,6 +28,8 @@ export async function GET(request: Request) {
           nama_produk: true,
           stok: true,
           gambar: true,
+          gambarPosX: true,
+          gambarPosY: true,
         },
       });
       return NextResponse.json(products);
@@ -61,6 +63,8 @@ export async function POST(request: Request) {
         stok: Number(data.stok),
         barcode: finalBarcode,
         gambar: data.gambar || null,
+        gambarPosX: data.gambarPosX != null ? Math.max(0, Math.min(100, Number(data.gambarPosX))) : 50,
+        gambarPosY: data.gambarPosY != null ? Math.max(0, Math.min(100, Number(data.gambarPosY))) : 50,
       },
     });
     await recordActivityLog({
@@ -122,6 +126,8 @@ export async function PATCH(request: Request) {
         stok: Number(data.stok),
         barcode: finalBarcode,
         gambar: data.gambar || null,
+        gambarPosX: data.gambarPosX != null ? Math.max(0, Math.min(100, Number(data.gambarPosX))) : (before?.gambarPosX ?? 50),
+        gambarPosY: data.gambarPosY != null ? Math.max(0, Math.min(100, Number(data.gambarPosY))) : (before?.gambarPosY ?? 50),
       },
     });
     if (before?.gambar && before.gambar !== updatedProduct.gambar) {

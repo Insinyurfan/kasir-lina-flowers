@@ -22,6 +22,8 @@ type Product = {
   stok: number;
   barcode?: string | null;
   gambar?: string | null;
+  gambarPosX?: number;
+  gambarPosY?: number;
   isArchived?: boolean;
 };
 
@@ -62,7 +64,9 @@ export default function ManajemenProdukPage() {
     satuanHarga: "pcs",
     stok: "",
     barcode: "",
-    gambar: ""
+    gambar: "",
+    gambarPosX: 50,
+    gambarPosY: 50,
   });
 
   const isGuest = user?.role === "Tamu";
@@ -155,7 +159,7 @@ export default function ManajemenProdukPage() {
     if (isGuest) return;
     setIsEdit(false);
     setSelectedImageFile(null);
-    setFormData({ id: 0, nama_produk: "", harga: "", satuanHarga: "pcs", stok: "", barcode: "", gambar: "" });
+    setFormData({ id: 0, nama_produk: "", harga: "", satuanHarga: "pcs", stok: "", barcode: "", gambar: "", gambarPosX: 50, gambarPosY: 50 });
     setIsModalOpen(true);
   };
 
@@ -170,7 +174,9 @@ export default function ManajemenProdukPage() {
       satuanHarga: produk.satuanHarga || "pcs",
       stok: produk.stok.toString(),
       barcode: produk.barcode || "",
-      gambar: produk.gambar || ""
+      gambar: produk.gambar || "",
+      gambarPosX: produk.gambarPosX ?? 50,
+      gambarPosY: produk.gambarPosY ?? 50,
     });
     setIsModalOpen(true);
   };
@@ -896,6 +902,45 @@ export default function ManajemenProdukPage() {
                   {isEdit && isAdmin && <span className="text-red-400">(Hanya Owner yang dapat ubah foto)</span>}
                 </p>
               </div>
+
+              {/* FOCAL POINT PICKER — hanya muncul jika ada foto dan boleh edit */}
+              {formData.gambar && !(isEdit && isAdmin) && (
+                <div>
+                  <label className="block text-xs font-bold text-slate-500 mb-1 uppercase">Posisi Fokus Foto</label>
+                  <p className="text-[11px] text-slate-400 mb-2">Klik pada bagian foto yang ingin ditonjolkan di tampilan kasir.</p>
+                  <div
+                    className="relative mx-auto rounded-2xl overflow-hidden cursor-crosshair border-2 border-pink-100 select-none"
+                    style={{ width: 160, height: 160 }}
+                    onClick={(e) => {
+                      const rect = e.currentTarget.getBoundingClientRect();
+                      const x = Math.round(((e.clientX - rect.left) / rect.width) * 100);
+                      const y = Math.round(((e.clientY - rect.top) / rect.height) * 100);
+                      setFormData((prev) => ({ ...prev, gambarPosX: x, gambarPosY: y }));
+                    }}
+                  >
+                    <img
+                      src={formData.gambar}
+                      alt="Focal preview"
+                      className="w-full h-full object-cover pointer-events-none"
+                      style={{ objectPosition: `${formData.gambarPosX}% ${formData.gambarPosY}%` }}
+                      draggable={false}
+                    />
+                    {/* Crosshair indicator */}
+                    <div
+                      className="absolute pointer-events-none"
+                      style={{
+                        left: `${formData.gambarPosX}%`,
+                        top: `${formData.gambarPosY}%`,
+                        transform: "translate(-50%, -50%)",
+                      }}
+                    >
+                      <div className="w-6 h-6 rounded-full border-2 border-white shadow-[0_0_0_1.5px_rgba(0,0,0,0.4)] flex items-center justify-center">
+                        <div className="w-2 h-2 bg-white rounded-full opacity-90" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/* NAMA PRODUK */}
               <div>

@@ -28,6 +28,8 @@ model Product {
   stok              Int
   barcode           String?            @unique
   gambar            String?
+  gambarPosX        Int                @default(50)
+  gambarPosY        Int                @default(50)
   isArchived        Boolean            @default(false)
   TransactionItems  TransactionItem[]
   cartItems         UserCartItem[]

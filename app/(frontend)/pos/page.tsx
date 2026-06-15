@@ -13,6 +13,8 @@ type Product = {
   stok: number;
   barcode: string | null;
   gambar: string | null;
+  gambarPosX?: number;
+  gambarPosY?: number;
 };
 
 type UserSession = {
@@ -539,28 +541,29 @@ export default function PosPage() {
         {/* GRID PRODUK */}
         <div className="p-3 overflow-y-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-3 flex-1 content-start pb-32">
           {filteredProduk.map((p) => (
-            <div
+            <article
               key={p.id}
               onClick={(e) => handleProductClick(e, p)}
-              className="bg-white border border-pink-100 rounded-2xl cursor-pointer hover:border-pink-400 hover:shadow-lg transition-all active:scale-95 group flex flex-col overflow-hidden shadow-sm"
+              className="group rounded-2xl bg-white border border-pink-100 overflow-hidden shadow-sm hover:shadow-lg hover:shadow-pink-100 hover:border-pink-300 transition-all duration-200 cursor-pointer active:scale-[0.97]"
             >
-              {/* FOTO — paddingBottom trick: reliable di semua browser & device */}
-              <div className="relative w-full overflow-hidden bg-pink-50" style={{ paddingBottom: '90%' }}>
+              {/* FOTO */}
+              <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-pink-50 to-rose-50">
                 {p.gambar ? (
                   <img
                     src={p.gambar}
                     alt={p.nama_produk}
-                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    style={{ objectPosition: `${p.gambarPosX ?? 50}% ${p.gambarPosY ?? 50}%` }}
                   />
                 ) : (
-                  <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="w-full h-full flex items-center justify-center">
                     <Flower2 size={40} className="text-pink-200 group-hover:scale-110 transition-transform duration-300" />
                   </div>
                 )}
               </div>
 
               {/* INFO */}
-              <div className="p-2.5 sm:p-3 text-center bg-white">
+              <div className="p-2.5 sm:p-3 text-center">
                 <h3
                   className="font-bold text-[11px] sm:text-xs line-clamp-2 text-slate-800 uppercase tracking-tight leading-snug min-h-[2rem]"
                   title={p.nama_produk}
@@ -576,7 +579,7 @@ export default function PosPage() {
                   </p>
                 )}
               </div>
-            </div>
+            </article>
           ))}
         </div>
       </div>

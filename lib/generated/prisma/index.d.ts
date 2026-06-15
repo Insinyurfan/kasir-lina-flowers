@@ -3185,12 +3185,16 @@ export namespace Prisma {
     id: number | null
     harga: number | null
     stok: number | null
+    gambarPosX: number | null
+    gambarPosY: number | null
   }
 
   export type ProductSumAggregateOutputType = {
     id: number | null
     harga: number | null
     stok: number | null
+    gambarPosX: number | null
+    gambarPosY: number | null
   }
 
   export type ProductMinAggregateOutputType = {
@@ -3201,6 +3205,8 @@ export namespace Prisma {
     stok: number | null
     barcode: string | null
     gambar: string | null
+    gambarPosX: number | null
+    gambarPosY: number | null
     isArchived: boolean | null
   }
 
@@ -3212,6 +3218,8 @@ export namespace Prisma {
     stok: number | null
     barcode: string | null
     gambar: string | null
+    gambarPosX: number | null
+    gambarPosY: number | null
     isArchived: boolean | null
   }
 
@@ -3223,6 +3231,8 @@ export namespace Prisma {
     stok: number
     barcode: number
     gambar: number
+    gambarPosX: number
+    gambarPosY: number
     isArchived: number
     _all: number
   }
@@ -3232,12 +3242,16 @@ export namespace Prisma {
     id?: true
     harga?: true
     stok?: true
+    gambarPosX?: true
+    gambarPosY?: true
   }
 
   export type ProductSumAggregateInputType = {
     id?: true
     harga?: true
     stok?: true
+    gambarPosX?: true
+    gambarPosY?: true
   }
 
   export type ProductMinAggregateInputType = {
@@ -3248,6 +3262,8 @@ export namespace Prisma {
     stok?: true
     barcode?: true
     gambar?: true
+    gambarPosX?: true
+    gambarPosY?: true
     isArchived?: true
   }
 
@@ -3259,6 +3275,8 @@ export namespace Prisma {
     stok?: true
     barcode?: true
     gambar?: true
+    gambarPosX?: true
+    gambarPosY?: true
     isArchived?: true
   }
 
@@ -3270,6 +3288,8 @@ export namespace Prisma {
     stok?: true
     barcode?: true
     gambar?: true
+    gambarPosX?: true
+    gambarPosY?: true
     isArchived?: true
     _all?: true
   }
@@ -3368,6 +3388,8 @@ export namespace Prisma {
     stok: number
     barcode: string | null
     gambar: string | null
+    gambarPosX: number
+    gambarPosY: number
     isArchived: boolean
     _count: ProductCountAggregateOutputType | null
     _avg: ProductAvgAggregateOutputType | null
@@ -3398,6 +3420,8 @@ export namespace Prisma {
     stok?: boolean
     barcode?: boolean
     gambar?: boolean
+    gambarPosX?: boolean
+    gambarPosY?: boolean
     isArchived?: boolean
     TransactionItems?: boolean | Product$TransactionItemsArgs<ExtArgs>
     cartItems?: boolean | Product$cartItemsArgs<ExtArgs>
@@ -3413,6 +3437,8 @@ export namespace Prisma {
     stok?: boolean
     barcode?: boolean
     gambar?: boolean
+    gambarPosX?: boolean
+    gambarPosY?: boolean
     isArchived?: boolean
   }, ExtArgs["result"]["product"]>
 
@@ -3424,6 +3450,8 @@ export namespace Prisma {
     stok?: boolean
     barcode?: boolean
     gambar?: boolean
+    gambarPosX?: boolean
+    gambarPosY?: boolean
     isArchived?: boolean
   }, ExtArgs["result"]["product"]>
 
@@ -3435,10 +3463,12 @@ export namespace Prisma {
     stok?: boolean
     barcode?: boolean
     gambar?: boolean
+    gambarPosX?: boolean
+    gambarPosY?: boolean
     isArchived?: boolean
   }
 
-  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "nama_produk" | "harga" | "satuanHarga" | "stok" | "barcode" | "gambar" | "isArchived", ExtArgs["result"]["product"]>
+  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "nama_produk" | "harga" | "satuanHarga" | "stok" | "barcode" | "gambar" | "gambarPosX" | "gambarPosY" | "isArchived", ExtArgs["result"]["product"]>
   export type ProductInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     TransactionItems?: boolean | Product$TransactionItemsArgs<ExtArgs>
     cartItems?: boolean | Product$cartItemsArgs<ExtArgs>
@@ -3463,6 +3493,8 @@ export namespace Prisma {
       stok: number
       barcode: string | null
       gambar: string | null
+      gambarPosX: number
+      gambarPosY: number
       isArchived: boolean
     }, ExtArgs["result"]["product"]>
     composites: {}
@@ -3897,6 +3929,8 @@ export namespace Prisma {
     readonly stok: FieldRef<"Product", 'Int'>
     readonly barcode: FieldRef<"Product", 'String'>
     readonly gambar: FieldRef<"Product", 'String'>
+    readonly gambarPosX: FieldRef<"Product", 'Int'>
+    readonly gambarPosY: FieldRef<"Product", 'Int'>
     readonly isArchived: FieldRef<"Product", 'Boolean'>
   }
     
@@ -15870,6 +15904,8 @@ export namespace Prisma {
     stok: 'stok',
     barcode: 'barcode',
     gambar: 'gambar',
+    gambarPosX: 'gambarPosX',
+    gambarPosY: 'gambarPosY',
     isArchived: 'isArchived'
   };
 
@@ -16214,6 +16250,8 @@ export namespace Prisma {
     stok?: IntFilter<"Product"> | number
     barcode?: StringNullableFilter<"Product"> | string | null
     gambar?: StringNullableFilter<"Product"> | string | null
+    gambarPosX?: IntFilter<"Product"> | number
+    gambarPosY?: IntFilter<"Product"> | number
     isArchived?: BoolFilter<"Product"> | boolean
     TransactionItems?: TransactionItemListRelationFilter
     cartItems?: UserCartItemListRelationFilter
@@ -16228,6 +16266,8 @@ export namespace Prisma {
     stok?: SortOrder
     barcode?: SortOrderInput | SortOrder
     gambar?: SortOrderInput | SortOrder
+    gambarPosX?: SortOrder
+    gambarPosY?: SortOrder
     isArchived?: SortOrder
     TransactionItems?: TransactionItemOrderByRelationAggregateInput
     cartItems?: UserCartItemOrderByRelationAggregateInput
@@ -16245,6 +16285,8 @@ export namespace Prisma {
     satuanHarga?: StringFilter<"Product"> | string
     stok?: IntFilter<"Product"> | number
     gambar?: StringNullableFilter<"Product"> | string | null
+    gambarPosX?: IntFilter<"Product"> | number
+    gambarPosY?: IntFilter<"Product"> | number
     isArchived?: BoolFilter<"Product"> | boolean
     TransactionItems?: TransactionItemListRelationFilter
     cartItems?: UserCartItemListRelationFilter
@@ -16259,6 +16301,8 @@ export namespace Prisma {
     stok?: SortOrder
     barcode?: SortOrderInput | SortOrder
     gambar?: SortOrderInput | SortOrder
+    gambarPosX?: SortOrder
+    gambarPosY?: SortOrder
     isArchived?: SortOrder
     _count?: ProductCountOrderByAggregateInput
     _avg?: ProductAvgOrderByAggregateInput
@@ -16278,6 +16322,8 @@ export namespace Prisma {
     stok?: IntWithAggregatesFilter<"Product"> | number
     barcode?: StringNullableWithAggregatesFilter<"Product"> | string | null
     gambar?: StringNullableWithAggregatesFilter<"Product"> | string | null
+    gambarPosX?: IntWithAggregatesFilter<"Product"> | number
+    gambarPosY?: IntWithAggregatesFilter<"Product"> | number
     isArchived?: BoolWithAggregatesFilter<"Product"> | boolean
   }
 
@@ -17088,6 +17134,8 @@ export namespace Prisma {
     stok: number
     barcode?: string | null
     gambar?: string | null
+    gambarPosX?: number
+    gambarPosY?: number
     isArchived?: boolean
     TransactionItems?: TransactionItemCreateNestedManyWithoutProductInput
     cartItems?: UserCartItemCreateNestedManyWithoutProductInput
@@ -17102,6 +17150,8 @@ export namespace Prisma {
     stok: number
     barcode?: string | null
     gambar?: string | null
+    gambarPosX?: number
+    gambarPosY?: number
     isArchived?: boolean
     TransactionItems?: TransactionItemUncheckedCreateNestedManyWithoutProductInput
     cartItems?: UserCartItemUncheckedCreateNestedManyWithoutProductInput
@@ -17115,6 +17165,8 @@ export namespace Prisma {
     stok?: IntFieldUpdateOperationsInput | number
     barcode?: NullableStringFieldUpdateOperationsInput | string | null
     gambar?: NullableStringFieldUpdateOperationsInput | string | null
+    gambarPosX?: IntFieldUpdateOperationsInput | number
+    gambarPosY?: IntFieldUpdateOperationsInput | number
     isArchived?: BoolFieldUpdateOperationsInput | boolean
     TransactionItems?: TransactionItemUpdateManyWithoutProductNestedInput
     cartItems?: UserCartItemUpdateManyWithoutProductNestedInput
@@ -17129,6 +17181,8 @@ export namespace Prisma {
     stok?: IntFieldUpdateOperationsInput | number
     barcode?: NullableStringFieldUpdateOperationsInput | string | null
     gambar?: NullableStringFieldUpdateOperationsInput | string | null
+    gambarPosX?: IntFieldUpdateOperationsInput | number
+    gambarPosY?: IntFieldUpdateOperationsInput | number
     isArchived?: BoolFieldUpdateOperationsInput | boolean
     TransactionItems?: TransactionItemUncheckedUpdateManyWithoutProductNestedInput
     cartItems?: UserCartItemUncheckedUpdateManyWithoutProductNestedInput
@@ -17143,6 +17197,8 @@ export namespace Prisma {
     stok: number
     barcode?: string | null
     gambar?: string | null
+    gambarPosX?: number
+    gambarPosY?: number
     isArchived?: boolean
   }
 
@@ -17153,6 +17209,8 @@ export namespace Prisma {
     stok?: IntFieldUpdateOperationsInput | number
     barcode?: NullableStringFieldUpdateOperationsInput | string | null
     gambar?: NullableStringFieldUpdateOperationsInput | string | null
+    gambarPosX?: IntFieldUpdateOperationsInput | number
+    gambarPosY?: IntFieldUpdateOperationsInput | number
     isArchived?: BoolFieldUpdateOperationsInput | boolean
   }
 
@@ -17164,6 +17222,8 @@ export namespace Prisma {
     stok?: IntFieldUpdateOperationsInput | number
     barcode?: NullableStringFieldUpdateOperationsInput | string | null
     gambar?: NullableStringFieldUpdateOperationsInput | string | null
+    gambarPosX?: IntFieldUpdateOperationsInput | number
+    gambarPosY?: IntFieldUpdateOperationsInput | number
     isArchived?: BoolFieldUpdateOperationsInput | boolean
   }
 
@@ -18103,6 +18163,8 @@ export namespace Prisma {
     stok?: SortOrder
     barcode?: SortOrder
     gambar?: SortOrder
+    gambarPosX?: SortOrder
+    gambarPosY?: SortOrder
     isArchived?: SortOrder
   }
 
@@ -18110,6 +18172,8 @@ export namespace Prisma {
     id?: SortOrder
     harga?: SortOrder
     stok?: SortOrder
+    gambarPosX?: SortOrder
+    gambarPosY?: SortOrder
   }
 
   export type ProductMaxOrderByAggregateInput = {
@@ -18120,6 +18184,8 @@ export namespace Prisma {
     stok?: SortOrder
     barcode?: SortOrder
     gambar?: SortOrder
+    gambarPosX?: SortOrder
+    gambarPosY?: SortOrder
     isArchived?: SortOrder
   }
 
@@ -18131,6 +18197,8 @@ export namespace Prisma {
     stok?: SortOrder
     barcode?: SortOrder
     gambar?: SortOrder
+    gambarPosX?: SortOrder
+    gambarPosY?: SortOrder
     isArchived?: SortOrder
   }
 
@@ -18138,6 +18206,8 @@ export namespace Prisma {
     id?: SortOrder
     harga?: SortOrder
     stok?: SortOrder
+    gambarPosX?: SortOrder
+    gambarPosY?: SortOrder
   }
 
   export type BoolWithAggregatesFilter<$PrismaModel = never> = {
@@ -19990,6 +20060,8 @@ export namespace Prisma {
     stok: number
     barcode?: string | null
     gambar?: string | null
+    gambarPosX?: number
+    gambarPosY?: number
     isArchived?: boolean
     cartItems?: UserCartItemCreateNestedManyWithoutProductInput
     orderRequestItems?: OrderRequestItemCreateNestedManyWithoutProductInput
@@ -20003,6 +20075,8 @@ export namespace Prisma {
     stok: number
     barcode?: string | null
     gambar?: string | null
+    gambarPosX?: number
+    gambarPosY?: number
     isArchived?: boolean
     cartItems?: UserCartItemUncheckedCreateNestedManyWithoutProductInput
     orderRequestItems?: OrderRequestItemUncheckedCreateNestedManyWithoutProductInput
@@ -20069,6 +20143,8 @@ export namespace Prisma {
     stok?: IntFieldUpdateOperationsInput | number
     barcode?: NullableStringFieldUpdateOperationsInput | string | null
     gambar?: NullableStringFieldUpdateOperationsInput | string | null
+    gambarPosX?: IntFieldUpdateOperationsInput | number
+    gambarPosY?: IntFieldUpdateOperationsInput | number
     isArchived?: BoolFieldUpdateOperationsInput | boolean
     cartItems?: UserCartItemUpdateManyWithoutProductNestedInput
     orderRequestItems?: OrderRequestItemUpdateManyWithoutProductNestedInput
@@ -20082,6 +20158,8 @@ export namespace Prisma {
     stok?: IntFieldUpdateOperationsInput | number
     barcode?: NullableStringFieldUpdateOperationsInput | string | null
     gambar?: NullableStringFieldUpdateOperationsInput | string | null
+    gambarPosX?: IntFieldUpdateOperationsInput | number
+    gambarPosY?: IntFieldUpdateOperationsInput | number
     isArchived?: BoolFieldUpdateOperationsInput | boolean
     cartItems?: UserCartItemUncheckedUpdateManyWithoutProductNestedInput
     orderRequestItems?: OrderRequestItemUncheckedUpdateManyWithoutProductNestedInput
@@ -20285,6 +20363,8 @@ export namespace Prisma {
     stok: number
     barcode?: string | null
     gambar?: string | null
+    gambarPosX?: number
+    gambarPosY?: number
     isArchived?: boolean
     TransactionItems?: TransactionItemCreateNestedManyWithoutProductInput
     orderRequestItems?: OrderRequestItemCreateNestedManyWithoutProductInput
@@ -20298,6 +20378,8 @@ export namespace Prisma {
     stok: number
     barcode?: string | null
     gambar?: string | null
+    gambarPosX?: number
+    gambarPosY?: number
     isArchived?: boolean
     TransactionItems?: TransactionItemUncheckedCreateNestedManyWithoutProductInput
     orderRequestItems?: OrderRequestItemUncheckedCreateNestedManyWithoutProductInput
@@ -20358,6 +20440,8 @@ export namespace Prisma {
     stok?: IntFieldUpdateOperationsInput | number
     barcode?: NullableStringFieldUpdateOperationsInput | string | null
     gambar?: NullableStringFieldUpdateOperationsInput | string | null
+    gambarPosX?: IntFieldUpdateOperationsInput | number
+    gambarPosY?: IntFieldUpdateOperationsInput | number
     isArchived?: BoolFieldUpdateOperationsInput | boolean
     TransactionItems?: TransactionItemUpdateManyWithoutProductNestedInput
     orderRequestItems?: OrderRequestItemUpdateManyWithoutProductNestedInput
@@ -20371,6 +20455,8 @@ export namespace Prisma {
     stok?: IntFieldUpdateOperationsInput | number
     barcode?: NullableStringFieldUpdateOperationsInput | string | null
     gambar?: NullableStringFieldUpdateOperationsInput | string | null
+    gambarPosX?: IntFieldUpdateOperationsInput | number
+    gambarPosY?: IntFieldUpdateOperationsInput | number
     isArchived?: BoolFieldUpdateOperationsInput | boolean
     TransactionItems?: TransactionItemUncheckedUpdateManyWithoutProductNestedInput
     orderRequestItems?: OrderRequestItemUncheckedUpdateManyWithoutProductNestedInput
@@ -20648,6 +20734,8 @@ export namespace Prisma {
     stok: number
     barcode?: string | null
     gambar?: string | null
+    gambarPosX?: number
+    gambarPosY?: number
     isArchived?: boolean
     TransactionItems?: TransactionItemCreateNestedManyWithoutProductInput
     cartItems?: UserCartItemCreateNestedManyWithoutProductInput
@@ -20661,6 +20749,8 @@ export namespace Prisma {
     stok: number
     barcode?: string | null
     gambar?: string | null
+    gambarPosX?: number
+    gambarPosY?: number
     isArchived?: boolean
     TransactionItems?: TransactionItemUncheckedCreateNestedManyWithoutProductInput
     cartItems?: UserCartItemUncheckedCreateNestedManyWithoutProductInput
@@ -20727,6 +20817,8 @@ export namespace Prisma {
     stok?: IntFieldUpdateOperationsInput | number
     barcode?: NullableStringFieldUpdateOperationsInput | string | null
     gambar?: NullableStringFieldUpdateOperationsInput | string | null
+    gambarPosX?: IntFieldUpdateOperationsInput | number
+    gambarPosY?: IntFieldUpdateOperationsInput | number
     isArchived?: BoolFieldUpdateOperationsInput | boolean
     TransactionItems?: TransactionItemUpdateManyWithoutProductNestedInput
     cartItems?: UserCartItemUpdateManyWithoutProductNestedInput
@@ -20740,6 +20832,8 @@ export namespace Prisma {
     stok?: IntFieldUpdateOperationsInput | number
     barcode?: NullableStringFieldUpdateOperationsInput | string | null
     gambar?: NullableStringFieldUpdateOperationsInput | string | null
+    gambarPosX?: IntFieldUpdateOperationsInput | number
+    gambarPosY?: IntFieldUpdateOperationsInput | number
     isArchived?: BoolFieldUpdateOperationsInput | boolean
     TransactionItems?: TransactionItemUncheckedUpdateManyWithoutProductNestedInput
     cartItems?: UserCartItemUncheckedUpdateManyWithoutProductNestedInput

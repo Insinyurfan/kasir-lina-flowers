@@ -40,6 +40,7 @@ type PrintTransactionItem = {
 };
 type PrintTransaction = {
   id: number;
+  trxNumber?: number | null;
   tanggal: string;
   total_harga: number;
   nama_kasir?: string | null;
@@ -394,7 +395,7 @@ export default function RiwayatPenjualanPage() {
   };
 
   const handleDeleteOne = async (transaction: any) => {
-    if (!confirm(`Apakah Anda yakin ingin menghapus TRX-${transaction.id.toString().padStart(4, "0")}?`)) return;
+    if (!confirm(`Apakah Anda yakin ingin menghapus TRX-${(transaction.trxNumber ?? transaction.id).toString().padStart(4, "0")}?`)) return;
 
     try {
       const res = await fetch("/api/transaksi", {
@@ -495,7 +496,7 @@ export default function RiwayatPenjualanPage() {
   };
 
   const getPrintFileName = (extension = "jpg") =>
-    `${printType === "struk" ? "struk" : printType === "nota" ? "nota" : "surat-jalan"}-TRX-${selectedTrx?.id.toString().padStart(4, "0") || "0000"}.${extension}`;
+    `${printType === "struk" ? "struk" : printType === "nota" ? "nota" : "surat-jalan"}-TRX-${(selectedTrx?.trxNumber ?? selectedTrx?.id)?.toString().padStart(4, "0") || "0000"}.${extension}`;
 
   const downloadBlobFile = (blob: Blob, filename: string) => {
     const url = URL.createObjectURL(blob);
@@ -654,7 +655,7 @@ export default function RiwayatPenjualanPage() {
     y += bodyLineHeight + 2;
     ctx.fillText(`PELANGGAN : ${selectedTrx.nama_pembeli || "-"}`, margin, y);
     y += bodyLineHeight + 2;
-    ctx.fillText(`NO TRX    : TRX-${selectedTrx.id.toString().padStart(4, "0")}`, margin, y);
+    ctx.fillText(`NO TRX    : TRX-${(selectedTrx.trxNumber ?? selectedTrx.id).toString().padStart(4, "0")}`, margin, y);
     y += isThermal ? 28 : 36;
 
     drawDashedLine(ctx, y, width, margin);
@@ -783,7 +784,7 @@ export default function RiwayatPenjualanPage() {
     ctx.fillText(docTitle, MARGIN + CW, headerTopY);
     ctx.font = "bold 20px Arial, sans-serif";
     ctx.fillStyle = "#64748b";
-    ctx.fillText(formatTransactionCode(t.id), MARGIN + CW, headerTopY + 38);
+    ctx.fillText(formatTransactionCode(t.trxNumber ?? t.id), MARGIN + CW, headerTopY + 38);
     ctx.textAlign = "left";
 
     y = Math.max(headerTopY + LOGO_SIZE, brandBottomY) + 16;
@@ -797,7 +798,7 @@ export default function RiwayatPenjualanPage() {
     const META_CELL_H = 70;
     const COL_W = Math.floor(CW / 2);
     const metaFields: [string, string][] = [
-      ["No. Transaksi", formatTransactionCode(t.id)],
+      ["No. Transaksi", formatTransactionCode(t.trxNumber ?? t.id)],
       ["Tanggal", new Date(t.tanggal).toLocaleDateString("id-ID", { day: "2-digit", month: "long", year: "numeric" })],
       ["Pelanggan", t.nama_pembeli || "-"],
       ["Kasir", t.nama_kasir || "-"],
@@ -980,7 +981,7 @@ export default function RiwayatPenjualanPage() {
       </tr>
     `).join("");
 
-    printWindow.document.write(`<!doctype html><html><head><title>${escapeHtml(documentTitle)} ${formatTransactionCode(t.id)}</title><meta charset="UTF-8"><style>
+    printWindow.document.write(`<!doctype html><html><head><title>${escapeHtml(documentTitle)} ${formatTransactionCode(t.trxNumber ?? t.id)}</title><meta charset="UTF-8"><style>
       *{box-sizing:border-box}
       body{font-family:Arial,sans-serif;color:#1e293b;margin:0;background:#f8fafc}
       .sheet{width:210mm;min-height:297mm;margin:0 auto;background:#fff;padding:16mm 18mm}
@@ -1012,11 +1013,11 @@ export default function RiwayatPenjualanPage() {
           </div>
           <div class="doc-title">
             <h2>${escapeHtml(documentTitle)}</h2>
-            <p>${formatTransactionCode(t.id)}</p>
+            <p>${formatTransactionCode(t.trxNumber ?? t.id)}</p>
           </div>
         </section>
         <section class="meta">
-          <div class="meta-cell"><b>No. Transaksi</b>${formatTransactionCode(t.id)}</div>
+          <div class="meta-cell"><b>No. Transaksi</b>${formatTransactionCode(t.trxNumber ?? t.id)}</div>
           <div class="meta-cell"><b>Tanggal</b>${escapeHtml(transactionDate.toLocaleDateString("id-ID", { day: "2-digit", month: "long", year: "numeric" }))}</div>
           <div class="meta-cell"><b>Pelanggan</b>${escapeHtml(t.nama_pembeli || "-")}</div>
           <div class="meta-cell"><b>Kasir</b>${escapeHtml(t.nama_kasir || "-")}</div>
@@ -1256,7 +1257,7 @@ export default function RiwayatPenjualanPage() {
 
       const baseTransaksi = !keyword ? transaksi : transaksi.filter((t) => {
         const buyerName = (t.nama_pembeli?.toLowerCase() || "");
-        const transactionId = t.id.toString();
+        const transactionId = (t.trxNumber ?? t.id).toString();
         const paddedTransactionId = transactionId.padStart(4, "0");
         const trxCode = `trx-${paddedTransactionId}`;
         const compactTrxCode = `trx${paddedTransactionId}`;
@@ -1566,7 +1567,7 @@ export default function RiwayatPenjualanPage() {
                             className="w-4 h-4 cursor-pointer accent-pink-600"
                           />
                         )}
-                        <p className="text-xs font-mono font-bold text-pink-600">TRX-{t.id.toString().padStart(4, "0")}</p>
+                        <p className="text-xs font-mono font-bold text-pink-600">TRX-{(t.trxNumber ?? t.id).toString().padStart(4, "0")}</p>
                       </div>
                       <h3 className="mt-1 text-base font-bold text-slate-800 leading-snug">{t.nama_pembeli || "Tanpa nama"}</h3>
                       <p className="mt-0.5 text-[11px] text-slate-500">
@@ -1787,7 +1788,7 @@ export default function RiwayatPenjualanPage() {
                         <User size={14} className="text-slate-400" /> {t.nama_pembeli}
                       </div>
                       <div className="text-[10px] text-slate-500 font-mono mt-0.5">
-                        #TRX-{t.id.toString().padStart(4, "0")}
+                        #TRX-{(t.trxNumber ?? t.id).toString().padStart(4, "0")}
                       </div>
                       {t.orderRequest?.code && <div className="mt-1 text-[10px] font-bold text-violet-600">{t.orderRequest.code}</div>}
                       {user?.role === "Owner" && t.orderRequest?.phone && <div className="mt-1 text-[10px] font-bold text-slate-500">HP: {t.orderRequest.phone}</div>}
@@ -2018,7 +2019,7 @@ export default function RiwayatPenjualanPage() {
                       <div>TIME      : {new Date(selectedTrx.tanggal).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}</div>
                       <div>CASHIER   : {selectedTrx.nama_kasir}</div>
                       <div>PELANGGAN : <span className="font-bold">{selectedTrx.nama_pembeli}</span></div>
-                      <div>NO TRX    : TRX-{selectedTrx.id.toString().padStart(4, "0")}</div>
+                      <div>NO TRX    : TRX-{(selectedTrx.trxNumber ?? selectedTrx.id).toString().padStart(4, "0")}</div>
                     </div>
 
                     <div style={{ borderTop: "1.5px dashed #000", margin: "12px 0" }}></div>
@@ -2071,14 +2072,14 @@ export default function RiwayatPenjualanPage() {
                         <h2 className="text-[13px] font-black uppercase tracking-wide text-slate-900">
                           {printType === "nota" ? "NOTA PESANAN" : "SURAT JALAN"}
                         </h2>
-                        <p className="mt-1 text-[10px] font-bold text-slate-500">{formatTransactionCode(selectedTrx.id)}</p>
+                        <p className="mt-1 text-[10px] font-bold text-slate-500">{formatTransactionCode(selectedTrx.trxNumber ?? selectedTrx.id)}</p>
                       </div>
                     </div>
 
                     {/* META */}
                     <div className="grid grid-cols-2 gap-px bg-pink-100 border-b border-pink-100">
                       {([
-                        ["No. Transaksi", formatTransactionCode(selectedTrx.id)],
+                        ["No. Transaksi", formatTransactionCode(selectedTrx.trxNumber ?? selectedTrx.id)],
                         ["Tanggal", new Date(selectedTrx.tanggal).toLocaleDateString("id-ID", { day: "2-digit", month: "long", year: "numeric" })],
                         ["Pelanggan", selectedTrx.nama_pembeli || "-"],
                         ["Kasir", selectedTrx.nama_kasir || "-"],

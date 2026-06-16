@@ -4424,16 +4424,19 @@ export namespace Prisma {
 
   export type TransactionAvgAggregateOutputType = {
     id: number | null
+    trxNumber: number | null
     total_harga: number | null
   }
 
   export type TransactionSumAggregateOutputType = {
     id: number | null
+    trxNumber: number | null
     total_harga: number | null
   }
 
   export type TransactionMinAggregateOutputType = {
     id: number | null
+    trxNumber: number | null
     tanggal: Date | null
     total_harga: number | null
     metode_pembayaran: string | null
@@ -4446,6 +4449,7 @@ export namespace Prisma {
 
   export type TransactionMaxAggregateOutputType = {
     id: number | null
+    trxNumber: number | null
     tanggal: Date | null
     total_harga: number | null
     metode_pembayaran: string | null
@@ -4458,6 +4462,7 @@ export namespace Prisma {
 
   export type TransactionCountAggregateOutputType = {
     id: number
+    trxNumber: number
     tanggal: number
     total_harga: number
     metode_pembayaran: number
@@ -4472,16 +4477,19 @@ export namespace Prisma {
 
   export type TransactionAvgAggregateInputType = {
     id?: true
+    trxNumber?: true
     total_harga?: true
   }
 
   export type TransactionSumAggregateInputType = {
     id?: true
+    trxNumber?: true
     total_harga?: true
   }
 
   export type TransactionMinAggregateInputType = {
     id?: true
+    trxNumber?: true
     tanggal?: true
     total_harga?: true
     metode_pembayaran?: true
@@ -4494,6 +4502,7 @@ export namespace Prisma {
 
   export type TransactionMaxAggregateInputType = {
     id?: true
+    trxNumber?: true
     tanggal?: true
     total_harga?: true
     metode_pembayaran?: true
@@ -4506,6 +4515,7 @@ export namespace Prisma {
 
   export type TransactionCountAggregateInputType = {
     id?: true
+    trxNumber?: true
     tanggal?: true
     total_harga?: true
     metode_pembayaran?: true
@@ -4605,6 +4615,7 @@ export namespace Prisma {
 
   export type TransactionGroupByOutputType = {
     id: number
+    trxNumber: number | null
     tanggal: Date
     total_harga: number
     metode_pembayaran: string
@@ -4636,6 +4647,7 @@ export namespace Prisma {
 
   export type TransactionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    trxNumber?: boolean
     tanggal?: boolean
     total_harga?: boolean
     metode_pembayaran?: boolean
@@ -4652,6 +4664,7 @@ export namespace Prisma {
 
   export type TransactionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    trxNumber?: boolean
     tanggal?: boolean
     total_harga?: boolean
     metode_pembayaran?: boolean
@@ -4664,6 +4677,7 @@ export namespace Prisma {
 
   export type TransactionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    trxNumber?: boolean
     tanggal?: boolean
     total_harga?: boolean
     metode_pembayaran?: boolean
@@ -4676,6 +4690,7 @@ export namespace Prisma {
 
   export type TransactionSelectScalar = {
     id?: boolean
+    trxNumber?: boolean
     tanggal?: boolean
     total_harga?: boolean
     metode_pembayaran?: boolean
@@ -4686,7 +4701,7 @@ export namespace Prisma {
     nama_pengrajin?: boolean
   }
 
-  export type TransactionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "tanggal" | "total_harga" | "metode_pembayaran" | "status" | "nama_pembeli" | "nama_kasir" | "status_pengiriman" | "nama_pengrajin", ExtArgs["result"]["transaction"]>
+  export type TransactionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "trxNumber" | "tanggal" | "total_harga" | "metode_pembayaran" | "status" | "nama_pembeli" | "nama_kasir" | "status_pengiriman" | "nama_pengrajin", ExtArgs["result"]["transaction"]>
   export type TransactionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     items?: boolean | Transaction$itemsArgs<ExtArgs>
     notifications?: boolean | Transaction$notificationsArgs<ExtArgs>
@@ -4705,6 +4720,7 @@ export namespace Prisma {
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
+      trxNumber: number | null
       tanggal: Date
       total_harga: number
       metode_pembayaran: string
@@ -5140,6 +5156,7 @@ export namespace Prisma {
    */
   interface TransactionFieldRefs {
     readonly id: FieldRef<"Transaction", 'Int'>
+    readonly trxNumber: FieldRef<"Transaction", 'Int'>
     readonly tanggal: FieldRef<"Transaction", 'DateTime'>
     readonly total_harga: FieldRef<"Transaction", 'Int'>
     readonly metode_pembayaran: FieldRef<"Transaction", 'String'>
@@ -15914,6 +15931,7 @@ export namespace Prisma {
 
   export const TransactionScalarFieldEnum: {
     id: 'id',
+    trxNumber: 'trxNumber',
     tanggal: 'tanggal',
     total_harga: 'total_harga',
     metode_pembayaran: 'metode_pembayaran',
@@ -16332,6 +16350,7 @@ export namespace Prisma {
     OR?: TransactionWhereInput[]
     NOT?: TransactionWhereInput | TransactionWhereInput[]
     id?: IntFilter<"Transaction"> | number
+    trxNumber?: IntNullableFilter<"Transaction"> | number | null
     tanggal?: DateTimeFilter<"Transaction"> | Date | string
     total_harga?: IntFilter<"Transaction"> | number
     metode_pembayaran?: StringFilter<"Transaction"> | string
@@ -16347,6 +16366,7 @@ export namespace Prisma {
 
   export type TransactionOrderByWithRelationInput = {
     id?: SortOrder
+    trxNumber?: SortOrderInput | SortOrder
     tanggal?: SortOrder
     total_harga?: SortOrder
     metode_pembayaran?: SortOrder
@@ -16362,6 +16382,7 @@ export namespace Prisma {
 
   export type TransactionWhereUniqueInput = Prisma.AtLeast<{
     id?: number
+    trxNumber?: number
     AND?: TransactionWhereInput | TransactionWhereInput[]
     OR?: TransactionWhereInput[]
     NOT?: TransactionWhereInput | TransactionWhereInput[]
@@ -16376,10 +16397,11 @@ export namespace Prisma {
     items?: TransactionItemListRelationFilter
     notifications?: NotificationListRelationFilter
     orderRequest?: XOR<OrderRequestNullableScalarRelationFilter, OrderRequestWhereInput> | null
-  }, "id">
+  }, "id" | "trxNumber">
 
   export type TransactionOrderByWithAggregationInput = {
     id?: SortOrder
+    trxNumber?: SortOrderInput | SortOrder
     tanggal?: SortOrder
     total_harga?: SortOrder
     metode_pembayaran?: SortOrder
@@ -16400,6 +16422,7 @@ export namespace Prisma {
     OR?: TransactionScalarWhereWithAggregatesInput[]
     NOT?: TransactionScalarWhereWithAggregatesInput | TransactionScalarWhereWithAggregatesInput[]
     id?: IntWithAggregatesFilter<"Transaction"> | number
+    trxNumber?: IntNullableWithAggregatesFilter<"Transaction"> | number | null
     tanggal?: DateTimeWithAggregatesFilter<"Transaction"> | Date | string
     total_harga?: IntWithAggregatesFilter<"Transaction"> | number
     metode_pembayaran?: StringWithAggregatesFilter<"Transaction"> | string
@@ -17228,6 +17251,7 @@ export namespace Prisma {
   }
 
   export type TransactionCreateInput = {
+    trxNumber?: number | null
     tanggal?: Date | string
     total_harga: number
     metode_pembayaran: string
@@ -17243,6 +17267,7 @@ export namespace Prisma {
 
   export type TransactionUncheckedCreateInput = {
     id?: number
+    trxNumber?: number | null
     tanggal?: Date | string
     total_harga: number
     metode_pembayaran: string
@@ -17257,6 +17282,7 @@ export namespace Prisma {
   }
 
   export type TransactionUpdateInput = {
+    trxNumber?: NullableIntFieldUpdateOperationsInput | number | null
     tanggal?: DateTimeFieldUpdateOperationsInput | Date | string
     total_harga?: IntFieldUpdateOperationsInput | number
     metode_pembayaran?: StringFieldUpdateOperationsInput | string
@@ -17272,6 +17298,7 @@ export namespace Prisma {
 
   export type TransactionUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
+    trxNumber?: NullableIntFieldUpdateOperationsInput | number | null
     tanggal?: DateTimeFieldUpdateOperationsInput | Date | string
     total_harga?: IntFieldUpdateOperationsInput | number
     metode_pembayaran?: StringFieldUpdateOperationsInput | string
@@ -17287,6 +17314,7 @@ export namespace Prisma {
 
   export type TransactionCreateManyInput = {
     id?: number
+    trxNumber?: number | null
     tanggal?: Date | string
     total_harga: number
     metode_pembayaran: string
@@ -17298,6 +17326,7 @@ export namespace Prisma {
   }
 
   export type TransactionUpdateManyMutationInput = {
+    trxNumber?: NullableIntFieldUpdateOperationsInput | number | null
     tanggal?: DateTimeFieldUpdateOperationsInput | Date | string
     total_harga?: IntFieldUpdateOperationsInput | number
     metode_pembayaran?: StringFieldUpdateOperationsInput | string
@@ -17310,6 +17339,7 @@ export namespace Prisma {
 
   export type TransactionUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
+    trxNumber?: NullableIntFieldUpdateOperationsInput | number | null
     tanggal?: DateTimeFieldUpdateOperationsInput | Date | string
     total_harga?: IntFieldUpdateOperationsInput | number
     metode_pembayaran?: StringFieldUpdateOperationsInput | string
@@ -18218,6 +18248,17 @@ export namespace Prisma {
     _max?: NestedBoolFilter<$PrismaModel>
   }
 
+  export type IntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
   export type DateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -18246,6 +18287,7 @@ export namespace Prisma {
 
   export type TransactionCountOrderByAggregateInput = {
     id?: SortOrder
+    trxNumber?: SortOrder
     tanggal?: SortOrder
     total_harga?: SortOrder
     metode_pembayaran?: SortOrder
@@ -18258,11 +18300,13 @@ export namespace Prisma {
 
   export type TransactionAvgOrderByAggregateInput = {
     id?: SortOrder
+    trxNumber?: SortOrder
     total_harga?: SortOrder
   }
 
   export type TransactionMaxOrderByAggregateInput = {
     id?: SortOrder
+    trxNumber?: SortOrder
     tanggal?: SortOrder
     total_harga?: SortOrder
     metode_pembayaran?: SortOrder
@@ -18275,6 +18319,7 @@ export namespace Prisma {
 
   export type TransactionMinOrderByAggregateInput = {
     id?: SortOrder
+    trxNumber?: SortOrder
     tanggal?: SortOrder
     total_harga?: SortOrder
     metode_pembayaran?: SortOrder
@@ -18287,7 +18332,24 @@ export namespace Prisma {
 
   export type TransactionSumOrderByAggregateInput = {
     id?: SortOrder
+    trxNumber?: SortOrder
     total_harga?: SortOrder
+  }
+
+  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
   }
 
   export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
@@ -18389,17 +18451,6 @@ export namespace Prisma {
     id?: SortOrder
   }
 
-  export type IntNullableFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableFilter<$PrismaModel> | number | null
-  }
-
   export type TransactionNullableScalarRelationFilter = {
     is?: TransactionWhereInput | null
     isNot?: TransactionWhereInput | null
@@ -18459,22 +18510,6 @@ export namespace Prisma {
   export type NotificationSumOrderByAggregateInput = {
     id?: SortOrder
     transactionId?: SortOrder
-  }
-
-  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedIntNullableFilter<$PrismaModel>
-    _max?: NestedIntNullableFilter<$PrismaModel>
   }
   export type JsonNullableFilter<$PrismaModel = never> =
     | PatchUndefined<
@@ -19064,6 +19099,14 @@ export namespace Prisma {
     connect?: OrderRequestWhereUniqueInput
   }
 
+  export type NullableIntFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
   export type DateTimeFieldUpdateOperationsInput = {
     set?: Date | string
   }
@@ -19186,14 +19229,6 @@ export namespace Prisma {
     delete?: TransactionWhereInput | boolean
     connect?: TransactionWhereUniqueInput
     update?: XOR<XOR<TransactionUpdateToOneWithWhereWithoutNotificationsInput, TransactionUpdateWithoutNotificationsInput>, TransactionUncheckedUpdateWithoutNotificationsInput>
-  }
-
-  export type NullableIntFieldUpdateOperationsInput = {
-    set?: number | null
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
   }
 
   export type UserCreateNestedOneWithoutCartsInput = {
@@ -19557,20 +19592,6 @@ export namespace Prisma {
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
-  export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedDateTimeFilter<$PrismaModel>
-    _max?: NestedDateTimeFilter<$PrismaModel>
-  }
-
   export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel> | null
     in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
@@ -19596,6 +19617,20 @@ export namespace Prisma {
     gt?: number | FloatFieldRefInput<$PrismaModel>
     gte?: number | FloatFieldRefInput<$PrismaModel>
     not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedDateTimeFilter<$PrismaModel>
+    _max?: NestedDateTimeFilter<$PrismaModel>
   }
   export type NestedJsonNullableFilter<$PrismaModel = never> =
     | PatchUndefined<
@@ -20022,6 +20057,7 @@ export namespace Prisma {
   }
 
   export type TransactionCreateWithoutItemsInput = {
+    trxNumber?: number | null
     tanggal?: Date | string
     total_harga: number
     metode_pembayaran: string
@@ -20036,6 +20072,7 @@ export namespace Prisma {
 
   export type TransactionUncheckedCreateWithoutItemsInput = {
     id?: number
+    trxNumber?: number | null
     tanggal?: Date | string
     total_harga: number
     metode_pembayaran: string
@@ -20099,6 +20136,7 @@ export namespace Prisma {
   }
 
   export type TransactionUpdateWithoutItemsInput = {
+    trxNumber?: NullableIntFieldUpdateOperationsInput | number | null
     tanggal?: DateTimeFieldUpdateOperationsInput | Date | string
     total_harga?: IntFieldUpdateOperationsInput | number
     metode_pembayaran?: StringFieldUpdateOperationsInput | string
@@ -20113,6 +20151,7 @@ export namespace Prisma {
 
   export type TransactionUncheckedUpdateWithoutItemsInput = {
     id?: IntFieldUpdateOperationsInput | number
+    trxNumber?: NullableIntFieldUpdateOperationsInput | number | null
     tanggal?: DateTimeFieldUpdateOperationsInput | Date | string
     total_harga?: IntFieldUpdateOperationsInput | number
     metode_pembayaran?: StringFieldUpdateOperationsInput | string
@@ -20166,6 +20205,7 @@ export namespace Prisma {
   }
 
   export type TransactionCreateWithoutNotificationsInput = {
+    trxNumber?: number | null
     tanggal?: Date | string
     total_harga: number
     metode_pembayaran: string
@@ -20180,6 +20220,7 @@ export namespace Prisma {
 
   export type TransactionUncheckedCreateWithoutNotificationsInput = {
     id?: number
+    trxNumber?: number | null
     tanggal?: Date | string
     total_harga: number
     metode_pembayaran: string
@@ -20209,6 +20250,7 @@ export namespace Prisma {
   }
 
   export type TransactionUpdateWithoutNotificationsInput = {
+    trxNumber?: NullableIntFieldUpdateOperationsInput | number | null
     tanggal?: DateTimeFieldUpdateOperationsInput | Date | string
     total_harga?: IntFieldUpdateOperationsInput | number
     metode_pembayaran?: StringFieldUpdateOperationsInput | string
@@ -20223,6 +20265,7 @@ export namespace Prisma {
 
   export type TransactionUncheckedUpdateWithoutNotificationsInput = {
     id?: IntFieldUpdateOperationsInput | number
+    trxNumber?: NullableIntFieldUpdateOperationsInput | number | null
     tanggal?: DateTimeFieldUpdateOperationsInput | Date | string
     total_harga?: IntFieldUpdateOperationsInput | number
     metode_pembayaran?: StringFieldUpdateOperationsInput | string
@@ -20463,6 +20506,7 @@ export namespace Prisma {
   }
 
   export type TransactionCreateWithoutOrderRequestInput = {
+    trxNumber?: number | null
     tanggal?: Date | string
     total_harga: number
     metode_pembayaran: string
@@ -20477,6 +20521,7 @@ export namespace Prisma {
 
   export type TransactionUncheckedCreateWithoutOrderRequestInput = {
     id?: number
+    trxNumber?: number | null
     tanggal?: Date | string
     total_harga: number
     metode_pembayaran: string
@@ -20556,6 +20601,7 @@ export namespace Prisma {
   }
 
   export type TransactionUpdateWithoutOrderRequestInput = {
+    trxNumber?: NullableIntFieldUpdateOperationsInput | number | null
     tanggal?: DateTimeFieldUpdateOperationsInput | Date | string
     total_harga?: IntFieldUpdateOperationsInput | number
     metode_pembayaran?: StringFieldUpdateOperationsInput | string
@@ -20570,6 +20616,7 @@ export namespace Prisma {
 
   export type TransactionUncheckedUpdateWithoutOrderRequestInput = {
     id?: IntFieldUpdateOperationsInput | number
+    trxNumber?: NullableIntFieldUpdateOperationsInput | number | null
     tanggal?: DateTimeFieldUpdateOperationsInput | Date | string
     total_harga?: IntFieldUpdateOperationsInput | number
     metode_pembayaran?: StringFieldUpdateOperationsInput | string

@@ -28,6 +28,8 @@ model Product {
   stok              Int
   barcode           String?            @unique
   gambar            String?
+  gambarPosX        Int                @default(50)
+  gambarPosY        Int                @default(50)
   isArchived        Boolean            @default(false)
   TransactionItems  TransactionItem[]
   cartItems         UserCartItem[]
@@ -36,6 +38,7 @@ model Product {
 
 model Transaction {
   id                Int               @id @default(autoincrement())
+  trxNumber         Int?              @unique
   tanggal           DateTime          @default(now())
   total_harga       Int
   metode_pembayaran String

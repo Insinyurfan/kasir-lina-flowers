@@ -127,7 +127,7 @@ export async function PATCH(request: Request) {
       action: "UPDATE",
       entity: "Status Pesanan",
       entityId: id,
-      title: `Status pesanan diperbarui: TRX-${String(id).padStart(4, "0")}`,
+      title: `Status pesanan diperbarui: TRX-${String(updated.trxNumber ?? id).padStart(4, "0")}`,
       description: `${actor.name} memperbarui status pesanan ${updated.nama_pembeli || ""}.`,
       actor,
       metadata: {

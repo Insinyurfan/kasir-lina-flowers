@@ -45,6 +45,7 @@ type OrderItem = {
 
 type ActiveOrder = {
   id: number;
+  trxNumber?: number | null;
   tanggal: string;
   total_harga: number;
   nama_pembeli?: string | null;
@@ -154,7 +155,7 @@ export default function OrderStatusPage() {
       .join("");
 
     printWindow.document.write(`<!doctype html><html><head>
-      <title>NOTA PESANAN ${formatTrxCode(order.id)}</title>
+      <title>NOTA PESANAN ${formatTrxCode(order.trxNumber ?? order.id)}</title>
       <meta charset="UTF-8">
       <style>
         *{box-sizing:border-box}
@@ -189,11 +190,11 @@ export default function OrderStatusPage() {
           </div>
           <div class="doc-title">
             <h2>NOTA PESANAN</h2>
-            <p>${formatTrxCode(order.id)}</p>
+            <p>${formatTrxCode(order.trxNumber ?? order.id)}</p>
           </div>
         </section>
         <section class="meta">
-          <div class="meta-cell"><b>No. Transaksi</b>${formatTrxCode(order.id)}</div>
+          <div class="meta-cell"><b>No. Transaksi</b>${formatTrxCode(order.trxNumber ?? order.id)}</div>
           <div class="meta-cell"><b>Tanggal</b>${escapeHtml(transactionDate.toLocaleDateString("id-ID", { day: "2-digit", month: "long", year: "numeric" }))}</div>
           <div class="meta-cell"><b>Pelanggan</b>${escapeHtml(order.nama_pembeli || "-")}</div>
           <div class="meta-cell"><b>Kasir</b>${escapeHtml(order.nama_kasir || "-")}</div>
@@ -251,7 +252,7 @@ export default function OrderStatusPage() {
               {/* HEADER CARD */}
               <div className="flex flex-col justify-between gap-3 border-b border-pink-100 bg-pink-50 p-5 sm:flex-row">
                 <div>
-                  <p className="font-mono text-sm font-black text-pink-700">{formatTrxCode(order.id)}</p>
+                  <p className="font-mono text-sm font-black text-pink-700">{formatTrxCode(order.trxNumber ?? order.id)}</p>
                   {order.orderRequest?.code && (
                     <p className="mt-1 font-mono text-xs font-black text-violet-600">{order.orderRequest.code}</p>
                   )}

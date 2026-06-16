@@ -89,15 +89,24 @@ export async function GET(request: Request) {
         return NextResponse.json({ error: "Nomor HP wajib diisi untuk melacak pesanan." }, { status: 400 });
       }
       const transactionMatch = code.match(/^TRX-?(\d+)$/);
-      const transactionId = transactionMatch ? Number(transactionMatch[1]) : null;
+      const trxNum = transactionMatch ? Number(transactionMatch[1]) : null;
+      let resolvedTransactionId: number | null = null;
+      if (trxNum !== null) {
+        const trx = await prisma.transaction.findFirst({
+          where: { OR: [{ trxNumber: trxNum }, { trxNumber: null, id: trxNum }] },
+          select: { id: true },
+        });
+        resolvedTransactionId = trx?.id ?? null;
+      }
       const orderRequest = await prisma.orderRequest.findUnique({
-        where: transactionId ? { transactionId } : { code },
+        where: resolvedTransactionId !== null ? { transactionId: resolvedTransactionId } : { code },
         include: {
           items: { orderBy: { id: "asc" } },
           statusHistory: { orderBy: { createdAt: "asc" } },
           transaction: {
             select: {
               id: true,
+              trxNumber: true,
               tanggal: true,
               status_pengiriman: true,
             },
@@ -126,7 +135,7 @@ export async function GET(request: Request) {
           ? [{
               id: -2,
               status: "Diterima",
-              description: `Request diterima sebagai TRX-${String(orderRequest.transaction.id).padStart(4, "0")}.`,
+              description: `Request diterima sebagai TRX-${String(orderRequest.transaction.trxNumber ?? orderRequest.transaction.id).padStart(4, "0")}.`,
               createdAt: orderRequest.transaction.tanggal,
             }]
           : []),
@@ -177,6 +186,7 @@ export async function GET(request: Request) {
         transaction: orderRequest.transaction
           ? {
               id: orderRequest.transaction.id,
+              trxNumber: orderRequest.transaction.trxNumber,
               status_pengiriman: orderRequest.transaction.status_pengiriman,
             }
           : null,
@@ -205,7 +215,7 @@ export async function GET(request: Request) {
           orderBy: { id: "asc" },
         },
         transaction: {
-          select: { id: true, status_pengiriman: true, nama_pengrajin: true },
+          select: { id: true, trxNumber: true, status_pengiriman: true, nama_pengrajin: true },
         },
       },
       orderBy: { createdAt: "desc" },
@@ -428,8 +438,14 @@ export async function PATCH(request: Request) {
         });
       }
 
+      const allTrx = await tx.transaction.findMany({ select: { id: true, trxNumber: true } });
+      const usedTrxNums = new Set(allTrx.map((t) => (t.trxNumber !== null ? t.trxNumber : t.id)));
+      let nextTrxNum = 1;
+      while (usedTrxNums.has(nextTrxNum)) nextTrxNum++;
+
       const transaction = await tx.transaction.create({
         data: {
+          trxNumber: nextTrxNum,
           total_harga: confirmedTotal,
           metode_pembayaran: "Belum Bayar",
           status: "Unpaid",
@@ -467,7 +483,7 @@ export async function PATCH(request: Request) {
             create: [
               {
                 status: "Diterima",
-                description: `Request diterima sebagai TRX-${String(transaction.id).padStart(4, "0")}.`,
+                description: `Request diterima sebagai TRX-${String(transaction.trxNumber ?? transaction.id).padStart(4, "0")}.`,
               },
               {
                 status: "Sedang Disiapkan",
@@ -486,7 +502,7 @@ export async function PATCH(request: Request) {
       entity: "Request Pesanan",
       entityId: accepted.request.id,
       title: `Request diterima: ${accepted.request.code}`,
-      description: `${actor.name} menerima request ${accepted.request.code} menjadi TRX-${String(accepted.transaction.id).padStart(4, "0")}.`,
+      description: `${actor.name} menerima request ${accepted.request.code} menjadi TRX-${String(accepted.transaction.trxNumber ?? accepted.transaction.id).padStart(4, "0")}.`,
       actor,
       metadata: {
         transactionId: accepted.transaction.id,

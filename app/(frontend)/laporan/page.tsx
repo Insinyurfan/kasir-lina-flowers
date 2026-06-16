@@ -45,6 +45,7 @@ type TransactionItem = {
 
 type Transaction = {
   id: number;
+  trxNumber?: number | null;
   tanggal: string;
   total_harga: number;
   metode_pembayaran: string;
@@ -417,7 +418,7 @@ export default function LaporanPage() {
       .flatMap((transaction) =>
         (transaction.items || []).map((item) => ({
           tanggal: new Date(transaction.tanggal),
-          trxId: transaction.id,
+          trxId: transaction.trxNumber ?? transaction.id,
           pelanggan: transaction.nama_pembeli || "-",
           kasir: getCashierDisplayName(transaction.nama_kasir),
           produk: item.product.nama_produk,
@@ -435,7 +436,7 @@ export default function LaporanPage() {
     return paidTransactions
       .map((transaction) => ({
         tanggal: new Date(transaction.tanggal),
-        trxId: transaction.id,
+        trxId: transaction.trxNumber ?? transaction.id,
         pelanggan: transaction.nama_pembeli || "-",
         kasir: getCashierDisplayName(transaction.nama_kasir),
         jumlah: (transaction.items || []).reduce((sum, item) => sum + item.jumlah, 0),
@@ -533,7 +534,7 @@ export default function LaporanPage() {
   };
 
   const deleteTransaction = async (transaction: Transaction) => {
-    if (!confirm(`Hapus TRX-${String(transaction.id).padStart(4, "0")}? Data tidak bisa dikembalikan.`)) return;
+    if (!confirm(`Hapus TRX-${String(transaction.trxNumber ?? transaction.id).padStart(4, "0")}? Data tidak bisa dikembalikan.`)) return;
 
     const res = await fetch("/api/transaksi", {
       method: "DELETE",
@@ -1202,7 +1203,7 @@ export default function LaporanPage() {
           <div className="max-h-[88vh] w-full max-w-lg overflow-hidden rounded-3xl bg-white shadow-2xl">
             <div className="flex items-start justify-between gap-4 border-b border-slate-100 bg-slate-50 p-5">
               <div className="min-w-0">
-                <p className="font-mono text-xs font-bold text-pink-500">TRX-{String(detailTransaction.id).padStart(4, "0")}</p>
+                <p className="font-mono text-xs font-bold text-pink-500">TRX-{String(detailTransaction.trxNumber ?? detailTransaction.id).padStart(4, "0")}</p>
                 <h3 className="mt-1 truncate text-lg font-bold text-slate-800">
                   {getCashierDisplayName(detailTransaction.nama_kasir)}
                 </h3>

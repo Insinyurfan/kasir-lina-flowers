@@ -38,6 +38,7 @@ model Product {
 
 model Transaction {
   id                Int               @id @default(autoincrement())
+  trxNumber         Int?              @unique
   tanggal           DateTime          @default(now())
   total_harga       Int
   metode_pembayaran String

@@ -24,6 +24,7 @@ type TransactionItem = {
 
 type Transaction = {
   id: number;
+  trxNumber?: number | null;
   tanggal: string;
   total_harga: number;
   nama_kasir?: string | null;
@@ -74,7 +75,7 @@ export default function ReceiptPage() {
 
     return {
       title,
-      text: `TRX-${String(transaction.id).padStart(4, "0")} ${transaction.nama_pembeli || ""}`.trim(),
+      text: `TRX-${String(transaction.trxNumber ?? transaction.id).padStart(4, "0")} ${transaction.nama_pembeli || ""}`.trim(),
       url: window.location.href,
     };
   }, [title, transaction]);
@@ -135,7 +136,7 @@ export default function ReceiptPage() {
           <div>
             PELANGGAN : <strong>{transaction.nama_pembeli || "-"}</strong>
           </div>
-          <div>NO TRX    : TRX-{String(transaction.id).padStart(4, "0")}</div>
+          <div>NO TRX    : TRX-{String(transaction.trxNumber ?? transaction.id).padStart(4, "0")}</div>
         </div>
 
         <div className="dash" />

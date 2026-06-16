@@ -56,6 +56,18 @@ type NotificationRow = {
 const calculateTotal = (cart: CartItem[]) =>
   cart.reduce((total: number, item: CartItem) => total + Number(item.harga) * Number(item.quantity), 0);
 
+const getNextTrxNumber = async (): Promise<number> => {
+  const transactions = await prisma.transaction.findMany({
+    select: { id: true, trxNumber: true },
+  });
+  const usedNumbers = new Set(
+    transactions.map((t) => (t.trxNumber !== null ? t.trxNumber : t.id))
+  );
+  let next = 1;
+  while (usedNumbers.has(next)) next++;
+  return next;
+};
+
 const mapCartToItems = (cart: CartItem[]) =>
   cart.map((item: CartItem) => ({
     productId: Number(item.id),
@@ -126,12 +138,13 @@ const attachNotifications = async <T extends { id: number }>(transactions: T[]) 
 
 const createNewOrderNotifications = async (transaction: {
   id: number;
+  trxNumber?: number | null;
   nama_pembeli?: string | null;
   nama_kasir?: string | null;
   senderRole?: string | null;
   senderName?: string | null;
 }) => {
-  const trxNumber = `TRX-${String(transaction.id).padStart(4, "0")}`;
+  const trxNumber = `TRX-${String(transaction.trxNumber ?? transaction.id).padStart(4, "0")}`;
   const message = `Orderan baru ${trxNumber} - ${transaction.nama_pembeli || "Tanpa nama"}`;
   const senderRole = transaction.senderRole || "Kasir";
   const senderName = transaction.senderName || transaction.nama_kasir || null;
@@ -222,9 +235,11 @@ export async function POST(request: Request) {
 
     const total_harga = calculateTotal(cart || []);
 
+    const nextTrxNumber = await getNextTrxNumber();
     const newTransaction = await prisma.transaction.create({
       data: {
         ...(tanggal ? { tanggal: new Date(tanggal) } : {}),
+        trxNumber: nextTrxNumber,
         total_harga,
         metode_pembayaran: metode_pembayaran || "Tunai",
         nama_pembeli,
@@ -254,7 +269,7 @@ export async function POST(request: Request) {
       action: "TAMBAH",
       entity: "Transaksi",
       entityId: newTransaction.id,
-      title: `Transaksi ditambahkan: TRX-${String(newTransaction.id).padStart(4, "0")}`,
+      title: `Transaksi ditambahkan: TRX-${String(newTransaction.trxNumber ?? newTransaction.id).padStart(4, "0")}`,
       description: `${actor.name} menambahkan transaksi untuk ${newTransaction.nama_pembeli || "Tanpa nama"} sebesar Rp ${newTransaction.total_harga.toLocaleString("id-ID")}.`,
       actor,
       metadata: {
@@ -331,8 +346,8 @@ export async function PATCH(request: Request) {
       action: "UPDATE",
       entity: "Transaksi",
       entityId: updated.id,
-      title: `Transaksi diperbarui: TRX-${String(updated.id).padStart(4, "0")}`,
-      description: `${actor.name} memperbarui transaksi TRX-${String(updated.id).padStart(4, "0")}.`,
+      title: `Transaksi diperbarui: TRX-${String(updated.trxNumber ?? updated.id).padStart(4, "0")}`,
+      description: `${actor.name} memperbarui transaksi TRX-${String(updated.trxNumber ?? updated.id).padStart(4, "0")}.`,
       actor,
       metadata: {
         sebelum: before
@@ -378,8 +393,8 @@ export async function DELETE(request: Request) {
       action: "HAPUS",
       entity: "Transaksi",
       entityId: id,
-      title: `Transaksi dihapus: TRX-${String(id).padStart(4, "0")}`,
-      description: `${actor.name} menghapus transaksi TRX-${String(id).padStart(4, "0")}.`,
+      title: `Transaksi dihapus: TRX-${String(transaction?.trxNumber ?? id).padStart(4, "0")}`,
+      description: `${actor.name} menghapus transaksi TRX-${String(transaction?.trxNumber ?? id).padStart(4, "0")}.`,
       actor,
       metadata: transaction
         ? {

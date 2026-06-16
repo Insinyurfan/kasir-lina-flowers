@@ -134,7 +134,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Notifikasi untuk status ini sudah pernah dikirim." }, { status: 409 });
     }
 
-    const trxNumber = `TRX-${String(transaction.id).padStart(4, "0")}`;
+    const trxNumber = `TRX-${String(transaction.trxNumber ?? transaction.id).padStart(4, "0")}`;
     const baseMessage = statusMessages[statusPengiriman] || "Ada update orderan.";
     const message = `${baseMessage} ${trxNumber} - ${transaction.nama_pembeli || "Tanpa nama"}`;
 

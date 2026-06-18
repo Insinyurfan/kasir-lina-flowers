@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
-import { Flower2, Search, LogIn, X } from "lucide-react";
+import { Flower2, Search, LogIn, X, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 
 type Product = {
   id: number;
@@ -22,6 +22,7 @@ export default function KatalogPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [storeInfo, setStoreInfo] = useState<StoreInfo>({ brand: "Lina Flowers", logo: null });
   const [search, setSearch] = useState("");
+  const [sortBy, setSortBy] = useState<"name-asc" | "name-desc" | "newest" | "oldest">("name-asc");
   const [isLoading, setIsLoading] = useState(true);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
@@ -43,9 +44,15 @@ export default function KatalogPage() {
 
   const filtered = useMemo(() => {
     const kw = search.trim().toLowerCase();
-    if (!kw) return products;
-    return products.filter((p) => p.nama_produk.toLowerCase().includes(kw));
-  }, [products, search]);
+    let list = kw ? products.filter((p) => p.nama_produk.toLowerCase().includes(kw)) : [...products];
+    switch (sortBy) {
+      case "name-asc": list.sort((a, b) => a.nama_produk.localeCompare(b.nama_produk, "id")); break;
+      case "name-desc": list.sort((a, b) => b.nama_produk.localeCompare(a.nama_produk, "id")); break;
+      case "newest": list.sort((a, b) => b.id - a.id); break;
+      case "oldest": list.sort((a, b) => a.id - b.id); break;
+    }
+    return list;
+  }, [products, search, sortBy]);
 
   return (
     <div className="min-h-screen bg-pink-50 flex flex-col">
@@ -101,6 +108,33 @@ export default function KatalogPage() {
               <X size={16} />
             </button>
           )}
+        </div>
+
+        {/* SORT */}
+        <div className="flex items-center gap-2 mb-5 flex-wrap">
+          <span className="text-xs text-slate-400 font-semibold shrink-0">Urutkan:</span>
+          {(
+            [
+              { key: "name-asc", label: "A → Z", icon: <ArrowUp size={11} /> },
+              { key: "name-desc", label: "Z → A", icon: <ArrowDown size={11} /> },
+              { key: "newest", label: "Terbaru", icon: null },
+              { key: "oldest", label: "Terlama", icon: null },
+            ] as const
+          ).map(({ key, label, icon }) => (
+            <button
+              key={key}
+              type="button"
+              onClick={() => setSortBy(key)}
+              className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
+                sortBy === key
+                  ? "bg-pink-600 text-white shadow-sm shadow-pink-200"
+                  : "bg-white border border-pink-100 text-slate-500 hover:border-pink-300 hover:text-pink-600"
+              }`}
+            >
+              {icon}
+              {label}
+            </button>
+          ))}
         </div>
 
         {/* GRID PRODUK */}
@@ -166,7 +200,7 @@ export default function KatalogPage() {
 
       {/* FOOTER */}
       <footer className="border-t border-pink-100 bg-white py-5 text-center">
-        <p className="text-xs text-slate-400">© {storeInfo.brand} · Semua hak dilindungi</p>
+        <p className="text-xs text-slate-400">© {storeInfo.brand} · Copyright 2026</p>
       </footer>
 
       {/* MODAL ZOOM FOTO */}

@@ -1,8 +1,8 @@
 "use client";
 /* eslint-disable @next/next/no-img-element */
 
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Package, Plus, Edit, Trash2, X, Search, Camera, Flower2, ShoppingCart, Minus, MessageCircle, Archive, RotateCcw } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Package, Plus, Edit, Trash2, X, Search, Camera, Flower2, ShoppingCart, Minus, MessageCircle, Archive, RotateCcw, ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
 import Barcode from "react-barcode";
 import { getSavedUserSession } from "@/lib/userSession";
 import { compressProductImage } from "@/lib/compressProductImage";
@@ -48,6 +48,8 @@ export default function ManajemenProdukPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [search, setSearch] = useState("");
+  const [sortField, setSortField] = useState<"nama_produk" | "harga">("nama_produk");
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
   const [guestCart, setGuestCart] = useState<GuestCartItem[]>([]);
   const [isGuestCartOpen, setIsGuestCartOpen] = useState(false);
   const [isGuestCartLoaded, setIsGuestCartLoaded] = useState(false);
@@ -380,14 +382,41 @@ export default function ManajemenProdukPage() {
     window.open(`https://wa.me/${WHATSAPP_ORDER_NUMBER}?text=${encodeURIComponent(message)}`, "_blank", "noopener,noreferrer");
   };
 
-  const filteredProduk = produkList.filter(p =>
-    p.nama_produk.toLowerCase().includes(search.toLowerCase()) ||
-    (p.barcode && p.barcode.toLowerCase().includes(search.toLowerCase()))
+  const toggleSort = (field: "nama_produk" | "harga") => {
+    if (sortField === field) {
+      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+    } else {
+      setSortField(field);
+      setSortDir("asc");
+    }
+  };
+
+  const sortList = <T extends { nama_produk: string; harga: number }>(list: T[]): T[] => {
+    return [...list].sort((a, b) =>
+      sortField === "harga"
+        ? sortDir === "asc" ? a.harga - b.harga : b.harga - a.harga
+        : sortDir === "asc"
+          ? a.nama_produk.localeCompare(b.nama_produk, "id")
+          : b.nama_produk.localeCompare(a.nama_produk, "id")
+    );
+  };
+
+  const filteredProduk = useMemo(() =>
+    sortList(produkList.filter(p =>
+      p.nama_produk.toLowerCase().includes(search.toLowerCase()) ||
+      (p.barcode && p.barcode.toLowerCase().includes(search.toLowerCase()))
+    )),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [produkList, search, sortField, sortDir]
   );
 
-  const filteredArsip = arsipList.filter(p =>
-    p.nama_produk.toLowerCase().includes(search.toLowerCase()) ||
-    (p.barcode && p.barcode.toLowerCase().includes(search.toLowerCase()))
+  const filteredArsip = useMemo(() =>
+    sortList(arsipList.filter(p =>
+      p.nama_produk.toLowerCase().includes(search.toLowerCase()) ||
+      (p.barcode && p.barcode.toLowerCase().includes(search.toLowerCase()))
+    )),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [arsipList, search, sortField, sortDir]
   );
 
   return (
@@ -603,6 +632,35 @@ export default function ManajemenProdukPage() {
 
           {!showArsip ? (
             <>
+              {/* SORT BAR MOBILE */}
+              <div className="md:hidden flex items-center gap-2 mb-4 flex-wrap">
+                <span className="text-xs text-slate-400 font-semibold shrink-0">Urutkan:</span>
+                {(
+                  [
+                    { field: "nama_produk" as const, label: "Nama" },
+                    { field: "harga" as const, label: "Harga" },
+                  ]
+                ).map(({ field, label }) => (
+                  <button
+                    key={field}
+                    type="button"
+                    onClick={() => toggleSort(field)}
+                    className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
+                      sortField === field
+                        ? "bg-pink-600 text-white shadow-sm"
+                        : "bg-white border border-pink-100 text-slate-500 hover:border-pink-300"
+                    }`}
+                  >
+                    {label}
+                    {sortField === field ? (
+                      sortDir === "asc" ? <ArrowUp size={11} /> : <ArrowDown size={11} />
+                    ) : (
+                      <ArrowUpDown size={11} className="opacity-40" />
+                    )}
+                  </button>
+                ))}
+              </div>
+
               {/* CARD PRODUK MOBILE */}
               <div className="md:hidden space-y-3">
                 {filteredProduk.length === 0 && !isLoading ? (
@@ -676,8 +734,32 @@ export default function ManajemenProdukPage() {
                   <thead className="bg-pink-50 text-pink-900 text-sm border-b border-pink-100">
                     <tr>
                       <th className="p-4 font-semibold w-20 text-center">Foto</th>
-                      <th className="p-4 font-semibold">Nama Produk</th>
-                      <th className="p-4 font-semibold">Harga</th>
+                      <th
+                        className="p-4 font-semibold cursor-pointer select-none hover:bg-pink-100 transition-colors"
+                        onClick={() => toggleSort("nama_produk")}
+                      >
+                        <span className="flex items-center gap-1.5">
+                          Nama Produk
+                          {sortField === "nama_produk" ? (
+                            sortDir === "asc" ? <ArrowUp size={13} className="text-pink-500" /> : <ArrowDown size={13} className="text-pink-500" />
+                          ) : (
+                            <ArrowUpDown size={13} className="text-slate-300" />
+                          )}
+                        </span>
+                      </th>
+                      <th
+                        className="p-4 font-semibold cursor-pointer select-none hover:bg-pink-100 transition-colors"
+                        onClick={() => toggleSort("harga")}
+                      >
+                        <span className="flex items-center gap-1.5">
+                          Harga
+                          {sortField === "harga" ? (
+                            sortDir === "asc" ? <ArrowUp size={13} className="text-pink-500" /> : <ArrowDown size={13} className="text-pink-500" />
+                          ) : (
+                            <ArrowUpDown size={13} className="text-slate-300" />
+                          )}
+                        </span>
+                      </th>
                       <th className="p-4 font-semibold">Stok</th>
                       <th className="p-4 font-semibold text-center">Barcode</th>
                       <th className="p-4 font-semibold text-center">Aksi</th>

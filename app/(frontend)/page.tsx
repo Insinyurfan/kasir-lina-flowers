@@ -42,16 +42,33 @@ export default function KatalogPage() {
       .finally(() => setIsLoading(false));
   }, []);
 
+  const naturalCompare = (a: string, b: string): number => {
+    const re = /(\d+)/g;
+    const ax = a.split(re);
+    const bx = b.split(re);
+    for (let i = 0; i < Math.max(ax.length, bx.length); i++) {
+      const ac = ax[i] ?? "";
+      const bc = bx[i] ?? "";
+      if (ac === bc) continue;
+      const an = parseInt(ac, 10);
+      const bn = parseInt(bc, 10);
+      if (!isNaN(an) && !isNaN(bn)) return an - bn;
+      return ac.localeCompare(bc, "id");
+    }
+    return 0;
+  };
+
   const filtered = useMemo(() => {
     const kw = search.trim().toLowerCase();
     let list = kw ? products.filter((p) => p.nama_produk.toLowerCase().includes(kw)) : [...products];
     switch (sortBy) {
-      case "name-asc": list.sort((a, b) => a.nama_produk.localeCompare(b.nama_produk, "id", { numeric: true })); break;
-      case "name-desc": list.sort((a, b) => b.nama_produk.localeCompare(a.nama_produk, "id", { numeric: true })); break;
+      case "name-asc": list.sort((a, b) => naturalCompare(a.nama_produk, b.nama_produk)); break;
+      case "name-desc": list.sort((a, b) => naturalCompare(b.nama_produk, a.nama_produk)); break;
       case "newest": list.sort((a, b) => b.id - a.id); break;
       case "oldest": list.sort((a, b) => a.id - b.id); break;
     }
     return list;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [products, search, sortBy]);
 
   return (

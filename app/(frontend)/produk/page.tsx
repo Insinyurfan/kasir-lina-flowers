@@ -391,13 +391,29 @@ export default function ManajemenProdukPage() {
     }
   };
 
+  const naturalCompare = (a: string, b: string): number => {
+    const re = /(\d+)/g;
+    const ax = a.split(re);
+    const bx = b.split(re);
+    for (let i = 0; i < Math.max(ax.length, bx.length); i++) {
+      const ac = ax[i] ?? "";
+      const bc = bx[i] ?? "";
+      if (ac === bc) continue;
+      const an = parseInt(ac, 10);
+      const bn = parseInt(bc, 10);
+      if (!isNaN(an) && !isNaN(bn)) return an - bn;
+      return ac.localeCompare(bc, "id");
+    }
+    return 0;
+  };
+
   const sortList = <T extends { nama_produk: string; harga: number }>(list: T[]): T[] => {
     return [...list].sort((a, b) =>
       sortField === "harga"
         ? sortDir === "asc" ? a.harga - b.harga : b.harga - a.harga
         : sortDir === "asc"
-          ? a.nama_produk.localeCompare(b.nama_produk, "id", { numeric: true })
-          : b.nama_produk.localeCompare(a.nama_produk, "id", { numeric: true })
+          ? naturalCompare(a.nama_produk, b.nama_produk)
+          : naturalCompare(b.nama_produk, a.nama_produk)
     );
   };
 

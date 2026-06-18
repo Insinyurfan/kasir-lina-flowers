@@ -396,8 +396,8 @@ export default function ManajemenProdukPage() {
       sortField === "harga"
         ? sortDir === "asc" ? a.harga - b.harga : b.harga - a.harga
         : sortDir === "asc"
-          ? a.nama_produk.localeCompare(b.nama_produk, "id")
-          : b.nama_produk.localeCompare(a.nama_produk, "id")
+          ? a.nama_produk.localeCompare(b.nama_produk, "id", { numeric: true })
+          : b.nama_produk.localeCompare(a.nama_produk, "id", { numeric: true })
     );
   };
 

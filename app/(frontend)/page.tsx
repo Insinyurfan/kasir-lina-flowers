@@ -46,8 +46,8 @@ export default function KatalogPage() {
     const kw = search.trim().toLowerCase();
     let list = kw ? products.filter((p) => p.nama_produk.toLowerCase().includes(kw)) : [...products];
     switch (sortBy) {
-      case "name-asc": list.sort((a, b) => a.nama_produk.localeCompare(b.nama_produk, "id")); break;
-      case "name-desc": list.sort((a, b) => b.nama_produk.localeCompare(a.nama_produk, "id")); break;
+      case "name-asc": list.sort((a, b) => a.nama_produk.localeCompare(b.nama_produk, "id", { numeric: true })); break;
+      case "name-desc": list.sort((a, b) => b.nama_produk.localeCompare(a.nama_produk, "id", { numeric: true })); break;
       case "newest": list.sort((a, b) => b.id - a.id); break;
       case "oldest": list.sort((a, b) => a.id - b.id); break;
     }

@@ -5672,6 +5672,7 @@ export namespace Prisma {
     productId: number | null
     jumlah: number | null
     subtotal: number | null
+    satuanHarga: string | null
   }
 
   export type TransactionItemMaxAggregateOutputType = {
@@ -5680,6 +5681,7 @@ export namespace Prisma {
     productId: number | null
     jumlah: number | null
     subtotal: number | null
+    satuanHarga: string | null
   }
 
   export type TransactionItemCountAggregateOutputType = {
@@ -5688,6 +5690,7 @@ export namespace Prisma {
     productId: number
     jumlah: number
     subtotal: number
+    satuanHarga: number
     _all: number
   }
 
@@ -5714,6 +5717,7 @@ export namespace Prisma {
     productId?: true
     jumlah?: true
     subtotal?: true
+    satuanHarga?: true
   }
 
   export type TransactionItemMaxAggregateInputType = {
@@ -5722,6 +5726,7 @@ export namespace Prisma {
     productId?: true
     jumlah?: true
     subtotal?: true
+    satuanHarga?: true
   }
 
   export type TransactionItemCountAggregateInputType = {
@@ -5730,6 +5735,7 @@ export namespace Prisma {
     productId?: true
     jumlah?: true
     subtotal?: true
+    satuanHarga?: true
     _all?: true
   }
 
@@ -5825,6 +5831,7 @@ export namespace Prisma {
     productId: number
     jumlah: number
     subtotal: number
+    satuanHarga: string
     _count: TransactionItemCountAggregateOutputType | null
     _avg: TransactionItemAvgAggregateOutputType | null
     _sum: TransactionItemSumAggregateOutputType | null
@@ -5852,6 +5859,7 @@ export namespace Prisma {
     productId?: boolean
     jumlah?: boolean
     subtotal?: boolean
+    satuanHarga?: boolean
     transaction?: boolean | TransactionDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["transactionItem"]>
@@ -5862,6 +5870,7 @@ export namespace Prisma {
     productId?: boolean
     jumlah?: boolean
     subtotal?: boolean
+    satuanHarga?: boolean
     transaction?: boolean | TransactionDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["transactionItem"]>
@@ -5872,6 +5881,7 @@ export namespace Prisma {
     productId?: boolean
     jumlah?: boolean
     subtotal?: boolean
+    satuanHarga?: boolean
     transaction?: boolean | TransactionDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["transactionItem"]>
@@ -5882,9 +5892,10 @@ export namespace Prisma {
     productId?: boolean
     jumlah?: boolean
     subtotal?: boolean
+    satuanHarga?: boolean
   }
 
-  export type TransactionItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "transactionId" | "productId" | "jumlah" | "subtotal", ExtArgs["result"]["transactionItem"]>
+  export type TransactionItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "transactionId" | "productId" | "jumlah" | "subtotal" | "satuanHarga", ExtArgs["result"]["transactionItem"]>
   export type TransactionItemInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     transaction?: boolean | TransactionDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
@@ -5910,6 +5921,7 @@ export namespace Prisma {
       productId: number
       jumlah: number
       subtotal: number
+      satuanHarga: string
     }, ExtArgs["result"]["transactionItem"]>
     composites: {}
   }
@@ -6340,6 +6352,7 @@ export namespace Prisma {
     readonly productId: FieldRef<"TransactionItem", 'Int'>
     readonly jumlah: FieldRef<"TransactionItem", 'Int'>
     readonly subtotal: FieldRef<"TransactionItem", 'Int'>
+    readonly satuanHarga: FieldRef<"TransactionItem", 'String'>
   }
     
 
@@ -15950,7 +15963,8 @@ export namespace Prisma {
     transactionId: 'transactionId',
     productId: 'productId',
     jumlah: 'jumlah',
-    subtotal: 'subtotal'
+    subtotal: 'subtotal',
+    satuanHarga: 'satuanHarga'
   };
 
   export type TransactionItemScalarFieldEnum = (typeof TransactionItemScalarFieldEnum)[keyof typeof TransactionItemScalarFieldEnum]
@@ -16442,6 +16456,7 @@ export namespace Prisma {
     productId?: IntFilter<"TransactionItem"> | number
     jumlah?: IntFilter<"TransactionItem"> | number
     subtotal?: IntFilter<"TransactionItem"> | number
+    satuanHarga?: StringFilter<"TransactionItem"> | string
     transaction?: XOR<TransactionScalarRelationFilter, TransactionWhereInput>
     product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
   }
@@ -16452,6 +16467,7 @@ export namespace Prisma {
     productId?: SortOrder
     jumlah?: SortOrder
     subtotal?: SortOrder
+    satuanHarga?: SortOrder
     transaction?: TransactionOrderByWithRelationInput
     product?: ProductOrderByWithRelationInput
   }
@@ -16465,6 +16481,7 @@ export namespace Prisma {
     productId?: IntFilter<"TransactionItem"> | number
     jumlah?: IntFilter<"TransactionItem"> | number
     subtotal?: IntFilter<"TransactionItem"> | number
+    satuanHarga?: StringFilter<"TransactionItem"> | string
     transaction?: XOR<TransactionScalarRelationFilter, TransactionWhereInput>
     product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
   }, "id">
@@ -16475,6 +16492,7 @@ export namespace Prisma {
     productId?: SortOrder
     jumlah?: SortOrder
     subtotal?: SortOrder
+    satuanHarga?: SortOrder
     _count?: TransactionItemCountOrderByAggregateInput
     _avg?: TransactionItemAvgOrderByAggregateInput
     _max?: TransactionItemMaxOrderByAggregateInput
@@ -16491,6 +16509,7 @@ export namespace Prisma {
     productId?: IntWithAggregatesFilter<"TransactionItem"> | number
     jumlah?: IntWithAggregatesFilter<"TransactionItem"> | number
     subtotal?: IntWithAggregatesFilter<"TransactionItem"> | number
+    satuanHarga?: StringWithAggregatesFilter<"TransactionItem"> | string
   }
 
   export type StoreSettingWhereInput = {
@@ -17353,6 +17372,7 @@ export namespace Prisma {
   export type TransactionItemCreateInput = {
     jumlah: number
     subtotal: number
+    satuanHarga?: string
     transaction: TransactionCreateNestedOneWithoutItemsInput
     product: ProductCreateNestedOneWithoutTransactionItemsInput
   }
@@ -17363,11 +17383,13 @@ export namespace Prisma {
     productId: number
     jumlah: number
     subtotal: number
+    satuanHarga?: string
   }
 
   export type TransactionItemUpdateInput = {
     jumlah?: IntFieldUpdateOperationsInput | number
     subtotal?: IntFieldUpdateOperationsInput | number
+    satuanHarga?: StringFieldUpdateOperationsInput | string
     transaction?: TransactionUpdateOneRequiredWithoutItemsNestedInput
     product?: ProductUpdateOneRequiredWithoutTransactionItemsNestedInput
   }
@@ -17378,6 +17400,7 @@ export namespace Prisma {
     productId?: IntFieldUpdateOperationsInput | number
     jumlah?: IntFieldUpdateOperationsInput | number
     subtotal?: IntFieldUpdateOperationsInput | number
+    satuanHarga?: StringFieldUpdateOperationsInput | string
   }
 
   export type TransactionItemCreateManyInput = {
@@ -17386,11 +17409,13 @@ export namespace Prisma {
     productId: number
     jumlah: number
     subtotal: number
+    satuanHarga?: string
   }
 
   export type TransactionItemUpdateManyMutationInput = {
     jumlah?: IntFieldUpdateOperationsInput | number
     subtotal?: IntFieldUpdateOperationsInput | number
+    satuanHarga?: StringFieldUpdateOperationsInput | string
   }
 
   export type TransactionItemUncheckedUpdateManyInput = {
@@ -17399,6 +17424,7 @@ export namespace Prisma {
     productId?: IntFieldUpdateOperationsInput | number
     jumlah?: IntFieldUpdateOperationsInput | number
     subtotal?: IntFieldUpdateOperationsInput | number
+    satuanHarga?: StringFieldUpdateOperationsInput | string
   }
 
   export type StoreSettingCreateInput = {
@@ -18382,6 +18408,7 @@ export namespace Prisma {
     productId?: SortOrder
     jumlah?: SortOrder
     subtotal?: SortOrder
+    satuanHarga?: SortOrder
   }
 
   export type TransactionItemAvgOrderByAggregateInput = {
@@ -18398,6 +18425,7 @@ export namespace Prisma {
     productId?: SortOrder
     jumlah?: SortOrder
     subtotal?: SortOrder
+    satuanHarga?: SortOrder
   }
 
   export type TransactionItemMinOrderByAggregateInput = {
@@ -18406,6 +18434,7 @@ export namespace Prisma {
     productId?: SortOrder
     jumlah?: SortOrder
     subtotal?: SortOrder
+    satuanHarga?: SortOrder
   }
 
   export type TransactionItemSumOrderByAggregateInput = {
@@ -19720,6 +19749,7 @@ export namespace Prisma {
   export type TransactionItemCreateWithoutProductInput = {
     jumlah: number
     subtotal: number
+    satuanHarga?: string
     transaction: TransactionCreateNestedOneWithoutItemsInput
   }
 
@@ -19728,6 +19758,7 @@ export namespace Prisma {
     transactionId: number
     jumlah: number
     subtotal: number
+    satuanHarga?: string
   }
 
   export type TransactionItemCreateOrConnectWithoutProductInput = {
@@ -19821,6 +19852,7 @@ export namespace Prisma {
     productId?: IntFilter<"TransactionItem"> | number
     jumlah?: IntFilter<"TransactionItem"> | number
     subtotal?: IntFilter<"TransactionItem"> | number
+    satuanHarga?: StringFilter<"TransactionItem"> | string
   }
 
   export type UserCartItemUpsertWithWhereUniqueWithoutProductInput = {
@@ -19885,6 +19917,7 @@ export namespace Prisma {
   export type TransactionItemCreateWithoutTransactionInput = {
     jumlah: number
     subtotal: number
+    satuanHarga?: string
     product: ProductCreateNestedOneWithoutTransactionItemsInput
   }
 
@@ -19893,6 +19926,7 @@ export namespace Prisma {
     productId: number
     jumlah: number
     subtotal: number
+    satuanHarga?: string
   }
 
   export type TransactionItemCreateOrConnectWithoutTransactionInput = {
@@ -20932,6 +20966,7 @@ export namespace Prisma {
     transactionId: number
     jumlah: number
     subtotal: number
+    satuanHarga?: string
   }
 
   export type UserCartItemCreateManyProductInput = {
@@ -20956,6 +20991,7 @@ export namespace Prisma {
   export type TransactionItemUpdateWithoutProductInput = {
     jumlah?: IntFieldUpdateOperationsInput | number
     subtotal?: IntFieldUpdateOperationsInput | number
+    satuanHarga?: StringFieldUpdateOperationsInput | string
     transaction?: TransactionUpdateOneRequiredWithoutItemsNestedInput
   }
 
@@ -20964,6 +21000,7 @@ export namespace Prisma {
     transactionId?: IntFieldUpdateOperationsInput | number
     jumlah?: IntFieldUpdateOperationsInput | number
     subtotal?: IntFieldUpdateOperationsInput | number
+    satuanHarga?: StringFieldUpdateOperationsInput | string
   }
 
   export type TransactionItemUncheckedUpdateManyWithoutProductInput = {
@@ -20971,6 +21008,7 @@ export namespace Prisma {
     transactionId?: IntFieldUpdateOperationsInput | number
     jumlah?: IntFieldUpdateOperationsInput | number
     subtotal?: IntFieldUpdateOperationsInput | number
+    satuanHarga?: StringFieldUpdateOperationsInput | string
   }
 
   export type UserCartItemUpdateWithoutProductInput = {
@@ -21033,6 +21071,7 @@ export namespace Prisma {
     productId: number
     jumlah: number
     subtotal: number
+    satuanHarga?: string
   }
 
   export type NotificationCreateManyTransactionInput = {
@@ -21050,6 +21089,7 @@ export namespace Prisma {
   export type TransactionItemUpdateWithoutTransactionInput = {
     jumlah?: IntFieldUpdateOperationsInput | number
     subtotal?: IntFieldUpdateOperationsInput | number
+    satuanHarga?: StringFieldUpdateOperationsInput | string
     product?: ProductUpdateOneRequiredWithoutTransactionItemsNestedInput
   }
 
@@ -21058,6 +21098,7 @@ export namespace Prisma {
     productId?: IntFieldUpdateOperationsInput | number
     jumlah?: IntFieldUpdateOperationsInput | number
     subtotal?: IntFieldUpdateOperationsInput | number
+    satuanHarga?: StringFieldUpdateOperationsInput | string
   }
 
   export type TransactionItemUncheckedUpdateManyWithoutTransactionInput = {
@@ -21065,6 +21106,7 @@ export namespace Prisma {
     productId?: IntFieldUpdateOperationsInput | number
     jumlah?: IntFieldUpdateOperationsInput | number
     subtotal?: IntFieldUpdateOperationsInput | number
+    satuanHarga?: StringFieldUpdateOperationsInput | string
   }
 
   export type NotificationUpdateWithoutTransactionInput = {

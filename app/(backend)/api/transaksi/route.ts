@@ -24,6 +24,7 @@ type CartItem = {
   id: number | string;
   harga: number | string;
   quantity: number | string;
+  satuanPesan?: string;
 };
 
 type TransactionPayload = {
@@ -73,6 +74,7 @@ const mapCartToItems = (cart: CartItem[]) =>
     productId: Number(item.id),
     jumlah: Number(item.quantity),
     subtotal: Number(item.harga) * Number(item.quantity),
+    satuanHarga: item.satuanPesan || "pcs",
   }));
 
 const getNotificationTargetRoles = async () => {
@@ -98,6 +100,7 @@ const transactionInclude = (includeProductImage = false) => ({
           id: true,
           nama_produk: true,
           harga: true,
+          satuanHarga: true,
           ...(includeProductImage ? { gambar: true } : {}),
         },
       },

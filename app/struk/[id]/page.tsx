@@ -13,10 +13,13 @@ type StoreInfo = {
   receiptLogo?: string | null;
 };
 
+const SATUAN_LABELS: Record<string, string> = { pcs: "Pcs", lusin: "Lusin", gross: "Gross" };
+
 type TransactionItem = {
   id: number;
   jumlah: number;
   subtotal: number;
+  satuanHarga?: string;
   product: {
     nama_produk: string;
   };
@@ -145,12 +148,16 @@ export default function ReceiptPage() {
           {transaction.items.map((item) => {
             const unitPrice = item.jumlah > 0 ? item.subtotal / item.jumlah : 0;
 
+            const satuanLabel = SATUAN_LABELS[item.satuanHarga || "pcs"] ?? "Pcs";
+
             return (
               <div key={item.id} className="item">
                 <div className="product-name">{item.product.nama_produk}</div>
                 <div className="row receipt-row">
                   <span>
-                    {item.jumlah} x {receiptType === "struk" ? unitPrice.toLocaleString("id-ID") : "Pcs"}
+                    {receiptType === "struk"
+                      ? `${item.jumlah} ${satuanLabel} x ${unitPrice.toLocaleString("id-ID")}`
+                      : `${item.jumlah} ${satuanLabel}`}
                   </span>
                   {receiptType === "struk" && <span className="receipt-amount">{formatCurrency(item.subtotal)}</span>}
                 </div>

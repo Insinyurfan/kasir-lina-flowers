@@ -33,10 +33,13 @@ type StoreInfo = {
   receiptLogo: string;
 };
 
+const SATUAN_LABELS: Record<string, string> = { pcs: "Pcs", lusin: "Lusin", gross: "Gross" };
+
 type OrderItem = {
   id: number;
   jumlah: number;
   subtotal: number;
+  satuanHarga?: string;
   product: {
     nama_produk: string;
     gambar?: string | null;
@@ -145,12 +148,15 @@ export default function OrderStatusPage() {
     const transactionDate = new Date(order.tanggal);
     const itemRows = (order.items || [])
       .map(
-        (item) => `
+        (item) => {
+          const satuanLabel = SATUAN_LABELS[item.satuanHarga || "pcs"] ?? "Pcs";
+          return `
       <tr>
         <td>${escapeHtml(item.product?.nama_produk || "-")}</td>
-        <td class="qty">${item.jumlah} Pcs</td>
+        <td class="qty">${item.jumlah} ${satuanLabel}</td>
         <td class="money">Rp ${Number(item.subtotal || 0).toLocaleString("id-ID")}</td>
-      </tr>`
+      </tr>`;
+        }
       )
       .join("");
 

@@ -60,6 +60,7 @@ model TransactionItem {
   product       Product     @relation(fields: [productId], references: [id])
   jumlah        Int
   subtotal      Int
+  satuanHarga   String      @default("pcs")
 }
 
 model StoreSetting {

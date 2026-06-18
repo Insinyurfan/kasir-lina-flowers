@@ -30,10 +30,13 @@ type StoreSettingResponse = Partial<StoreInfo> & {
   detail?: string;
 };
 type PrintDocumentType = "nota" | "surat-jalan";
+const SATUAN_LABELS: Record<string, string> = { pcs: "Pcs", lusin: "Lusin", gross: "Gross" };
+
 type PrintTransactionItem = {
   id?: number;
   jumlah: number;
   subtotal: number;
+  satuanHarga?: string | null;
   product?: {
     nama_produk?: string | null;
   } | null;
@@ -661,13 +664,19 @@ export default function RiwayatPenjualanPage() {
     drawDashedLine(ctx, y, width, margin);
     y += isThermal ? 16 : 24;
 
-    (selectedTrx.items || []).forEach((item: { jumlah: number; subtotal: number; product: { nama_produk: string } }) => {
+    (selectedTrx.items || []).forEach((item: { jumlah: number; subtotal: number; satuanHarga?: string | null; product: { nama_produk: string } }) => {
       ctx.font = `bold ${bodyFont}px 'Courier New', monospace`;
       y = wrapCanvasText(ctx, String(item.product.nama_produk || "").toUpperCase(), margin, y, contentWidth, bodyLineHeight);
 
       ctx.font = `${bodyFont}px 'Courier New', monospace`;
       const unitPrice = item.jumlah > 0 ? item.subtotal / item.jumlah : 0;
-      ctx.fillText(`${item.jumlah} x ${printType === "struk" ? unitPrice.toLocaleString("id-ID") : "Pcs"}`, margin, y + 2);
+      const satuanLabel = SATUAN_LABELS[item.satuanHarga || "pcs"] ?? "Pcs";
+      ctx.fillText(
+        printType === "struk"
+          ? `${item.jumlah} ${satuanLabel} x ${unitPrice.toLocaleString("id-ID")}`
+          : `${item.jumlah} ${satuanLabel}`,
+        margin, y + 2
+      );
 
       if (printType === "struk") {
         ctx.textAlign = "right";
@@ -868,7 +877,7 @@ export default function RiwayatPenjualanPage() {
       ctx.fillStyle = "#64748b";
       ctx.font = "16px Arial, sans-serif";
       ctx.textAlign = "center";
-      ctx.fillText(`${item.jumlah} Pcs`, MARGIN + PROD_W + QTY_W / 2, y + 16);
+      ctx.fillText(`${item.jumlah} ${SATUAN_LABELS[item.satuanHarga || "pcs"] ?? "Pcs"}`, MARGIN + PROD_W + QTY_W / 2, y + 16);
 
       if (isNota) {
         ctx.fillStyle = "#334155";

@@ -2033,20 +2033,22 @@ export default function RiwayatPenjualanPage() {
 
                     <div style={{ borderTop: "1.5px dashed #000", margin: "12px 0" }}></div>
                     <div className="space-y-3">
-                      {selectedTrx.items.map((item: { id: number; jumlah: number; subtotal: number; product: { nama_produk: string } }) => (
-                        <div key={item.id}>
-                          <div className="font-bold uppercase">{item.product.nama_produk}</div>
-                          <div className="receipt-row flex justify-between mt-0.5">
-                            <span>
-                              {item.jumlah} x{" "}
-                              {printType === "struk"
-                                ? (item.subtotal / item.jumlah).toLocaleString("id-ID")
-                                : "Pcs"}
-                            </span>
-                            {printType === "struk" && <span className="receipt-amount">Rp {item.subtotal.toLocaleString("id-ID")}</span>}
+                      {selectedTrx.items.map((item: { id: number; jumlah: number; subtotal: number; satuanHarga?: string | null; product: { nama_produk: string } }) => {
+                        const satuanLabel = SATUAN_LABELS[item.satuanHarga || "pcs"] ?? "Pcs";
+                        return (
+                          <div key={item.id}>
+                            <div className="font-bold uppercase">{item.product.nama_produk}</div>
+                            <div className="receipt-row flex justify-between mt-0.5">
+                              <span>
+                                {printType === "struk"
+                                  ? `${item.jumlah} ${satuanLabel} x ${(item.subtotal / item.jumlah).toLocaleString("id-ID")}`
+                                  : `${item.jumlah} ${satuanLabel}`}
+                              </span>
+                              {printType === "struk" && <span className="receipt-amount">Rp {item.subtotal.toLocaleString("id-ID")}</span>}
+                            </div>
                           </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
 
                     <div style={{ borderTop: "1.5px dashed #000", margin: "12px 0" }}></div>
@@ -2110,10 +2112,10 @@ export default function RiwayatPenjualanPage() {
                         </tr>
                       </thead>
                       <tbody>
-                        {(selectedTrx.items || []).map((item: { id: number; jumlah: number; subtotal: number; product: { nama_produk: string } }) => (
+                        {(selectedTrx.items || []).map((item: { id: number; jumlah: number; subtotal: number; satuanHarga?: string | null; product: { nama_produk: string } }) => (
                           <tr key={item.id} className="border-b border-slate-50 even:bg-pink-50/30">
                             <td className="px-4 py-2 font-semibold text-slate-700 leading-snug">{item.product?.nama_produk || "-"}</td>
-                            <td className="px-2 py-2 text-center text-slate-600">{item.jumlah} Pcs</td>
+                            <td className="px-2 py-2 text-center text-slate-600">{item.jumlah} {SATUAN_LABELS[item.satuanHarga || "pcs"] ?? "Pcs"}</td>
                             {printType === "nota" && (
                               <td className="px-4 py-2 text-right text-slate-700">Rp {Number(item.subtotal || 0).toLocaleString("id-ID")}</td>
                             )}

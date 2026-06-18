@@ -982,13 +982,15 @@ export default function RiwayatPenjualanPage() {
     const documentTitle = isNota ? "NOTA PESANAN" : "SURAT JALAN";
     const transactionDate = new Date(t.tanggal);
     const logoSrc = storeInfo.receiptLogo || storeInfo.logo;
-    const itemRows = (t.items || []).map((item) => `
+    const itemRows = (t.items || []).map((item) => {
+      const satuanLabel = SATUAN_LABELS[item.satuanHarga || "pcs"] ?? "Pcs";
+      return `
       <tr>
         <td>${escapeHtml(item.product?.nama_produk || "-")}</td>
-        <td class="qty">${escapeHtml(item.jumlah)} Pcs</td>
+        <td class="qty">${escapeHtml(item.jumlah)} ${satuanLabel}</td>
         ${isNota ? `<td class="money">Rp ${Number(item.subtotal || 0).toLocaleString("id-ID")}</td>` : ""}
-      </tr>
-    `).join("");
+      </tr>`;
+    }).join("");
 
     printWindow.document.write(`<!doctype html><html><head><title>${escapeHtml(documentTitle)} ${formatTransactionCode(t.trxNumber ?? t.id)}</title><meta charset="UTF-8"><style>
       *{box-sizing:border-box}

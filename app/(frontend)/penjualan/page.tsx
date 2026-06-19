@@ -6,6 +6,11 @@ import { ReceiptText, Filter, X, Printer, Settings, Save, User, Trash2, Camera, 
 import ManualTransactionModal, { type ManualTransaction } from "@/components/ManualTransactionModal";
 import { getSavedUserSession } from "@/lib/userSession";
 
+const getTimeFromISO = (isoString: string): string => {
+  const match = isoString.match(/T(\d{2}):(\d{2})/);
+  return match ? `${match[1]}:${match[2]}` : "--:--";
+};
+
 const MOBILE_TRANSACTION_BATCH_SIZE = 25;
 const pengirimanOptions = ["Diproses", "Siap Kirim", "Dikirim", "Selesai"];
 const pengirimanLevels: Record<string, number> = {
@@ -1610,7 +1615,7 @@ export default function RiwayatPenjualanPage() {
                         {new Date(t.tanggal).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" })}
                       </p>
                       <p className="text-[11px] text-slate-400">
-                        {new Date(t.tanggal).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })} WIB
+                        {getTimeFromISO(t.tanggal)} WIB
                       </p>
                     </div>
                   </div>
@@ -1808,7 +1813,7 @@ export default function RiwayatPenjualanPage() {
                         {new Date(t.tanggal).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" })}
                       </div>
                       <div className="text-[10px] text-slate-400 mt-0.5 ml-5">
-                        {new Date(t.tanggal).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })} WIB
+                        {getTimeFromISO(t.tanggal)} WIB
                       </div>
                     </td>
                     <td className="p-4">

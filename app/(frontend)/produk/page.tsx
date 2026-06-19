@@ -991,13 +991,13 @@ export default function ManajemenProdukPage() {
       {/* MODAL TAMBAH/EDIT */}
       {!isGuest && isModalOpen && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-3xl w-full max-w-md shadow-2xl overflow-hidden">
-            <div className="lina-panel-header p-5 border-b flex justify-between items-center">
+          <div className="bg-white rounded-3xl w-full max-w-md shadow-2xl overflow-hidden flex flex-col max-h-[calc(100vh-120px)]">
+            <div className="lina-panel-header p-5 border-b flex justify-between items-center flex-shrink-0">
               <h3 className="font-bold text-lg text-slate-800">{isEdit ? "Edit Produk" : "Tambah Produk Baru"}</h3>
               <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-red-500"><X size={20} /></button>
             </div>
 
-            <form onSubmit={handleSimpan} className="p-6 space-y-5">
+            <form id="produk-form" onSubmit={handleSimpan} className="p-6 space-y-5 overflow-y-auto flex-1">
 
               {/* UPLOAD GAMBAR */}
               <div className="flex flex-col items-center justify-center mb-2">
@@ -1210,13 +1210,14 @@ export default function ManajemenProdukPage() {
                 )}
               </div>
 
-              <div className="pt-4 mt-6 border-t border-slate-100 flex gap-3">
-                <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 py-3.5 bg-slate-100 hover:bg-slate-200 rounded-xl font-bold text-sm text-slate-600 transition-colors">Batal</button>
-                <button type="submit" disabled={isSaving} className="flex-1 py-3.5 bg-pink-600 hover:bg-pink-700 text-white rounded-xl font-bold text-sm flex justify-center items-center gap-2 shadow-lg shadow-pink-200 transition-all disabled:opacity-50">
-                  {isSaving ? <Flower2 size={18} className="animate-spin" /> : "Simpan"} {isSaving ? "Menyimpan..." : "Simpan Data"}
-                </button>
-              </div>
             </form>
+
+            <div className="border-t border-slate-100 p-6 flex gap-3 flex-shrink-0 bg-white">
+              <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 py-3.5 bg-slate-100 hover:bg-slate-200 rounded-xl font-bold text-sm text-slate-600 transition-colors">Batal</button>
+              <button type="submit" form="produk-form" disabled={isSaving} className="flex-1 py-3.5 bg-pink-600 hover:bg-pink-700 text-white rounded-xl font-bold text-sm flex justify-center items-center gap-2 shadow-lg shadow-pink-200 transition-all disabled:opacity-50">
+                {isSaving ? <Flower2 size={18} className="animate-spin" /> : "Simpan"} {isSaving ? "Menyimpan..." : "Simpan Data"}
+              </button>
+            </div>
           </div>
         </div>
       )}

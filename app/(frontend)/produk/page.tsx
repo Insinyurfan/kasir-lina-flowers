@@ -25,6 +25,7 @@ type Product = {
   gambarPosX?: number;
   gambarPosY?: number;
   isArchived?: boolean;
+  variants?: Array<{ id: number; name: string; priceModifier: number | null }>;
 };
 
 type GuestCartItem = Product & {
@@ -69,6 +70,8 @@ export default function ManajemenProdukPage() {
     gambar: "",
     gambarPosX: 50,
     gambarPosY: 50,
+    hasVariants: false,
+    variants: [] as Array<{ name: string; priceModifier: number | null }>,
   });
 
   const isGuest = user?.role === "Tamu";
@@ -161,11 +164,23 @@ export default function ManajemenProdukPage() {
     if (isGuest) return;
     setIsEdit(false);
     setSelectedImageFile(null);
-    setFormData({ id: 0, nama_produk: "", harga: "", satuanHarga: "gross", stok: "", barcode: "", gambar: "", gambarPosX: 50, gambarPosY: 50 });
+    setFormData({
+      id: 0,
+      nama_produk: "",
+      harga: "",
+      satuanHarga: "gross",
+      stok: "",
+      barcode: "",
+      gambar: "",
+      gambarPosX: 50,
+      gambarPosY: 50,
+      hasVariants: false,
+      variants: []
+    });
     setIsModalOpen(true);
   };
 
-  const handleOpenEdit = (produk: Product) => {
+  const handleOpenEdit = (produk: Product & { variants?: Array<{ id: number; name: string; priceModifier: number | null }> }) => {
     if (isGuest) return;
     setIsEdit(true);
     setSelectedImageFile(null);
@@ -179,6 +194,8 @@ export default function ManajemenProdukPage() {
       gambar: produk.gambar || "",
       gambarPosX: produk.gambarPosX ?? 50,
       gambarPosY: produk.gambarPosY ?? 50,
+      hasVariants: produk.variants ? produk.variants.length > 0 : false,
+      variants: produk.variants ? produk.variants.map(v => ({ name: v.name, priceModifier: v.priceModifier })) : []
     });
     setIsModalOpen(true);
   };
@@ -227,10 +244,21 @@ export default function ManajemenProdukPage() {
     try {
       const gambar = await uploadSelectedProductImage();
       const method = isEdit ? "PATCH" : "POST";
+
+      // Filter variants - hanya yang punya nama
+      const validVariants = formData.hasVariants
+        ? formData.variants.filter(v => v.name && v.name.trim())
+        : [];
+
       const res = await fetch("/api/produk", {
         method: method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...formData, gambar, ...actorPayload }),
+        body: JSON.stringify({
+          ...formData,
+          gambar,
+          variants: validVariants,
+          ...actorPayload
+        }),
       });
 
       const result = await res.json();
@@ -550,7 +578,7 @@ export default function ManajemenProdukPage() {
                           </div>
                           <div className="min-w-0 flex-1">
                             <h4 className="line-clamp-2 text-sm font-black text-slate-800">{item.nama_produk}</h4>
-                            <p className="mt-1 text-xs font-semibold text-slate-400">Jumlah pesanan: {item.quantity} pcs</p>
+                            <p className="mt-1 text-xs font-semibold text-slate-400">Jumlah pesanan: {item.quantity}</p>
                           </div>
                           <button
                             type="button"
@@ -1103,6 +1131,83 @@ export default function ManajemenProdukPage() {
                   className={`w-full border rounded-xl px-4 py-3 outline-none text-sm font-bold font-mono text-slate-700 ${isEdit && isAdmin ? 'bg-slate-100 border-slate-200 text-slate-500 cursor-not-allowed' : 'border-slate-200 focus:border-pink-500'}`}
                 />
                 {!(isEdit && isAdmin) && <p className="text-[10px] text-slate-400 mt-1 italic">Jika dikosongkan, sistem otomatis membuat kode acak unik.</p>}
+              </div>
+
+              {/* VARIASI SECTION */}
+              <div className="pt-4 mt-6 border-t border-slate-100">
+                <label className="flex items-center gap-3 cursor-pointer mb-4">
+                  <input
+                    type="checkbox"
+                    checked={formData.hasVariants}
+                    onChange={(e) => setFormData({
+                      ...formData,
+                      hasVariants: e.target.checked,
+                      variants: e.target.checked ? formData.variants : []
+                    })}
+                    className="w-5 h-5 rounded border-2 border-slate-300 cursor-pointer accent-pink-500"
+                  />
+                  <span className="text-sm font-bold text-slate-700">Tambahkan Variasi (Ukuran/Warna)</span>
+                </label>
+
+                {formData.hasVariants && (
+                  <div className="space-y-3 bg-pink-50/50 p-4 rounded-2xl border border-pink-100">
+                    {formData.variants.map((variant, idx) => (
+                      <div key={idx} className="flex gap-2 items-end">
+                        <div className="flex-1">
+                          <input
+                            type="text"
+                            value={variant.name}
+                            onChange={(e) => {
+                              const newVariants = [...formData.variants];
+                              newVariants[idx].name = e.target.value;
+                              setFormData({ ...formData, variants: newVariants });
+                            }}
+                            placeholder="Contoh: M, Merah, L, Biru"
+                            className="w-full border border-slate-200 rounded-lg px-3 py-2 outline-none focus:border-pink-500 text-sm font-semibold text-slate-700"
+                          />
+                          <p className="text-[10px] text-slate-400 mt-1">Nama Variasi</p>
+                        </div>
+                        <div className="flex-1">
+                          <input
+                            type="number"
+                            value={variant.priceModifier ?? ""}
+                            onChange={(e) => {
+                              const newVariants = [...formData.variants];
+                              newVariants[idx].priceModifier = e.target.value ? Number(e.target.value) : null;
+                              setFormData({ ...formData, variants: newVariants });
+                            }}
+                            placeholder="Kosongkan jika harga sama"
+                            className="w-full border border-slate-200 rounded-lg px-3 py-2 outline-none focus:border-pink-500 text-sm font-semibold text-slate-700"
+                          />
+                          <p className="text-[10px] text-slate-400 mt-1">Selisih Harga (Rp)</p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const newVariants = formData.variants.filter((_, i) => i !== idx);
+                            setFormData({ ...formData, variants: newVariants });
+                          }}
+                          className="p-2 bg-red-50 border border-red-200 rounded-lg text-red-500 hover:bg-red-100 transition-colors"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    ))}
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setFormData({
+                          ...formData,
+                          variants: [...formData.variants, { name: "", priceModifier: null }]
+                        });
+                      }}
+                      className="w-full py-2.5 bg-white border-2 border-dashed border-pink-300 rounded-lg font-bold text-pink-600 hover:bg-pink-50 transition-colors flex items-center justify-center gap-2 text-sm"
+                    >
+                      <Plus size={16} /> Tambah Variasi
+                    </button>
+                  </div>
+                )}
               </div>
 
               <div className="pt-4 mt-6 border-t border-slate-100 flex gap-3">

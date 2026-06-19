@@ -26,10 +26,15 @@ export async function GET(request: Request) {
         select: {
           id: true,
           nama_produk: true,
+          harga: true,
           stok: true,
           gambar: true,
           gambarPosX: true,
           gambarPosY: true,
+          variants: {
+            select: { id: true, name: true, priceModifier: true },
+            orderBy: { order: "asc" }
+          },
         },
       });
       return NextResponse.json(products);
@@ -38,6 +43,12 @@ export async function GET(request: Request) {
     const products = await prisma.product.findMany({
       where: { isArchived: showArsip },
       orderBy: { id: "desc" },
+      include: {
+        variants: {
+          select: { id: true, name: true, priceModifier: true },
+          orderBy: { order: "asc" }
+        }
+      }
     });
     return NextResponse.json(products);
   } catch {
@@ -65,7 +76,24 @@ export async function POST(request: Request) {
         gambar: data.gambar || null,
         gambarPosX: data.gambarPosX != null ? Math.max(0, Math.min(100, Number(data.gambarPosX))) : 50,
         gambarPosY: data.gambarPosY != null ? Math.max(0, Math.min(100, Number(data.gambarPosY))) : 50,
+        variants: data.variants && Array.isArray(data.variants)
+          ? {
+              create: data.variants
+                .filter((v: any) => v.name && v.name.trim())
+                .map((v: any, idx: number) => ({
+                  name: v.name.trim(),
+                  priceModifier: v.priceModifier != null ? Number(v.priceModifier) : null,
+                  order: idx,
+                }))
+            }
+          : undefined,
       },
+      include: {
+        variants: {
+          select: { id: true, name: true, priceModifier: true },
+          orderBy: { order: "asc" }
+        }
+      }
     });
     await recordActivityLog({
       action: "TAMBAH",
@@ -128,7 +156,23 @@ export async function PATCH(request: Request) {
         gambar: data.gambar || null,
         gambarPosX: data.gambarPosX != null ? Math.max(0, Math.min(100, Number(data.gambarPosX))) : (before?.gambarPosX ?? 50),
         gambarPosY: data.gambarPosY != null ? Math.max(0, Math.min(100, Number(data.gambarPosY))) : (before?.gambarPosY ?? 50),
+        variants: data.variants !== undefined ? {
+          deleteMany: {},
+          create: data.variants
+            .filter((v: any) => v.name && v.name.trim())
+            .map((v: any, idx: number) => ({
+              name: v.name.trim(),
+              priceModifier: v.priceModifier != null ? Number(v.priceModifier) : null,
+              order: idx,
+            }))
+        } : undefined,
       },
+      include: {
+        variants: {
+          select: { id: true, name: true, priceModifier: true },
+          orderBy: { order: "asc" }
+        }
+      }
     });
     if (before?.gambar && before.gambar !== updatedProduct.gambar) {
       await cleanupProductImage(before.gambar);

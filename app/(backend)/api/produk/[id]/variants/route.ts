@@ -6,11 +6,12 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const variants = await prisma.productVariant.findMany({
-      where: { productId: Number(params.id) },
+      where: { productId: Number(id) },
       orderBy: { order: "asc" },
     });
     return NextResponse.json(variants);
@@ -21,12 +22,13 @@ export async function GET(
 
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const data = await request.json();
     const actor = getActorFromPayload(data);
-    const productId = Number(params.id);
+    const productId = Number(id);
 
     // Check jika produk ada
     const product = await prisma.product.findUnique({ where: { id: productId } });
@@ -81,12 +83,13 @@ export async function POST(
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const data = await request.json();
     const actor = getActorFromPayload(data);
-    const productId = Number(params.id);
+    const productId = Number(id);
 
     // Check duplicate name jika mengubah name
     if (data.name) {
@@ -119,12 +122,13 @@ export async function PATCH(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const data = await request.json();
     const actor = getActorFromPayload(data);
-    const productId = Number(params.id);
+    const productId = Number(id);
 
     const variant = await prisma.productVariant.findUnique({
       where: { id: Number(data.variantId) },

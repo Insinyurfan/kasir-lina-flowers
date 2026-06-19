@@ -34,6 +34,21 @@ model Product {
   TransactionItems  TransactionItem[]
   cartItems         UserCartItem[]
   orderRequestItems OrderRequestItem[]
+  variants          ProductVariant[]
+}
+
+model ProductVariant {
+  id            Int      @id @default(autoincrement())
+  productId     Int
+  product       Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  name          String // "S", "M", "L", "Merah", "Biru", etc
+  priceModifier Int? // nullable - jika null berarti harga sama dengan base
+  order         Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([productId, name])
+  @@index([productId])
 }
 
 model Transaction {
@@ -58,8 +73,12 @@ model TransactionItem {
   transaction   Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
   productId     Int
   product       Product     @relation(fields: [productId], references: [id])
+  variantId     Int? // reference ke ProductVariant (optional, untuk info saja)
+  variantName   String? // snapshot: "L", "Merah" (nullable karena produk bisa tanpa variant)
+  basePrice     Int         @default(0) // snapshot: harga base produk saat transaksi
+  priceModifier Int? // snapshot: modifier dari variant saat transaksi (nullable jika tanpa variant)
   jumlah        Int
-  subtotal      Int
+  subtotal      Int // (basePrice + priceModifier) × jumlah
   satuanHarga   String      @default("pcs")
 }
 
@@ -129,13 +148,13 @@ model UserCartItem {
   cart          UserCart @relation(fields: [cartId], references: [id], onDelete: Cascade)
   productId     Int
   product       Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  variantId     Int? // selected variant (nullable)
   quantity      Int
   priceOverride Int?
   satuanPesan   String   @default("pcs")
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  @@unique([cartId, productId])
   @@index([cartId])
   @@index([productId])
 }

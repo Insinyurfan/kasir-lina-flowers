@@ -70,7 +70,7 @@ export async function POST(
       metadata: {
         productId,
         variantName: newVariant.name,
-        price: newVariant.price,
+        priceModifier: newVariant.priceModifier,
       },
     });
 

@@ -42,7 +42,7 @@ model ProductVariant {
   productId     Int
   product       Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   name          String // "S", "M", "L", "Merah", "Biru", etc
-  priceModifier Int // Absolute price for this variant
+  priceModifier Int? // Absolute price for this variant (nullable, match DB)
   order         Int      @default(0)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt

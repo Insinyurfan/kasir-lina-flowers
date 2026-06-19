@@ -4731,7 +4731,7 @@ export namespace Prisma {
     id: number
     productId: number
     name: string
-    priceModifier: number
+    priceModifier: number | null
     order: number
     createdAt: Date
     updatedAt: Date
@@ -4819,7 +4819,7 @@ export namespace Prisma {
       id: number
       productId: number
       name: string
-      priceModifier: number
+      priceModifier: number | null
       order: number
       createdAt: Date
       updatedAt: Date
@@ -17726,7 +17726,7 @@ export namespace Prisma {
     id?: IntFilter<"ProductVariant"> | number
     productId?: IntFilter<"ProductVariant"> | number
     name?: StringFilter<"ProductVariant"> | string
-    priceModifier?: IntFilter<"ProductVariant"> | number
+    priceModifier?: IntNullableFilter<"ProductVariant"> | number | null
     order?: IntFilter<"ProductVariant"> | number
     createdAt?: DateTimeFilter<"ProductVariant"> | Date | string
     updatedAt?: DateTimeFilter<"ProductVariant"> | Date | string
@@ -17737,7 +17737,7 @@ export namespace Prisma {
     id?: SortOrder
     productId?: SortOrder
     name?: SortOrder
-    priceModifier?: SortOrder
+    priceModifier?: SortOrderInput | SortOrder
     order?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -17752,7 +17752,7 @@ export namespace Prisma {
     NOT?: ProductVariantWhereInput | ProductVariantWhereInput[]
     productId?: IntFilter<"ProductVariant"> | number
     name?: StringFilter<"ProductVariant"> | string
-    priceModifier?: IntFilter<"ProductVariant"> | number
+    priceModifier?: IntNullableFilter<"ProductVariant"> | number | null
     order?: IntFilter<"ProductVariant"> | number
     createdAt?: DateTimeFilter<"ProductVariant"> | Date | string
     updatedAt?: DateTimeFilter<"ProductVariant"> | Date | string
@@ -17763,7 +17763,7 @@ export namespace Prisma {
     id?: SortOrder
     productId?: SortOrder
     name?: SortOrder
-    priceModifier?: SortOrder
+    priceModifier?: SortOrderInput | SortOrder
     order?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -17781,7 +17781,7 @@ export namespace Prisma {
     id?: IntWithAggregatesFilter<"ProductVariant"> | number
     productId?: IntWithAggregatesFilter<"ProductVariant"> | number
     name?: StringWithAggregatesFilter<"ProductVariant"> | string
-    priceModifier?: IntWithAggregatesFilter<"ProductVariant"> | number
+    priceModifier?: IntNullableWithAggregatesFilter<"ProductVariant"> | number | null
     order?: IntWithAggregatesFilter<"ProductVariant"> | number
     createdAt?: DateTimeWithAggregatesFilter<"ProductVariant"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"ProductVariant"> | Date | string
@@ -18727,7 +18727,7 @@ export namespace Prisma {
 
   export type ProductVariantCreateInput = {
     name: string
-    priceModifier: number
+    priceModifier?: number | null
     order?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -18738,7 +18738,7 @@ export namespace Prisma {
     id?: number
     productId: number
     name: string
-    priceModifier: number
+    priceModifier?: number | null
     order?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -18746,7 +18746,7 @@ export namespace Prisma {
 
   export type ProductVariantUpdateInput = {
     name?: StringFieldUpdateOperationsInput | string
-    priceModifier?: IntFieldUpdateOperationsInput | number
+    priceModifier?: NullableIntFieldUpdateOperationsInput | number | null
     order?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -18757,7 +18757,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     productId?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
-    priceModifier?: IntFieldUpdateOperationsInput | number
+    priceModifier?: NullableIntFieldUpdateOperationsInput | number | null
     order?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -18767,7 +18767,7 @@ export namespace Prisma {
     id?: number
     productId: number
     name: string
-    priceModifier: number
+    priceModifier?: number | null
     order?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -18775,7 +18775,7 @@ export namespace Prisma {
 
   export type ProductVariantUpdateManyMutationInput = {
     name?: StringFieldUpdateOperationsInput | string
-    priceModifier?: IntFieldUpdateOperationsInput | number
+    priceModifier?: NullableIntFieldUpdateOperationsInput | number | null
     order?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -18785,7 +18785,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     productId?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
-    priceModifier?: IntFieldUpdateOperationsInput | number
+    priceModifier?: NullableIntFieldUpdateOperationsInput | number | null
     order?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -19841,6 +19841,17 @@ export namespace Prisma {
     _max?: NestedBoolFilter<$PrismaModel>
   }
 
+  export type IntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
   export type DateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -19906,6 +19917,22 @@ export namespace Prisma {
     order?: SortOrder
   }
 
+  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
+  }
+
   export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -19918,17 +19945,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedDateTimeFilter<$PrismaModel>
     _max?: NestedDateTimeFilter<$PrismaModel>
-  }
-
-  export type IntNullableFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
   export type NotificationListRelationFilter = {
@@ -19995,22 +20011,6 @@ export namespace Prisma {
     id?: SortOrder
     trxNumber?: SortOrder
     total_harga?: SortOrder
-  }
-
-  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedIntNullableFilter<$PrismaModel>
-    _max?: NestedIntNullableFilter<$PrismaModel>
   }
 
   export type TransactionScalarRelationFilter = {
@@ -20770,6 +20770,14 @@ export namespace Prisma {
     connect?: ProductWhereUniqueInput
   }
 
+  export type NullableIntFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
   export type DateTimeFieldUpdateOperationsInput = {
     set?: Date | string
   }
@@ -20820,14 +20828,6 @@ export namespace Prisma {
     create?: XOR<OrderRequestCreateWithoutTransactionInput, OrderRequestUncheckedCreateWithoutTransactionInput>
     connectOrCreate?: OrderRequestCreateOrConnectWithoutTransactionInput
     connect?: OrderRequestWhereUniqueInput
-  }
-
-  export type NullableIntFieldUpdateOperationsInput = {
-    set?: number | null
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
   }
 
   export type TransactionItemUpdateManyWithoutTransactionNestedInput = {
@@ -21311,20 +21311,6 @@ export namespace Prisma {
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
-  export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedDateTimeFilter<$PrismaModel>
-    _max?: NestedDateTimeFilter<$PrismaModel>
-  }
-
   export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel> | null
     in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
@@ -21350,6 +21336,20 @@ export namespace Prisma {
     gt?: number | FloatFieldRefInput<$PrismaModel>
     gte?: number | FloatFieldRefInput<$PrismaModel>
     not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedDateTimeFilter<$PrismaModel>
+    _max?: NestedDateTimeFilter<$PrismaModel>
   }
   export type NestedJsonNullableFilter<$PrismaModel = never> =
     | PatchUndefined<
@@ -21529,7 +21529,7 @@ export namespace Prisma {
 
   export type ProductVariantCreateWithoutProductInput = {
     name: string
-    priceModifier: number
+    priceModifier?: number | null
     order?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -21538,7 +21538,7 @@ export namespace Prisma {
   export type ProductVariantUncheckedCreateWithoutProductInput = {
     id?: number
     name: string
-    priceModifier: number
+    priceModifier?: number | null
     order?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -21669,7 +21669,7 @@ export namespace Prisma {
     id?: IntFilter<"ProductVariant"> | number
     productId?: IntFilter<"ProductVariant"> | number
     name?: StringFilter<"ProductVariant"> | string
-    priceModifier?: IntFilter<"ProductVariant"> | number
+    priceModifier?: IntNullableFilter<"ProductVariant"> | number | null
     order?: IntFilter<"ProductVariant"> | number
     createdAt?: DateTimeFilter<"ProductVariant"> | Date | string
     updatedAt?: DateTimeFilter<"ProductVariant"> | Date | string
@@ -22857,7 +22857,7 @@ export namespace Prisma {
   export type ProductVariantCreateManyProductInput = {
     id?: number
     name: string
-    priceModifier: number
+    priceModifier?: number | null
     order?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -22958,7 +22958,7 @@ export namespace Prisma {
 
   export type ProductVariantUpdateWithoutProductInput = {
     name?: StringFieldUpdateOperationsInput | string
-    priceModifier?: IntFieldUpdateOperationsInput | number
+    priceModifier?: NullableIntFieldUpdateOperationsInput | number | null
     order?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -22967,7 +22967,7 @@ export namespace Prisma {
   export type ProductVariantUncheckedUpdateWithoutProductInput = {
     id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
-    priceModifier?: IntFieldUpdateOperationsInput | number
+    priceModifier?: NullableIntFieldUpdateOperationsInput | number | null
     order?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -22976,7 +22976,7 @@ export namespace Prisma {
   export type ProductVariantUncheckedUpdateManyWithoutProductInput = {
     id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
-    priceModifier?: IntFieldUpdateOperationsInput | number
+    priceModifier?: NullableIntFieldUpdateOperationsInput | number | null
     order?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string

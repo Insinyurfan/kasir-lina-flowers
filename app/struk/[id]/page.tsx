@@ -20,6 +20,7 @@ type TransactionItem = {
   jumlah: number;
   subtotal: number;
   satuanHarga?: string;
+  variantName?: string | null;
   product: {
     nama_produk: string;
   };
@@ -152,7 +153,7 @@ export default function ReceiptPage() {
 
             return (
               <div key={item.id} className="item">
-                <div className="product-name">{item.product.nama_produk}</div>
+                <div className="product-name">{item.product.nama_produk}{item.variantName ? ` (${item.variantName})` : ""}</div>
                 <div className="row receipt-row">
                   <span>
                     {receiptType === "struk"

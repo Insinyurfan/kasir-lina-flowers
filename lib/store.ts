@@ -11,7 +11,10 @@ export function hitungHargaSatuan(hargaBase: number, satuanHarga: string, satuan
 }
 
 export type CartItem = {
-  id: number;
+  id: number;          // unique cart-row id (= productId untuk non-variasi, komposit untuk variasi)
+  productId?: number;  // id produk asli (untuk variasi)
+  variantId?: number | null;
+  variantName?: string | null;
   nama_produk: string;
   harga: number;
   hargaAwal?: number;
@@ -23,10 +26,15 @@ export type CartItem = {
   gambar?: string | null;
 };
 
-type CartProduct = Omit<CartItem, "quantity" | "hargaAwal"> & {
+type CartProduct = Omit<CartItem, "quantity" | "hargaAwal" | "id"> & {
+  id: number;          // productId
   hargaAwal?: number;
   satuanPesan?: string;
 };
+
+// Hitung id baris keranjang: produk variasi dapat id komposit agar varian berbeda jadi baris terpisah
+const computeCartRowId = (productId: number, variantId?: number | null) =>
+  variantId ? productId * 1000000 + variantId : productId;
 
 interface CartState {
   cart: CartItem[];
@@ -49,14 +57,15 @@ export const useCartStore = create<CartState>()(
         const satuanPesan = product.satuanPesan ?? product.satuanHarga ?? "pcs";
         const hargaBase = product.hargaBase ?? product.harga;
         const hargaDihitung = hitungHargaSatuan(hargaBase, product.satuanHarga ?? "pcs", satuanPesan);
-        const existingItem = cart.find((item) => item.id === product.id);
+        const rowId = computeCartRowId(product.id, product.variantId);
+        const existingItem = cart.find((item) => item.id === rowId);
 
         if (existingItem) {
           // Jika satuan berubah, reset quantity ke 1 dengan harga baru
           if (existingItem.satuanPesan !== satuanPesan) {
             set({
               cart: cart.map((item) =>
-                item.id === product.id
+                item.id === rowId
                   ? { ...item, satuanPesan, harga: hargaDihitung, hargaAwal: hargaDihitung, quantity: 1 }
                   : item
               ),
@@ -64,7 +73,7 @@ export const useCartStore = create<CartState>()(
           } else if (existingItem.quantity < product.stok) {
             set({
               cart: cart.map((item) =>
-                item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
+                item.id === rowId ? { ...item, quantity: item.quantity + 1 } : item
               ),
             });
           } else {
@@ -77,6 +86,10 @@ export const useCartStore = create<CartState>()(
                 ...cart,
                 {
                   ...product,
+                  id: rowId,
+                  productId: product.id,
+                  variantId: product.variantId ?? null,
+                  variantName: product.variantName ?? null,
                   harga: hargaDihitung,
                   hargaAwal: hargaDihitung,
                   hargaBase,

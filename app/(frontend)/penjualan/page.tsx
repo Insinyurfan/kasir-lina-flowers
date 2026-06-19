@@ -42,6 +42,7 @@ type PrintTransactionItem = {
   jumlah: number;
   subtotal: number;
   satuanHarga?: string | null;
+  variantName?: string | null;
   product?: {
     nama_produk?: string | null;
   } | null;
@@ -669,9 +670,10 @@ export default function RiwayatPenjualanPage() {
     drawDashedLine(ctx, y, width, margin);
     y += isThermal ? 16 : 24;
 
-    (selectedTrx.items || []).forEach((item: { jumlah: number; subtotal: number; satuanHarga?: string | null; product: { nama_produk: string } }) => {
+    (selectedTrx.items || []).forEach((item: { jumlah: number; subtotal: number; satuanHarga?: string | null; variantName?: string | null; product: { nama_produk: string } }) => {
       ctx.font = `bold ${bodyFont}px 'Courier New', monospace`;
-      y = wrapCanvasText(ctx, String(item.product.nama_produk || "").toUpperCase(), margin, y, contentWidth, bodyLineHeight);
+      const namaLengkap = String(item.product.nama_produk || "") + (item.variantName ? ` (${item.variantName})` : "");
+      y = wrapCanvasText(ctx, namaLengkap.toUpperCase(), margin, y, contentWidth, bodyLineHeight);
 
       ctx.font = `${bodyFont}px 'Courier New', monospace`;
       const unitPrice = item.jumlah > 0 ? item.subtotal / item.jumlah : 0;
@@ -878,7 +880,7 @@ export default function RiwayatPenjualanPage() {
       ctx.lineWidth = 0.5;
       ctx.strokeRect(MARGIN, y, CW, ROW_H);
 
-      const prodName = item.product?.nama_produk || "-";
+      const prodName = (item.product?.nama_produk || "-") + (item.variantName ? ` (${item.variantName})` : "");
       ctx.fillStyle = "#334155";
       ctx.font = "bold 16px Arial, sans-serif";
       ctx.fillText(prodName.length > 50 ? prodName.slice(0, 49) + "…" : prodName, MARGIN + 14, y + 16);
@@ -1007,7 +1009,7 @@ export default function RiwayatPenjualanPage() {
       const unitPrice = item.jumlah > 0 ? item.subtotal / item.jumlah : 0;
       return `
       <tr>
-        <td>${escapeHtml(item.product?.nama_produk || "-")}</td>
+        <td>${escapeHtml((item.product?.nama_produk || "-") + (item.variantName ? ` (${item.variantName})` : ""))}</td>
         ${isNota ? `<td class="money">Rp ${Number(unitPrice).toLocaleString("id-ID")}/${satuanLabel}</td>` : ""}
         <td class="qty">${escapeHtml(item.jumlah)} ${satuanLabel}</td>
         ${isNota ? `<td class="money">Rp ${Number(item.subtotal || 0).toLocaleString("id-ID")}</td>` : ""}
@@ -1621,10 +1623,10 @@ export default function RiwayatPenjualanPage() {
                   </div>
 
                   <div className="rounded-xl bg-white/80 border border-white p-3 space-y-2">
-                    {(t.items || []).slice(0, 3).map((item: { id: number; jumlah: number; subtotal: number; product?: { nama_produk?: string } }) => (
+                    {(t.items || []).slice(0, 3).map((item: { id: number; jumlah: number; subtotal: number; variantName?: string | null; product?: { nama_produk?: string } }) => (
                       <div key={item.id} className="flex justify-between gap-3 text-xs">
                         <span className="text-slate-600 min-w-0 truncate">
-                          {item.jumlah}x {item.product?.nama_produk || "Produk Dihapus"}
+                          {item.jumlah}x {item.product?.nama_produk || "Produk Dihapus"}{item.variantName ? ` (${item.variantName})` : ""}
                         </span>
                         <span className="font-bold text-slate-700 shrink-0">Rp {item.subtotal.toLocaleString("id-ID")}</span>
                       </div>
@@ -2057,11 +2059,11 @@ export default function RiwayatPenjualanPage() {
 
                     <div style={{ borderTop: "1.5px dashed #000", margin: "12px 0" }}></div>
                     <div className="space-y-3">
-                      {selectedTrx.items.map((item: { id: number; jumlah: number; subtotal: number; satuanHarga?: string | null; product: { nama_produk: string } }) => {
+                      {selectedTrx.items.map((item: { id: number; jumlah: number; subtotal: number; satuanHarga?: string | null; variantName?: string | null; product: { nama_produk: string } }) => {
                         const satuanLabel = SATUAN_LABELS[item.satuanHarga || "pcs"] ?? "Pcs";
                         return (
                           <div key={item.id}>
-                            <div className="font-bold uppercase">{item.product.nama_produk}</div>
+                            <div className="font-bold uppercase">{item.product.nama_produk}{item.variantName ? ` (${item.variantName})` : ""}</div>
                             <div className="receipt-row flex justify-between mt-0.5">
                               <span>
                                 {printType === "struk"
@@ -2137,12 +2139,12 @@ export default function RiwayatPenjualanPage() {
                         </tr>
                       </thead>
                       <tbody>
-                        {(selectedTrx.items || []).map((item: { id: number; jumlah: number; subtotal: number; satuanHarga?: string | null; product: { nama_produk: string } }) => {
+                        {(selectedTrx.items || []).map((item: { id: number; jumlah: number; subtotal: number; satuanHarga?: string | null; variantName?: string | null; product: { nama_produk: string } }) => {
                           const satuanLabel = SATUAN_LABELS[item.satuanHarga || "pcs"] ?? "Pcs";
                           const unitPrice = item.jumlah > 0 ? item.subtotal / item.jumlah : 0;
                           return (
                             <tr key={item.id} className="border-b border-slate-50 even:bg-pink-50/30">
-                              <td className="px-4 py-2 font-semibold text-slate-700 leading-snug">{item.product?.nama_produk || "-"}</td>
+                              <td className="px-4 py-2 font-semibold text-slate-700 leading-snug">{(item.product?.nama_produk || "-") + (item.variantName ? ` (${item.variantName})` : "")}</td>
                               {printType === "nota" && (
                                 <td className="px-4 py-2 text-right text-slate-700">Rp {Number(unitPrice).toLocaleString("id-ID")}/{satuanLabel}</td>
                               )}

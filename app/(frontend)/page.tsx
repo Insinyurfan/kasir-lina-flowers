@@ -4,6 +4,12 @@ import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import { Flower2, Search, LogIn, X, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 
+type Variant = {
+  id: number;
+  name: string;
+  priceModifier: number | null;
+};
+
 type Product = {
   id: number;
   nama_produk: string;
@@ -11,6 +17,7 @@ type Product = {
   gambar: string | null;
   gambarPosX?: number;
   gambarPosY?: number;
+  variants?: Variant[];
 };
 
 type StoreInfo = {
@@ -204,6 +211,11 @@ export default function KatalogPage() {
                         <Flower2 size={42} className="text-pink-200" />
                       </div>
                     )}
+                    {product.variants && product.variants.length > 0 && (
+                      <span className="absolute top-2 left-2 inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-amber-400 to-yellow-500 px-2 py-0.5 text-[10px] font-black text-white shadow-md shadow-amber-300/50 ring-1 ring-white/40">
+                        ✦ {product.variants.length} Variasi
+                      </span>
+                    )}
                   </div>
                   <div className="p-3">
                     <p className="text-sm font-bold text-slate-800 leading-snug line-clamp-2">{product.nama_produk}</p>
@@ -253,7 +265,29 @@ export default function KatalogPage() {
             </div>
             <div className="p-5">
               <h2 className="font-black text-slate-800 text-lg leading-snug">{selectedProduct.nama_produk}</h2>
-              <p className="mt-1 text-xs text-slate-400 font-medium">Ketuk foto untuk memperbesar</p>
+              {selectedProduct.variants && selectedProduct.variants.length > 0 ? (
+                <div className="mt-3">
+                  <p className="flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wide text-amber-600 mb-2">
+                    <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-gradient-to-r from-amber-400 to-yellow-500 text-white text-[9px]">✦</span>
+                    Pilihan Variasi
+                  </p>
+                  <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1 snap-x">
+                    {selectedProduct.variants.map((v) => (
+                      <div
+                        key={v.id}
+                        className="snap-start shrink-0 rounded-2xl border border-amber-200 bg-amber-50 px-3.5 py-2 text-center"
+                      >
+                        <p className="text-sm font-black text-slate-800 whitespace-nowrap">{v.name}</p>
+                        {v.priceModifier != null && (
+                          <p className="text-[11px] font-bold text-amber-600 whitespace-nowrap">Rp {v.priceModifier.toLocaleString("id-ID")}</p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <p className="mt-1 text-xs text-slate-400 font-medium">Ketuk foto untuk memperbesar</p>
+              )}
               <button
                 type="button"
                 onClick={() => setSelectedProduct(null)}

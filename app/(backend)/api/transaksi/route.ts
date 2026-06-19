@@ -22,6 +22,9 @@ const getPengirimanLevel = (status?: string) => {
 
 type CartItem = {
   id: number | string;
+  productId?: number | string;
+  variantId?: number | string | null;
+  variantName?: string | null;
   harga: number | string;
   quantity: number | string;
   satuanPesan?: string;
@@ -69,9 +72,14 @@ const getNextTrxNumber = async (): Promise<number> => {
   return next;
 };
 
+const resolveProductId = (item: CartItem) => Number(item.productId ?? item.id);
+
 const mapCartToItems = (cart: CartItem[]) =>
   cart.map((item: CartItem) => ({
-    productId: Number(item.id),
+    productId: resolveProductId(item),
+    variantId: item.variantId != null ? Number(item.variantId) : null,
+    variantName: item.variantName ?? null,
+    basePrice: Number(item.harga),
     jumlah: Number(item.quantity),
     subtotal: Number(item.harga) * Number(item.quantity),
     satuanHarga: item.satuanPesan || "pcs",
@@ -258,7 +266,7 @@ export async function POST(request: Request) {
 
     if (adjustStock !== false) for (const item of cart || []) {
       await prisma.product.update({
-        where: { id: Number(item.id) },
+        where: { id: resolveProductId(item) },
         data: { stok: { decrement: Number(item.quantity) } },
       });
     }

@@ -8,6 +8,7 @@ type CartScope = "produk" | "pos";
 type CartPayloadItem = {
   id?: number;
   productId?: number;
+  variantId?: number | null;
   quantity?: number;
   harga?: number;
   hargaAwal?: number;
@@ -45,6 +46,9 @@ const getCartItems = async (userId: number, scope: CartScope) => {
   return prisma.$queryRaw<
     Array<{
       id: number;
+      productId: number;
+      variantId: number | null;
+      variantName: string | null;
       nama_produk: string;
       harga: number;
       hargaAwal: number;
@@ -58,11 +62,14 @@ const getCartItems = async (userId: number, scope: CartScope) => {
     }>
   >`
     SELECT
-      p."id",
+      CASE WHEN ci."variantId" IS NOT NULL THEN p."id" * 1000000 + ci."variantId" ELSE p."id" END AS "id",
+      p."id" AS "productId",
+      ci."variantId",
+      v."name" AS "variantName",
       p."nama_produk",
-      COALESCE(ci."priceOverride", p."harga")::int AS "harga",
-      p."harga"::int AS "hargaAwal",
-      p."harga"::int AS "hargaBase",
+      COALESCE(ci."priceOverride", v."priceModifier", p."harga")::int AS "harga",
+      COALESCE(v."priceModifier", p."harga")::int AS "hargaAwal",
+      COALESCE(v."priceModifier", p."harga")::int AS "hargaBase",
       COALESCE(p."satuanHarga", 'pcs') AS "satuanHarga",
       COALESCE(ci."satuanPesan", 'pcs') AS "satuanPesan",
       LEAST(ci."quantity", p."stok")::int AS "quantity",
@@ -72,6 +79,7 @@ const getCartItems = async (userId: number, scope: CartScope) => {
     FROM "UserCart" c
     JOIN "UserCartItem" ci ON ci."cartId" = c."id"
     JOIN "Product" p ON p."id" = ci."productId"
+    LEFT JOIN "ProductVariant" v ON v."id" = ci."variantId"
     WHERE c."userId" = ${userId}
       AND c."scope" = ${scope}
       AND p."stok" > 0
@@ -147,6 +155,7 @@ export async function PUT(request: Request) {
     const normalizedItems = items
       .map((item) => {
         const productId = Number(item.productId || item.id);
+        const variantId = item.variantId != null ? Number(item.variantId) : null;
         const quantity = Math.max(0, Math.floor(Number(item.quantity || 0)));
         const price = Number(item.harga);
         const basePrice = Number(item.hargaAwal);
@@ -154,6 +163,7 @@ export async function PUT(request: Request) {
 
         return {
           productId,
+          variantId: variantId && Number.isInteger(variantId) && variantId > 0 ? variantId : null,
           quantity,
           satuanPesan,
           priceOverride:
@@ -169,16 +179,13 @@ export async function PUT(request: Request) {
 
       await tx.$executeRaw`DELETE FROM "UserCartItem" WHERE "cartId" = ${cartId}`;
 
+      // Catatan: baris item lama sudah dihapus di atas (DELETE), jadi INSERT langsung.
+      // Tidak pakai ON CONFLICT karena tidak ada unique constraint (cartId, productId)
+      // dan satu produk bisa punya beberapa baris untuk variasi berbeda.
       for (const item of normalizedItems) {
         await tx.$executeRaw`
-          INSERT INTO "UserCartItem" ("cartId", "productId", "quantity", "priceOverride", "satuanPesan", "createdAt", "updatedAt")
-          VALUES (${cartId}, ${item.productId}, ${item.quantity}, ${item.priceOverride}, ${item.satuanPesan}, NOW(), NOW())
-          ON CONFLICT ("cartId", "productId")
-          DO UPDATE SET
-            "quantity" = EXCLUDED."quantity",
-            "priceOverride" = EXCLUDED."priceOverride",
-            "satuanPesan" = EXCLUDED."satuanPesan",
-            "updatedAt" = NOW()
+          INSERT INTO "UserCartItem" ("cartId", "productId", "variantId", "quantity", "priceOverride", "satuanPesan", "createdAt", "updatedAt")
+          VALUES (${cartId}, ${item.productId}, ${item.variantId}, ${item.quantity}, ${item.priceOverride}, ${item.satuanPesan}, NOW(), NOW())
         `;
       }
 

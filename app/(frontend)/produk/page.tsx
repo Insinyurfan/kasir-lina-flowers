@@ -1082,10 +1082,9 @@ export default function ManajemenProdukPage() {
                 />
               </div>
 
+              {!formData.hasVariants && (
               <div>
-                <label className="block text-xs font-bold text-slate-500 mb-1 uppercase">
-                  Harga (Rp){formData.hasVariants && <span className="text-slate-400 normal-case font-medium"> — opsional, harga ikut variasi</span>}
-                </label>
+                <label className="block text-xs font-bold text-slate-500 mb-1 uppercase">Harga (Rp)</label>
                 <div className="flex gap-2">
                   <input
                     type="number"
@@ -1093,7 +1092,7 @@ export default function ManajemenProdukPage() {
                     value={formData.harga}
                     onChange={(e) => setFormData({ ...formData, harga: e.target.value })}
                     className="flex-1 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-pink-500 text-sm font-bold text-slate-700"
-                    placeholder={formData.hasVariants ? "Kosongkan jika harga ikut variasi" : "0"}
+                    placeholder="0"
                   />
                   <select
                     value={formData.satuanHarga}
@@ -1116,6 +1115,13 @@ export default function ManajemenProdukPage() {
                   </p>
                 )}
               </div>
+              )}
+
+              {formData.hasVariants && (
+                <div className="rounded-xl bg-amber-50 border border-amber-200 px-4 py-3">
+                  <p className="text-[11px] font-semibold text-amber-700">💡 Produk ini memakai variasi — harga ditentukan per variasi di bawah, jadi tidak perlu mengisi harga produk utama.</p>
+                </div>
+              )}
               <div className="w-full">
                 <label className="block text-xs font-bold text-slate-500 mb-1 uppercase">Stok (dalam satuan {formData.satuanHarga})</label>
                 <input type="number" required value={formData.stok} onChange={(e) => setFormData({ ...formData, stok: e.target.value })} className="w-full border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-pink-500 text-sm font-bold text-slate-700" placeholder="0" />

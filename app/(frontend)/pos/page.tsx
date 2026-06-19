@@ -5,6 +5,12 @@ import { useCartStore, PCS_PER_UNIT, SATUAN_LABELS, hitungHargaSatuan } from "@/
 import { Search, Plus, Minus, Trash2, ShoppingCart, Flower2, Wallet, User, UserCheck, LogOut, Camera, X, Pencil, Check } from "lucide-react";
 import { getSavedUserSession } from "@/lib/userSession";
 
+type Variant = {
+  id: number;
+  name: string;
+  priceModifier: number | null;
+};
+
 type Product = {
   id: number;
   nama_produk: string;
@@ -15,6 +21,7 @@ type Product = {
   gambar: string | null;
   gambarPosX?: number;
   gambarPosY?: number;
+  variants?: Variant[];
 };
 
 type UserSession = {
@@ -78,6 +85,7 @@ export default function PosPage() {
   const [isPosCartLoaded, setIsPosCartLoaded] = useState(false);
   
   const [isCartOpen, setIsCartOpen] = useState(false); // STATE BUKA/TUTUP KERANJANG
+  const [variantModalProduct, setVariantModalProduct] = useState<Product | null>(null); // PRODUK YANG SEDANG PILIH VARIASI
   const [animations, setAnimations] = useState<{id: number, x: number, y: number, img: string | null}[]>([]); // STATE ANIMASI TERBANG
   const animationIdRef = useRef(0);
   
@@ -126,8 +134,13 @@ export default function PosPage() {
               // JIKA BERHASIL SCAN:
               const matchedProduct = produk.find(p => p.barcode === decodedText);
               if (matchedProduct) {
-                 addToCart(matchedProduct);
-                 alert(`✅ ${matchedProduct.nama_produk} otomatis masuk keranjang!`);
+                 if (matchedProduct.variants && matchedProduct.variants.length > 0) {
+                   setVariantModalProduct(matchedProduct);
+                   alert(`✅ ${matchedProduct.nama_produk} — silakan pilih variasi.`);
+                 } else {
+                   addToCart(matchedProduct);
+                   alert(`✅ ${matchedProduct.nama_produk} otomatis masuk keranjang!`);
+                 }
               } else {
                  alert(`❌ Barcode ${decodedText} tidak ditemukan!`);
               }
@@ -328,10 +341,28 @@ export default function PosPage() {
     }, 700);
   };
 
-  // Klik produk → langsung masuk keranjang dengan satuan default produk + animasi terbang
+  // Klik produk → jika punya variasi, buka modal pilih variasi dulu. Jika tidak, langsung masuk keranjang.
   const handleProductClick = (e: React.MouseEvent, p: Product) => {
+    if (p.variants && p.variants.length > 0) {
+      setVariantModalProduct(p);
+      return;
+    }
     triggerFlyAnimation(e, p);
     addToCart({ ...p, satuanPesan: p.satuanHarga ?? "pcs", hargaBase: p.harga });
+  };
+
+  // Setelah memilih variasi → masuk keranjang dengan harga & nama variasi
+  const handleVariantSelected = (p: Product, variant: Variant) => {
+    const hargaVarian = variant.priceModifier ?? p.harga;
+    addToCart({
+      ...p,
+      harga: hargaVarian,
+      hargaBase: hargaVarian,
+      satuanPesan: p.satuanHarga ?? "pcs",
+      variantId: variant.id,
+      variantName: variant.name,
+    });
+    setVariantModalProduct(null);
   };
 
   const filteredProduk = produk.filter(p => 
@@ -373,6 +404,39 @@ export default function PosPage() {
       {animations.map(anim => (
          <FlyingItem key={anim.id} startX={anim.x} startY={anim.y} img={anim.img} />
       ))}
+
+      {/* MODAL PILIH VARIASI */}
+      {variantModalProduct && (
+        <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm" onClick={() => setVariantModalProduct(null)}>
+          <div className="w-full max-w-md rounded-3xl bg-white shadow-2xl overflow-hidden" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between gap-3 bg-gradient-to-r from-amber-400 to-yellow-500 px-5 py-4 text-white">
+              <div className="min-w-0">
+                <p className="text-[10px] font-black uppercase tracking-widest text-white/80">Pilih Variasi</p>
+                <h3 className="font-black text-lg leading-tight truncate">{variantModalProduct.nama_produk}</h3>
+              </div>
+              <button onClick={() => setVariantModalProduct(null)} className="bg-white/20 hover:bg-white/30 p-2 rounded-full shrink-0"><X size={20} /></button>
+            </div>
+            <div className="p-4 grid grid-cols-2 gap-3 max-h-[60vh] overflow-y-auto">
+              {(variantModalProduct.variants || []).map((v) => (
+                <button
+                  key={v.id}
+                  type="button"
+                  onClick={() => handleVariantSelected(variantModalProduct, v)}
+                  className="flex flex-col items-center justify-center gap-1 rounded-2xl border-2 border-amber-200 bg-amber-50 px-3 py-4 hover:border-amber-400 hover:bg-amber-100 active:scale-95 transition-all"
+                >
+                  <span className="text-base font-black text-slate-800">{v.name}</span>
+                  <span className="text-sm font-bold text-amber-600">
+                    Rp {(v.priceModifier ?? variantModalProduct.harga).toLocaleString("id-ID")}
+                    {(variantModalProduct.satuanHarga ?? "pcs") !== "pcs" && (
+                      <span className="text-[10px] text-slate-400"> /{SATUAN_LABELS[variantModalProduct.satuanHarga] ?? variantModalProduct.satuanHarga}</span>
+                    )}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* MODAL SCANNER KAMERA KUSTOM */}
       {showScanner && (
@@ -645,7 +709,10 @@ export default function PosPage() {
                     <div key={item.id} className="bg-white shadow-sm p-2 sm:p-3 rounded-xl sm:rounded-2xl border border-pink-50 space-y-1.5 sm:space-y-2">
                       <div className="flex justify-between items-start gap-1.5 sm:gap-2">
                         <div className="flex-1 min-w-0">
-                          <h4 className="font-bold text-[11px] sm:text-xs text-slate-800 truncate">{item.nama_produk}</h4>
+                          <h4 className="font-bold text-[11px] sm:text-xs text-slate-800 truncate">
+                            {item.nama_produk}
+                            {item.variantName && <span className="ml-1 text-amber-600">({item.variantName})</span>}
+                          </h4>
                           <p className="text-pink-600 text-[10px] sm:text-[11px] font-extrabold mt-0.5">
                             Rp {(item.harga * item.quantity).toLocaleString("id-ID")}
                           </p>

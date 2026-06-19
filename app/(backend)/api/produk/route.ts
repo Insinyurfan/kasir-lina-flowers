@@ -32,7 +32,7 @@ export async function GET(request: Request) {
           gambarPosX: true,
           gambarPosY: true,
           variants: {
-            select: { id: true, name: true, price: true },
+            select: { id: true, name: true, priceModifier: true },
             orderBy: { order: "asc" }
           },
         },
@@ -45,7 +45,7 @@ export async function GET(request: Request) {
       orderBy: { id: "desc" },
       include: {
         variants: {
-          select: { id: true, name: true, price: true },
+          select: { id: true, name: true, priceModifier: true },
           orderBy: { order: "asc" }
         }
       }
@@ -90,7 +90,7 @@ export async function POST(request: Request) {
       },
       include: {
         variants: {
-          select: { id: true, name: true, price: true },
+          select: { id: true, name: true, priceModifier: true },
           orderBy: { order: "asc" }
         }
       }
@@ -169,7 +169,7 @@ export async function PATCH(request: Request) {
       },
       include: {
         variants: {
-          select: { id: true, name: true, price: true },
+          select: { id: true, name: true, priceModifier: true },
           orderBy: { order: "asc" }
         }
       }

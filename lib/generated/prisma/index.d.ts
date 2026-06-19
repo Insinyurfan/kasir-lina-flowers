@@ -4553,14 +4553,14 @@ export namespace Prisma {
   export type ProductVariantAvgAggregateOutputType = {
     id: number | null
     productId: number | null
-    price: number | null
+    priceModifier: number | null
     order: number | null
   }
 
   export type ProductVariantSumAggregateOutputType = {
     id: number | null
     productId: number | null
-    price: number | null
+    priceModifier: number | null
     order: number | null
   }
 
@@ -4568,7 +4568,7 @@ export namespace Prisma {
     id: number | null
     productId: number | null
     name: string | null
-    price: number | null
+    priceModifier: number | null
     order: number | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -4578,7 +4578,7 @@ export namespace Prisma {
     id: number | null
     productId: number | null
     name: string | null
-    price: number | null
+    priceModifier: number | null
     order: number | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -4588,7 +4588,7 @@ export namespace Prisma {
     id: number
     productId: number
     name: number
-    price: number
+    priceModifier: number
     order: number
     createdAt: number
     updatedAt: number
@@ -4599,14 +4599,14 @@ export namespace Prisma {
   export type ProductVariantAvgAggregateInputType = {
     id?: true
     productId?: true
-    price?: true
+    priceModifier?: true
     order?: true
   }
 
   export type ProductVariantSumAggregateInputType = {
     id?: true
     productId?: true
-    price?: true
+    priceModifier?: true
     order?: true
   }
 
@@ -4614,7 +4614,7 @@ export namespace Prisma {
     id?: true
     productId?: true
     name?: true
-    price?: true
+    priceModifier?: true
     order?: true
     createdAt?: true
     updatedAt?: true
@@ -4624,7 +4624,7 @@ export namespace Prisma {
     id?: true
     productId?: true
     name?: true
-    price?: true
+    priceModifier?: true
     order?: true
     createdAt?: true
     updatedAt?: true
@@ -4634,7 +4634,7 @@ export namespace Prisma {
     id?: true
     productId?: true
     name?: true
-    price?: true
+    priceModifier?: true
     order?: true
     createdAt?: true
     updatedAt?: true
@@ -4731,7 +4731,7 @@ export namespace Prisma {
     id: number
     productId: number
     name: string
-    price: number
+    priceModifier: number
     order: number
     createdAt: Date
     updatedAt: Date
@@ -4760,7 +4760,7 @@ export namespace Prisma {
     id?: boolean
     productId?: boolean
     name?: boolean
-    price?: boolean
+    priceModifier?: boolean
     order?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -4771,7 +4771,7 @@ export namespace Prisma {
     id?: boolean
     productId?: boolean
     name?: boolean
-    price?: boolean
+    priceModifier?: boolean
     order?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -4782,7 +4782,7 @@ export namespace Prisma {
     id?: boolean
     productId?: boolean
     name?: boolean
-    price?: boolean
+    priceModifier?: boolean
     order?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -4793,13 +4793,13 @@ export namespace Prisma {
     id?: boolean
     productId?: boolean
     name?: boolean
-    price?: boolean
+    priceModifier?: boolean
     order?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type ProductVariantOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "productId" | "name" | "price" | "order" | "createdAt" | "updatedAt", ExtArgs["result"]["productVariant"]>
+  export type ProductVariantOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "productId" | "name" | "priceModifier" | "order" | "createdAt" | "updatedAt", ExtArgs["result"]["productVariant"]>
   export type ProductVariantInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     product?: boolean | ProductDefaultArgs<ExtArgs>
   }
@@ -4819,7 +4819,7 @@ export namespace Prisma {
       id: number
       productId: number
       name: string
-      price: number
+      priceModifier: number
       order: number
       createdAt: Date
       updatedAt: Date
@@ -5250,7 +5250,7 @@ export namespace Prisma {
     readonly id: FieldRef<"ProductVariant", 'Int'>
     readonly productId: FieldRef<"ProductVariant", 'Int'>
     readonly name: FieldRef<"ProductVariant", 'String'>
-    readonly price: FieldRef<"ProductVariant", 'Int'>
+    readonly priceModifier: FieldRef<"ProductVariant", 'Int'>
     readonly order: FieldRef<"ProductVariant", 'Int'>
     readonly createdAt: FieldRef<"ProductVariant", 'DateTime'>
     readonly updatedAt: FieldRef<"ProductVariant", 'DateTime'>
@@ -17285,7 +17285,7 @@ export namespace Prisma {
     id: 'id',
     productId: 'productId',
     name: 'name',
-    price: 'price',
+    priceModifier: 'priceModifier',
     order: 'order',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
@@ -17726,7 +17726,7 @@ export namespace Prisma {
     id?: IntFilter<"ProductVariant"> | number
     productId?: IntFilter<"ProductVariant"> | number
     name?: StringFilter<"ProductVariant"> | string
-    price?: IntFilter<"ProductVariant"> | number
+    priceModifier?: IntFilter<"ProductVariant"> | number
     order?: IntFilter<"ProductVariant"> | number
     createdAt?: DateTimeFilter<"ProductVariant"> | Date | string
     updatedAt?: DateTimeFilter<"ProductVariant"> | Date | string
@@ -17737,7 +17737,7 @@ export namespace Prisma {
     id?: SortOrder
     productId?: SortOrder
     name?: SortOrder
-    price?: SortOrder
+    priceModifier?: SortOrder
     order?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -17752,7 +17752,7 @@ export namespace Prisma {
     NOT?: ProductVariantWhereInput | ProductVariantWhereInput[]
     productId?: IntFilter<"ProductVariant"> | number
     name?: StringFilter<"ProductVariant"> | string
-    price?: IntFilter<"ProductVariant"> | number
+    priceModifier?: IntFilter<"ProductVariant"> | number
     order?: IntFilter<"ProductVariant"> | number
     createdAt?: DateTimeFilter<"ProductVariant"> | Date | string
     updatedAt?: DateTimeFilter<"ProductVariant"> | Date | string
@@ -17763,7 +17763,7 @@ export namespace Prisma {
     id?: SortOrder
     productId?: SortOrder
     name?: SortOrder
-    price?: SortOrder
+    priceModifier?: SortOrder
     order?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -17781,7 +17781,7 @@ export namespace Prisma {
     id?: IntWithAggregatesFilter<"ProductVariant"> | number
     productId?: IntWithAggregatesFilter<"ProductVariant"> | number
     name?: StringWithAggregatesFilter<"ProductVariant"> | string
-    price?: IntWithAggregatesFilter<"ProductVariant"> | number
+    priceModifier?: IntWithAggregatesFilter<"ProductVariant"> | number
     order?: IntWithAggregatesFilter<"ProductVariant"> | number
     createdAt?: DateTimeWithAggregatesFilter<"ProductVariant"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"ProductVariant"> | Date | string
@@ -18727,7 +18727,7 @@ export namespace Prisma {
 
   export type ProductVariantCreateInput = {
     name: string
-    price: number
+    priceModifier: number
     order?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -18738,7 +18738,7 @@ export namespace Prisma {
     id?: number
     productId: number
     name: string
-    price: number
+    priceModifier: number
     order?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -18746,7 +18746,7 @@ export namespace Prisma {
 
   export type ProductVariantUpdateInput = {
     name?: StringFieldUpdateOperationsInput | string
-    price?: IntFieldUpdateOperationsInput | number
+    priceModifier?: IntFieldUpdateOperationsInput | number
     order?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -18757,7 +18757,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     productId?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
-    price?: IntFieldUpdateOperationsInput | number
+    priceModifier?: IntFieldUpdateOperationsInput | number
     order?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -18767,7 +18767,7 @@ export namespace Prisma {
     id?: number
     productId: number
     name: string
-    price: number
+    priceModifier: number
     order?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -18775,7 +18775,7 @@ export namespace Prisma {
 
   export type ProductVariantUpdateManyMutationInput = {
     name?: StringFieldUpdateOperationsInput | string
-    price?: IntFieldUpdateOperationsInput | number
+    priceModifier?: IntFieldUpdateOperationsInput | number
     order?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -18785,7 +18785,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     productId?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
-    price?: IntFieldUpdateOperationsInput | number
+    priceModifier?: IntFieldUpdateOperationsInput | number
     order?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -19866,7 +19866,7 @@ export namespace Prisma {
     id?: SortOrder
     productId?: SortOrder
     name?: SortOrder
-    price?: SortOrder
+    priceModifier?: SortOrder
     order?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -19875,7 +19875,7 @@ export namespace Prisma {
   export type ProductVariantAvgOrderByAggregateInput = {
     id?: SortOrder
     productId?: SortOrder
-    price?: SortOrder
+    priceModifier?: SortOrder
     order?: SortOrder
   }
 
@@ -19883,7 +19883,7 @@ export namespace Prisma {
     id?: SortOrder
     productId?: SortOrder
     name?: SortOrder
-    price?: SortOrder
+    priceModifier?: SortOrder
     order?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -19893,7 +19893,7 @@ export namespace Prisma {
     id?: SortOrder
     productId?: SortOrder
     name?: SortOrder
-    price?: SortOrder
+    priceModifier?: SortOrder
     order?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -19902,7 +19902,7 @@ export namespace Prisma {
   export type ProductVariantSumOrderByAggregateInput = {
     id?: SortOrder
     productId?: SortOrder
-    price?: SortOrder
+    priceModifier?: SortOrder
     order?: SortOrder
   }
 
@@ -21529,7 +21529,7 @@ export namespace Prisma {
 
   export type ProductVariantCreateWithoutProductInput = {
     name: string
-    price: number
+    priceModifier: number
     order?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -21538,7 +21538,7 @@ export namespace Prisma {
   export type ProductVariantUncheckedCreateWithoutProductInput = {
     id?: number
     name: string
-    price: number
+    priceModifier: number
     order?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -21669,7 +21669,7 @@ export namespace Prisma {
     id?: IntFilter<"ProductVariant"> | number
     productId?: IntFilter<"ProductVariant"> | number
     name?: StringFilter<"ProductVariant"> | string
-    price?: IntFilter<"ProductVariant"> | number
+    priceModifier?: IntFilter<"ProductVariant"> | number
     order?: IntFilter<"ProductVariant"> | number
     createdAt?: DateTimeFilter<"ProductVariant"> | Date | string
     updatedAt?: DateTimeFilter<"ProductVariant"> | Date | string
@@ -22857,7 +22857,7 @@ export namespace Prisma {
   export type ProductVariantCreateManyProductInput = {
     id?: number
     name: string
-    price: number
+    priceModifier: number
     order?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -22958,7 +22958,7 @@ export namespace Prisma {
 
   export type ProductVariantUpdateWithoutProductInput = {
     name?: StringFieldUpdateOperationsInput | string
-    price?: IntFieldUpdateOperationsInput | number
+    priceModifier?: IntFieldUpdateOperationsInput | number
     order?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -22967,7 +22967,7 @@ export namespace Prisma {
   export type ProductVariantUncheckedUpdateWithoutProductInput = {
     id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
-    price?: IntFieldUpdateOperationsInput | number
+    priceModifier?: IntFieldUpdateOperationsInput | number
     order?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -22976,7 +22976,7 @@ export namespace Prisma {
   export type ProductVariantUncheckedUpdateManyWithoutProductInput = {
     id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
-    price?: IntFieldUpdateOperationsInput | number
+    priceModifier?: IntFieldUpdateOperationsInput | number
     order?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string

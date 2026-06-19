@@ -82,7 +82,7 @@ export async function POST(request: Request) {
                 .filter((v: any) => v.name && v.name.trim())
                 .map((v: any, idx: number) => ({
                   name: v.name.trim(),
-                  price: v.price != null ? Number(v.price) : null,
+                  priceModifier: v.priceModifier != null ? Number(v.priceModifier) : 0,
                   order: idx,
                 }))
             }
@@ -162,7 +162,7 @@ export async function PATCH(request: Request) {
             .filter((v: any) => v.name && v.name.trim())
             .map((v: any, idx: number) => ({
               name: v.name.trim(),
-              price: v.price != null ? Number(v.price) : null,
+              priceModifier: v.priceModifier != null ? Number(v.priceModifier) : 0,
               order: idx,
             }))
         } : undefined,

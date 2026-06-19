@@ -135,9 +135,9 @@ export default function ReceiptPage() {
         <div className="meta">
           <div>DATE      : {transactionDate.toLocaleDateString("id-ID")}</div>
           <div>TIME      : {transactionDate.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}</div>
-          <div>CASHIER   : {transaction.nama_kasir || "-"}</div>
+          <div>CASHIER   : {(transaction.nama_kasir || "-").toUpperCase()}</div>
           <div>
-            PELANGGAN : <strong>{transaction.nama_pembeli || "-"}</strong>
+            PELANGGAN : <strong>{(transaction.nama_pembeli || "-").toUpperCase()}</strong>
           </div>
           <div>NO TRX    : TRX-{String(transaction.trxNumber ?? transaction.id).padStart(4, "0")}</div>
         </div>

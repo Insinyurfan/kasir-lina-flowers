@@ -296,9 +296,9 @@ export default function PosPage() {
       const res = await fetch("/api/transaksi", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-          cart, metode_pembayaran: metodePembayaran, nama_pembeli: namaPembeli,
-          nama_kasir: cashierDisplayName, status: statusTransaksi, status_pengiriman: "Sedang Disiapkan",
+        body: JSON.stringify({
+          cart, metode_pembayaran: metodePembayaran, nama_pembeli: namaPembeli.toUpperCase(),
+          nama_kasir: cashierDisplayName?.toUpperCase(), status: statusTransaksi, status_pengiriman: "Sedang Disiapkan",
           ...actorPayload,
         }),
       });
@@ -632,39 +632,39 @@ export default function PosPage() {
          
          {/* POP-UP KERANJANG */}
          {isCartOpen && (
-            <div className="bg-white rounded-3xl shadow-2xl border border-pink-100 w-[90vw] sm:w-[400px] mb-4 flex flex-col h-[65vh] max-h-[600px] overflow-hidden transform origin-bottom-right transition-all animate-in slide-in-from-bottom-5">
-              
-              <div className="p-4 bg-pink-600 text-white font-bold flex justify-between items-center shadow-md z-10">
-                <span className="flex items-center gap-2 text-sm"><User size={16} className="text-pink-200"/> {namaPembeli}</span>
-                <button onClick={() => setIsCartOpen(false)} className="text-pink-200 hover:text-white bg-pink-700/50 p-1 rounded-full"><X size={18}/></button>
+            <div className="bg-white rounded-3xl shadow-2xl border border-pink-100 w-[90vw] sm:w-[400px] mb-4 flex flex-col h-[60vh] sm:h-[65vh] max-h-[700px] overflow-hidden transform origin-bottom-right transition-all animate-in slide-in-from-bottom-5">
+
+              <div className="p-2 sm:p-4 bg-pink-600 text-white font-bold flex justify-between items-center shadow-md z-10">
+                <span className="flex items-center gap-2 text-xs sm:text-sm"><User size={14} className="text-pink-200"/> <span className="truncate">{namaPembeli}</span></span>
+                <button onClick={() => setIsCartOpen(false)} className="text-pink-200 hover:text-white bg-pink-700/50 p-1 rounded-full"><X size={16}/></button>
               </div>
 
-              <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-pink-50/50">
+              <div className="flex-1 overflow-y-auto p-2 sm:p-4 space-y-2 sm:space-y-3 bg-pink-50/50">
                 {cart.length > 0 ? (
                   cart.map((item) => (
-                    <div key={item.id} className="bg-white shadow-sm p-3 rounded-2xl border border-pink-50 space-y-2">
-                      <div className="flex justify-between items-start gap-2">
+                    <div key={item.id} className="bg-white shadow-sm p-2 sm:p-3 rounded-xl sm:rounded-2xl border border-pink-50 space-y-1.5 sm:space-y-2">
+                      <div className="flex justify-between items-start gap-1.5 sm:gap-2">
                         <div className="flex-1 min-w-0">
-                          <h4 className="font-bold text-xs text-slate-800 truncate">{item.nama_produk}</h4>
-                          <p className="text-pink-600 text-[11px] font-extrabold mt-0.5">
+                          <h4 className="font-bold text-[11px] sm:text-xs text-slate-800 truncate">{item.nama_produk}</h4>
+                          <p className="text-pink-600 text-[10px] sm:text-[11px] font-extrabold mt-0.5">
                             Rp {(item.harga * item.quantity).toLocaleString("id-ID")}
                           </p>
-                          <p className="text-[10px] font-semibold text-slate-400">
+                          <p className="text-[9px] sm:text-[10px] font-semibold text-slate-400">
                             Rp {item.harga.toLocaleString("id-ID")} / {SATUAN_LABELS[item.satuanPesan ?? "pcs"] ?? item.satuanPesan ?? "pcs"}
                           </p>
                         </div>
                         <div className="flex items-center gap-0.5">
-                          <button onClick={openPriceAdjustment} className="p-1.5 text-slate-400 hover:bg-pink-50 hover:text-pink-600 rounded-lg" title="Sesuaikan harga"><Pencil size={13} /></button>
-                          <button onClick={() => removeFromCart(item.id)} className="p-1.5 text-red-400 hover:bg-red-50 rounded-lg"><Trash2 size={14} /></button>
+                          <button onClick={openPriceAdjustment} className="p-1 text-slate-400 hover:bg-pink-50 hover:text-pink-600 rounded-lg" title="Sesuaikan harga"><Pencil size={11} /></button>
+                          <button onClick={() => removeFromCart(item.id)} className="p-1 text-red-400 hover:bg-red-50 rounded-lg"><Trash2 size={11} /></button>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1.5 sm:gap-2">
                         {/* Ganti satuan (hanya untuk produk non-pcs) */}
                         {(item.satuanHarga ?? "pcs") !== "pcs" && (
                           <select
                             value={item.satuanPesan ?? item.satuanHarga ?? "pcs"}
                             onChange={(e) => updateSatuanPesan(item.id, e.target.value)}
-                            className="text-[11px] font-bold border border-pink-200 rounded-lg px-2 py-1 bg-pink-50 text-pink-600 outline-none cursor-pointer"
+                            className="text-[9px] sm:text-[11px] font-bold border border-pink-200 rounded-lg px-1.5 sm:px-2 py-0.5 sm:py-1 bg-pink-50 text-pink-600 outline-none cursor-pointer flex-shrink"
                           >
                             {(["gross", "lusin", "pcs"] as const).map(s => (
                               <option key={s} value={s}>
@@ -673,36 +673,36 @@ export default function PosPage() {
                             ))}
                           </select>
                         )}
-                        <div className="flex items-center gap-1 bg-slate-50 p-1 rounded-xl border border-slate-100 ml-auto">
-                          <button onClick={() => updateQuantity(item.id, item.quantity - 1)} className="p-1.5 bg-white shadow-sm rounded-lg text-slate-500"><Minus size={12}/></button>
-                          <span className="text-xs font-bold w-6 text-center">{item.quantity}</span>
-                          <button onClick={() => updateQuantity(item.id, item.quantity + 1)} className="p-1.5 bg-white shadow-sm rounded-lg text-pink-600"><Plus size={12}/></button>
+                        <div className="flex items-center gap-0.5 bg-slate-50 p-0.5 sm:p-1 rounded-lg sm:rounded-xl border border-slate-100 ml-auto">
+                          <button onClick={() => updateQuantity(item.id, item.quantity - 1)} className="p-0.5 sm:p-1.5 bg-white shadow-sm rounded-lg text-slate-500"><Minus size={10}/></button>
+                          <span className="text-[10px] sm:text-xs font-bold w-5 text-center">{item.quantity}</span>
+                          <button onClick={() => updateQuantity(item.id, item.quantity + 1)} className="p-0.5 sm:p-1.5 bg-white shadow-sm rounded-lg text-pink-600"><Plus size={10}/></button>
                         </div>
                       </div>
                     </div>
                   ))
                 ) : (
-                  <div className="h-full flex flex-col items-center justify-center text-slate-300 gap-3">
-                     <ShoppingCart size={48} className="opacity-50" />
-                     <p className="text-xs font-bold uppercase tracking-widest text-slate-400">Keranjang Kosong</p>
+                  <div className="h-full flex flex-col items-center justify-center text-slate-300 gap-2">
+                     <ShoppingCart size={36} className="opacity-50" />
+                     <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Keranjang Kosong</p>
                   </div>
                 )}
               </div>
 
-              <div className="p-5 bg-white border-t border-pink-100 space-y-4 shadow-[0_-10px_20px_-10px_rgba(0,0,0,0.05)]">
-                 <div className="bg-pink-50 p-3 rounded-xl border border-pink-100">
-                  <label className="text-[10px] uppercase font-extrabold text-slate-400 mb-1 flex items-center gap-1"><Wallet size={12}/> Metode Pembayaran</label>
-                  <select value={metodePembayaran} onChange={(e) => setMetodePembayaran(e.target.value)} className="w-full bg-transparent outline-none font-bold text-pink-600 text-sm cursor-pointer">
+              <div className="p-3 sm:p-5 bg-white border-t border-pink-100 space-y-3 sm:space-y-4 shadow-[0_-10px_20px_-10px_rgba(0,0,0,0.05)]">
+                 <div className="bg-pink-50 p-2 sm:p-3 rounded-lg sm:rounded-xl border border-pink-100">
+                  <label className="text-[9px] sm:text-[10px] uppercase font-extrabold text-slate-400 mb-0.5 sm:mb-1 flex items-center gap-1"><Wallet size={10}/> Metode Pembayaran</label>
+                  <select value={metodePembayaran} onChange={(e) => setMetodePembayaran(e.target.value)} className="w-full bg-transparent outline-none font-bold text-pink-600 text-xs sm:text-sm cursor-pointer">
                     <option value="Tunai">💵 Tunai (Cash)</option><option value="QRIS">📱 QRIS / E-Wallet</option><option value="Transfer Bank">🏦 Transfer Bank</option><option value="Belum Bayar">🔴 Belum Bayar (Piutang)</option>
                   </select>
                 </div>
-                
+
                 <div className="flex justify-between items-end px-1">
-                  <span className="text-slate-500 font-bold text-xs uppercase">Total Tagihan</span>
-                  <span className="text-2xl font-black text-pink-600">Rp {getTotal().toLocaleString("id-ID")}</span>
+                  <span className="text-slate-500 font-bold text-[9px] sm:text-xs uppercase">Total Tagihan</span>
+                  <span className="text-lg sm:text-2xl font-black text-pink-600">Rp {getTotal().toLocaleString("id-ID")}</span>
                 </div>
 
-                <button onClick={handleCheckout} disabled={isProcessing || cart.length === 0} className="w-full py-4 bg-pink-600 text-white rounded-xl font-bold shadow-lg shadow-pink-200 hover:bg-pink-700 transition-all active:scale-[0.98] disabled:opacity-50">
+                <button onClick={handleCheckout} disabled={isProcessing || cart.length === 0} className="w-full py-3 sm:py-4 bg-pink-600 text-white rounded-xl font-bold text-xs sm:text-base shadow-lg shadow-pink-200 hover:bg-pink-700 transition-all active:scale-[0.98] disabled:opacity-50">
                   {isProcessing ? "MEMPROSES..." : "SELESAIKAN PESANAN"}
                 </button>
               </div>

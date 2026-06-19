@@ -654,9 +654,9 @@ export default function RiwayatPenjualanPage() {
       y
     );
     y += bodyLineHeight + 2;
-    ctx.fillText(`CASHIER   : ${selectedTrx.nama_kasir || "-"}`, margin, y);
+    ctx.fillText(`CASHIER   : ${selectedTrx.nama_kasir?.toUpperCase() || "-" || "-"}`, margin, y);
     y += bodyLineHeight + 2;
-    ctx.fillText(`PELANGGAN : ${selectedTrx.nama_pembeli || "-"}`, margin, y);
+    ctx.fillText(`PELANGGAN : ${selectedTrx.nama_pembeli?.toUpperCase() || "-" || "-"}`, margin, y);
     y += bodyLineHeight + 2;
     ctx.fillText(`NO TRX    : TRX-${(selectedTrx.trxNumber ?? selectedTrx.id).toString().padStart(4, "0")}`, margin, y);
     y += isThermal ? 28 : 36;
@@ -2045,8 +2045,8 @@ export default function RiwayatPenjualanPage() {
                     <div className="receipt-meta mt-4 space-y-1">
                       <div>DATE      : {new Date(selectedTrx.tanggal).toLocaleDateString("id-ID")}</div>
                       <div>TIME      : {new Date(selectedTrx.tanggal).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}</div>
-                      <div>CASHIER   : {selectedTrx.nama_kasir}</div>
-                      <div>PELANGGAN : <span className="font-bold">{selectedTrx.nama_pembeli}</span></div>
+                      <div>CASHIER   : {selectedTrx.nama_kasir?.toUpperCase() || "-"}</div>
+                      <div>PELANGGAN : <span className="font-bold">{selectedTrx.nama_pembeli?.toUpperCase() || "-"}</span></div>
                       <div>NO TRX    : TRX-{(selectedTrx.trxNumber ?? selectedTrx.id).toString().padStart(4, "0")}</div>
                     </div>
 
@@ -2111,8 +2111,8 @@ export default function RiwayatPenjualanPage() {
                       {([
                         ["No. Transaksi", formatTransactionCode(selectedTrx.trxNumber ?? selectedTrx.id)],
                         ["Tanggal", new Date(selectedTrx.tanggal).toLocaleDateString("id-ID", { day: "2-digit", month: "long", year: "numeric" })],
-                        ["Pelanggan", selectedTrx.nama_pembeli || "-"],
-                        ["Kasir", selectedTrx.nama_kasir || "-"],
+                        ["Pelanggan", selectedTrx.nama_pembeli?.toUpperCase() || "-" || "-"],
+                        ["Kasir", selectedTrx.nama_kasir?.toUpperCase() || "-" || "-"],
                       ] as [string, string][]).map(([label, value]) => (
                         <div key={label} className="bg-white px-4 py-3">
                           <p className="text-[9px] font-black uppercase tracking-wider text-pink-400">{label}</p>

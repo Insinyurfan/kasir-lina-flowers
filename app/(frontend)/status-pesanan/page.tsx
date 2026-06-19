@@ -202,8 +202,8 @@ export default function OrderStatusPage() {
         <section class="meta">
           <div class="meta-cell"><b>No. Transaksi</b>${formatTrxCode(order.trxNumber ?? order.id)}</div>
           <div class="meta-cell"><b>Tanggal</b>${escapeHtml(transactionDate.toLocaleDateString("id-ID", { day: "2-digit", month: "long", year: "numeric" }))}</div>
-          <div class="meta-cell"><b>Pelanggan</b>${escapeHtml(order.nama_pembeli || "-")}</div>
-          <div class="meta-cell"><b>Kasir</b>${escapeHtml(order.nama_kasir || "-")}</div>
+          <div class="meta-cell"><b>Pelanggan</b>${escapeHtml((order.nama_pembeli || "-").toUpperCase())}</div>
+          <div class="meta-cell"><b>Kasir</b>${escapeHtml((order.nama_kasir || "-").toUpperCase())}</div>
         </section>
         <table>
           <thead><tr><th>Produk</th><th class="qty">Jumlah</th><th class="money">Subtotal</th></tr></thead>
@@ -262,7 +262,7 @@ export default function OrderStatusPage() {
                   {order.orderRequest?.code && (
                     <p className="mt-1 font-mono text-xs font-black text-violet-600">{order.orderRequest.code}</p>
                   )}
-                  <h2 className="mt-1 text-lg font-black text-slate-800">{order.nama_pembeli || "Tanpa nama"}</h2>
+                  <h2 className="mt-1 text-lg font-black text-slate-800">{(order.nama_pembeli || "Tanpa nama").toUpperCase()}</h2>
                   <p className="text-xs text-slate-400">{new Date(order.tanggal).toLocaleString("id-ID")}</p>
                 </div>
                 <select

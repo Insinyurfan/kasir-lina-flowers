@@ -1083,15 +1083,17 @@ export default function ManajemenProdukPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-500 mb-1 uppercase">Harga (Rp)</label>
+                <label className="block text-xs font-bold text-slate-500 mb-1 uppercase">
+                  Harga (Rp){formData.hasVariants && <span className="text-slate-400 normal-case font-medium"> — opsional, harga ikut variasi</span>}
+                </label>
                 <div className="flex gap-2">
                   <input
                     type="number"
-                    required
+                    required={!formData.hasVariants}
                     value={formData.harga}
                     onChange={(e) => setFormData({ ...formData, harga: e.target.value })}
                     className="flex-1 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-pink-500 text-sm font-bold text-slate-700"
-                    placeholder="0"
+                    placeholder={formData.hasVariants ? "Kosongkan jika harga ikut variasi" : "0"}
                   />
                   <select
                     value={formData.satuanHarga}
@@ -1173,7 +1175,7 @@ export default function ManajemenProdukPage() {
                             value={variant.priceModifier ?? ""}
                             onChange={(e) => {
                               const newVariants = [...formData.variants];
-                              newVariants[idx].priceModifier = e.target.value ? Number(e.target.value) : 0;
+                              newVariants[idx].priceModifier = e.target.value ? Number(e.target.value) : null;
                               setFormData({ ...formData, variants: newVariants });
                             }}
                             placeholder="Harga variasi (Rp)"
@@ -1199,7 +1201,7 @@ export default function ManajemenProdukPage() {
                       onClick={() => {
                         setFormData({
                           ...formData,
-                          variants: [...formData.variants, { name: "", priceModifier: 0 }]
+                          variants: [...formData.variants, { name: "", priceModifier: null }]
                         });
                       }}
                       className="w-full py-2.5 bg-white border-2 border-dashed border-pink-300 rounded-lg font-bold text-pink-600 hover:bg-pink-50 transition-colors flex items-center justify-center gap-2 text-sm"

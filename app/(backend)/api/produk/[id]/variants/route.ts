@@ -55,7 +55,7 @@ export async function POST(
       data: {
         productId,
         name: data.name?.trim(),
-        price: Number(data.price) || 0,
+        priceModifier: Number(data.price) || 0,
         order: nextOrder,
       },
     });
@@ -109,7 +109,7 @@ export async function PATCH(
       where: { id: Number(data.variantId) },
       data: {
         name: data.name?.trim(),
-        price: Number(data.price) || 0,
+        priceModifier: Number(data.price) || 0,
       },
     });
 

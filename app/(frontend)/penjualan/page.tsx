@@ -839,9 +839,10 @@ export default function RiwayatPenjualanPage() {
     // --- TABLE ---
     const THEAD_H = 40;
     const ROW_H = 48;
+    const UNIT_W = isNota ? 140 : 0;
     const QTY_W = 120;
-    const SUB_W = isNota ? 160 : 0;
-    const PROD_W = CW - QTY_W - SUB_W;
+    const SUB_W = isNota ? 140 : 0;
+    const PROD_W = CW - UNIT_W - QTY_W - SUB_W;
 
     ctx.fillStyle = "#fce7f3";
     ctx.fillRect(MARGIN, y, CW, THEAD_H);
@@ -852,10 +853,13 @@ export default function RiwayatPenjualanPage() {
     ctx.font = "bold 14px Arial, sans-serif";
     ctx.fillText("PRODUK", MARGIN + 14, y + 13);
     ctx.textAlign = "center";
-    ctx.fillText("JUMLAH", MARGIN + PROD_W + QTY_W / 2, y + 13);
     if (isNota) {
+      ctx.fillText("HARGA/UNIT", MARGIN + PROD_W + UNIT_W / 2, y + 13);
+      ctx.fillText("JUMLAH", MARGIN + PROD_W + UNIT_W + QTY_W / 2, y + 13);
       ctx.textAlign = "right";
       ctx.fillText("SUBTOTAL", MARGIN + CW - 14, y + 13);
+    } else {
+      ctx.fillText("JUMLAH", MARGIN + PROD_W + UNIT_W + QTY_W / 2, y + 13);
     }
     ctx.textAlign = "left";
     y += THEAD_H;
@@ -874,16 +878,27 @@ export default function RiwayatPenjualanPage() {
       ctx.font = "bold 16px Arial, sans-serif";
       ctx.fillText(prodName.length > 50 ? prodName.slice(0, 49) + "…" : prodName, MARGIN + 14, y + 16);
 
-      ctx.fillStyle = "#64748b";
-      ctx.font = "16px Arial, sans-serif";
-      ctx.textAlign = "center";
-      ctx.fillText(`${item.jumlah} ${SATUAN_LABELS[item.satuanHarga || "pcs"] ?? "Pcs"}`, MARGIN + PROD_W + QTY_W / 2, y + 16);
-
       if (isNota) {
+        const satuanLabel = SATUAN_LABELS[item.satuanHarga || "pcs"] ?? "Pcs";
+        const unitPrice = item.jumlah > 0 ? item.subtotal / item.jumlah : 0;
+        ctx.fillStyle = "#64748b";
+        ctx.font = "16px Arial, sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText(`Rp ${Number(unitPrice).toLocaleString("id-ID")}/${satuanLabel}`, MARGIN + PROD_W + UNIT_W / 2, y + 16);
+
+        ctx.fillStyle = "#64748b";
+        ctx.font = "16px Arial, sans-serif";
+        ctx.fillText(`${item.jumlah} ${satuanLabel}`, MARGIN + PROD_W + UNIT_W + QTY_W / 2, y + 16);
+
         ctx.fillStyle = "#334155";
         ctx.font = "bold 16px Arial, sans-serif";
         ctx.textAlign = "right";
         ctx.fillText(`Rp ${Number(item.subtotal || 0).toLocaleString("id-ID")}`, MARGIN + CW - 14, y + 16);
+      } else {
+        ctx.fillStyle = "#64748b";
+        ctx.font = "16px Arial, sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText(`${item.jumlah} ${SATUAN_LABELS[item.satuanHarga || "pcs"] ?? "Pcs"}`, MARGIN + PROD_W + UNIT_W + QTY_W / 2, y + 16);
       }
       ctx.textAlign = "left";
       y += ROW_H;
@@ -984,9 +999,11 @@ export default function RiwayatPenjualanPage() {
     const logoSrc = storeInfo.receiptLogo || storeInfo.logo;
     const itemRows = (t.items || []).map((item) => {
       const satuanLabel = SATUAN_LABELS[item.satuanHarga || "pcs"] ?? "Pcs";
+      const unitPrice = item.jumlah > 0 ? item.subtotal / item.jumlah : 0;
       return `
       <tr>
         <td>${escapeHtml(item.product?.nama_produk || "-")}</td>
+        ${isNota ? `<td class="money">Rp ${Number(unitPrice).toLocaleString("id-ID")}/${satuanLabel}</td>` : ""}
         <td class="qty">${escapeHtml(item.jumlah)} ${satuanLabel}</td>
         ${isNota ? `<td class="money">Rp ${Number(item.subtotal || 0).toLocaleString("id-ID")}</td>` : ""}
       </tr>`;
@@ -1008,7 +1025,7 @@ export default function RiwayatPenjualanPage() {
       th,td{padding:11px 14px;border:1px solid #e2e8f0;text-align:left;vertical-align:top}
       th{background:#fce7f3;color:#be185d;text-transform:uppercase;font-size:11px;letter-spacing:.05em;font-weight:700}
       tr:nth-child(even) td{background:#fdf8fb}
-      .qty{text-align:center;white-space:nowrap;width:80px}.money{text-align:right;white-space:nowrap;width:120px}
+      .qty{text-align:center;white-space:nowrap;width:80px}.money{text-align:right;white-space:nowrap;width:110px}
       .total-row{display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding:13px 16px;background:#fdf2f8;border:1px solid #fbcfe8;border-radius:10px;color:#be185d;font-size:18px;font-weight:800}
       .notes{margin-top:24px;border:1px dashed #cbd5e1;padding:14px 16px;min-height:72px;border-radius:10px}
       .notes b{color:#475569;font-size:12px;display:block;margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em}
@@ -1035,7 +1052,7 @@ export default function RiwayatPenjualanPage() {
         </section>
         <table>
           <thead>
-            <tr><th>Produk</th><th class="qty">Jumlah</th>${isNota ? '<th class="money">Subtotal</th>' : ""}</tr>
+            <tr><th>Produk</th>${isNota ? '<th class="money">Harga/Unit</th>' : ""}<th class="qty">Jumlah</th>${isNota ? '<th class="money">Subtotal</th>' : ""}</tr>
           </thead>
           <tbody>${itemRows}</tbody>
         </table>
@@ -2109,20 +2126,28 @@ export default function RiwayatPenjualanPage() {
                       <thead>
                         <tr className="bg-pink-50 border-b border-pink-100">
                           <th className="px-4 py-2 text-left font-black text-pink-700">Produk</th>
+                          {printType === "nota" && <th className="px-4 py-2 text-right font-black text-pink-700 w-32">Harga/Unit</th>}
                           <th className="px-2 py-2 text-center font-black text-pink-700 w-16">Jumlah</th>
-                          {printType === "nota" && <th className="px-4 py-2 text-right font-black text-pink-700 w-28">Subtotal</th>}
+                          {printType === "nota" && <th className="px-4 py-2 text-right font-black text-pink-700 w-24">Subtotal</th>}
                         </tr>
                       </thead>
                       <tbody>
-                        {(selectedTrx.items || []).map((item: { id: number; jumlah: number; subtotal: number; satuanHarga?: string | null; product: { nama_produk: string } }) => (
-                          <tr key={item.id} className="border-b border-slate-50 even:bg-pink-50/30">
-                            <td className="px-4 py-2 font-semibold text-slate-700 leading-snug">{item.product?.nama_produk || "-"}</td>
-                            <td className="px-2 py-2 text-center text-slate-600">{item.jumlah} {SATUAN_LABELS[item.satuanHarga || "pcs"] ?? "Pcs"}</td>
-                            {printType === "nota" && (
-                              <td className="px-4 py-2 text-right text-slate-700">Rp {Number(item.subtotal || 0).toLocaleString("id-ID")}</td>
-                            )}
-                          </tr>
-                        ))}
+                        {(selectedTrx.items || []).map((item: { id: number; jumlah: number; subtotal: number; satuanHarga?: string | null; product: { nama_produk: string } }) => {
+                          const satuanLabel = SATUAN_LABELS[item.satuanHarga || "pcs"] ?? "Pcs";
+                          const unitPrice = item.jumlah > 0 ? item.subtotal / item.jumlah : 0;
+                          return (
+                            <tr key={item.id} className="border-b border-slate-50 even:bg-pink-50/30">
+                              <td className="px-4 py-2 font-semibold text-slate-700 leading-snug">{item.product?.nama_produk || "-"}</td>
+                              {printType === "nota" && (
+                                <td className="px-4 py-2 text-right text-slate-700">Rp {Number(unitPrice).toLocaleString("id-ID")}/{satuanLabel}</td>
+                              )}
+                              <td className="px-2 py-2 text-center text-slate-600">{item.jumlah} {satuanLabel}</td>
+                              {printType === "nota" && (
+                                <td className="px-4 py-2 text-right text-slate-700">Rp {Number(item.subtotal || 0).toLocaleString("id-ID")}</td>
+                              )}
+                            </tr>
+                          );
+                        })}
                       </tbody>
                     </table>
 

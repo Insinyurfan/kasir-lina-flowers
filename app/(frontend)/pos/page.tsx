@@ -31,6 +31,19 @@ type UserSession = {
   role: string;
 };
 
+// Tampilkan harga di grid POS: rentang termurah–termahal jika produk punya variasi
+const formatHargaPos = (p: Product) => {
+  const vs = (p.variants ?? []).map((v) => v.priceModifier).filter((x): x is number => x != null);
+  if (vs.length > 0) {
+    const min = Math.min(...vs);
+    const max = Math.max(...vs);
+    return min === max
+      ? `Rp ${min.toLocaleString("id-ID")}`
+      : `Rp ${min.toLocaleString("id-ID")} - ${max.toLocaleString("id-ID")}`;
+  }
+  return `Rp ${p.harga.toLocaleString("id-ID")}`;
+};
+
 // KOMPONEN UNTUK ANIMASI TERBANG (FLYING ITEM)
 const FlyingItem = ({ startX, startY, img }: { startX: number, startY: number, img: string | null }) => {
   const [style, setStyle] = useState({
@@ -682,7 +695,7 @@ export default function PosPage() {
 
   <div className="mt-auto">
     <p className="font-black text-pink-600">
-      Rp {p.harga.toLocaleString("id-ID")}
+      {formatHargaPos(p)}
     </p>
   </div>
 </div>

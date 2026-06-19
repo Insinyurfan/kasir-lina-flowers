@@ -34,6 +34,19 @@ type GuestCartItem = Product & {
 
 const WHATSAPP_ORDER_NUMBER = "6281247000600";
 
+// Tampilkan harga: rentang termurah–termahal jika produk punya variasi
+const formatHargaProduk = (p: { harga: number; variants?: Array<{ priceModifier: number | null }> }) => {
+  const vs = (p.variants ?? []).map((v) => v.priceModifier).filter((x): x is number => x != null);
+  if (vs.length > 0) {
+    const min = Math.min(...vs);
+    const max = Math.max(...vs);
+    return min === max
+      ? `Rp ${min.toLocaleString("id-ID")}`
+      : `Rp ${min.toLocaleString("id-ID")} - ${max.toLocaleString("id-ID")}`;
+  }
+  return `Rp ${p.harga.toLocaleString("id-ID")}`;
+};
+
 const getSavedUser = () => {
   return getSavedUserSession<UserSession>();
 };
@@ -73,6 +86,7 @@ export default function ManajemenProdukPage() {
     hasVariants: false,
     variants: [] as Array<{ name: string; priceModifier: number | null }>,
   });
+  const [bulkVariantPrice, setBulkVariantPrice] = useState("");
 
   const isGuest = user?.role === "Tamu";
   const isAdmin = user?.role !== "Owner";
@@ -177,6 +191,7 @@ export default function ManajemenProdukPage() {
       hasVariants: false,
       variants: []
     });
+    setBulkVariantPrice("");
     setIsModalOpen(true);
   };
 
@@ -184,6 +199,7 @@ export default function ManajemenProdukPage() {
     if (isGuest) return;
     setIsEdit(true);
     setSelectedImageFile(null);
+    setBulkVariantPrice("");
     setFormData({
       id: produk.id,
       nama_produk: produk.nama_produk,
@@ -732,7 +748,7 @@ export default function ManajemenProdukPage() {
                           <div className="flex items-start justify-between gap-2">
                             <div className="min-w-0">
                               <h3 className="font-bold text-slate-800 leading-snug line-clamp-2">{p.nama_produk}</h3>
-                              <p className="mt-1 font-bold text-pink-600">Rp {p.harga.toLocaleString("id-ID")}</p>
+                              <p className="mt-1 font-bold text-pink-600">{formatHargaProduk(p)}</p>
                             </div>
                             <span className={`shrink-0 rounded-full px-3 py-1 text-xs font-bold ${p.stok > 5 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
                               {p.stok} Pcs
@@ -828,7 +844,7 @@ export default function ManajemenProdukPage() {
                             )}
                           </td>
                           <td className="p-4 font-bold text-slate-700">{p.nama_produk}</td>
-                          <td className="p-4 font-bold text-pink-600">Rp {p.harga.toLocaleString("id-ID")}</td>
+                          <td className="p-4 font-bold text-pink-600">{formatHargaProduk(p)}</td>
                           <td className="p-4 whitespace-nowrap">
                             <span className={`px-3 py-1 rounded-full text-xs font-bold ${p.stok > 5 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>{p.stok} Pcs</span>
                           </td>
@@ -895,7 +911,7 @@ export default function ManajemenProdukPage() {
                           <div className="flex items-start justify-between gap-2">
                             <div className="min-w-0">
                               <h3 className="font-bold text-slate-500 leading-snug line-clamp-2">{p.nama_produk}</h3>
-                              <p className="mt-1 font-bold text-slate-400">Rp {p.harga.toLocaleString("id-ID")}</p>
+                              <p className="mt-1 font-bold text-slate-400">{formatHargaProduk(p)}</p>
                             </div>
                             <span className="shrink-0 rounded-full bg-amber-100 px-3 py-1 text-xs font-bold text-amber-700">
                               Diarsipkan
@@ -954,7 +970,7 @@ export default function ManajemenProdukPage() {
                             )}
                           </td>
                           <td className="p-4 font-bold text-slate-500">{p.nama_produk}</td>
-                          <td className="p-4 font-bold text-slate-400">Rp {p.harga.toLocaleString("id-ID")}</td>
+                          <td className="p-4 font-bold text-slate-400">{formatHargaProduk(p)}</td>
                           <td className="p-4 whitespace-nowrap">
                             <span className="px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-500">{p.stok} Pcs</span>
                           </td>
@@ -1159,6 +1175,35 @@ export default function ManajemenProdukPage() {
 
                 {formData.hasVariants && (
                   <div className="space-y-3 bg-pink-50/50 p-4 rounded-2xl border border-pink-100">
+                    {/* HARGA UNTUK SEMUA VARIASI (jika harga sama, beda warna saja) */}
+                    <div className="rounded-xl bg-white border border-amber-200 p-3">
+                      <label className="block text-[11px] font-bold text-amber-700 mb-1.5">⚡ Harga sama untuk semua variasi?</label>
+                      <div className="flex gap-2">
+                        <input
+                          type="number"
+                          value={bulkVariantPrice}
+                          onChange={(e) => setBulkVariantPrice(e.target.value)}
+                          placeholder="Masukkan harga sekali..."
+                          className="flex-1 border border-slate-200 rounded-lg px-3 py-2 outline-none focus:border-amber-400 text-sm font-semibold text-slate-700"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (!bulkVariantPrice) return;
+                            const harga = Number(bulkVariantPrice);
+                            setFormData({
+                              ...formData,
+                              variants: formData.variants.map((v) => ({ ...v, priceModifier: harga })),
+                            });
+                          }}
+                          className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg font-bold text-xs whitespace-nowrap transition-colors"
+                        >
+                          Terapkan ke Semua
+                        </button>
+                      </div>
+                      <p className="text-[10px] text-slate-400 mt-1">Isi nama variasi dulu di bawah, lalu klik &quot;Terapkan ke Semua&quot;.</p>
+                    </div>
+
                     {formData.variants.map((variant, idx) => (
                       <div key={idx} className="flex gap-2 items-end">
                         <div className="flex-1">

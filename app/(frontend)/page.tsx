@@ -275,12 +275,9 @@ export default function KatalogPage() {
                     {selectedProduct.variants.map((v) => (
                       <div
                         key={v.id}
-                        className="snap-start shrink-0 rounded-2xl border border-amber-200 bg-amber-50 px-3.5 py-2 text-center"
+                        className="snap-start shrink-0 rounded-full border border-amber-200 bg-amber-50 px-4 py-2"
                       >
                         <p className="text-sm font-black text-slate-800 whitespace-nowrap">{v.name}</p>
-                        {v.priceModifier != null && (
-                          <p className="text-[11px] font-bold text-amber-600 whitespace-nowrap">Rp {v.priceModifier.toLocaleString("id-ID")}</p>
-                        )}
                       </div>
                     ))}
                   </div>

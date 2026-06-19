@@ -154,7 +154,7 @@ export async function DELETE(
       metadata: {
         productId,
         variantName: variant.name,
-        price: variant.price,
+        priceModifier: variant.priceModifier,
       },
     });
 

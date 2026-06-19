@@ -32,7 +32,7 @@ export async function GET(request: Request) {
           gambarPosX: true,
           gambarPosY: true,
           variants: {
-            select: { id: true, name: true, priceModifier: true },
+            select: { id: true, name: true, price: true },
             orderBy: { order: "asc" }
           },
         },
@@ -45,7 +45,7 @@ export async function GET(request: Request) {
       orderBy: { id: "desc" },
       include: {
         variants: {
-          select: { id: true, name: true, priceModifier: true },
+          select: { id: true, name: true, price: true },
           orderBy: { order: "asc" }
         }
       }
@@ -82,7 +82,7 @@ export async function POST(request: Request) {
                 .filter((v: any) => v.name && v.name.trim())
                 .map((v: any, idx: number) => ({
                   name: v.name.trim(),
-                  priceModifier: v.priceModifier != null ? Number(v.priceModifier) : null,
+                  price: v.price != null ? Number(v.price) : null,
                   order: idx,
                 }))
             }
@@ -90,7 +90,7 @@ export async function POST(request: Request) {
       },
       include: {
         variants: {
-          select: { id: true, name: true, priceModifier: true },
+          select: { id: true, name: true, price: true },
           orderBy: { order: "asc" }
         }
       }
@@ -162,14 +162,14 @@ export async function PATCH(request: Request) {
             .filter((v: any) => v.name && v.name.trim())
             .map((v: any, idx: number) => ({
               name: v.name.trim(),
-              priceModifier: v.priceModifier != null ? Number(v.priceModifier) : null,
+              price: v.price != null ? Number(v.price) : null,
               order: idx,
             }))
         } : undefined,
       },
       include: {
         variants: {
-          select: { id: true, name: true, priceModifier: true },
+          select: { id: true, name: true, price: true },
           orderBy: { order: "asc" }
         }
       }

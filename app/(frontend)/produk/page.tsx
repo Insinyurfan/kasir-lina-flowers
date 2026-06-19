@@ -1173,13 +1173,13 @@ export default function ManajemenProdukPage() {
                             value={variant.priceModifier ?? ""}
                             onChange={(e) => {
                               const newVariants = [...formData.variants];
-                              newVariants[idx].priceModifier = e.target.value ? Number(e.target.value) : null;
+                              newVariants[idx].priceModifier = e.target.value ? Number(e.target.value) : 0;
                               setFormData({ ...formData, variants: newVariants });
                             }}
-                            placeholder="Kosongkan jika harga sama"
+                            placeholder="Harga variasi (Rp)"
                             className="w-full border border-slate-200 rounded-lg px-3 py-2 outline-none focus:border-pink-500 text-sm font-semibold text-slate-700"
                           />
-                          <p className="text-[10px] text-slate-400 mt-1">Selisih Harga (Rp)</p>
+                          <p className="text-[10px] text-slate-400 mt-1">Harga Variasi (Rp)</p>
                         </div>
                         <button
                           type="button"
@@ -1199,7 +1199,7 @@ export default function ManajemenProdukPage() {
                       onClick={() => {
                         setFormData({
                           ...formData,
-                          variants: [...formData.variants, { name: "", priceModifier: null }]
+                          variants: [...formData.variants, { name: "", priceModifier: 0 }]
                         });
                       }}
                       className="w-full py-2.5 bg-white border-2 border-dashed border-pink-300 rounded-lg font-bold text-pink-600 hover:bg-pink-50 transition-colors flex items-center justify-center gap-2 text-sm"

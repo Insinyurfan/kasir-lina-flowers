@@ -55,7 +55,7 @@ export async function POST(
       data: {
         productId,
         name: data.name?.trim(),
-        priceModifier: data.priceModifier != null ? Number(data.priceModifier) : null,
+        price: Number(data.price) || 0,
         order: nextOrder,
       },
     });
@@ -70,7 +70,7 @@ export async function POST(
       metadata: {
         productId,
         variantName: newVariant.name,
-        priceModifier: newVariant.priceModifier,
+        price: newVariant.price,
       },
     });
 
@@ -109,7 +109,7 @@ export async function PATCH(
       where: { id: Number(data.variantId) },
       data: {
         name: data.name?.trim(),
-        priceModifier: data.priceModifier != null ? Number(data.priceModifier) : null,
+        price: Number(data.price) || 0,
       },
     });
 
@@ -154,7 +154,7 @@ export async function DELETE(
       metadata: {
         productId,
         variantName: variant.name,
-        priceModifier: variant.priceModifier,
+        price: variant.price,
       },
     });
 

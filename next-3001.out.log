@@ -4,7 +4,7 @@
 
 ▲ Next.js 16.2.4 (Turbopack)
 - Local:         http://localhost:3001
-- Network:       http://172.130.10.139:3001
+- Network:       http://192.168.137.1:3001
 - Environments: .env
-✓ Ready in 1330ms
+✓ Ready in 586ms
 [?25h

@@ -38,14 +38,14 @@ model Product {
 }
 
 model ProductVariant {
-  id              Int      @id @default(autoincrement())
-  productId       Int
-  product         Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-  name            String   // "S", "M", "L", "Merah", "Biru", etc
-  priceModifier   Int?     // nullable - jika null berarti harga sama dengan base
-  order           Int      @default(0)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id        Int      @id @default(autoincrement())
+  productId Int
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  name      String   // "S", "M", "L", "Merah", "Biru", etc
+  price     Int      // absolute price for this variant
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([productId, name])
   @@index([productId])

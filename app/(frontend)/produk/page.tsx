@@ -1178,13 +1178,13 @@ export default function ManajemenProdukPage() {
                     {/* HARGA UNTUK SEMUA VARIASI (jika harga sama, beda warna saja) */}
                     <div className="rounded-xl bg-white border border-amber-200 p-3">
                       <label className="block text-[11px] font-bold text-amber-700 mb-1.5">⚡ Harga sama untuk semua variasi?</label>
-                      <div className="flex gap-2">
+                      <div className="flex flex-col sm:flex-row gap-2">
                         <input
                           type="number"
                           value={bulkVariantPrice}
                           onChange={(e) => setBulkVariantPrice(e.target.value)}
                           placeholder="Masukkan harga sekali..."
-                          className="flex-1 border border-slate-200 rounded-lg px-3 py-2 outline-none focus:border-amber-400 text-sm font-semibold text-slate-700"
+                          className="w-full sm:flex-1 border border-slate-200 rounded-lg px-3 py-2 outline-none focus:border-amber-400 text-sm font-semibold text-slate-700"
                         />
                         <button
                           type="button"
@@ -1196,7 +1196,7 @@ export default function ManajemenProdukPage() {
                               variants: formData.variants.map((v) => ({ ...v, priceModifier: harga })),
                             });
                           }}
-                          className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg font-bold text-xs whitespace-nowrap transition-colors"
+                          className="w-full sm:w-auto px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg font-bold text-xs whitespace-nowrap transition-colors shrink-0"
                         >
                           Terapkan ke Semua
                         </button>

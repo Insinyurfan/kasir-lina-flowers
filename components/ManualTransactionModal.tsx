@@ -66,6 +66,13 @@ const formatDateTimeLocal = (date: Date) => {
   return `${year}-${month}-${day}T${hour}:${minute}`;
 };
 
+const parseISODateTimeLocal = (isoString: string) => {
+  // Parse ISO string tanpa timezone conversion
+  const match = isoString.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/);
+  if (!match) return formatDateTimeLocal(new Date());
+  return `${match[1]}-${match[2]}-${match[3]}T${match[4]}:${match[5]}`;
+};
+
 const newRowId = () => `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 
 const createEmptyItem = (): ManualItem => ({
@@ -122,7 +129,7 @@ export default function ManualTransactionModal({ open, transaction, title, onClo
 
     const timeoutId = window.setTimeout(() => {
       if (transaction) {
-        setTanggal(formatDateTimeLocal(new Date(transaction.tanggal)));
+        setTanggal(parseISODateTimeLocal(transaction.tanggal));
         setNamaPembeli(transaction.nama_pembeli || "");
         setNamaKasir(normalizeCashierName(transaction.nama_kasir));
         setMetode(transaction.metode_pembayaran || "Tunai");
@@ -203,9 +210,9 @@ export default function ManualTransactionModal({ open, transaction, title, onClo
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...(transaction ? { id: transaction.id } : {}),
-          tanggal,
-          nama_pembeli: namaPembeli || "-",
-          nama_kasir: namaKasir || "-",
+          tanggal: new Date(`${tanggal}:00Z`).toISOString(),
+          nama_pembeli: namaPembeli?.toUpperCase() || "-",
+          nama_kasir: namaKasir?.toUpperCase() || "-",
           metode_pembayaran: metode,
           status,
           status_pengiriman: pengiriman,

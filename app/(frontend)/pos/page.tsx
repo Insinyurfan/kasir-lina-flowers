@@ -653,9 +653,9 @@ export default function PosPage() {
                             Rp {item.harga.toLocaleString("id-ID")} / {SATUAN_LABELS[item.satuanPesan ?? "pcs"] ?? item.satuanPesan ?? "pcs"}
                           </p>
                         </div>
-                        <div className="flex items-center gap-0.5">
-                          <button onClick={openPriceAdjustment} className="p-1 text-slate-400 hover:bg-pink-50 hover:text-pink-600 rounded-lg" title="Sesuaikan harga"><Pencil size={11} /></button>
-                          <button onClick={() => removeFromCart(item.id)} className="p-1 text-red-400 hover:bg-red-50 rounded-lg"><Trash2 size={11} /></button>
+                        <div className="flex items-center gap-1 sm:gap-0.5">
+                          <button onClick={openPriceAdjustment} className="p-2 sm:p-1 text-slate-400 hover:bg-pink-50 hover:text-pink-600 rounded-lg" title="Sesuaikan harga"><Pencil size={14} className="sm:hidden" /><Pencil size={11} className="hidden sm:block" /></button>
+                          <button onClick={() => removeFromCart(item.id)} className="p-2 sm:p-1 text-red-400 hover:bg-red-50 rounded-lg"><Trash2 size={14} className="sm:hidden" /><Trash2 size={11} className="hidden sm:block" /></button>
                         </div>
                       </div>
                       <div className="flex items-center gap-1.5 sm:gap-2">

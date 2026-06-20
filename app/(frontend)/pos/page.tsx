@@ -95,6 +95,7 @@ export default function PosPage() {
   const [isCheckoutConfirmOpen, setIsCheckoutConfirmOpen] = useState(false);
   const [isPriceAdjustOpen, setIsPriceAdjustOpen] = useState(false);
   const [priceDraft, setPriceDraft] = useState<Record<number, string>>({});
+  const [qtyDraft, setQtyDraft] = useState<Record<number, string>>({});
   const [isPosCartLoaded, setIsPosCartLoaded] = useState(false);
   
   const [isCartOpen, setIsCartOpen] = useState(false); // STATE BUKA/TUTUP KERANJANG
@@ -106,6 +107,32 @@ export default function PosPage() {
 
   // MENGHITUNG TOTAL BARANG DI KERANJANG UNTUK BADGE
   const totalBarang = cart.reduce((total, item) => total + item.quantity, 0);
+
+  // Hapus draft jumlah untuk satu item (dipakai saat tekan +/-)
+  const clearQtyDraft = (id: number) =>
+    setQtyDraft((prev) => {
+      if (!(id in prev)) return prev;
+      const next = { ...prev };
+      delete next[id];
+      return next;
+    });
+
+  // Simpan hasil ketik manual jumlah ke keranjang
+  const commitQtyDraft = (id: number) => {
+    setQtyDraft((prev) => {
+      if (!(id in prev)) return prev;
+      const parsed = parseInt(prev[id], 10);
+      if (!isNaN(parsed) && parsed >= 1) updateQuantity(id, parsed);
+      const next = { ...prev };
+      delete next[id];
+      return next;
+    });
+  };
+
+  const handleQtyStep = (id: number, nextQty: number) => {
+    clearQtyDraft(id);
+    updateQuantity(id, nextQty);
+  };
 
   const clearSavedPosCart = async () => {
     if (!user?.id) return;
@@ -719,32 +746,32 @@ export default function PosPage() {
               <div className="flex-1 overflow-y-auto p-2 sm:p-4 space-y-2 sm:space-y-3 bg-pink-50/50">
                 {cart.length > 0 ? (
                   cart.map((item) => (
-                    <div key={item.id} className="bg-white shadow-sm p-2 sm:p-3 rounded-xl sm:rounded-2xl border border-pink-50 space-y-1.5 sm:space-y-2">
-                      <div className="flex justify-between items-start gap-1.5 sm:gap-2">
+                    <div key={item.id} className="bg-white shadow-sm p-3 rounded-2xl border border-pink-50 space-y-2.5">
+                      <div className="flex justify-between items-start gap-2">
                         <div className="flex-1 min-w-0">
-                          <h4 className="font-bold text-[11px] sm:text-xs text-slate-800 truncate">
+                          <h4 className="font-bold text-sm sm:text-base text-slate-800 truncate">
                             {item.nama_produk}
                             {item.variantName && <span className="ml-1 text-amber-600">({item.variantName})</span>}
                           </h4>
-                          <p className="text-pink-600 text-[10px] sm:text-[11px] font-extrabold mt-0.5">
+                          <p className="text-pink-600 text-sm sm:text-base font-extrabold mt-0.5">
                             Rp {(item.harga * item.quantity).toLocaleString("id-ID")}
                           </p>
-                          <p className="text-[9px] sm:text-[10px] font-semibold text-slate-400">
+                          <p className="text-xs font-semibold text-slate-400 mt-0.5">
                             Rp {item.harga.toLocaleString("id-ID")} / {SATUAN_LABELS[item.satuanPesan ?? "pcs"] ?? item.satuanPesan ?? "pcs"}
                           </p>
                         </div>
-                        <div className="flex items-center gap-1 sm:gap-0.5">
-                          <button onClick={openPriceAdjustment} className="p-2 sm:p-1 text-slate-400 hover:bg-pink-50 hover:text-pink-600 rounded-lg" title="Sesuaikan harga"><Pencil size={14} className="sm:hidden" /><Pencil size={11} className="hidden sm:block" /></button>
-                          <button onClick={() => removeFromCart(item.id)} className="p-2 sm:p-1 text-red-400 hover:bg-red-50 rounded-lg"><Trash2 size={14} className="sm:hidden" /><Trash2 size={11} className="hidden sm:block" /></button>
+                        <div className="flex items-center gap-1 shrink-0">
+                          <button onClick={openPriceAdjustment} className="p-2.5 text-slate-400 hover:bg-pink-50 hover:text-pink-600 rounded-xl" title="Sesuaikan harga"><Pencil size={18} /></button>
+                          <button onClick={() => removeFromCart(item.id)} className="p-2.5 text-red-400 hover:bg-red-50 rounded-xl" title="Hapus"><Trash2 size={18} /></button>
                         </div>
                       </div>
-                      <div className="flex items-center gap-1.5 sm:gap-2">
+                      <div className="flex items-center gap-2 flex-wrap">
                         {/* Ganti satuan (hanya untuk produk non-pcs) */}
                         {(item.satuanHarga ?? "pcs") !== "pcs" && (
                           <select
                             value={item.satuanPesan ?? item.satuanHarga ?? "pcs"}
                             onChange={(e) => updateSatuanPesan(item.id, e.target.value)}
-                            className="text-[9px] sm:text-[11px] font-bold border border-pink-200 rounded-lg px-1.5 sm:px-2 py-0.5 sm:py-1 bg-pink-50 text-pink-600 outline-none cursor-pointer flex-shrink"
+                            className="text-xs sm:text-sm font-bold border border-pink-200 rounded-xl px-2.5 py-2 bg-pink-50 text-pink-600 outline-none cursor-pointer min-w-0"
                           >
                             {(["gross", "lusin", "pcs"] as const).map(s => (
                               <option key={s} value={s}>
@@ -753,10 +780,23 @@ export default function PosPage() {
                             ))}
                           </select>
                         )}
-                        <div className="flex items-center gap-0.5 bg-slate-50 p-0.5 sm:p-1 rounded-lg sm:rounded-xl border border-slate-100 ml-auto">
-                          <button onClick={() => updateQuantity(item.id, item.quantity - 1)} className="p-0.5 sm:p-1.5 bg-white shadow-sm rounded-lg text-slate-500"><Minus size={10}/></button>
-                          <span className="text-[10px] sm:text-xs font-bold w-5 text-center">{item.quantity}</span>
-                          <button onClick={() => updateQuantity(item.id, item.quantity + 1)} className="p-0.5 sm:p-1.5 bg-white shadow-sm rounded-lg text-pink-600"><Plus size={10}/></button>
+                        <div className="flex items-center gap-1 bg-slate-50 p-1 rounded-xl border border-slate-100 ml-auto">
+                          <button onClick={() => handleQtyStep(item.id, item.quantity - 1)} className="p-2 bg-white shadow-sm rounded-lg text-slate-500 active:scale-95" aria-label="Kurangi"><Minus size={16}/></button>
+                          <input
+                            type="text"
+                            inputMode="numeric"
+                            value={qtyDraft[item.id] ?? String(item.quantity)}
+                            onChange={(e) => {
+                              const digits = e.target.value.replace(/\D/g, "");
+                              setQtyDraft((prev) => ({ ...prev, [item.id]: digits }));
+                            }}
+                            onFocus={(e) => e.target.select()}
+                            onBlur={() => commitQtyDraft(item.id)}
+                            onKeyDown={(e) => { if (e.key === "Enter") (e.target as HTMLInputElement).blur(); }}
+                            className="w-12 text-center text-sm font-bold bg-transparent outline-none text-slate-700"
+                            aria-label="Jumlah"
+                          />
+                          <button onClick={() => handleQtyStep(item.id, item.quantity + 1)} className="p-2 bg-white shadow-sm rounded-lg text-pink-600 active:scale-95" aria-label="Tambah"><Plus size={16}/></button>
                         </div>
                       </div>
                     </div>

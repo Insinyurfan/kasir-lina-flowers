@@ -9,6 +9,7 @@ export type ManualProduct = {
   nama_produk: string;
   harga: number;
   stok: number;
+  satuanHarga?: string;
   gambar?: string | null;
 };
 
@@ -38,6 +39,7 @@ export type ManualTransaction = {
     id: number;
     jumlah: number;
     subtotal: number;
+    satuanHarga?: string;
     product: ManualProduct;
   }>;
 };
@@ -47,7 +49,14 @@ type ManualItem = {
   productId: string;
   quantity: string;
   harga: string;
+  satuan: string;
 };
+
+const SATUAN_OPTIONS: Array<{ value: string; label: string }> = [
+  { value: "pcs", label: "Pcs" },
+  { value: "lusin", label: "Lusin" },
+  { value: "gross", label: "Gross" },
+];
 
 type Props = {
   open: boolean;
@@ -80,6 +89,7 @@ const createEmptyItem = (): ManualItem => ({
   productId: "",
   quantity: "1",
   harga: "0",
+  satuan: "pcs",
 });
 
 export default function ManualTransactionModal({ open, transaction, title, onClose, onSaved }: Props) {
@@ -124,40 +134,51 @@ export default function ManualTransactionModal({ open, transaction, title, onClo
     [cashierAccounts, getCashierNameFromAccount]
   );
 
+  // Inisialisasi field & item — TIDAK boleh tergantung cashierAccounts,
+  // supaya tidak ter-reset (mengembalikan satuan/qty/harga) saat data akun
+  // selesai dimuat setelah modal terbuka.
   useEffect(() => {
     if (!open) return;
 
-    const timeoutId = window.setTimeout(() => {
-      if (transaction) {
-        setTanggal(parseISODateTimeLocal(transaction.tanggal));
-        setNamaPembeli(transaction.nama_pembeli || "");
-        setNamaKasir(normalizeCashierName(transaction.nama_kasir));
-        setMetode(transaction.metode_pembayaran || "Tunai");
-        setStatus(transaction.status || "Paid");
-        setPengiriman(transaction.status_pengiriman || "Selesai");
-        setItems(
-          transaction.items && transaction.items.length > 0
-            ? transaction.items.map((item) => ({
-                rowId: newRowId(),
-                productId: String(item.product.id),
-                quantity: String(item.jumlah),
-                harga: String(item.jumlah > 0 ? item.subtotal / item.jumlah : item.product.harga),
-              }))
-            : [createEmptyItem()]
-        );
-      } else {
-        setTanggal(formatDateTimeLocal(new Date()));
-        setNamaPembeli("");
-        setNamaKasir(cashierAccounts[0] ? getCashierNameFromAccount(cashierAccounts[0]) : "");
-        setMetode("Tunai");
-        setStatus("Paid");
-        setPengiriman("Selesai");
-        setItems([createEmptyItem()]);
-      }
-    }, 0);
+    if (transaction) {
+      setTanggal(parseISODateTimeLocal(transaction.tanggal));
+      setNamaPembeli(transaction.nama_pembeli || "");
+      setMetode(transaction.metode_pembayaran || "Tunai");
+      setStatus(transaction.status || "Paid");
+      setPengiriman(transaction.status_pengiriman || "Selesai");
+      setItems(
+        transaction.items && transaction.items.length > 0
+          ? transaction.items.map((item) => ({
+              rowId: newRowId(),
+              productId: String(item.product.id),
+              quantity: String(item.jumlah),
+              harga: String(item.jumlah > 0 ? item.subtotal / item.jumlah : item.product.harga),
+              satuan: item.satuanHarga || "pcs",
+            }))
+          : [createEmptyItem()]
+      );
+    } else {
+      setTanggal(formatDateTimeLocal(new Date()));
+      setNamaPembeli("");
+      setMetode("Tunai");
+      setStatus("Paid");
+      setPengiriman("Selesai");
+      setItems([createEmptyItem()]);
+    }
+  }, [open, transaction]);
 
-    return () => window.clearTimeout(timeoutId);
-  }, [cashierAccounts, getCashierNameFromAccount, normalizeCashierName, open, transaction]);
+  // Nama kasir butuh data akun, jadi dipisah. Hanya menyetel saat modal
+  // pertama dibuka / akun dimuat — perubahan field lain tidak terpengaruh.
+  useEffect(() => {
+    if (!open) return;
+
+    if (transaction) {
+      setNamaKasir(normalizeCashierName(transaction.nama_kasir));
+    } else {
+      setNamaKasir(cashierAccounts[0] ? getCashierNameFromAccount(cashierAccounts[0]) : "");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, transaction, cashierAccounts]);
 
   const productsById = useMemo(() => {
     return products.reduce<Record<string, ManualProduct>>((result, product) => {
@@ -173,10 +194,12 @@ export default function ManualTransactionModal({ open, transaction, title, onClo
       current.map((item) => {
         if (item.rowId !== rowId) return item;
         if (field === "productId") {
+          const selected = productsById[value];
           return {
             ...item,
             productId: value,
-            harga: productsById[value] ? String(productsById[value].harga) : item.harga,
+            harga: selected ? String(selected.harga) : item.harga,
+            satuan: selected?.satuanHarga || item.satuan,
           };
         }
         return { ...item, [field]: value };
@@ -191,6 +214,7 @@ export default function ManualTransactionModal({ open, transaction, title, onClo
         id: Number(item.productId),
         quantity: Number(item.quantity),
         harga: Number(item.harga),
+        satuanPesan: item.satuan || "pcs",
       }));
 
     if (cart.length === 0) {
@@ -330,7 +354,7 @@ export default function ManualTransactionModal({ open, transaction, title, onClo
                 const product = productsById[item.productId];
 
                 return (
-                  <div key={item.rowId} className="grid grid-cols-1 lg:grid-cols-[72px_1fr_110px_150px_44px] gap-3 p-4 items-center">
+                  <div key={item.rowId} className="grid grid-cols-1 lg:grid-cols-[72px_1fr_90px_110px_140px_44px] gap-3 p-4 items-center">
                     <div className="w-16 h-16 rounded-xl bg-slate-100 overflow-hidden flex items-center justify-center">
                       {product?.gambar ? (
                         <img src={product.gambar} alt={product.nama_produk} className="w-full h-full object-cover" />
@@ -358,6 +382,18 @@ export default function ManualTransactionModal({ open, transaction, title, onClo
                       className="w-full border border-slate-200 rounded-xl px-3 py-2.5 outline-none focus:border-pink-500 text-sm"
                       placeholder="Qty"
                     />
+                    <select
+                      value={item.satuan}
+                      onChange={(e) => updateItem(item.rowId, "satuan", e.target.value)}
+                      className="w-full border border-slate-200 rounded-xl px-3 py-2.5 outline-none focus:border-pink-500 text-sm"
+                      title="Satuan harga"
+                    >
+                      {SATUAN_OPTIONS.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
                     <input
                       type="number"
                       min="0"

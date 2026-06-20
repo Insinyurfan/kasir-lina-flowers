@@ -797,25 +797,25 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             )}
 
             {/* MOBILE HEADER BAR: hamburger | profil + sapaan | notifikasi */}
-            <div className="md:hidden fixed top-0 left-0 right-0 h-14 z-50 bg-white/95 border-b border-pink-100 backdrop-blur-md shadow-sm flex items-center px-3 gap-2">
+            <div className="md:hidden fixed top-0 left-0 right-0 h-16 z-50 bg-white/95 border-b border-pink-100 backdrop-blur-md shadow-sm flex items-center px-3.5 gap-2.5">
               <button
                 onClick={openMobileMenu}
-                className="p-2 rounded-xl bg-pink-50 text-pink-600 border border-pink-100 flex-shrink-0"
+                className="p-2.5 rounded-xl bg-pink-50 text-pink-600 border border-pink-100 flex-shrink-0"
               >
-                <Menu size={22} />
+                <Menu size={26} />
               </button>
 
-              <div className="flex items-center gap-2 flex-1 min-w-0">
-                <div className="w-8 h-8 rounded-full bg-pink-50 border-2 border-pink-200 flex items-center justify-center overflow-hidden text-pink-400 flex-shrink-0">
+              <div className="flex items-center gap-2.5 flex-1 min-w-0">
+                <div className="w-11 h-11 rounded-full bg-pink-50 border-2 border-pink-200 flex items-center justify-center overflow-hidden text-pink-400 flex-shrink-0">
                   {user?.profilePhoto ? (
                     <img src={user.profilePhoto} alt="" className="w-full h-full object-cover" />
                   ) : (
-                    <UserRound size={16} />
+                    <UserRound size={22} />
                   )}
                 </div>
                 <div className="min-w-0">
-                  <p className="text-[9px] text-slate-400 font-medium leading-none">Selamat datang,</p>
-                  <p className="text-xs font-bold text-slate-800 truncate leading-tight">{user?.fullName || user?.username || "Pengguna"}</p>
+                  <p className="text-[11px] text-slate-400 font-medium leading-none mb-0.5">Selamat datang,</p>
+                  <p className="text-sm font-bold text-slate-800 truncate leading-tight">{user?.fullName || user?.username || "Pengguna"}</p>
                 </div>
               </div>
 
@@ -824,12 +824,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   <button
                     type="button"
                     onClick={() => setIsNotifOpen(!isNotifOpen)}
-                    className="w-9 h-9 rounded-xl bg-pink-50 text-pink-600 border border-pink-100 flex items-center justify-center"
+                    className="w-11 h-11 rounded-xl bg-pink-50 text-pink-600 border border-pink-100 flex items-center justify-center"
                   >
-                    <Bell size={18} className={unreadNotifications > 0 ? "animate-[lina-bell-ring_1.6s_ease-in-out_infinite]" : ""} />
+                    <Bell size={22} className={unreadNotifications > 0 ? "animate-[lina-bell-ring_1.6s_ease-in-out_infinite]" : ""} />
                   </button>
                   {unreadNotifications > 0 && (
-                    <span className="absolute -top-1.5 -right-1.5 min-w-5 h-5 px-1 rounded-full bg-red-500 text-white text-[9px] font-bold flex items-center justify-center ring-2 ring-white z-10">
+                    <span className="absolute -top-1.5 -right-1.5 min-w-5 h-5 px-1 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center ring-2 ring-white z-10">
                       {unreadNotifications}
                     </span>
                   )}
@@ -959,7 +959,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </aside>
 
             {/* KONTEN UTAMA */}
-            <main className="lina-app-content flex-1 overflow-y-auto p-4 md:p-8 pt-14 md:pt-8 pb-20 md:pb-8">
+            <main className="lina-app-content flex-1 overflow-y-auto p-4 md:p-8 pt-16 md:pt-8 pb-20 md:pb-8">
               {children}
             </main>
 

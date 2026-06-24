@@ -4,6 +4,12 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Plus, Save, Trash2, X } from "lucide-react";
 import { getSavedUserSession } from "@/lib/userSession";
 
+export type ManualVariant = {
+  id: number;
+  name: string;
+  priceModifier?: number | null;
+};
+
 export type ManualProduct = {
   id: number;
   nama_produk: string;
@@ -11,6 +17,7 @@ export type ManualProduct = {
   stok: number;
   satuanHarga?: string;
   gambar?: string | null;
+  variants?: ManualVariant[];
 };
 
 type CashierAccount = {
@@ -40,6 +47,8 @@ export type ManualTransaction = {
     jumlah: number;
     subtotal: number;
     satuanHarga?: string;
+    variantId?: number | null;
+    variantName?: string | null;
     product: ManualProduct;
   }>;
 };
@@ -47,6 +56,7 @@ export type ManualTransaction = {
 type ManualItem = {
   rowId: string;
   productId: string;
+  variantId: string;
   quantity: string;
   harga: string;
   satuan: string;
@@ -87,6 +97,7 @@ const newRowId = () => `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 const createEmptyItem = (): ManualItem => ({
   rowId: newRowId(),
   productId: "",
+  variantId: "",
   quantity: "1",
   harga: "0",
   satuan: "pcs",
@@ -151,6 +162,7 @@ export default function ManualTransactionModal({ open, transaction, title, onClo
           ? transaction.items.map((item) => ({
               rowId: newRowId(),
               productId: String(item.product.id),
+              variantId: item.variantId != null ? String(item.variantId) : "",
               quantity: String(item.jumlah),
               harga: String(item.jumlah > 0 ? item.subtotal / item.jumlah : item.product.harga),
               satuan: item.satuanHarga || "pcs",
@@ -198,6 +210,7 @@ export default function ManualTransactionModal({ open, transaction, title, onClo
           return {
             ...item,
             productId: value,
+            variantId: "", // reset variasi karena beda produk beda variasi
             harga: selected ? String(selected.harga) : item.harga,
             satuan: selected?.satuanHarga || item.satuan,
           };
@@ -210,12 +223,18 @@ export default function ManualTransactionModal({ open, transaction, title, onClo
   const handleSave = async () => {
     const cart = items
       .filter((item) => item.productId && Number(item.quantity) > 0)
-      .map((item) => ({
-        id: Number(item.productId),
-        quantity: Number(item.quantity),
-        harga: Number(item.harga),
-        satuanPesan: item.satuan || "pcs",
-      }));
+      .map((item) => {
+        const product = productsById[item.productId];
+        const variant = product?.variants?.find((v) => String(v.id) === item.variantId);
+        return {
+          id: Number(item.productId),
+          quantity: Number(item.quantity),
+          harga: Number(item.harga),
+          satuanPesan: item.satuan || "pcs",
+          variantId: variant ? variant.id : null,
+          variantName: variant ? variant.name : null,
+        };
+      });
 
     if (cart.length === 0) {
       alert("Tambahkan minimal satu produk.");
@@ -362,18 +381,35 @@ export default function ManualTransactionModal({ open, transaction, title, onClo
                         <span className="text-xs text-slate-400">Foto</span>
                       )}
                     </div>
-                    <select
-                      value={item.productId}
-                      onChange={(e) => updateItem(item.rowId, "productId", e.target.value)}
-                      className="w-full border border-slate-200 rounded-xl px-3 py-2.5 outline-none focus:border-pink-500 text-sm"
-                    >
-                      <option value="">Pilih produk</option>
-                      {products.map((productOption) => (
-                        <option key={productOption.id} value={productOption.id}>
-                          {productOption.nama_produk}
-                        </option>
-                      ))}
-                    </select>
+                    <div className="flex flex-col gap-2">
+                      <select
+                        value={item.productId}
+                        onChange={(e) => updateItem(item.rowId, "productId", e.target.value)}
+                        className="w-full border border-slate-200 rounded-xl px-3 py-2.5 outline-none focus:border-pink-500 text-sm"
+                      >
+                        <option value="">Pilih produk</option>
+                        {products.map((productOption) => (
+                          <option key={productOption.id} value={productOption.id}>
+                            {productOption.nama_produk}
+                          </option>
+                        ))}
+                      </select>
+                      {product?.variants && product.variants.length > 0 && (
+                        <select
+                          value={item.variantId}
+                          onChange={(e) => updateItem(item.rowId, "variantId", e.target.value)}
+                          className="w-full border border-amber-200 bg-amber-50 text-amber-700 rounded-xl px-3 py-2 outline-none focus:border-amber-400 text-sm font-bold"
+                          title="Variasi produk"
+                        >
+                          <option value="">Tanpa variasi</option>
+                          {product.variants.map((v) => (
+                            <option key={v.id} value={v.id}>
+                              {v.name}
+                            </option>
+                          ))}
+                        </select>
+                      )}
+                    </div>
                     <input
                       type="number"
                       min="1"

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { hitungHargaSatuan } from "@/lib/satuan";
 
 export const dynamic = "force-dynamic";
 
@@ -12,6 +13,8 @@ type CartPayloadItem = {
   quantity?: number;
   harga?: number;
   hargaAwal?: number;
+  hargaBase?: number;
+  hargaBaseAsli?: number;
   satuanPesan?: string;
 };
 
@@ -43,16 +46,17 @@ const getOrCreateCartId = async (client: QueryClient, userId: number, scope: Car
 };
 
 const getCartItems = async (userId: number, scope: CartScope) => {
-  return prisma.$queryRaw<
+  // Catatan: ci."priceOverride" menyimpan HARGA DASAR yang sudah disesuaikan (per satuanHarga).
+  // Harga per satuan pesan (harga & hargaAwal) dihitung ulang di JS agar konsisten dengan client.
+  const rows = await prisma.$queryRaw<
     Array<{
       id: number;
       productId: number;
       variantId: number | null;
       variantName: string | null;
       nama_produk: string;
-      harga: number;
-      hargaAwal: number;
       hargaBase: number;
+      hargaBaseAsli: number;
       satuanHarga: string;
       satuanPesan: string;
       quantity: number;
@@ -67,9 +71,8 @@ const getCartItems = async (userId: number, scope: CartScope) => {
       ci."variantId",
       v."name" AS "variantName",
       p."nama_produk",
-      COALESCE(ci."priceOverride", v."priceModifier", p."harga")::int AS "harga",
-      COALESCE(v."priceModifier", p."harga")::int AS "hargaAwal",
-      COALESCE(v."priceModifier", p."harga")::int AS "hargaBase",
+      COALESCE(ci."priceOverride", v."priceModifier", p."harga")::int AS "hargaBase",
+      COALESCE(v."priceModifier", p."harga")::int AS "hargaBaseAsli",
       COALESCE(p."satuanHarga", 'pcs') AS "satuanHarga",
       COALESCE(ci."satuanPesan", 'pcs') AS "satuanPesan",
       LEAST(ci."quantity", p."stok")::int AS "quantity",
@@ -85,6 +88,12 @@ const getCartItems = async (userId: number, scope: CartScope) => {
       AND p."stok" > 0
     ORDER BY ci."updatedAt" ASC, ci."id" ASC
   `;
+
+  return rows.map((row) => ({
+    ...row,
+    harga: hitungHargaSatuan(row.hargaBase, row.satuanHarga, row.satuanPesan),
+    hargaAwal: hitungHargaSatuan(row.hargaBaseAsli, row.satuanHarga, row.satuanPesan),
+  }));
 };
 
 const getCartMeta = async (userId: number, scope: CartScope) => {
@@ -157,8 +166,9 @@ export async function PUT(request: Request) {
         const productId = Number(item.productId || item.id);
         const variantId = item.variantId != null ? Number(item.variantId) : null;
         const quantity = Math.max(0, Math.floor(Number(item.quantity || 0)));
-        const price = Number(item.harga);
-        const basePrice = Number(item.hargaAwal);
+        // Simpan HARGA DASAR yang sudah disesuaikan (per satuanHarga) bila berbeda dari harga katalog.
+        const hargaBase = Number(item.hargaBase);
+        const hargaBaseAsli = Number(item.hargaBaseAsli);
         const satuanPesan = typeof item.satuanPesan === "string" && item.satuanPesan ? item.satuanPesan : "pcs";
 
         return {
@@ -167,8 +177,8 @@ export async function PUT(request: Request) {
           quantity,
           satuanPesan,
           priceOverride:
-            scope === "pos" && Number.isFinite(price) && Number.isFinite(basePrice) && price !== basePrice
-              ? Math.max(0, Math.round(price))
+            scope === "pos" && Number.isFinite(hargaBase) && Number.isFinite(hargaBaseAsli) && hargaBase !== hargaBaseAsli
+              ? Math.max(0, Math.round(hargaBase))
               : null,
         };
       })

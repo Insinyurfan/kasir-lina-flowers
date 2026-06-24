@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useCartStore, PCS_PER_UNIT, SATUAN_LABELS, hitungHargaSatuan } from "@/lib/store";
+import { useCartStore, SATUAN_LABELS, hitungHargaSatuan, type CartItem } from "@/lib/store";
 import { Search, Plus, Minus, Trash2, ShoppingCart, Flower2, Wallet, User, UserCheck, LogOut, Camera, X, Pencil, Check } from "lucide-react";
 import { getSavedUserSession } from "@/lib/userSession";
 
@@ -93,8 +93,8 @@ export default function PosPage() {
   const [search, setSearch] = useState("");
   const [isProcessing, setIsProcessing] = useState(false); 
   const [isCheckoutConfirmOpen, setIsCheckoutConfirmOpen] = useState(false);
-  const [isPriceAdjustOpen, setIsPriceAdjustOpen] = useState(false);
-  const [priceDraft, setPriceDraft] = useState<Record<number, string>>({});
+  const [priceEditItem, setPriceEditItem] = useState<CartItem | null>(null); // item yang sedang disesuaikan harganya
+  const [priceEditDraft, setPriceEditDraft] = useState("");
   const [qtyDraft, setQtyDraft] = useState<Record<number, string>>({});
   const [isPosCartLoaded, setIsPosCartLoaded] = useState(false);
   
@@ -103,7 +103,7 @@ export default function PosPage() {
   const [animations, setAnimations] = useState<{id: number, x: number, y: number, img: string | null}[]>([]); // STATE ANIMASI TERBANG
   const animationIdRef = useRef(0);
   
-  const { cart, addToCart, removeFromCart, updateQuantity, updatePrice, updateSatuanPesan, setCart, getTotal, clearCart } = useCartStore();
+  const { cart, addToCart, removeFromCart, updateQuantity, updateHargaBase, updateSatuanPesan, setCart, getTotal, clearCart } = useCartStore();
 
   // MENGHITUNG TOTAL BARANG DI KERANJANG UNTUK BADGE
   const totalBarang = cart.reduce((total, item) => total + item.quantity, 0);
@@ -291,42 +291,36 @@ export default function PosPage() {
       setNamaPembeli("");
       setIsSessionStarted(false);
       setIsCheckoutConfirmOpen(false);
-      setIsPriceAdjustOpen(false);
-      setPriceDraft({});
+      setPriceEditItem(null);
+      setPriceEditDraft("");
       clearCart();
     }
   };
 
   const resetCheckoutFlow = () => {
     setIsCheckoutConfirmOpen(false);
-    setIsPriceAdjustOpen(false);
-    setPriceDraft({});
+    setPriceEditItem(null);
+    setPriceEditDraft("");
   };
 
-  const openPriceAdjustment = () => {
-    setPriceDraft(
-      cart.reduce<Record<number, string>>((draft, item) => {
-        draft[item.id] = String(item.harga);
-        return draft;
-      }, {})
-    );
-    setIsCheckoutConfirmOpen(false);
-    setIsPriceAdjustOpen(true);
+  // Buka penyesuaian harga untuk SATU item saja (berbasis harga dasar / per satuanHarga).
+  const openPriceEdit = (item: CartItem) => {
+    setPriceEditItem(item);
+    setPriceEditDraft(String(item.hargaBase ?? item.harga));
     setIsCartOpen(true);
   };
 
-  const savePriceAdjustment = () => {
-    for (const item of cart) {
-      const value = Number(priceDraft[item.id]);
-      if (!Number.isFinite(value) || value < 0) {
-        alert(`Harga ${item.nama_produk} belum valid.`);
-        return;
-      }
+  // Simpan penyesuaian → harga tersimpan di keranjang, kembali ke keranjang (tidak loncat ke checkout).
+  const savePriceEdit = () => {
+    if (!priceEditItem) return;
+    const value = Number(priceEditDraft);
+    if (!Number.isFinite(value) || value < 0) {
+      alert(`Harga ${priceEditItem.nama_produk} belum valid.`);
+      return;
     }
-
-    cart.forEach((item) => updatePrice(item.id, Number(priceDraft[item.id])));
-    setIsPriceAdjustOpen(false);
-    setIsCheckoutConfirmOpen(true);
+    updateHargaBase(priceEditItem.id, value);
+    setPriceEditItem(null);
+    setPriceEditDraft("");
     setIsCartOpen(true);
   };
 
@@ -529,10 +523,10 @@ export default function PosPage() {
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <button
                 type="button"
-                onClick={openPriceAdjustment}
+                onClick={() => { setIsCheckoutConfirmOpen(false); setIsCartOpen(true); }}
                 className="flex items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-700 transition-colors hover:bg-slate-50"
               >
-                <Pencil size={17} /> Sesuaikan Harga
+                <ShoppingCart size={17} /> Kembali ke Keranjang
               </button>
               <button
                 type="button"
@@ -544,79 +538,92 @@ export default function PosPage() {
               </button>
             </div>
 
-            <button
-              type="button"
-              onClick={() => setIsCheckoutConfirmOpen(false)}
-              className="mt-3 w-full rounded-2xl border border-pink-100 bg-pink-50/60 px-4 py-3 text-xs font-black text-pink-600 transition-colors hover:bg-pink-100"
-            >
-              Batal
-            </button>
+            <p className="mt-3 text-center text-[11px] font-semibold text-slate-400">
+              Untuk mengubah harga, kembali ke keranjang lalu tekan ikon ✏️ pada produk yang ingin disesuaikan.
+            </p>
           </div>
         </div>
       )}
 
-      {isPriceAdjustOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
-          <div className="flex max-h-[88vh] w-full max-w-lg flex-col overflow-hidden rounded-3xl bg-white shadow-2xl">
-            <div className="flex items-start justify-between border-b border-slate-100 p-5">
-              <div>
-                <h3 className="font-black text-slate-800">Sesuaikan Harga</h3>
-                <p className="mt-1 text-xs text-slate-500">Harga ini hanya berlaku untuk pesanan {namaPembeli}.</p>
+      {priceEditItem && (() => {
+        // Pakai data terbaru dari keranjang (jumlah/satuan bisa berubah), fallback ke snapshot.
+        const liveItem = cart.find((i) => i.id === priceEditItem.id) ?? priceEditItem;
+        const satuanHarga = liveItem.satuanHarga ?? "pcs";
+        const satuanPesan = liveItem.satuanPesan ?? "pcs";
+        const draftBase = Number(priceEditDraft || 0);
+        const hargaPerPesan = hitungHargaSatuan(draftBase, satuanHarga, satuanPesan);
+        const subtotalBaru = hargaPerPesan * liveItem.quantity;
+        const beda = satuanPesan !== satuanHarga;
+        const baseAsli = liveItem.hargaBaseAsli ?? liveItem.hargaBase ?? liveItem.harga;
+
+        return (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm" onClick={() => setPriceEditItem(null)}>
+            <div className="flex max-h-[88vh] w-full max-w-md flex-col overflow-hidden rounded-3xl bg-white shadow-2xl" onClick={(e) => e.stopPropagation()}>
+              <div className="flex items-start justify-between border-b border-slate-100 p-5">
+                <div className="min-w-0">
+                  <h3 className="font-black text-slate-800">Sesuaikan Harga</h3>
+                  <p className="mt-1 truncate text-xs text-slate-500">
+                    {liveItem.nama_produk}
+                    {liveItem.variantName && <span className="text-amber-600"> ({liveItem.variantName})</span>}
+                  </p>
+                </div>
+                <button onClick={() => setPriceEditItem(null)} className="ml-3 rounded-full bg-slate-50 p-2 text-slate-400 hover:bg-red-50 hover:text-red-500 shrink-0">
+                  <X size={18} />
+                </button>
               </div>
-              <button onClick={() => setIsPriceAdjustOpen(false)} className="rounded-full bg-slate-50 p-2 text-slate-400 hover:bg-red-50 hover:text-red-500">
-                <X size={18} />
-              </button>
-            </div>
 
-            <div className="flex-1 space-y-3 overflow-y-auto p-5">
-              {cart.map((item) => {
-                const draftPrice = Number(priceDraft[item.id] || 0);
-                const basePrice = item.hargaAwal ?? item.harga;
+              <div className="flex-1 space-y-4 overflow-y-auto p-5">
+                <div className="flex items-center justify-between rounded-2xl bg-slate-50 px-4 py-3 text-xs font-semibold text-slate-500">
+                  <span>Jumlah dipesan</span>
+                  <span className="font-black text-slate-700">{liveItem.quantity} {SATUAN_LABELS[satuanPesan] ?? satuanPesan}</span>
+                </div>
 
-                return (
-                  <div key={item.id} className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-                    <div className="mb-3 flex items-start justify-between gap-3">
-                      <div className="min-w-0">
-                        <p className="truncate text-sm font-black text-slate-800">{item.nama_produk}</p>
-                        <p className="mt-1 text-[11px] font-semibold text-slate-400">
-                          {item.quantity} {SATUAN_LABELS[item.satuanPesan ?? "pcs"] ?? item.satuanPesan} · harga awal Rp {basePrice.toLocaleString("id-ID")}
-                        </p>
-                      </div>
-                      <p className="shrink-0 text-xs font-black text-pink-600">
-                        Rp {(draftPrice * item.quantity).toLocaleString("id-ID")}
-                      </p>
+                <div>
+                  <label className="mb-1.5 block text-[11px] font-black uppercase tracking-wide text-slate-400">
+                    Harga per {SATUAN_LABELS[satuanHarga] ?? satuanHarga}
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    inputMode="numeric"
+                    autoFocus
+                    value={priceEditDraft}
+                    onChange={(event) => setPriceEditDraft(event.target.value)}
+                    onKeyDown={(e) => { if (e.key === "Enter") savePriceEdit(); }}
+                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-base font-black text-slate-700 outline-none focus:border-pink-500"
+                  />
+                  <p className="mt-1.5 text-[11px] font-semibold text-slate-400">
+                    Harga katalog: Rp {baseAsli.toLocaleString("id-ID")} / {SATUAN_LABELS[satuanHarga] ?? satuanHarga}
+                  </p>
+                </div>
+
+                <div className="space-y-1.5 rounded-2xl border border-pink-100 bg-pink-50/60 p-4">
+                  {beda && (
+                    <div className="flex items-center justify-between text-xs font-semibold text-slate-500">
+                      <span>Harga per {SATUAN_LABELS[satuanPesan] ?? satuanPesan}</span>
+                      <span className="font-black text-slate-700">Rp {hargaPerPesan.toLocaleString("id-ID")}</span>
                     </div>
-                    <input
-                      type="number"
-                      min="0"
-                      inputMode="numeric"
-                      value={priceDraft[item.id] ?? String(item.harga)}
-                      onChange={(event) => setPriceDraft((current) => ({ ...current, [item.id]: event.target.value }))}
-                      className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-700 outline-none focus:border-pink-500"
-                    />
+                  )}
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-black uppercase text-pink-500">Subtotal Baru</span>
+                    <span className="text-xl font-black text-pink-700">Rp {subtotalBaru.toLocaleString("id-ID")}</span>
                   </div>
-                );
-              })}
-            </div>
-
-            <div className="border-t border-slate-100 bg-white p-5">
-              <div className="mb-4 flex items-center justify-between">
-                <span className="text-xs font-black uppercase text-slate-400">Total Baru</span>
-                <span className="text-2xl font-black text-pink-600">
-                  Rp {cart.reduce((total, item) => total + Number(priceDraft[item.id] || 0) * item.quantity, 0).toLocaleString("id-ID")}
-                </span>
+                </div>
               </div>
-              <button
-                type="button"
-                onClick={savePriceAdjustment}
-                className="w-full rounded-2xl bg-pink-600 py-4 text-sm font-black text-white shadow-lg shadow-pink-200 transition-colors hover:bg-pink-700"
-              >
-                Simpan Penyesuaian
-              </button>
+
+              <div className="border-t border-slate-100 bg-white p-5">
+                <button
+                  type="button"
+                  onClick={savePriceEdit}
+                  className="w-full rounded-2xl bg-pink-600 py-4 text-sm font-black text-white shadow-lg shadow-pink-200 transition-colors hover:bg-pink-700"
+                >
+                  Simpan Penyesuaian
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       {/* AREA UTAMA: KATALOG PRODUK */}
       <div className="lina-panel flex-1 flex flex-col rounded-2xl border overflow-hidden w-full">
@@ -759,9 +766,20 @@ export default function PosPage() {
                           <p className="text-xs font-semibold text-slate-400 mt-0.5">
                             Rp {item.harga.toLocaleString("id-ID")} / {SATUAN_LABELS[item.satuanPesan ?? "pcs"] ?? item.satuanPesan ?? "pcs"}
                           </p>
+                          {item.hargaBaseAsli != null && item.hargaBase != null && item.hargaBase !== item.hargaBaseAsli && (
+                            <div className="mt-1 flex flex-wrap items-center gap-1.5">
+                              <span className="inline-flex items-center gap-1 rounded-full bg-green-50 px-2 py-0.5 text-[10px] font-black text-green-600">✓ Harga disesuaikan</span>
+                              <span className="text-[11px] font-semibold text-slate-400">
+                                <span className="line-through">Rp {item.hargaBaseAsli.toLocaleString("id-ID")}</span>
+                                {" → "}
+                                <span className="font-black text-slate-600">Rp {item.hargaBase.toLocaleString("id-ID")}</span>
+                                {" / "}{SATUAN_LABELS[item.satuanHarga ?? "pcs"] ?? item.satuanHarga}
+                              </span>
+                            </div>
+                          )}
                         </div>
                         <div className="flex items-center gap-1 shrink-0">
-                          <button onClick={openPriceAdjustment} className="p-2.5 text-slate-400 hover:bg-pink-50 hover:text-pink-600 rounded-xl" title="Sesuaikan harga"><Pencil size={18} /></button>
+                          <button onClick={() => openPriceEdit(item)} className="p-2.5 text-slate-400 hover:bg-pink-50 hover:text-pink-600 rounded-xl" title="Sesuaikan harga"><Pencil size={18} /></button>
                           <button onClick={() => removeFromCart(item.id)} className="p-2.5 text-red-400 hover:bg-red-50 rounded-xl" title="Hapus"><Trash2 size={18} /></button>
                         </div>
                       </div>

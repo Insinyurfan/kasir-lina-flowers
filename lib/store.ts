@@ -1,14 +1,9 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { hitungHargaSatuan } from "@/lib/satuan";
 
-export const PCS_PER_UNIT: Record<string, number> = { pcs: 1, lusin: 12, gross: 144 };
-export const SATUAN_LABELS: Record<string, string> = { pcs: "Pcs", lusin: "Lusin", gross: "Gross" };
-
-export function hitungHargaSatuan(hargaBase: number, satuanHarga: string, satuanPesan: string): number {
-  const perHarga = PCS_PER_UNIT[satuanHarga] ?? 1;
-  const perPesan = PCS_PER_UNIT[satuanPesan] ?? 1;
-  return Math.round((hargaBase * perPesan) / perHarga);
-}
+// Re-export agar import lama `from "@/lib/store"` tetap berfungsi.
+export { PCS_PER_UNIT, SATUAN_LABELS, hitungHargaSatuan } from "@/lib/satuan";
 
 export type CartItem = {
   id: number;          // unique cart-row id (= productId untuk non-variasi, komposit untuk variasi)
@@ -16,9 +11,10 @@ export type CartItem = {
   variantId?: number | null;
   variantName?: string | null;
   nama_produk: string;
-  harga: number;
-  hargaAwal?: number;
-  hargaBase?: number;
+  harga: number;          // harga efektif per satuan pesan
+  hargaAwal?: number;     // harga asli per satuan pesan (sebelum penyesuaian)
+  hargaBase?: number;     // harga dasar efektif (per satuanHarga), bisa disesuaikan
+  hargaBaseAsli?: number; // harga dasar katalog (per satuanHarga), tidak berubah
   satuanHarga?: string;
   satuanPesan?: string;
   quantity: number;
@@ -42,6 +38,7 @@ interface CartState {
   removeFromCart: (id: number) => void;
   updateQuantity: (id: number, quantity: number) => void;
   updatePrice: (id: number, price: number) => void;
+  updateHargaBase: (id: number, hargaBase: number) => void;
   updateSatuanPesan: (id: number, satuanPesan: string) => void;
   setCart: (cart: CartItem[]) => void;
   clearCart: () => void;
@@ -63,10 +60,19 @@ export const useCartStore = create<CartState>()(
         if (existingItem) {
           // Jika satuan berubah, reset quantity ke 1 dengan harga baru
           if (existingItem.satuanPesan !== satuanPesan) {
+            // Saat ganti satuan, hitung ulang dari harga dasar efektif (mempertahankan penyesuaian).
+            const hargaBaseEfektif = existingItem.hargaBase ?? hargaBase;
+            const hargaBaseAsli = existingItem.hargaBaseAsli ?? hargaBase;
             set({
               cart: cart.map((item) =>
                 item.id === rowId
-                  ? { ...item, satuanPesan, harga: hargaDihitung, hargaAwal: hargaDihitung, quantity: 1 }
+                  ? {
+                      ...item,
+                      satuanPesan,
+                      harga: hitungHargaSatuan(hargaBaseEfektif, product.satuanHarga ?? "pcs", satuanPesan),
+                      hargaAwal: hitungHargaSatuan(hargaBaseAsli, product.satuanHarga ?? "pcs", satuanPesan),
+                      quantity: 1,
+                    }
                   : item
               ),
             });
@@ -93,6 +99,7 @@ export const useCartStore = create<CartState>()(
                   harga: hargaDihitung,
                   hargaAwal: hargaDihitung,
                   hargaBase,
+                  hargaBaseAsli: hargaBase,
                   satuanPesan,
                   quantity: 1,
                 },
@@ -125,14 +132,34 @@ export const useCartStore = create<CartState>()(
             item.id === id ? { ...item, harga: Math.max(0, Math.round(price)) } : item
           ),
         })),
+      // Sesuaikan HARGA DASAR (per satuanHarga, mis. per Gross). Harga per satuan pesan ikut dihitung ulang.
+      updateHargaBase: (id, hargaBase) =>
+        set((state) => ({
+          cart: state.cart.map((item) => {
+            if (item.id !== id) return item;
+            const baseBaru = Math.max(0, Math.round(hargaBase));
+            const satuanHarga = item.satuanHarga ?? "pcs";
+            const satuanPesan = item.satuanPesan ?? "pcs";
+            return {
+              ...item,
+              hargaBase: baseBaru,
+              harga: hitungHargaSatuan(baseBaru, satuanHarga, satuanPesan),
+            };
+          }),
+        })),
       updateSatuanPesan: (id, satuanPesan) =>
         set((state) => ({
           cart: state.cart.map((item) => {
             if (item.id !== id) return item;
-            const hargaBase = item.hargaBase ?? item.hargaAwal ?? item.harga;
             const satuanHarga = item.satuanHarga ?? "pcs";
-            const hargaBaru = hitungHargaSatuan(hargaBase, satuanHarga, satuanPesan);
-            return { ...item, satuanPesan, harga: hargaBaru, hargaAwal: hargaBaru };
+            const hargaBase = item.hargaBase ?? item.hargaAwal ?? item.harga;
+            const hargaBaseAsli = item.hargaBaseAsli ?? hargaBase;
+            return {
+              ...item,
+              satuanPesan,
+              harga: hitungHargaSatuan(hargaBase, satuanHarga, satuanPesan),
+              hargaAwal: hitungHargaSatuan(hargaBaseAsli, satuanHarga, satuanPesan),
+            };
           }),
         })),
       setCart: (cart) => set({ cart }),

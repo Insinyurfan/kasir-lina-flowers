@@ -302,6 +302,23 @@ export default function PosPage() {
     }
   }, [namaPembeli, isSessionStarted]);
 
+  // Ambil keranjang tersimpan dari server (per akun) — dipakai saat mount & auto-refresh.
+  const refreshSavedCart = useCallback(async () => {
+    if (!user?.id) return;
+    try {
+      const res = await fetch(`/api/cart?userId=${user.id}&scope=pos`, { cache: "no-store" });
+      const data = await res.json();
+      if (Array.isArray(data.items)) {
+        setCart(data.items);
+        setNamaPembeli(data.customerName || "");
+        setMetodePembayaran(data.paymentMethod || "Tunai");
+        setIsSessionStarted(Boolean(data.sessionActive || data.customerName || data.items.length > 0));
+      }
+    } catch {
+      /* abaikan kegagalan jaringan */
+    }
+  }, [setCart, user?.id]);
+
   useEffect(() => {
     if (!user?.id) {
       const timeoutId = window.setTimeout(() => setIsPosCartLoaded(true), 0);
@@ -309,28 +326,36 @@ export default function PosPage() {
     }
 
     let isCancelled = false;
-
-    const fetchSavedCart = async () => {
-      try {
-        const res = await fetch(`/api/cart?userId=${user.id}&scope=pos`, { cache: "no-store" });
-        const data = await res.json();
-        if (!isCancelled && Array.isArray(data.items)) {
-          setCart(data.items);
-          setNamaPembeli(data.customerName || "");
-          setMetodePembayaran(data.paymentMethod || "Tunai");
-          setIsSessionStarted(Boolean(data.sessionActive || data.customerName || data.items.length > 0));
-        }
-      } finally {
-        if (!isCancelled) setIsPosCartLoaded(true);
-      }
-    };
-
-    fetchSavedCart();
+    (async () => {
+      await refreshSavedCart();
+      if (!isCancelled) setIsPosCartLoaded(true);
+    })();
 
     return () => {
       isCancelled = true;
     };
-  }, [setCart, user?.id]);
+  }, [refreshSavedCart, user?.id]);
+
+  // Auto-refresh keranjang saat halaman kembali fokus (mis. balik dari tab/HP lain),
+  // sehingga akun yang sama tetap sinkron antar perangkat tanpa polling boros.
+  useEffect(() => {
+    if (!user?.id) return;
+
+    const handleFocus = () => {
+      if (document.visibilityState !== "visible") return;
+      if (!isPosCartLoaded || isProcessing) return;
+      // Jangan ganggu saat ada modal aktif agar data tidak berubah di tengah interaksi.
+      if (variantModalProduct || priceEditItem || isCheckoutConfirmOpen || showScanner) return;
+      refreshSavedCart();
+    };
+
+    window.addEventListener("focus", handleFocus);
+    document.addEventListener("visibilitychange", handleFocus);
+    return () => {
+      window.removeEventListener("focus", handleFocus);
+      document.removeEventListener("visibilitychange", handleFocus);
+    };
+  }, [user?.id, isPosCartLoaded, isProcessing, variantModalProduct, priceEditItem, isCheckoutConfirmOpen, showScanner, refreshSavedCart]);
 
   useEffect(() => {
     if (!user?.id || !isPosCartLoaded || isProcessing) return;

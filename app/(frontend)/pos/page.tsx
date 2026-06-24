@@ -76,6 +76,80 @@ const FlyingItem = ({ startX, startY, img }: { startX: number, startY: number, i
   );
 };
 
+// Nama produk yang panjang: auto-scroll pelan ke kiri-kanan, dan bisa digeser manual (klik-tahan / swipe).
+const ScrollingName = ({ text }: { text: string }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const innerRef = useRef<HTMLSpanElement>(null);
+  const [overflow, setOverflow] = useState(false);
+  const pausedRef = useRef(false);
+  const dragRef = useRef({ active: false, startX: 0, startScroll: 0 });
+
+  useEffect(() => {
+    const el = containerRef.current;
+    const inner = innerRef.current;
+    if (!el || !inner) return;
+    const check = () => setOverflow(inner.scrollWidth > el.clientWidth + 2);
+    check();
+    const ro = new ResizeObserver(check);
+    ro.observe(el);
+    ro.observe(inner);
+    return () => ro.disconnect();
+  }, [text]);
+
+  useEffect(() => {
+    if (!overflow) return;
+    const el = containerRef.current;
+    if (!el) return;
+    let raf = 0;
+    let dir = 1;
+    const step = () => {
+      if (!pausedRef.current) {
+        const max = el.scrollWidth - el.clientWidth;
+        if (max > 0) {
+          el.scrollLeft += 0.4 * dir;
+          if (el.scrollLeft >= max) dir = -1;
+          else if (el.scrollLeft <= 0) dir = 1;
+        }
+      }
+      raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  }, [overflow]);
+
+  const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    const el = containerRef.current;
+    if (!el || !overflow) return;
+    dragRef.current = { active: true, startX: e.clientX, startScroll: el.scrollLeft };
+    pausedRef.current = true;
+    el.setPointerCapture?.(e.pointerId);
+  };
+  const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    const el = containerRef.current;
+    if (!el || !dragRef.current.active) return;
+    el.scrollLeft = dragRef.current.startScroll - (e.clientX - dragRef.current.startX);
+  };
+  const endDrag = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!dragRef.current.active) return;
+    dragRef.current.active = false;
+    pausedRef.current = false;
+    containerRef.current?.releasePointerCapture?.(e.pointerId);
+  };
+
+  return (
+    <div
+      ref={containerRef}
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={endDrag}
+      onPointerCancel={endDrag}
+      className={`overflow-x-hidden whitespace-nowrap select-none touch-pan-x ${overflow ? "cursor-grab active:cursor-grabbing" : ""}`}
+    >
+      <span ref={innerRef} className="inline-block">{text}</span>
+    </div>
+  );
+};
+
 export default function PosPage() {
   const [user, setUser] = useState<UserSession | null>(null);
   const cashierDisplayName = user?.fullName || user?.username || "Admin";
@@ -756,9 +830,8 @@ export default function PosPage() {
                     <div key={item.id} className="bg-white shadow-sm p-3 rounded-2xl border border-pink-50 space-y-2.5">
                       <div className="flex justify-between items-start gap-2">
                         <div className="flex-1 min-w-0">
-                          <h4 className="font-bold text-sm sm:text-base text-slate-800 truncate">
-                            {item.nama_produk}
-                            {item.variantName && <span className="ml-1 text-amber-600">({item.variantName})</span>}
+                          <h4 className="font-bold text-sm sm:text-base text-slate-800">
+                            <ScrollingName text={item.nama_produk} />
                           </h4>
                           <p className="text-pink-600 text-sm sm:text-base font-extrabold mt-0.5">
                             Rp {(item.harga * item.quantity).toLocaleString("id-ID")}
@@ -784,6 +857,12 @@ export default function PosPage() {
                         </div>
                       </div>
                       <div className="flex items-center gap-2 flex-wrap">
+                        {/* Badge variasi: dipindah ke sini agar tidak memanjangkan nama & selalu terlihat */}
+                        {item.variantName && (
+                          <span className="text-xs sm:text-sm font-black rounded-xl bg-amber-50 border border-amber-200 text-amber-600 px-2.5 py-2 shrink-0">
+                            {item.variantName}
+                          </span>
+                        )}
                         {/* Ganti satuan (hanya untuk produk non-pcs) */}
                         {(item.satuanHarga ?? "pcs") !== "pcs" && (
                           <select

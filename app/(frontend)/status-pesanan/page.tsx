@@ -40,6 +40,7 @@ type OrderItem = {
   jumlah: number;
   subtotal: number;
   satuanHarga?: string;
+  variantName?: string | null;
   product: {
     nama_produk: string;
     gambar?: string | null;
@@ -152,7 +153,7 @@ export default function OrderStatusPage() {
           const satuanLabel = SATUAN_LABELS[item.satuanHarga || "pcs"] ?? "Pcs";
           return `
       <tr>
-        <td>${escapeHtml(item.product?.nama_produk || "-")}</td>
+        <td>${escapeHtml((item.product?.nama_produk || "-") + (item.variantName ? ` (${item.variantName})` : ""))}</td>
         <td class="qty">${item.jumlah} ${satuanLabel}</td>
         <td class="money">Rp ${Number(item.subtotal || 0).toLocaleString("id-ID")}</td>
       </tr>`;
@@ -291,7 +292,10 @@ export default function OrderStatusPage() {
                       )}
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-black">{item.product.nama_produk}</p>
+                      <p className="truncate text-sm font-black">
+                        {item.product.nama_produk}
+                        {item.variantName && <span className="ml-1 text-amber-600">({item.variantName})</span>}
+                      </p>
                       <p className="text-xs text-slate-500">Jumlah: {item.jumlah}</p>
                     </div>
                     <strong className="text-sm text-pink-600">

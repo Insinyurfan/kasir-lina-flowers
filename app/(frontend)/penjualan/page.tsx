@@ -2006,11 +2006,11 @@ export default function RiwayatPenjualanPage() {
             )}
 
             {/* SISI KANAN: PREVIEW & TOMBOL CETAK */}
-            <div className={`w-full ${user?.role === "Owner" ? "md:w-1/2" : "max-w-2xl mx-auto"} bg-pink-50/50 flex flex-col md:overflow-y-auto relative`}>
+            <div className={`w-full ${user?.role === "Owner" ? "md:w-1/2" : "max-w-2xl mx-auto"} bg-pink-50/50 flex flex-col md:min-h-0 md:overflow-hidden relative`}>
 
               {/* HEADER ADMIN */}
               {user?.role !== "Owner" && (
-                <div className="flex justify-between items-center p-4 md:p-6 bg-white border-b sticky top-0 z-10 shadow-sm">
+                <div className="flex justify-between items-center p-4 md:p-6 bg-white border-b sticky top-0 md:shrink-0 z-10 shadow-sm">
                   <h3 className="font-bold text-slate-800 text-lg hidden md:block">Pratinjau Pesanan</h3>
                   <div className="flex gap-2 p-1 bg-pink-50 rounded-xl w-full md:w-auto mt-6 md:mt-0 mr-8 md:mr-0">
                     <button onClick={() => setPrintType("struk")} className={`flex-1 md:w-24 py-2 text-xs font-bold rounded-lg transition-all ${printType === 'struk' ? 'bg-white shadow text-pink-600' : 'text-slate-500 hover:text-slate-700'}`}>Struk Harga</button>
@@ -2021,13 +2021,13 @@ export default function RiwayatPenjualanPage() {
               )}
 
               {user?.role === "Owner" && (
-                <div className="hidden md:flex justify-between items-center p-4 bg-white border-b sticky top-0 z-10">
+                <div className="hidden md:flex justify-between items-center p-4 bg-white border-b sticky top-0 md:shrink-0 z-10">
                   <h3 className="font-bold text-slate-800">Preview Dokumen</h3>
                 </div>
               )}
 
-              {/* AREA PREVIEW DOKUMEN */}
-              <div className="flex-1 p-6 md:p-8 flex justify-center items-start min-h-[50vh]">
+              {/* AREA PREVIEW DOKUMEN — hanya bagian ini yang scroll di desktop */}
+              <div className="flex-1 p-6 md:p-8 flex justify-center items-start min-h-[50vh] md:min-h-0 md:overflow-y-auto">
                 {printType === "struk" ? (
                   <div
                     id="receipt-print-area"
@@ -2183,8 +2183,8 @@ export default function RiwayatPenjualanPage() {
                 )}
               </div>
 
-              {/* TOMBOL CETAK */}
-              <div className="p-4 bg-white border-t mt-auto md:sticky md:bottom-0 z-10 shadow-[0_-10px_20px_-10px_rgba(0,0,0,0.05)]">
+              {/* TOMBOL CETAK — tetap di bawah (fixed), tidak ikut scroll */}
+              <div className="p-4 bg-white border-t mt-auto md:shrink-0 z-10 shadow-[0_-10px_20px_-10px_rgba(0,0,0,0.05)]">
                 {printType === "struk" && (
                   <>
                     <div className="mb-3 hidden md:block">

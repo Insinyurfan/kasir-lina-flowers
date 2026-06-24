@@ -852,17 +852,17 @@ export default function PosPage() {
                           )}
                         </div>
                         <div className="flex items-center gap-1 shrink-0">
+                          {/* Badge variasi: di kanan bersama tombol aksi, ringkas & selalu terlihat */}
+                          {item.variantName && (
+                            <span className="max-w-[72px] truncate rounded-lg bg-amber-50 border border-amber-200 text-amber-600 px-2 py-1 text-xs font-black mr-0.5" title={item.variantName}>
+                              {item.variantName}
+                            </span>
+                          )}
                           <button onClick={() => openPriceEdit(item)} className="p-2.5 text-slate-400 hover:bg-pink-50 hover:text-pink-600 rounded-xl" title="Sesuaikan harga"><Pencil size={18} /></button>
                           <button onClick={() => removeFromCart(item.id)} className="p-2.5 text-red-400 hover:bg-red-50 rounded-xl" title="Hapus"><Trash2 size={18} /></button>
                         </div>
                       </div>
                       <div className="flex items-center gap-2 flex-wrap">
-                        {/* Badge variasi: dipindah ke sini agar tidak memanjangkan nama & selalu terlihat */}
-                        {item.variantName && (
-                          <span className="text-xs sm:text-sm font-black rounded-xl bg-amber-50 border border-amber-200 text-amber-600 px-2.5 py-2 shrink-0">
-                            {item.variantName}
-                          </span>
-                        )}
                         {/* Ganti satuan (hanya untuk produk non-pcs) */}
                         {(item.satuanHarga ?? "pcs") !== "pcs" && (
                           <select

@@ -169,6 +169,9 @@ export default function PosPage() {
   const [isCheckoutConfirmOpen, setIsCheckoutConfirmOpen] = useState(false);
   const [priceEditItem, setPriceEditItem] = useState<CartItem | null>(null); // item yang sedang disesuaikan harganya
   const [priceEditDraft, setPriceEditDraft] = useState("");
+  // Harga khusus tersimpan untuk pelanggan sesi ini: key `${productId}-${variantId}` -> harga dasar.
+  const [rememberedPrices, setRememberedPrices] = useState<Record<string, number>>({});
+  const [rememberForCustomer, setRememberForCustomer] = useState(false);
   const [qtyDraft, setQtyDraft] = useState<Record<number, string>>({});
   const [isPosCartLoaded, setIsPosCartLoaded] = useState(false);
 
@@ -316,6 +319,39 @@ export default function PosPage() {
     }
   }, [namaPembeli, isSessionStarted]);
 
+  // Harga khusus pelanggan: kunci & resolusi (varian spesifik → level produk → harga default).
+  const priceKey = (productId: number, variantId: number) => `${productId}-${variantId}`;
+  const resolveRememberedBase = (productId: number, variantId: number | null | undefined, fallback: number) => {
+    const vId = variantId ?? 0;
+    return rememberedPrices[priceKey(productId, vId)] ?? rememberedPrices[priceKey(productId, 0)] ?? fallback;
+  };
+
+  // Muat harga khusus untuk pelanggan sesi ini. Kalau kosong, alur harga = seperti biasa.
+  useEffect(() => {
+    const name = namaPembeli.trim();
+    if (!name || !isSessionStarted) {
+      setRememberedPrices({});
+      return;
+    }
+    let cancelled = false;
+    fetch(`/api/harga-pelanggan?customerName=${encodeURIComponent(name)}`, { cache: "no-store" })
+      .then((res) => res.json())
+      .then((rows) => {
+        if (cancelled || !Array.isArray(rows)) return;
+        const map: Record<string, number> = {};
+        for (const row of rows) {
+          map[priceKey(Number(row.productId), Number(row.variantId))] = Number(row.price);
+        }
+        setRememberedPrices(map);
+      })
+      .catch(() => {
+        /* abaikan kegagalan jaringan; pakai harga default */
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [namaPembeli, isSessionStarted]);
+
   // Ambil keranjang tersimpan dari server (per akun) — dipakai saat mount & auto-refresh.
   // force=true (saat mount) tetap memuat walau ada perubahan lokal; saat auto-refresh
   // (force=false) dilewati bila ada perubahan lokal belum tersimpan agar tidak menimpa.
@@ -451,7 +487,26 @@ export default function PosPage() {
   const openPriceEdit = (item: CartItem) => {
     setPriceEditItem(item);
     setPriceEditDraft(String(item.hargaBase ?? item.harga));
+    setRememberForCustomer(false);
     setIsCartOpen(true);
+  };
+
+  // Simpan harga khusus pelanggan ke server + cache lokal (dipakai otomatis berikutnya).
+  const persistCustomerPrice = async (item: CartItem, price: number) => {
+    const name = namaPembeli.trim();
+    if (!name) return;
+    const productId = item.productId ?? item.id;
+    const variantId = item.variantId ?? 0;
+    setRememberedPrices((prev) => ({ ...prev, [priceKey(productId, variantId)]: price }));
+    try {
+      await fetch("/api/harga-pelanggan", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ customerName: name, productId, variantId, price }),
+      });
+    } catch {
+      /* abaikan; cache lokal sudah diperbarui */
+    }
   };
 
   // Simpan penyesuaian → harga tersimpan di keranjang, kembali ke keranjang (tidak loncat ke checkout).
@@ -463,8 +518,10 @@ export default function PosPage() {
       return;
     }
     updateHargaBase(priceEditItem.id, value);
+    if (rememberForCustomer) void persistCustomerPrice(priceEditItem, Math.round(value));
     setPriceEditItem(null);
     setPriceEditDraft("");
+    setRememberForCustomer(false);
     setIsCartOpen(true);
   };
 
@@ -526,16 +583,18 @@ export default function PosPage() {
       return;
     }
     triggerFlyAnimation(e, p);
-    addToCart({ ...p, satuanPesan: p.satuanHarga ?? "pcs", hargaBase: p.harga });
+    const base = resolveRememberedBase(p.id, 0, p.harga);
+    addToCart({ ...p, satuanPesan: p.satuanHarga ?? "pcs", hargaBase: base });
   };
 
   // Setelah memilih variasi → masuk keranjang dengan harga & nama variasi
   const handleVariantSelected = (p: Product, variant: Variant) => {
     const hargaVarian = variant.priceModifier ?? p.harga;
+    const base = resolveRememberedBase(p.id, variant.id, hargaVarian);
     addToCart({
       ...p,
-      harga: hargaVarian,
-      hargaBase: hargaVarian,
+      harga: base,
+      hargaBase: base,
       satuanPesan: p.satuanHarga ?? "pcs",
       variantId: variant.id,
       variantName: variant.name,
@@ -844,7 +903,19 @@ export default function PosPage() {
                 </div>
               </div>
 
-              <div className="border-t border-slate-100 bg-white p-5">
+              <div className="border-t border-slate-100 bg-white p-5 space-y-3">
+                <label className="flex items-start gap-2.5 rounded-2xl border border-amber-200 bg-amber-50 p-3 cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={rememberForCustomer}
+                    onChange={(e) => setRememberForCustomer(e.target.checked)}
+                    className="mt-0.5 h-4 w-4 accent-amber-500 shrink-0"
+                  />
+                  <span className="text-xs leading-snug">
+                    <b className="text-amber-700">Ingat harga ini untuk {namaPembeli || "pelanggan"}</b>
+                    <span className="block text-slate-500 mt-0.5">Otomatis dipakai lagi saat membuat orderan untuk pelanggan yang sama.</span>
+                  </span>
+                </label>
                 <button
                   type="button"
                   onClick={savePriceEdit}

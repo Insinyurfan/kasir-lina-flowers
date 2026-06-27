@@ -91,6 +91,22 @@ model StoreSetting {
   receiptLogo String? @db.Text
 }
 
+// Harga khusus per pelanggan (mis. Toko Aneka punya harga berbeda dari harga
+// universal). Diingat otomatis saat kasir menyesuaikan harga, lalu dipakai
+// kembali untuk pelanggan yang sama. variantId 0 = harga level produk (tanpa varian).
+model CustomerPrice {
+  id           Int      @id @default(autoincrement())
+  customerName String // dinormalisasi UPPERCASE
+  productId    Int
+  variantId    Int      @default(0)
+  price        Int // harga dasar (per satuanHarga produk)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([customerName, productId, variantId])
+  @@index([customerName])
+}
+
 model Notification {
   id               Int          @id @default(autoincrement())
   transactionId    Int?

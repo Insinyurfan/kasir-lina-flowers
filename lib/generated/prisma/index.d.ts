@@ -44,6 +44,11 @@ export type TransactionItem = $Result.DefaultSelection<Prisma.$TransactionItemPa
  */
 export type StoreSetting = $Result.DefaultSelection<Prisma.$StoreSettingPayload>
 /**
+ * Model CustomerPrice
+ * 
+ */
+export type CustomerPrice = $Result.DefaultSelection<Prisma.$CustomerPricePayload>
+/**
  * Model Notification
  * 
  */
@@ -256,6 +261,16 @@ export class PrismaClient<
     * ```
     */
   get storeSetting(): Prisma.StoreSettingDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.customerPrice`: Exposes CRUD operations for the **CustomerPrice** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more CustomerPrices
+    * const customerPrices = await prisma.customerPrice.findMany()
+    * ```
+    */
+  get customerPrice(): Prisma.CustomerPriceDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.notification`: Exposes CRUD operations for the **Notification** model.
@@ -773,6 +788,7 @@ export namespace Prisma {
     Transaction: 'Transaction',
     TransactionItem: 'TransactionItem',
     StoreSetting: 'StoreSetting',
+    CustomerPrice: 'CustomerPrice',
     Notification: 'Notification',
     ActivityLog: 'ActivityLog',
     UserCart: 'UserCart',
@@ -798,7 +814,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "product" | "productVariant" | "transaction" | "transactionItem" | "storeSetting" | "notification" | "activityLog" | "userCart" | "userCartItem" | "orderRequest" | "orderStatusHistory" | "orderRequestItem"
+      modelProps: "user" | "product" | "productVariant" | "transaction" | "transactionItem" | "storeSetting" | "customerPrice" | "notification" | "activityLog" | "userCart" | "userCartItem" | "orderRequest" | "orderStatusHistory" | "orderRequestItem"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1243,6 +1259,80 @@ export namespace Prisma {
           count: {
             args: Prisma.StoreSettingCountArgs<ExtArgs>
             result: $Utils.Optional<StoreSettingCountAggregateOutputType> | number
+          }
+        }
+      }
+      CustomerPrice: {
+        payload: Prisma.$CustomerPricePayload<ExtArgs>
+        fields: Prisma.CustomerPriceFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.CustomerPriceFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomerPricePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.CustomerPriceFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomerPricePayload>
+          }
+          findFirst: {
+            args: Prisma.CustomerPriceFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomerPricePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.CustomerPriceFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomerPricePayload>
+          }
+          findMany: {
+            args: Prisma.CustomerPriceFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomerPricePayload>[]
+          }
+          create: {
+            args: Prisma.CustomerPriceCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomerPricePayload>
+          }
+          createMany: {
+            args: Prisma.CustomerPriceCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.CustomerPriceCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomerPricePayload>[]
+          }
+          delete: {
+            args: Prisma.CustomerPriceDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomerPricePayload>
+          }
+          update: {
+            args: Prisma.CustomerPriceUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomerPricePayload>
+          }
+          deleteMany: {
+            args: Prisma.CustomerPriceDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.CustomerPriceUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.CustomerPriceUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomerPricePayload>[]
+          }
+          upsert: {
+            args: Prisma.CustomerPriceUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomerPricePayload>
+          }
+          aggregate: {
+            args: Prisma.CustomerPriceAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateCustomerPrice>
+          }
+          groupBy: {
+            args: Prisma.CustomerPriceGroupByArgs<ExtArgs>
+            result: $Utils.Optional<CustomerPriceGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.CustomerPriceCountArgs<ExtArgs>
+            result: $Utils.Optional<CustomerPriceCountAggregateOutputType> | number
           }
         }
       }
@@ -1866,6 +1956,7 @@ export namespace Prisma {
     transaction?: TransactionOmit
     transactionItem?: TransactionItemOmit
     storeSetting?: StoreSettingOmit
+    customerPrice?: CustomerPriceOmit
     notification?: NotificationOmit
     activityLog?: ActivityLogOmit
     userCart?: UserCartOmit
@@ -9128,6 +9219,1073 @@ export namespace Prisma {
      * Omit specific fields from the StoreSetting
      */
     omit?: StoreSettingOmit<ExtArgs> | null
+  }
+
+
+  /**
+   * Model CustomerPrice
+   */
+
+  export type AggregateCustomerPrice = {
+    _count: CustomerPriceCountAggregateOutputType | null
+    _avg: CustomerPriceAvgAggregateOutputType | null
+    _sum: CustomerPriceSumAggregateOutputType | null
+    _min: CustomerPriceMinAggregateOutputType | null
+    _max: CustomerPriceMaxAggregateOutputType | null
+  }
+
+  export type CustomerPriceAvgAggregateOutputType = {
+    id: number | null
+    productId: number | null
+    variantId: number | null
+    price: number | null
+  }
+
+  export type CustomerPriceSumAggregateOutputType = {
+    id: number | null
+    productId: number | null
+    variantId: number | null
+    price: number | null
+  }
+
+  export type CustomerPriceMinAggregateOutputType = {
+    id: number | null
+    customerName: string | null
+    productId: number | null
+    variantId: number | null
+    price: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type CustomerPriceMaxAggregateOutputType = {
+    id: number | null
+    customerName: string | null
+    productId: number | null
+    variantId: number | null
+    price: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type CustomerPriceCountAggregateOutputType = {
+    id: number
+    customerName: number
+    productId: number
+    variantId: number
+    price: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type CustomerPriceAvgAggregateInputType = {
+    id?: true
+    productId?: true
+    variantId?: true
+    price?: true
+  }
+
+  export type CustomerPriceSumAggregateInputType = {
+    id?: true
+    productId?: true
+    variantId?: true
+    price?: true
+  }
+
+  export type CustomerPriceMinAggregateInputType = {
+    id?: true
+    customerName?: true
+    productId?: true
+    variantId?: true
+    price?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type CustomerPriceMaxAggregateInputType = {
+    id?: true
+    customerName?: true
+    productId?: true
+    variantId?: true
+    price?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type CustomerPriceCountAggregateInputType = {
+    id?: true
+    customerName?: true
+    productId?: true
+    variantId?: true
+    price?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type CustomerPriceAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which CustomerPrice to aggregate.
+     */
+    where?: CustomerPriceWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CustomerPrices to fetch.
+     */
+    orderBy?: CustomerPriceOrderByWithRelationInput | CustomerPriceOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: CustomerPriceWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CustomerPrices from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CustomerPrices.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned CustomerPrices
+    **/
+    _count?: true | CustomerPriceCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: CustomerPriceAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: CustomerPriceSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: CustomerPriceMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: CustomerPriceMaxAggregateInputType
+  }
+
+  export type GetCustomerPriceAggregateType<T extends CustomerPriceAggregateArgs> = {
+        [P in keyof T & keyof AggregateCustomerPrice]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateCustomerPrice[P]>
+      : GetScalarType<T[P], AggregateCustomerPrice[P]>
+  }
+
+
+
+
+  export type CustomerPriceGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CustomerPriceWhereInput
+    orderBy?: CustomerPriceOrderByWithAggregationInput | CustomerPriceOrderByWithAggregationInput[]
+    by: CustomerPriceScalarFieldEnum[] | CustomerPriceScalarFieldEnum
+    having?: CustomerPriceScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: CustomerPriceCountAggregateInputType | true
+    _avg?: CustomerPriceAvgAggregateInputType
+    _sum?: CustomerPriceSumAggregateInputType
+    _min?: CustomerPriceMinAggregateInputType
+    _max?: CustomerPriceMaxAggregateInputType
+  }
+
+  export type CustomerPriceGroupByOutputType = {
+    id: number
+    customerName: string
+    productId: number
+    variantId: number
+    price: number
+    createdAt: Date
+    updatedAt: Date
+    _count: CustomerPriceCountAggregateOutputType | null
+    _avg: CustomerPriceAvgAggregateOutputType | null
+    _sum: CustomerPriceSumAggregateOutputType | null
+    _min: CustomerPriceMinAggregateOutputType | null
+    _max: CustomerPriceMaxAggregateOutputType | null
+  }
+
+  type GetCustomerPriceGroupByPayload<T extends CustomerPriceGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<CustomerPriceGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof CustomerPriceGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], CustomerPriceGroupByOutputType[P]>
+            : GetScalarType<T[P], CustomerPriceGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type CustomerPriceSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    customerName?: boolean
+    productId?: boolean
+    variantId?: boolean
+    price?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["customerPrice"]>
+
+  export type CustomerPriceSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    customerName?: boolean
+    productId?: boolean
+    variantId?: boolean
+    price?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["customerPrice"]>
+
+  export type CustomerPriceSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    customerName?: boolean
+    productId?: boolean
+    variantId?: boolean
+    price?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["customerPrice"]>
+
+  export type CustomerPriceSelectScalar = {
+    id?: boolean
+    customerName?: boolean
+    productId?: boolean
+    variantId?: boolean
+    price?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type CustomerPriceOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "customerName" | "productId" | "variantId" | "price" | "createdAt" | "updatedAt", ExtArgs["result"]["customerPrice"]>
+
+  export type $CustomerPricePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "CustomerPrice"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      customerName: string
+      productId: number
+      variantId: number
+      price: number
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["customerPrice"]>
+    composites: {}
+  }
+
+  type CustomerPriceGetPayload<S extends boolean | null | undefined | CustomerPriceDefaultArgs> = $Result.GetResult<Prisma.$CustomerPricePayload, S>
+
+  type CustomerPriceCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<CustomerPriceFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: CustomerPriceCountAggregateInputType | true
+    }
+
+  export interface CustomerPriceDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['CustomerPrice'], meta: { name: 'CustomerPrice' } }
+    /**
+     * Find zero or one CustomerPrice that matches the filter.
+     * @param {CustomerPriceFindUniqueArgs} args - Arguments to find a CustomerPrice
+     * @example
+     * // Get one CustomerPrice
+     * const customerPrice = await prisma.customerPrice.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends CustomerPriceFindUniqueArgs>(args: SelectSubset<T, CustomerPriceFindUniqueArgs<ExtArgs>>): Prisma__CustomerPriceClient<$Result.GetResult<Prisma.$CustomerPricePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one CustomerPrice that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {CustomerPriceFindUniqueOrThrowArgs} args - Arguments to find a CustomerPrice
+     * @example
+     * // Get one CustomerPrice
+     * const customerPrice = await prisma.customerPrice.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends CustomerPriceFindUniqueOrThrowArgs>(args: SelectSubset<T, CustomerPriceFindUniqueOrThrowArgs<ExtArgs>>): Prisma__CustomerPriceClient<$Result.GetResult<Prisma.$CustomerPricePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first CustomerPrice that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CustomerPriceFindFirstArgs} args - Arguments to find a CustomerPrice
+     * @example
+     * // Get one CustomerPrice
+     * const customerPrice = await prisma.customerPrice.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends CustomerPriceFindFirstArgs>(args?: SelectSubset<T, CustomerPriceFindFirstArgs<ExtArgs>>): Prisma__CustomerPriceClient<$Result.GetResult<Prisma.$CustomerPricePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first CustomerPrice that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CustomerPriceFindFirstOrThrowArgs} args - Arguments to find a CustomerPrice
+     * @example
+     * // Get one CustomerPrice
+     * const customerPrice = await prisma.customerPrice.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends CustomerPriceFindFirstOrThrowArgs>(args?: SelectSubset<T, CustomerPriceFindFirstOrThrowArgs<ExtArgs>>): Prisma__CustomerPriceClient<$Result.GetResult<Prisma.$CustomerPricePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more CustomerPrices that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CustomerPriceFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all CustomerPrices
+     * const customerPrices = await prisma.customerPrice.findMany()
+     * 
+     * // Get first 10 CustomerPrices
+     * const customerPrices = await prisma.customerPrice.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const customerPriceWithIdOnly = await prisma.customerPrice.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends CustomerPriceFindManyArgs>(args?: SelectSubset<T, CustomerPriceFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CustomerPricePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a CustomerPrice.
+     * @param {CustomerPriceCreateArgs} args - Arguments to create a CustomerPrice.
+     * @example
+     * // Create one CustomerPrice
+     * const CustomerPrice = await prisma.customerPrice.create({
+     *   data: {
+     *     // ... data to create a CustomerPrice
+     *   }
+     * })
+     * 
+     */
+    create<T extends CustomerPriceCreateArgs>(args: SelectSubset<T, CustomerPriceCreateArgs<ExtArgs>>): Prisma__CustomerPriceClient<$Result.GetResult<Prisma.$CustomerPricePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many CustomerPrices.
+     * @param {CustomerPriceCreateManyArgs} args - Arguments to create many CustomerPrices.
+     * @example
+     * // Create many CustomerPrices
+     * const customerPrice = await prisma.customerPrice.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends CustomerPriceCreateManyArgs>(args?: SelectSubset<T, CustomerPriceCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many CustomerPrices and returns the data saved in the database.
+     * @param {CustomerPriceCreateManyAndReturnArgs} args - Arguments to create many CustomerPrices.
+     * @example
+     * // Create many CustomerPrices
+     * const customerPrice = await prisma.customerPrice.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many CustomerPrices and only return the `id`
+     * const customerPriceWithIdOnly = await prisma.customerPrice.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends CustomerPriceCreateManyAndReturnArgs>(args?: SelectSubset<T, CustomerPriceCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CustomerPricePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a CustomerPrice.
+     * @param {CustomerPriceDeleteArgs} args - Arguments to delete one CustomerPrice.
+     * @example
+     * // Delete one CustomerPrice
+     * const CustomerPrice = await prisma.customerPrice.delete({
+     *   where: {
+     *     // ... filter to delete one CustomerPrice
+     *   }
+     * })
+     * 
+     */
+    delete<T extends CustomerPriceDeleteArgs>(args: SelectSubset<T, CustomerPriceDeleteArgs<ExtArgs>>): Prisma__CustomerPriceClient<$Result.GetResult<Prisma.$CustomerPricePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one CustomerPrice.
+     * @param {CustomerPriceUpdateArgs} args - Arguments to update one CustomerPrice.
+     * @example
+     * // Update one CustomerPrice
+     * const customerPrice = await prisma.customerPrice.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends CustomerPriceUpdateArgs>(args: SelectSubset<T, CustomerPriceUpdateArgs<ExtArgs>>): Prisma__CustomerPriceClient<$Result.GetResult<Prisma.$CustomerPricePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more CustomerPrices.
+     * @param {CustomerPriceDeleteManyArgs} args - Arguments to filter CustomerPrices to delete.
+     * @example
+     * // Delete a few CustomerPrices
+     * const { count } = await prisma.customerPrice.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends CustomerPriceDeleteManyArgs>(args?: SelectSubset<T, CustomerPriceDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more CustomerPrices.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CustomerPriceUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many CustomerPrices
+     * const customerPrice = await prisma.customerPrice.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends CustomerPriceUpdateManyArgs>(args: SelectSubset<T, CustomerPriceUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more CustomerPrices and returns the data updated in the database.
+     * @param {CustomerPriceUpdateManyAndReturnArgs} args - Arguments to update many CustomerPrices.
+     * @example
+     * // Update many CustomerPrices
+     * const customerPrice = await prisma.customerPrice.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more CustomerPrices and only return the `id`
+     * const customerPriceWithIdOnly = await prisma.customerPrice.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends CustomerPriceUpdateManyAndReturnArgs>(args: SelectSubset<T, CustomerPriceUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CustomerPricePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one CustomerPrice.
+     * @param {CustomerPriceUpsertArgs} args - Arguments to update or create a CustomerPrice.
+     * @example
+     * // Update or create a CustomerPrice
+     * const customerPrice = await prisma.customerPrice.upsert({
+     *   create: {
+     *     // ... data to create a CustomerPrice
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the CustomerPrice we want to update
+     *   }
+     * })
+     */
+    upsert<T extends CustomerPriceUpsertArgs>(args: SelectSubset<T, CustomerPriceUpsertArgs<ExtArgs>>): Prisma__CustomerPriceClient<$Result.GetResult<Prisma.$CustomerPricePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of CustomerPrices.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CustomerPriceCountArgs} args - Arguments to filter CustomerPrices to count.
+     * @example
+     * // Count the number of CustomerPrices
+     * const count = await prisma.customerPrice.count({
+     *   where: {
+     *     // ... the filter for the CustomerPrices we want to count
+     *   }
+     * })
+    **/
+    count<T extends CustomerPriceCountArgs>(
+      args?: Subset<T, CustomerPriceCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], CustomerPriceCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a CustomerPrice.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CustomerPriceAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends CustomerPriceAggregateArgs>(args: Subset<T, CustomerPriceAggregateArgs>): Prisma.PrismaPromise<GetCustomerPriceAggregateType<T>>
+
+    /**
+     * Group by CustomerPrice.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CustomerPriceGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends CustomerPriceGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: CustomerPriceGroupByArgs['orderBy'] }
+        : { orderBy?: CustomerPriceGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, CustomerPriceGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetCustomerPriceGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the CustomerPrice model
+   */
+  readonly fields: CustomerPriceFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for CustomerPrice.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__CustomerPriceClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the CustomerPrice model
+   */
+  interface CustomerPriceFieldRefs {
+    readonly id: FieldRef<"CustomerPrice", 'Int'>
+    readonly customerName: FieldRef<"CustomerPrice", 'String'>
+    readonly productId: FieldRef<"CustomerPrice", 'Int'>
+    readonly variantId: FieldRef<"CustomerPrice", 'Int'>
+    readonly price: FieldRef<"CustomerPrice", 'Int'>
+    readonly createdAt: FieldRef<"CustomerPrice", 'DateTime'>
+    readonly updatedAt: FieldRef<"CustomerPrice", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * CustomerPrice findUnique
+   */
+  export type CustomerPriceFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CustomerPrice
+     */
+    select?: CustomerPriceSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CustomerPrice
+     */
+    omit?: CustomerPriceOmit<ExtArgs> | null
+    /**
+     * Filter, which CustomerPrice to fetch.
+     */
+    where: CustomerPriceWhereUniqueInput
+  }
+
+  /**
+   * CustomerPrice findUniqueOrThrow
+   */
+  export type CustomerPriceFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CustomerPrice
+     */
+    select?: CustomerPriceSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CustomerPrice
+     */
+    omit?: CustomerPriceOmit<ExtArgs> | null
+    /**
+     * Filter, which CustomerPrice to fetch.
+     */
+    where: CustomerPriceWhereUniqueInput
+  }
+
+  /**
+   * CustomerPrice findFirst
+   */
+  export type CustomerPriceFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CustomerPrice
+     */
+    select?: CustomerPriceSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CustomerPrice
+     */
+    omit?: CustomerPriceOmit<ExtArgs> | null
+    /**
+     * Filter, which CustomerPrice to fetch.
+     */
+    where?: CustomerPriceWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CustomerPrices to fetch.
+     */
+    orderBy?: CustomerPriceOrderByWithRelationInput | CustomerPriceOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for CustomerPrices.
+     */
+    cursor?: CustomerPriceWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CustomerPrices from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CustomerPrices.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of CustomerPrices.
+     */
+    distinct?: CustomerPriceScalarFieldEnum | CustomerPriceScalarFieldEnum[]
+  }
+
+  /**
+   * CustomerPrice findFirstOrThrow
+   */
+  export type CustomerPriceFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CustomerPrice
+     */
+    select?: CustomerPriceSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CustomerPrice
+     */
+    omit?: CustomerPriceOmit<ExtArgs> | null
+    /**
+     * Filter, which CustomerPrice to fetch.
+     */
+    where?: CustomerPriceWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CustomerPrices to fetch.
+     */
+    orderBy?: CustomerPriceOrderByWithRelationInput | CustomerPriceOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for CustomerPrices.
+     */
+    cursor?: CustomerPriceWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CustomerPrices from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CustomerPrices.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of CustomerPrices.
+     */
+    distinct?: CustomerPriceScalarFieldEnum | CustomerPriceScalarFieldEnum[]
+  }
+
+  /**
+   * CustomerPrice findMany
+   */
+  export type CustomerPriceFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CustomerPrice
+     */
+    select?: CustomerPriceSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CustomerPrice
+     */
+    omit?: CustomerPriceOmit<ExtArgs> | null
+    /**
+     * Filter, which CustomerPrices to fetch.
+     */
+    where?: CustomerPriceWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CustomerPrices to fetch.
+     */
+    orderBy?: CustomerPriceOrderByWithRelationInput | CustomerPriceOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing CustomerPrices.
+     */
+    cursor?: CustomerPriceWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CustomerPrices from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CustomerPrices.
+     */
+    skip?: number
+    distinct?: CustomerPriceScalarFieldEnum | CustomerPriceScalarFieldEnum[]
+  }
+
+  /**
+   * CustomerPrice create
+   */
+  export type CustomerPriceCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CustomerPrice
+     */
+    select?: CustomerPriceSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CustomerPrice
+     */
+    omit?: CustomerPriceOmit<ExtArgs> | null
+    /**
+     * The data needed to create a CustomerPrice.
+     */
+    data: XOR<CustomerPriceCreateInput, CustomerPriceUncheckedCreateInput>
+  }
+
+  /**
+   * CustomerPrice createMany
+   */
+  export type CustomerPriceCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many CustomerPrices.
+     */
+    data: CustomerPriceCreateManyInput | CustomerPriceCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * CustomerPrice createManyAndReturn
+   */
+  export type CustomerPriceCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CustomerPrice
+     */
+    select?: CustomerPriceSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the CustomerPrice
+     */
+    omit?: CustomerPriceOmit<ExtArgs> | null
+    /**
+     * The data used to create many CustomerPrices.
+     */
+    data: CustomerPriceCreateManyInput | CustomerPriceCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * CustomerPrice update
+   */
+  export type CustomerPriceUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CustomerPrice
+     */
+    select?: CustomerPriceSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CustomerPrice
+     */
+    omit?: CustomerPriceOmit<ExtArgs> | null
+    /**
+     * The data needed to update a CustomerPrice.
+     */
+    data: XOR<CustomerPriceUpdateInput, CustomerPriceUncheckedUpdateInput>
+    /**
+     * Choose, which CustomerPrice to update.
+     */
+    where: CustomerPriceWhereUniqueInput
+  }
+
+  /**
+   * CustomerPrice updateMany
+   */
+  export type CustomerPriceUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update CustomerPrices.
+     */
+    data: XOR<CustomerPriceUpdateManyMutationInput, CustomerPriceUncheckedUpdateManyInput>
+    /**
+     * Filter which CustomerPrices to update
+     */
+    where?: CustomerPriceWhereInput
+    /**
+     * Limit how many CustomerPrices to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * CustomerPrice updateManyAndReturn
+   */
+  export type CustomerPriceUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CustomerPrice
+     */
+    select?: CustomerPriceSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the CustomerPrice
+     */
+    omit?: CustomerPriceOmit<ExtArgs> | null
+    /**
+     * The data used to update CustomerPrices.
+     */
+    data: XOR<CustomerPriceUpdateManyMutationInput, CustomerPriceUncheckedUpdateManyInput>
+    /**
+     * Filter which CustomerPrices to update
+     */
+    where?: CustomerPriceWhereInput
+    /**
+     * Limit how many CustomerPrices to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * CustomerPrice upsert
+   */
+  export type CustomerPriceUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CustomerPrice
+     */
+    select?: CustomerPriceSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CustomerPrice
+     */
+    omit?: CustomerPriceOmit<ExtArgs> | null
+    /**
+     * The filter to search for the CustomerPrice to update in case it exists.
+     */
+    where: CustomerPriceWhereUniqueInput
+    /**
+     * In case the CustomerPrice found by the `where` argument doesn't exist, create a new CustomerPrice with this data.
+     */
+    create: XOR<CustomerPriceCreateInput, CustomerPriceUncheckedCreateInput>
+    /**
+     * In case the CustomerPrice was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<CustomerPriceUpdateInput, CustomerPriceUncheckedUpdateInput>
+  }
+
+  /**
+   * CustomerPrice delete
+   */
+  export type CustomerPriceDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CustomerPrice
+     */
+    select?: CustomerPriceSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CustomerPrice
+     */
+    omit?: CustomerPriceOmit<ExtArgs> | null
+    /**
+     * Filter which CustomerPrice to delete.
+     */
+    where: CustomerPriceWhereUniqueInput
+  }
+
+  /**
+   * CustomerPrice deleteMany
+   */
+  export type CustomerPriceDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which CustomerPrices to delete
+     */
+    where?: CustomerPriceWhereInput
+    /**
+     * Limit how many CustomerPrices to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * CustomerPrice without action
+   */
+  export type CustomerPriceDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CustomerPrice
+     */
+    select?: CustomerPriceSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CustomerPrice
+     */
+    omit?: CustomerPriceOmit<ExtArgs> | null
   }
 
 
@@ -17338,6 +18496,19 @@ export namespace Prisma {
   export type StoreSettingScalarFieldEnum = (typeof StoreSettingScalarFieldEnum)[keyof typeof StoreSettingScalarFieldEnum]
 
 
+  export const CustomerPriceScalarFieldEnum: {
+    id: 'id',
+    customerName: 'customerName',
+    productId: 'productId',
+    variantId: 'variantId',
+    price: 'price',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type CustomerPriceScalarFieldEnum = (typeof CustomerPriceScalarFieldEnum)[keyof typeof CustomerPriceScalarFieldEnum]
+
+
   export const NotificationScalarFieldEnum: {
     id: 'id',
     transactionId: 'transactionId',
@@ -18017,6 +19188,71 @@ export namespace Prisma {
     footer?: StringWithAggregatesFilter<"StoreSetting"> | string
     logo?: StringNullableWithAggregatesFilter<"StoreSetting"> | string | null
     receiptLogo?: StringNullableWithAggregatesFilter<"StoreSetting"> | string | null
+  }
+
+  export type CustomerPriceWhereInput = {
+    AND?: CustomerPriceWhereInput | CustomerPriceWhereInput[]
+    OR?: CustomerPriceWhereInput[]
+    NOT?: CustomerPriceWhereInput | CustomerPriceWhereInput[]
+    id?: IntFilter<"CustomerPrice"> | number
+    customerName?: StringFilter<"CustomerPrice"> | string
+    productId?: IntFilter<"CustomerPrice"> | number
+    variantId?: IntFilter<"CustomerPrice"> | number
+    price?: IntFilter<"CustomerPrice"> | number
+    createdAt?: DateTimeFilter<"CustomerPrice"> | Date | string
+    updatedAt?: DateTimeFilter<"CustomerPrice"> | Date | string
+  }
+
+  export type CustomerPriceOrderByWithRelationInput = {
+    id?: SortOrder
+    customerName?: SortOrder
+    productId?: SortOrder
+    variantId?: SortOrder
+    price?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CustomerPriceWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    customerName_productId_variantId?: CustomerPriceCustomerNameProductIdVariantIdCompoundUniqueInput
+    AND?: CustomerPriceWhereInput | CustomerPriceWhereInput[]
+    OR?: CustomerPriceWhereInput[]
+    NOT?: CustomerPriceWhereInput | CustomerPriceWhereInput[]
+    customerName?: StringFilter<"CustomerPrice"> | string
+    productId?: IntFilter<"CustomerPrice"> | number
+    variantId?: IntFilter<"CustomerPrice"> | number
+    price?: IntFilter<"CustomerPrice"> | number
+    createdAt?: DateTimeFilter<"CustomerPrice"> | Date | string
+    updatedAt?: DateTimeFilter<"CustomerPrice"> | Date | string
+  }, "id" | "customerName_productId_variantId">
+
+  export type CustomerPriceOrderByWithAggregationInput = {
+    id?: SortOrder
+    customerName?: SortOrder
+    productId?: SortOrder
+    variantId?: SortOrder
+    price?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: CustomerPriceCountOrderByAggregateInput
+    _avg?: CustomerPriceAvgOrderByAggregateInput
+    _max?: CustomerPriceMaxOrderByAggregateInput
+    _min?: CustomerPriceMinOrderByAggregateInput
+    _sum?: CustomerPriceSumOrderByAggregateInput
+  }
+
+  export type CustomerPriceScalarWhereWithAggregatesInput = {
+    AND?: CustomerPriceScalarWhereWithAggregatesInput | CustomerPriceScalarWhereWithAggregatesInput[]
+    OR?: CustomerPriceScalarWhereWithAggregatesInput[]
+    NOT?: CustomerPriceScalarWhereWithAggregatesInput | CustomerPriceScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"CustomerPrice"> | number
+    customerName?: StringWithAggregatesFilter<"CustomerPrice"> | string
+    productId?: IntWithAggregatesFilter<"CustomerPrice"> | number
+    variantId?: IntWithAggregatesFilter<"CustomerPrice"> | number
+    price?: IntWithAggregatesFilter<"CustomerPrice"> | number
+    createdAt?: DateTimeWithAggregatesFilter<"CustomerPrice"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"CustomerPrice"> | Date | string
   }
 
   export type NotificationWhereInput = {
@@ -19038,6 +20274,73 @@ export namespace Prisma {
     footer?: StringFieldUpdateOperationsInput | string
     logo?: NullableStringFieldUpdateOperationsInput | string | null
     receiptLogo?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type CustomerPriceCreateInput = {
+    customerName: string
+    productId: number
+    variantId?: number
+    price: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CustomerPriceUncheckedCreateInput = {
+    id?: number
+    customerName: string
+    productId: number
+    variantId?: number
+    price: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CustomerPriceUpdateInput = {
+    customerName?: StringFieldUpdateOperationsInput | string
+    productId?: IntFieldUpdateOperationsInput | number
+    variantId?: IntFieldUpdateOperationsInput | number
+    price?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CustomerPriceUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    customerName?: StringFieldUpdateOperationsInput | string
+    productId?: IntFieldUpdateOperationsInput | number
+    variantId?: IntFieldUpdateOperationsInput | number
+    price?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CustomerPriceCreateManyInput = {
+    id?: number
+    customerName: string
+    productId: number
+    variantId?: number
+    price: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CustomerPriceUpdateManyMutationInput = {
+    customerName?: StringFieldUpdateOperationsInput | string
+    productId?: IntFieldUpdateOperationsInput | number
+    variantId?: IntFieldUpdateOperationsInput | number
+    price?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CustomerPriceUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    customerName?: StringFieldUpdateOperationsInput | string
+    productId?: IntFieldUpdateOperationsInput | number
+    variantId?: IntFieldUpdateOperationsInput | number
+    price?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type NotificationCreateInput = {
@@ -20112,6 +21415,56 @@ export namespace Prisma {
 
   export type StoreSettingSumOrderByAggregateInput = {
     id?: SortOrder
+  }
+
+  export type CustomerPriceCustomerNameProductIdVariantIdCompoundUniqueInput = {
+    customerName: string
+    productId: number
+    variantId: number
+  }
+
+  export type CustomerPriceCountOrderByAggregateInput = {
+    id?: SortOrder
+    customerName?: SortOrder
+    productId?: SortOrder
+    variantId?: SortOrder
+    price?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CustomerPriceAvgOrderByAggregateInput = {
+    id?: SortOrder
+    productId?: SortOrder
+    variantId?: SortOrder
+    price?: SortOrder
+  }
+
+  export type CustomerPriceMaxOrderByAggregateInput = {
+    id?: SortOrder
+    customerName?: SortOrder
+    productId?: SortOrder
+    variantId?: SortOrder
+    price?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CustomerPriceMinOrderByAggregateInput = {
+    id?: SortOrder
+    customerName?: SortOrder
+    productId?: SortOrder
+    variantId?: SortOrder
+    price?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CustomerPriceSumOrderByAggregateInput = {
+    id?: SortOrder
+    productId?: SortOrder
+    variantId?: SortOrder
+    price?: SortOrder
   }
 
   export type TransactionNullableScalarRelationFilter = {

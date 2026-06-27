@@ -702,13 +702,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         ) : isPublicPage || isStandaloneReceipt ? (
           children
         ) : (
-          <div className="lina-app-shell flex h-screen flex-col md:flex-row overflow-hidden relative w-full">
-            {!isGuest && <div className="hidden md:block fixed top-4 right-4 z-50">
+          <div className="lina-app-shell flex h-screen flex-col desktop:flex-row overflow-hidden relative w-full">
+            {!isGuest && <div className="hidden desktop:block fixed top-4 right-4 z-50">
               <div className="relative">
                 <button
                   type="button"
                   onClick={() => setIsNotifOpen(!isNotifOpen)}
-                  className={`group relative h-11 rounded-xl bg-white text-pink-600 border border-pink-100 shadow-lg shadow-pink-100 flex items-center justify-center gap-2 font-bold overflow-hidden transition-all duration-300 ease-out md:bg-pink-50 md:shadow-sm md:hover:w-36 md:hover:px-4 ${
+                  className={`group relative h-11 rounded-xl bg-white text-pink-600 border border-pink-100 shadow-lg shadow-pink-100 flex items-center justify-center gap-2 font-bold overflow-hidden transition-all duration-300 ease-out desktop:bg-pink-50 desktop:shadow-sm desktop:hover:w-36 desktop:hover:px-4 ${
                     isNotifOpen ? "w-36 px-4" : "w-11 px-0"
                   }`}
                 >
@@ -717,14 +717,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     className={`shrink-0 origin-top transition-transform duration-300 ${
                       isNotifOpen || unreadNotifications > 0
                         ? "animate-[lina-bell-ring_1.6s_ease-in-out_infinite]"
-                        : "md:group-hover:animate-[lina-bell-ring_1.6s_ease-in-out_infinite]"
+                        : "desktop:group-hover:animate-[lina-bell-ring_1.6s_ease-in-out_infinite]"
                     }`}
                   />
                   <span
                     className={`text-sm whitespace-nowrap transition-all duration-300 ${
                       isNotifOpen
                         ? "opacity-100 max-w-24 translate-x-0"
-                        : "opacity-0 max-w-0 translate-x-2 md:group-hover:opacity-100 md:group-hover:max-w-24 md:group-hover:translate-x-0"
+                        : "opacity-0 max-w-0 translate-x-2 desktop:group-hover:opacity-100 desktop:group-hover:max-w-24 desktop:group-hover:translate-x-0"
                     }`}
                   >
                     Notifikasi
@@ -747,7 +747,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   className="fixed inset-0 z-40 cursor-default bg-transparent"
                 />
                 {renderNotificationPanel(
-                  "fixed left-4 right-4 top-20 md:left-auto md:right-4 md:w-[340px] bg-white border border-pink-100 rounded-2xl shadow-2xl z-50 overflow-hidden"
+                  "fixed left-4 right-4 top-20 desktop:left-auto desktop:right-4 desktop:w-[340px] bg-white border border-pink-100 rounded-2xl shadow-2xl z-50 overflow-hidden"
                 )}
               </>}
 
@@ -797,7 +797,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             )}
 
             {/* MOBILE HEADER BAR: hamburger | profil + sapaan | notifikasi */}
-            <div className="md:hidden fixed top-0 left-0 right-0 h-16 z-50 bg-white/95 border-b border-pink-100 backdrop-blur-md shadow-sm flex items-center px-3.5 gap-2.5">
+            <div className="desktop:hidden fixed top-0 left-0 right-0 h-16 z-50 bg-white/95 border-b border-pink-100 backdrop-blur-md shadow-sm flex items-center px-3.5 gap-2.5">
               <button
                 onClick={openMobileMenu}
                 className="p-2.5 rounded-xl bg-pink-50 text-pink-600 border border-pink-100 flex-shrink-0"
@@ -840,19 +840,19 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             {/* OVERLAY HITAM UNTUK MOBILE */}
             {isMobileMenuRendered && (
               <div
-                className={`fixed inset-0 bg-black/60 z-[60] md:hidden backdrop-blur-sm transition-opacity duration-300 ease-out ${isMobileMenuOpen ? "opacity-100" : "opacity-0"}`}
+                className={`fixed inset-0 bg-black/60 z-[60] desktop:hidden backdrop-blur-sm transition-opacity duration-300 ease-out ${isMobileMenuOpen ? "opacity-100" : "opacity-0"}`}
                 onClick={closeMobileMenu}
               />
             )}
 
             {/* SIDEBAR */}
             <aside className={`
-              group/sidebar fixed md:static inset-y-0 left-0 z-[70] w-72 md:w-20 md:hover:w-64 flex flex-col bg-white/90 text-rose-950 p-4 shadow-xl md:shadow-[14px_0_40px_rgba(219,39,119,0.10)] border-r border-pink-100 backdrop-blur-md transition-[width,transform] duration-300 ease-in-out overflow-visible
-              ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
+              group/sidebar fixed desktop:static inset-y-0 left-0 z-[70] w-72 desktop:w-20 desktop:hover:w-64 flex flex-col bg-white/90 text-rose-950 p-4 shadow-xl desktop:shadow-[14px_0_40px_rgba(219,39,119,0.10)] border-r border-pink-100 backdrop-blur-md transition-[width,transform] duration-300 ease-in-out overflow-visible
+              ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full desktop:translate-x-0"}
             `}>
 
-              <div className="flex items-start justify-between mb-8 mt-2 md:px-0">
-                <div className="flex items-center gap-3 min-w-0 md:w-full md:justify-center md:group-hover/sidebar:justify-start">
+              <div className="flex items-start justify-between mb-8 mt-2 desktop:px-0">
+                <div className="flex items-center gap-3 min-w-0 desktop:w-full desktop:justify-center desktop:group-hover/sidebar:justify-start">
                   {/* LOGO DENGAN BACKGROUND PUTIH AGAR PNG TRANSPARAN TERLIHAT JELAS */}
                   <button
                     type="button"
@@ -869,7 +869,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                       <Eye size={18} className="scale-50 text-white opacity-0 transition-all duration-300 group-hover:scale-100 group-hover:opacity-100 group-focus-visible:scale-100 group-focus-visible:opacity-100" />
                     </span>
                   </button>
-                  <div className="min-w-0 overflow-hidden transition-all duration-300 md:max-w-0 md:opacity-0 md:group-hover/sidebar:max-w-40 md:group-hover/sidebar:opacity-100">
+                  <div className="min-w-0 overflow-hidden transition-all duration-300 desktop:max-w-0 desktop:opacity-0 desktop:group-hover/sidebar:max-w-40 desktop:group-hover/sidebar:opacity-100">
                     <h1 className="text-lg font-bold tracking-wider leading-tight text-rose-950">Lina Flowers</h1>
                     <p className="text-[10px] text-pink-700 bg-pink-50 border border-pink-100 px-2 py-0.5 rounded inline-block mt-1 font-medium tracking-wide">Role: {user?.role}</p>
                   </div>
@@ -878,13 +878,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 {/* TOMBOL TUTUP SIDEBAR DI MOBILE */}
               <button
                   onClick={closeMobileMenu}
-                  className="md:hidden text-pink-500 hover:text-pink-700 p-1"
+                  className="desktop:hidden text-pink-500 hover:text-pink-700 p-1"
                 >
                   <X size={24} />
                 </button>
               </div>
 
-              <nav className="flex flex-col gap-2 flex-1 overflow-y-auto md:overflow-y-visible overflow-x-hidden md:overflow-x-visible pr-1 md:pr-0">
+              <nav className="flex flex-col gap-2 flex-1 overflow-y-auto desktop:overflow-y-visible overflow-x-hidden desktop:overflow-x-visible pr-1 desktop:pr-0">
                 {!isGuest && <NavItem href="/dashboard" icon={<House />} label="Dashboard" pathname={pathname} onClick={closeMobileMenu} />}
                 {!isGuest && <NavItem href="/pos" icon={<ShoppingCart />} label="Kasir (POS)" pathname={pathname} onClick={closeMobileMenu} />}
                 <NavItem href="/produk" icon={<Package />} label="Data Produk" pathname={pathname} onClick={closeMobileMenu} />
@@ -940,7 +940,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <button
                   type="button"
                   onClick={() => setIsAccountMenuOpen((current) => !current)}
-                    className="w-full flex items-center md:justify-center md:group-hover/sidebar:justify-start gap-3 p-3 bg-pink-50 rounded-xl hover:bg-pink-100 transition-colors duration-200 text-rose-950 border border-pink-100 shadow-inner shadow-pink-50"
+                    className="w-full flex items-center desktop:justify-center desktop:group-hover/sidebar:justify-start gap-3 p-3 bg-pink-50 rounded-xl hover:bg-pink-100 transition-colors duration-200 text-rose-950 border border-pink-100 shadow-inner shadow-pink-50"
                   title="Menu akun"
                 >
                   <div className="w-11 h-11 rounded-full bg-white/95 border border-pink-200 flex items-center justify-center overflow-hidden text-pink-500 flex-shrink-0">
@@ -950,7 +950,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                       <UserRound size={22} />
                     )}
                   </div>
-                  <div className="min-w-0 flex-1 text-left overflow-hidden transition-all duration-300 md:max-w-0 md:opacity-0 md:group-hover/sidebar:max-w-40 md:group-hover/sidebar:opacity-100">
+                  <div className="min-w-0 flex-1 text-left overflow-hidden transition-all duration-300 desktop:max-w-0 desktop:opacity-0 desktop:group-hover/sidebar:max-w-40 desktop:group-hover/sidebar:opacity-100">
                     <p className="text-sm font-bold truncate">{user?.fullName || user?.username || "Akun"}</p>
                     <p className="text-[11px] text-pink-600 truncate">@{user?.username || "user"} - {user?.role}</p>
                   </div>
@@ -959,13 +959,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </aside>
 
             {/* KONTEN UTAMA */}
-            <main className="lina-app-content flex-1 overflow-y-auto p-4 md:p-8 pt-16 md:pt-8 pb-20 md:pb-8">
+            <main className="lina-app-content flex-1 overflow-y-auto p-4 desktop:p-8 pt-16 desktop:pt-8 pb-20 desktop:pb-8">
               {children}
             </main>
 
             {/* BOTTOM NAV - Mobile Only */}
             {!isGuest && user && (
-              <nav className="md:hidden fixed bottom-0 left-0 right-0 h-16 z-40 bg-white/95 border-t border-pink-100 backdrop-blur-md shadow-[0_-4px_20px_rgba(219,39,119,0.1)]">
+              <nav className="desktop:hidden fixed bottom-0 left-0 right-0 h-16 z-40 bg-white/95 border-t border-pink-100 backdrop-blur-md shadow-[0_-4px_20px_rgba(219,39,119,0.1)]">
                 <div className="flex h-full">
                   <BottomNavItem href="/dashboard" icon={<House size={20} />} label="Dashboard" pathname={pathname} />
                   <BottomNavItem href="/pos" icon={<ShoppingCart size={20} />} label="Kasir" pathname={pathname} />
@@ -1028,10 +1028,10 @@ function NavItem({ href, icon, label, pathname, onClick }: { href: string, icon:
       href={href}
       onClick={onClick}
       title={label}
-      className={`flex items-center md:justify-center md:group-hover/sidebar:justify-start gap-3 px-4 py-3.5 rounded-xl transition-all duration-200 font-bold tracking-wide overflow-hidden ${isActive ? 'bg-pink-600 text-white shadow-lg shadow-pink-200 transform scale-[1.02]' : 'text-rose-900 hover:bg-pink-50 hover:text-pink-700'}`}
+      className={`flex items-center desktop:justify-center desktop:group-hover/sidebar:justify-start gap-3 px-4 py-3.5 rounded-xl transition-all duration-200 font-bold tracking-wide overflow-hidden ${isActive ? 'bg-pink-600 text-white shadow-lg shadow-pink-200 transform scale-[1.02]' : 'text-rose-900 hover:bg-pink-50 hover:text-pink-700'}`}
     >
       <span className="flex-shrink-0">{icon}</span>
-      <span className="whitespace-nowrap overflow-hidden transition-all duration-300 md:max-w-0 md:opacity-0 md:group-hover/sidebar:max-w-44 md:group-hover/sidebar:opacity-100">
+      <span className="whitespace-nowrap overflow-hidden transition-all duration-300 desktop:max-w-0 desktop:opacity-0 desktop:group-hover/sidebar:max-w-44 desktop:group-hover/sidebar:opacity-100">
         {label}
       </span>
     </Link>

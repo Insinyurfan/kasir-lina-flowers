@@ -184,9 +184,6 @@ export default function PosPage() {
   const [isAddingVariant, setIsAddingVariant] = useState(false);
 
   const [isCartOpen, setIsCartOpen] = useState(false); // STATE BUKA/TUTUP KERANJANG
-  // Layar benar-benar besar (desktop/tablet): lebar >=1024px DAN tinggi >=600px.
-  // HP landscape (tinggi pendek) TIDAK dianggap desktop → tetap pakai keranjang mengambang.
-  const [isWideDesktop, setIsWideDesktop] = useState(false);
   const [variantModalProduct, setVariantModalProduct] = useState<Product | null>(null); // PRODUK YANG SEDANG PILIH VARIASI
   const [animations, setAnimations] = useState<{id: number, x: number, y: number, img: string | null}[]>([]); // STATE ANIMASI TERBANG
   const animationIdRef = useRef(0);
@@ -354,15 +351,6 @@ export default function PosPage() {
       cancelled = true;
     };
   }, [namaPembeli, isSessionStarted]);
-
-  // Deteksi layar benar-benar besar (desktop/tablet), bukan HP landscape yang pendek.
-  useEffect(() => {
-    const mq = window.matchMedia("(min-width: 1024px) and (min-height: 600px)");
-    const update = () => setIsWideDesktop(mq.matches);
-    update();
-    mq.addEventListener("change", update);
-    return () => mq.removeEventListener("change", update);
-  }, []);
 
   // Ambil keranjang tersimpan dari server (per akun) — dipakai saat mount & auto-refresh.
   // force=true (saat mount) tetap memuat walau ada perubahan lokal; saat auto-refresh
@@ -1205,17 +1193,14 @@ export default function PosPage() {
         </div>
       </div>
 
-        {/* KERANJANG PERMANEN — hanya layar besar (desktop/tablet), bukan HP landscape */}
-        {isWideDesktop && (
-          <aside className="flex flex-col w-[360px] xl:w-[400px] shrink-0 min-h-0 bg-white rounded-3xl shadow-xl border border-pink-100 overflow-hidden">
-            {renderCartPanel(false)}
-          </aside>
-        )}
+        {/* KERANJANG PANEL TETAP — desktop & HP landscape (≥640px). Navbar tetap ikut device. */}
+        <aside className="hidden lg:flex sm:landscape:flex flex-col w-[300px] lg:w-[360px] xl:w-[400px] shrink-0 min-h-0 bg-white rounded-3xl shadow-xl border border-pink-100 overflow-hidden">
+          {renderCartPanel(false)}
+        </aside>
       </div>
 
-      {/* KERANJANG MENGAMBANG — semua HP (termasuk landscape) agar tidak jadi tampilan desktop yang sempit */}
-      {!isWideDesktop && (
-      <div className="fixed bottom-[4.5rem] right-5 md:bottom-8 md:right-8 z-50 flex flex-col items-end">
+      {/* KERANJANG MENGAMBANG — hanya HP portrait */}
+      <div className="lg:hidden sm:landscape:hidden fixed bottom-[4.5rem] right-5 md:bottom-8 md:right-8 z-50 flex flex-col items-end">
          
          {/* POP-UP KERANJANG */}
          {isCartOpen && (
@@ -1371,7 +1356,6 @@ export default function PosPage() {
            )}
          </button>
       </div>
-      )}
 
     </div>
   );

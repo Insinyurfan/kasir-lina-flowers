@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+/* "desktop" = layar benar-benar besar (lebar >=768px DAN tinggi >=600px).
+   HP landscape (lebar cukup tapi tinggi pendek) TIDAK dianggap desktop,
+   sehingga navbar tetap mode mobile saat HP dimiringkan. */
+@custom-variant desktop (@media (min-width: 768px) and (min-height: 600px));
+
 :root {
   --background: #ffffff;
   --foreground: #171717;

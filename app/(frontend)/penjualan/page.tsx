@@ -37,6 +37,46 @@ type StoreSettingResponse = Partial<StoreInfo> & {
 type PrintDocumentType = "nota" | "surat-jalan";
 const SATUAN_LABELS: Record<string, string> = { pcs: "Pcs", lusin: "Lusin", setengah_gross: "½ Gross", gross: "Gross" };
 
+// ===== MODE ANEKA (nota grup bernomor + kode produk) =====
+// Aktif lewat toggle saat cetak. Saat NONAKTIF, semua dokumen dirender persis seperti semula.
+type DocItemLike = { variantName?: string | null; product?: { nama_produk?: string | null } | null };
+const CIRCLED_NUMS = ["", "①", "②", "③", "④", "⑤", "⑥", "⑦", "⑧", "⑨", "⑩", "⑪", "⑫", "⑬", "⑭", "⑮", "⑯", "⑰", "⑱", "⑲", "⑳"];
+const circledNo = (n: number): string => CIRCLED_NUMS[n] ?? `(${n})`;
+// Ambil kode produk dari nama, mis. "LN 13 - Bando Bunga..." -> "LN 13".
+const extractKode = (nama?: string | null): string => {
+  if (!nama) return "-";
+  const i = nama.indexOf(" - ");
+  return i > 0 ? nama.slice(0, i).trim() : nama.trim();
+};
+// Peta kode pelanggan (variantName) -> nomor nota, urut kemunculan pertama.
+const buildNotaMap = (items: DocItemLike[]): Map<string, number> => {
+  const map = new Map<string, number>();
+  let n = 0;
+  for (const it of items) {
+    const code = (it.variantName || "").trim();
+    if (code && !map.has(code)) map.set(code, ++n);
+  }
+  return map;
+};
+// Urutkan item agar terkelompok per pelanggan (nomor nota).
+const orderItemsAneka = <T extends DocItemLike>(items: T[], notaMap: Map<string, number>): T[] =>
+  [...items].sort((a, b) => {
+    const na = notaMap.get((a.variantName || "").trim()) ?? 999;
+    const nb = notaMap.get((b.variantName || "").trim()) ?? 999;
+    return na - nb;
+  });
+// Nama tampil Mode Aneka: "① LN 12 SMT" (nomor nota + kode produk + kode pelanggan).
+const anekaItemName = (item: DocItemLike, notaMap: Map<string, number>): string => {
+  const kode = extractKode(item.product?.nama_produk);
+  const code = (item.variantName || "").trim();
+  const no = code ? notaMap.get(code) : undefined;
+  const prefix = no ? `${circledNo(no)} ` : "";
+  return `${prefix}${kode}${code ? ` ${code}` : ""}`;
+};
+// Nama tampil normal.
+const normalItemName = (item: DocItemLike): string =>
+  (item.product?.nama_produk || "-") + (item.variantName ? ` (${item.variantName})` : "");
+
 type PrintTransactionItem = {
   id?: number;
   jumlah: number;
@@ -158,6 +198,8 @@ export default function RiwayatPenjualanPage() {
   const [printModalOpen, setPrintModalOpen] = useState(false);
   const [selectedTrx, setSelectedTrx] = useState<any>(null);
   const [printType, setPrintType] = useState<"struk" | "surat-jalan" | "nota">("struk");
+  // Mode Aneka: kelompokkan & beri nomor nota (①②③) + tampil kode produk saat cetak nota/surat jalan.
+  const [groupAneka, setGroupAneka] = useState(false);
   const [printerProfile, setPrinterProfile] = useState<PrinterProfile>("bluetooth");
   const [manualModalOpen, setManualModalOpen] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<any>(null);
@@ -750,9 +792,12 @@ export default function RiwayatPenjualanPage() {
   const createA4DocumentBlob = async (
     t: PrintTransaction,
     documentType: PrintDocumentType,
-    mimeType: "image/jpeg" | "image/png" = "image/jpeg"
+    mimeType: "image/jpeg" | "image/png" = "image/jpeg",
+    aneka = false
   ): Promise<Blob | null> => {
     const isNota = documentType === "nota";
+    const notaMap = buildNotaMap(t.items || []);
+    const docItems = aneka ? orderItemsAneka(t.items || [], notaMap) : (t.items || []);
     // A4 at ~150 dpi: 210mm × 5.906px/mm ≈ 1240px wide
     const W = 1240;
     const MARGIN = 95;
@@ -871,7 +916,7 @@ export default function RiwayatPenjualanPage() {
     ctx.textAlign = "left";
     y += THEAD_H;
 
-    (t.items || []).forEach((item, idx) => {
+    docItems.forEach((item, idx) => {
       if (idx % 2 === 1) {
         ctx.fillStyle = "#fdf8fb";
         ctx.fillRect(MARGIN, y, CW, ROW_H);
@@ -880,7 +925,7 @@ export default function RiwayatPenjualanPage() {
       ctx.lineWidth = 0.5;
       ctx.strokeRect(MARGIN, y, CW, ROW_H);
 
-      const prodName = (item.product?.nama_produk || "-") + (item.variantName ? ` (${item.variantName})` : "");
+      const prodName = aneka ? anekaItemName(item, notaMap) : normalItemName(item);
       ctx.fillStyle = "#334155";
       ctx.font = "bold 16px Arial, sans-serif";
       ctx.fillText(prodName.length > 50 ? prodName.slice(0, 49) + "…" : prodName, MARGIN + 14, y + 16);
@@ -975,7 +1020,7 @@ export default function RiwayatPenjualanPage() {
 
   const handleDownloadA4Jpg = async () => {
     if (!selectedTrx) return;
-    const blob = await createA4DocumentBlob(selectedTrx as PrintTransaction, printType as PrintDocumentType, "image/jpeg");
+    const blob = await createA4DocumentBlob(selectedTrx as PrintTransaction, printType as PrintDocumentType, "image/jpeg", groupAneka);
     if (!blob) return alert("Gagal membuat gambar dokumen.");
     downloadBlobFile(blob, getPrintFileName("jpg"));
   };
@@ -983,7 +1028,7 @@ export default function RiwayatPenjualanPage() {
   const handleDownloadA4Pdf = async () => {
     if (!selectedTrx) return;
     try {
-      const imageBlob = await createA4DocumentBlob(selectedTrx as PrintTransaction, printType as PrintDocumentType, "image/jpeg");
+      const imageBlob = await createA4DocumentBlob(selectedTrx as PrintTransaction, printType as PrintDocumentType, "image/jpeg", groupAneka);
       if (!imageBlob) return alert("Gagal membuat gambar dokumen.");
       const [imageBytes, imageSize] = await Promise.all([
         imageBlob.arrayBuffer().then((b) => new Uint8Array(b)),
@@ -997,19 +1042,24 @@ export default function RiwayatPenjualanPage() {
     }
   };
 
-  const printOrderDocument = (t: PrintTransaction, documentType: PrintDocumentType) => {
+  const printOrderDocument = (t: PrintTransaction, documentType: PrintDocumentType, aneka = false) => {
     const printWindow = window.open("", "_blank", "width=900,height=700");
     if (!printWindow) return alert("Popup cetak diblokir browser. Izinkan pop-up lalu coba lagi.");
     const isNota = documentType === "nota";
     const documentTitle = isNota ? "NOTA PESANAN" : "SURAT JALAN";
     const transactionDate = new Date(t.tanggal);
     const logoSrc = storeInfo.receiptLogo || storeInfo.logo;
-    const itemRows = (t.items || []).map((item) => {
+    const notaMap = buildNotaMap(t.items || []);
+    const orderedItems = aneka ? orderItemsAneka(t.items || [], notaMap) : (t.items || []);
+    const itemRows = orderedItems.map((item) => {
       const satuanLabel = SATUAN_LABELS[item.satuanHarga || "pcs"] ?? "Pcs";
       const unitPrice = item.jumlah > 0 ? item.subtotal / item.jumlah : 0;
+      const nameCell = aneka
+        ? `<strong>${escapeHtml(anekaItemName(item, notaMap))}</strong>`
+        : `${escapeHtml(item.product?.nama_produk || "-")}${item.variantName ? ` <strong>(${escapeHtml(item.variantName)})</strong>` : ""}`;
       return `
       <tr>
-        <td>${escapeHtml(item.product?.nama_produk || "-")}${item.variantName ? ` <strong>(${escapeHtml(item.variantName)})</strong>` : ""}</td>
+        <td>${nameCell}</td>
         ${isNota ? `<td class="money">Rp ${Number(unitPrice).toLocaleString("id-ID")}/${satuanLabel}</td>` : ""}
         <td class="qty">${escapeHtml(item.jumlah)} ${satuanLabel}</td>
         ${isNota ? `<td class="money">Rp ${Number(item.subtotal || 0).toLocaleString("id-ID")}</td>` : ""}
@@ -1081,7 +1131,7 @@ export default function RiwayatPenjualanPage() {
 
   const handlePrint = () => {
     if (printType !== "struk" && selectedTrx) {
-      printOrderDocument(selectedTrx, printType);
+      printOrderDocument(selectedTrx, printType, groupAneka);
       return;
     }
 
@@ -2139,12 +2189,15 @@ export default function RiwayatPenjualanPage() {
                         </tr>
                       </thead>
                       <tbody>
-                        {(selectedTrx.items || []).map((item: { id: number; jumlah: number; subtotal: number; satuanHarga?: string | null; variantName?: string | null; product: { nama_produk: string } }) => {
+                        {(() => {
+                          const notaMap = buildNotaMap(selectedTrx.items || []);
+                          const previewItems = groupAneka ? orderItemsAneka(selectedTrx.items || [], notaMap) : (selectedTrx.items || []);
+                          return previewItems.map((item: { id: number; jumlah: number; subtotal: number; satuanHarga?: string | null; variantName?: string | null; product: { nama_produk: string } }) => {
                           const satuanLabel = SATUAN_LABELS[item.satuanHarga || "pcs"] ?? "Pcs";
                           const unitPrice = item.jumlah > 0 ? item.subtotal / item.jumlah : 0;
                           return (
                             <tr key={item.id} className="border-b border-slate-50 even:bg-pink-50/30">
-                              <td className="px-4 py-2 font-semibold text-slate-700 leading-snug">{(item.product?.nama_produk || "-") + (item.variantName ? ` (${item.variantName})` : "")}</td>
+                              <td className="px-4 py-2 font-semibold text-slate-700 leading-snug">{groupAneka ? <strong>{anekaItemName(item, notaMap)}</strong> : (item.product?.nama_produk || "-") + (item.variantName ? ` (${item.variantName})` : "")}</td>
                               {printType === "nota" && (
                                 <td className="px-4 py-2 text-right text-slate-700">Rp {Number(unitPrice).toLocaleString("id-ID")}/{satuanLabel}</td>
                               )}
@@ -2154,7 +2207,8 @@ export default function RiwayatPenjualanPage() {
                               )}
                             </tr>
                           );
-                        })}
+                          });
+                        })()}
                       </tbody>
                     </table>
 
@@ -2227,6 +2281,20 @@ export default function RiwayatPenjualanPage() {
                       </button>
                     </div>
                   </>
+                )}
+                {(printType === "nota" || printType === "surat-jalan") && (
+                  <label className="flex items-start gap-2.5 mb-3 p-3 rounded-xl border border-amber-200 bg-amber-50 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={groupAneka}
+                      onChange={(e) => setGroupAneka(e.target.checked)}
+                      className="mt-0.5 h-4 w-4 accent-amber-500 shrink-0"
+                    />
+                    <span className="text-xs leading-snug">
+                      <b className="text-amber-700">Mode Aneka (Nota Grup)</b>
+                      <span className="block text-slate-500 mt-0.5">Kelompokkan per kode pelanggan, beri nomor nota ①②③, dan tampilkan kode produk (mis. <b>① LN 12 SMT</b>).</span>
+                    </span>
+                  </label>
                 )}
                 {(printType === "nota" || printType === "surat-jalan") && (
                   <div className="grid grid-cols-2 gap-3 mb-3">

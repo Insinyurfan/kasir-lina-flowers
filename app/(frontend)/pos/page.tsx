@@ -705,7 +705,7 @@ export default function PosPage() {
   // Isi keranjang dipakai bersama: panel kanan permanen (desktop) & popup mengambang (mobile).
   const renderCartPanel = (showClose: boolean) => (
     <>
-      <div className="p-2 sm:p-4 bg-pink-600 text-white font-bold flex justify-between items-center gap-2 shadow-md z-10">
+      <div className="p-2 sm:p-4 short:p-1.5! bg-pink-600 text-white font-bold flex justify-between items-center gap-2 shadow-md z-10">
         {isEditingCustomer ? (
           <div className="flex items-center gap-1.5 flex-1 min-w-0">
             <User size={14} className="text-pink-200 shrink-0" />
@@ -735,10 +735,10 @@ export default function PosPage() {
       <div className="flex-1 overflow-y-auto p-2 sm:p-4 short:p-2! space-y-2 sm:space-y-3 short:space-y-2! bg-pink-50/50">
         {cart.length > 0 ? (
           cart.map((item) => (
-            <div key={item.id} className="bg-white shadow-sm p-3 rounded-2xl border border-pink-50 space-y-2.5">
+            <div key={item.id} className="bg-white shadow-sm p-3 short:p-2! rounded-2xl border border-pink-50 space-y-2.5 short:space-y-1!">
               <div className="flex justify-between items-start gap-2">
                 {/* FOTO PRODUK DI KERANJANG — biar tahu bentukan barangnya */}
-                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-pink-50 border border-pink-100 overflow-hidden shrink-0 flex items-center justify-center">
+                <div className="w-12 h-12 sm:w-14 sm:h-14 short:w-9! short:h-9! rounded-xl bg-pink-50 border border-pink-100 overflow-hidden shrink-0 flex items-center justify-center">
                   {item.gambar ? (
                     <img src={item.gambar} alt={item.nama_produk} className="w-full h-full object-cover" />
                   ) : (
@@ -824,7 +824,7 @@ export default function PosPage() {
 
       <div className="p-3 sm:p-5 short:p-2! bg-white border-t border-pink-100 space-y-3 sm:space-y-4 short:space-y-2! shadow-[0_-10px_20px_-10px_rgba(0,0,0,0.05)]">
         <div className="bg-pink-50 p-2 sm:p-3 short:p-1.5! rounded-lg sm:rounded-xl border border-pink-100">
-          <label className="text-[9px] sm:text-[10px] uppercase font-extrabold text-slate-400 mb-0.5 sm:mb-1 flex items-center gap-1"><Wallet size={10}/> Metode Pembayaran</label>
+          <label className="text-[9px] sm:text-[10px] uppercase font-extrabold text-slate-400 mb-0.5 sm:mb-1 flex items-center gap-1 short:hidden"><Wallet size={10}/> Metode Pembayaran</label>
           <select value={metodePembayaran} onChange={(e) => setMetodePembayaran(e.target.value)} className="w-full bg-transparent outline-none font-bold text-pink-600 text-xs sm:text-sm cursor-pointer">
             <option value="Tunai">💵 Tunai (Cash)</option><option value="QRIS">📱 QRIS / E-Wallet</option><option value="Transfer Bank">🏦 Transfer Bank</option><option value="Belum Bayar">🔴 Belum Bayar (Piutang)</option>
           </select>
@@ -1209,7 +1209,7 @@ export default function PosPage() {
          {isCartOpen && (
             <div className="bg-white rounded-3xl shadow-2xl border border-pink-100 w-[90vw] sm:w-[400px] mb-4 flex flex-col h-[60vh] sm:h-[65vh] max-h-[700px] overflow-hidden transform origin-bottom-right transition-all animate-in slide-in-from-bottom-5">
 
-              <div className="p-2 sm:p-4 bg-pink-600 text-white font-bold flex justify-between items-center gap-2 shadow-md z-10">
+              <div className="p-2 sm:p-4 short:p-1.5! bg-pink-600 text-white font-bold flex justify-between items-center gap-2 shadow-md z-10">
                 {isEditingCustomer ? (
                   <div className="flex items-center gap-1.5 flex-1 min-w-0">
                     <User size={14} className="text-pink-200 shrink-0" />
@@ -1237,10 +1237,10 @@ export default function PosPage() {
               <div className="flex-1 overflow-y-auto p-2 sm:p-4 short:p-2! space-y-2 sm:space-y-3 short:space-y-2! bg-pink-50/50">
                 {cart.length > 0 ? (
                   cart.map((item) => (
-                    <div key={item.id} className="bg-white shadow-sm p-3 rounded-2xl border border-pink-50 space-y-2.5">
+                    <div key={item.id} className="bg-white shadow-sm p-3 short:p-2! rounded-2xl border border-pink-50 space-y-2.5 short:space-y-1!">
                       <div className="flex justify-between items-start gap-2">
                         {/* FOTO PRODUK DI KERANJANG — biar tahu bentukan barangnya */}
-                        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-pink-50 border border-pink-100 overflow-hidden shrink-0 flex items-center justify-center">
+                        <div className="w-12 h-12 sm:w-14 sm:h-14 short:w-9! short:h-9! rounded-xl bg-pink-50 border border-pink-100 overflow-hidden shrink-0 flex items-center justify-center">
                           {item.gambar ? (
                             <img src={item.gambar} alt={item.nama_produk} className="w-full h-full object-cover" />
                           ) : (
@@ -1326,7 +1326,7 @@ export default function PosPage() {
 
               <div className="p-3 sm:p-5 short:p-2! bg-white border-t border-pink-100 space-y-3 sm:space-y-4 short:space-y-2! shadow-[0_-10px_20px_-10px_rgba(0,0,0,0.05)]">
                  <div className="bg-pink-50 p-2 sm:p-3 short:p-1.5! rounded-lg sm:rounded-xl border border-pink-100">
-                  <label className="text-[9px] sm:text-[10px] uppercase font-extrabold text-slate-400 mb-0.5 sm:mb-1 flex items-center gap-1"><Wallet size={10}/> Metode Pembayaran</label>
+                  <label className="text-[9px] sm:text-[10px] uppercase font-extrabold text-slate-400 mb-0.5 sm:mb-1 flex items-center gap-1 short:hidden"><Wallet size={10}/> Metode Pembayaran</label>
                   <select value={metodePembayaran} onChange={(e) => setMetodePembayaran(e.target.value)} className="w-full bg-transparent outline-none font-bold text-pink-600 text-xs sm:text-sm cursor-pointer">
                     <option value="Tunai">💵 Tunai (Cash)</option><option value="QRIS">📱 QRIS / E-Wallet</option><option value="Transfer Bank">🏦 Transfer Bank</option><option value="Belum Bayar">🔴 Belum Bayar (Piutang)</option>
                   </select>
@@ -1334,7 +1334,7 @@ export default function PosPage() {
 
                 <div className="flex justify-between items-end px-1">
                   <span className="text-slate-500 font-bold text-[9px] sm:text-xs uppercase">Total Tagihan</span>
-                  <span className="text-lg sm:text-2xl font-black text-pink-600">Rp {getTotal().toLocaleString("id-ID")}</span>
+                  <span className="text-lg sm:text-2xl short:text-base! font-black text-pink-600">Rp {getTotal().toLocaleString("id-ID")}</span>
                 </div>
 
                 <button onClick={handleCheckout} disabled={isProcessing || cart.length === 0} className="w-full py-3 sm:py-4 short:py-2! bg-pink-600 text-white rounded-xl font-bold text-xs sm:text-base shadow-lg shadow-pink-200 hover:bg-pink-700 transition-all active:scale-[0.98] disabled:opacity-50">

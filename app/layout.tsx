@@ -851,7 +851,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full desktop:translate-x-0"}
             `}>
 
-              <div className="flex items-start justify-between mb-8 mt-2 desktop:px-0">
+              <div className="flex items-start justify-between mb-8 short:mb-3 mt-2 short:mt-0 desktop:px-0">
                 <div className="flex items-center gap-3 min-w-0 desktop:w-full desktop:justify-center desktop:group-hover/sidebar:justify-start">
                   {/* LOGO DENGAN BACKGROUND PUTIH AGAR PNG TRANSPARAN TERLIHAT JELAS */}
                   <button
@@ -884,7 +884,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 </button>
               </div>
 
-              <nav className="flex flex-col gap-2 flex-1 overflow-y-auto desktop:overflow-y-visible overflow-x-hidden desktop:overflow-x-visible pr-1 desktop:pr-0">
+              <nav className="flex flex-col gap-2 short:gap-1 flex-1 overflow-y-auto desktop:overflow-y-visible overflow-x-hidden desktop:overflow-x-visible pr-1 desktop:pr-0">
                 {!isGuest && <NavItem href="/dashboard" icon={<House />} label="Dashboard" pathname={pathname} onClick={closeMobileMenu} />}
                 {!isGuest && <NavItem href="/pos" icon={<ShoppingCart />} label="Kasir (POS)" pathname={pathname} onClick={closeMobileMenu} />}
                 <NavItem href="/produk" icon={<Package />} label="Data Produk" pathname={pathname} onClick={closeMobileMenu} />
@@ -900,7 +900,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 )}
               </nav>
 
-              <div ref={accountMenuRef} className="relative mt-6">
+              <div ref={accountMenuRef} className="relative mt-6 short:mt-2">
                 {isAccountMenuOpen && (
                   <div className="absolute bottom-full left-0 mb-3 w-60 rounded-xl border border-pink-100 bg-white p-2 text-slate-700 shadow-2xl z-[90]">
                     {user?.profilePhoto && (
@@ -1028,7 +1028,7 @@ function NavItem({ href, icon, label, pathname, onClick }: { href: string, icon:
       href={href}
       onClick={onClick}
       title={label}
-      className={`flex items-center desktop:justify-center desktop:group-hover/sidebar:justify-start gap-3 px-4 py-3.5 rounded-xl transition-all duration-200 font-bold tracking-wide overflow-hidden ${isActive ? 'bg-pink-600 text-white shadow-lg shadow-pink-200 transform scale-[1.02]' : 'text-rose-900 hover:bg-pink-50 hover:text-pink-700'}`}
+      className={`flex items-center desktop:justify-center desktop:group-hover/sidebar:justify-start gap-3 short:gap-2 px-4 py-3.5 short:py-2.5 rounded-xl transition-all duration-200 font-bold tracking-wide overflow-hidden ${isActive ? 'bg-pink-600 text-white shadow-lg shadow-pink-200 transform scale-[1.02]' : 'text-rose-900 hover:bg-pink-50 hover:text-pink-700'}`}
     >
       <span className="flex-shrink-0">{icon}</span>
       <span className="whitespace-nowrap overflow-hidden transition-all duration-300 desktop:max-w-0 desktop:opacity-0 desktop:group-hover/sidebar:max-w-44 desktop:group-hover/sidebar:opacity-100">

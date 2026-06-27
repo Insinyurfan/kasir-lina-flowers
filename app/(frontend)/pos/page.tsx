@@ -492,17 +492,27 @@ export default function PosPage() {
   };
 
   // Simpan harga khusus pelanggan ke server + cache lokal (dipakai otomatis berikutnya).
+  // Disimpan di level PRODUK (variantId 0) agar berlaku untuk SEMUA varian/kode produk ini —
+  // varian Aneka hanya kode pelanggan, jadi harganya sama untuk semua kode.
   const persistCustomerPrice = async (item: CartItem, price: number) => {
     const name = namaPembeli.trim();
     if (!name) return;
     const productId = item.productId ?? item.id;
-    const variantId = item.variantId ?? 0;
-    setRememberedPrices((prev) => ({ ...prev, [priceKey(productId, variantId)]: price }));
+    setRememberedPrices((prev) => {
+      const next: Record<string, number> = {};
+      const prefix = `${productId}-`;
+      // Buang entri per-varian lama untuk produk ini agar harga level produk jadi acuan tunggal.
+      for (const [key, value] of Object.entries(prev)) {
+        if (!key.startsWith(prefix)) next[key] = value;
+      }
+      next[priceKey(productId, 0)] = price;
+      return next;
+    });
     try {
       await fetch("/api/harga-pelanggan", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ customerName: name, productId, variantId, price }),
+        body: JSON.stringify({ customerName: name, productId, variantId: 0, price }),
       });
     } catch {
       /* abaikan; cache lokal sudah diperbarui */
@@ -913,7 +923,7 @@ export default function PosPage() {
                   />
                   <span className="text-xs leading-snug">
                     <b className="text-amber-700">Ingat harga ini untuk {namaPembeli || "pelanggan"}</b>
-                    <span className="block text-slate-500 mt-0.5">Otomatis dipakai lagi saat membuat orderan untuk pelanggan yang sama.</span>
+                    <span className="block text-slate-500 mt-0.5">Berlaku untuk <b>semua varian/kode</b> produk ini, dan otomatis dipakai lagi saat membuat orderan untuk pelanggan yang sama.</span>
                   </span>
                 </label>
                 <button

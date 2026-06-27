@@ -43,6 +43,15 @@ export async function POST(request: NextRequest) {
       update: { price },
       create: { customerName, productId, variantId, price },
     });
+
+    // Harga level produk (variantId 0) menjadi acuan tunggal: hapus harga per-varian lama
+    // untuk produk ini agar SEMUA varian/kode mengikuti harga produk.
+    if (variantId === 0) {
+      await prisma.customerPrice.deleteMany({
+        where: { customerName, productId, NOT: { variantId: 0 } },
+      });
+    }
+
     return NextResponse.json(saved);
   } catch {
     return NextResponse.json({ error: "Gagal menyimpan harga pelanggan." }, { status: 500 });

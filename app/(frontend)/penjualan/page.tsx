@@ -35,7 +35,7 @@ type StoreSettingResponse = Partial<StoreInfo> & {
   detail?: string;
 };
 type PrintDocumentType = "nota" | "surat-jalan";
-const SATUAN_LABELS: Record<string, string> = { pcs: "Pcs", lusin: "Lusin", gross: "Gross" };
+const SATUAN_LABELS: Record<string, string> = { pcs: "Pcs", lusin: "Lusin", setengah_gross: "½ Gross", gross: "Gross" };
 
 type PrintTransactionItem = {
   id?: number;
@@ -1009,7 +1009,7 @@ export default function RiwayatPenjualanPage() {
       const unitPrice = item.jumlah > 0 ? item.subtotal / item.jumlah : 0;
       return `
       <tr>
-        <td>${escapeHtml((item.product?.nama_produk || "-") + (item.variantName ? ` (${item.variantName})` : ""))}</td>
+        <td>${escapeHtml(item.product?.nama_produk || "-")}${item.variantName ? ` <strong>(${escapeHtml(item.variantName)})</strong>` : ""}</td>
         ${isNota ? `<td class="money">Rp ${Number(unitPrice).toLocaleString("id-ID")}/${satuanLabel}</td>` : ""}
         <td class="qty">${escapeHtml(item.jumlah)} ${satuanLabel}</td>
         ${isNota ? `<td class="money">Rp ${Number(item.subtotal || 0).toLocaleString("id-ID")}</td>` : ""}

@@ -13,7 +13,7 @@ type StoreInfo = {
   receiptLogo?: string | null;
 };
 
-const SATUAN_LABELS: Record<string, string> = { pcs: "Pcs", lusin: "Lusin", gross: "Gross" };
+const SATUAN_LABELS: Record<string, string> = { pcs: "Pcs", lusin: "Lusin", setengah_gross: "½ Gross", gross: "Gross" };
 
 type TransactionItem = {
   id: number;

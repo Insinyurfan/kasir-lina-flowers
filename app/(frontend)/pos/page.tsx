@@ -171,12 +171,24 @@ export default function PosPage() {
   const [priceEditDraft, setPriceEditDraft] = useState("");
   const [qtyDraft, setQtyDraft] = useState<Record<number, string>>({});
   const [isPosCartLoaded, setIsPosCartLoaded] = useState(false);
-  
+
+  // Edit nama pelanggan langsung dari dalam keranjang (tanpa menutup sesi).
+  const [isEditingCustomer, setIsEditingCustomer] = useState(false);
+  const [customerDraft, setCustomerDraft] = useState("");
+  // Tambah varian cepat langsung dari modal POS (tanpa ke halaman Produk).
+  const [newVariantName, setNewVariantName] = useState("");
+  const [newVariantPrice, setNewVariantPrice] = useState("");
+  const [isAddingVariant, setIsAddingVariant] = useState(false);
+
   const [isCartOpen, setIsCartOpen] = useState(false); // STATE BUKA/TUTUP KERANJANG
   const [variantModalProduct, setVariantModalProduct] = useState<Product | null>(null); // PRODUK YANG SEDANG PILIH VARIASI
   const [animations, setAnimations] = useState<{id: number, x: number, y: number, img: string | null}[]>([]); // STATE ANIMASI TERBANG
   const animationIdRef = useRef(0);
-  
+  // Tanda ada perubahan keranjang lokal yang belum tersimpan ke server.
+  // Dipakai agar auto-refresh (saat halaman kembali fokus) tidak menimpa
+  // pilihan varian/harga yang barusan diubah tapi belum sempat tersinkron.
+  const cartDirtyRef = useRef(false);
+
   const { cart, addToCart, removeFromCart, updateQuantity, updateHargaBase, updateSatuanPesan, setCart, getTotal, clearCart } = useCartStore();
 
   // MENGHITUNG TOTAL BARANG DI KERANJANG UNTUK BADGE
@@ -218,10 +230,12 @@ export default function PosPage() {
     });
   };
 
-  const fetchProduk = useCallback(async () => {
+  const fetchProduk = useCallback(async (): Promise<Product[]> => {
     const res = await fetch("/api/produk");
     const data = await res.json();
-    setProduk(data);
+    const list: Product[] = Array.isArray(data) ? data : [];
+    setProduk(list);
+    return list;
   }, []);
 
   // EFEK SCANNER KAMERA API LANGSUNG (TANPA UPLOAD GALERI)
@@ -303,16 +317,39 @@ export default function PosPage() {
   }, [namaPembeli, isSessionStarted]);
 
   // Ambil keranjang tersimpan dari server (per akun) — dipakai saat mount & auto-refresh.
-  const refreshSavedCart = useCallback(async () => {
+  // force=true (saat mount) tetap memuat walau ada perubahan lokal; saat auto-refresh
+  // (force=false) dilewati bila ada perubahan lokal belum tersimpan agar tidak menimpa.
+  const refreshSavedCart = useCallback(async (force = false) => {
     if (!user?.id) return;
+    if (!force && cartDirtyRef.current) return;
     try {
       const res = await fetch(`/api/cart?userId=${user.id}&scope=pos`, { cache: "no-store" });
       const data = await res.json();
       if (Array.isArray(data.items)) {
-        setCart(data.items);
-        setNamaPembeli(data.customerName || "");
+        // Gabungkan dengan keranjang lokal: server jadi acuan lintas-perangkat, TAPI info
+        // varian/harga dari lokal dipertahankan bila server kehilangannya (mis. JOIN varian
+        // stale / belum tersinkron). Ini mencegah nama varian hilang dari struk/nota/surat jalan.
+        const localCart = useCartStore.getState().cart;
+        const localById = new Map(localCart.map((item) => [item.id, item]));
+        const serverItems = data.items as CartItem[];
+        const serverIds = new Set(serverItems.map((item) => item.id));
+        const merged: CartItem[] = serverItems.map((srv) => {
+          const local = localById.get(srv.id);
+          if (!local) return srv;
+          return {
+            ...srv,
+            variantId: srv.variantId ?? local.variantId ?? null,
+            variantName: srv.variantName ?? local.variantName ?? null,
+          };
+        });
+        // Pertahankan baris lokal yang belum sempat tersimpan ke server (mis. varian baru dipilih).
+        for (const local of localCart) {
+          if (!serverIds.has(local.id)) merged.push(local);
+        }
+        setCart(merged);
+        setNamaPembeli((prev) => data.customerName || prev || "");
         setMetodePembayaran(data.paymentMethod || "Tunai");
-        setIsSessionStarted(Boolean(data.sessionActive || data.customerName || data.items.length > 0));
+        setIsSessionStarted(Boolean(data.sessionActive || data.customerName || merged.length > 0));
       }
     } catch {
       /* abaikan kegagalan jaringan */
@@ -327,7 +364,7 @@ export default function PosPage() {
 
     let isCancelled = false;
     (async () => {
-      await refreshSavedCart();
+      await refreshSavedCart(true);
       if (!isCancelled) setIsPosCartLoaded(true);
     })();
 
@@ -360,6 +397,9 @@ export default function PosPage() {
   useEffect(() => {
     if (!user?.id || !isPosCartLoaded || isProcessing) return;
 
+    // Ada perubahan yang belum tersimpan → tahan auto-refresh agar tidak menimpa.
+    cartDirtyRef.current = true;
+
     const timeoutId = window.setTimeout(() => {
       fetch("/api/cart", {
         method: "PUT",
@@ -372,9 +412,14 @@ export default function PosPage() {
           paymentMethod: metodePembayaran,
           sessionActive: isSessionStarted,
         }),
-      }).catch(() => {
-        console.error("Gagal menyimpan keranjang kasir");
-      });
+      })
+        .then(() => {
+          // Tersimpan → aman untuk disinkron ulang dari server.
+          cartDirtyRef.current = false;
+        })
+        .catch(() => {
+          console.error("Gagal menyimpan keranjang kasir");
+        });
     }, 350);
 
     return () => window.clearTimeout(timeoutId);
@@ -498,7 +543,65 @@ export default function PosPage() {
     setVariantModalProduct(null);
   };
 
-  const filteredProduk = produk.filter(p => 
+  // Simpan perubahan nama pelanggan dari dalam keranjang.
+  const startEditCustomer = () => {
+    setCustomerDraft(namaPembeli);
+    setIsEditingCustomer(true);
+  };
+  const commitCustomerEdit = () => {
+    const next = customerDraft.trim();
+    if (!next) {
+      alert("⚠️ Nama pelanggan tidak boleh kosong!");
+      return;
+    }
+    setNamaPembeli(next);
+    setIsEditingCustomer(false);
+  };
+
+  // Tambah varian baru langsung dari modal POS, lalu refresh produk & modal.
+  const handleAddVariantInline = async () => {
+    if (!variantModalProduct) return;
+    const name = newVariantName.trim();
+    if (!name) {
+      alert("⚠️ Nama varian/kode tidak boleh kosong!");
+      return;
+    }
+    setIsAddingVariant(true);
+    try {
+      const res = await fetch(`/api/produk/${variantModalProduct.id}/variants`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          price: Number(newVariantPrice) || variantModalProduct.harga,
+          ...actorPayload,
+        }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        alert(data?.error || "Gagal menambah varian.");
+        return;
+      }
+      const created = (await res.json()) as Variant;
+      // Perbarui daftar produk dari server lalu sinkronkan modal yang sedang terbuka.
+      const refreshed = await fetchProduk();
+      const updated = Array.isArray(refreshed)
+        ? refreshed.find((p) => p.id === variantModalProduct.id)
+        : undefined;
+      setVariantModalProduct(updated ?? {
+        ...variantModalProduct,
+        variants: [...(variantModalProduct.variants ?? []), created],
+      });
+      setNewVariantName("");
+      setNewVariantPrice("");
+    } catch {
+      alert("Gagal menambah varian.");
+    } finally {
+      setIsAddingVariant(false);
+    }
+  };
+
+  const filteredProduk = produk.filter(p =>
     p.nama_produk.toLowerCase().includes(search.toLowerCase()) || 
     (p.barcode && p.barcode.includes(search))
   );
@@ -566,6 +669,37 @@ export default function PosPage() {
                   </span>
                 </button>
               ))}
+            </div>
+            {/* TAMBAH VARIAN CEPAT — tanpa harus ke halaman Produk */}
+            <div className="border-t border-amber-100 bg-amber-50/50 px-4 py-3">
+              <p className="text-[10px] font-black uppercase tracking-widest text-amber-600 mb-2">Tambah Varian / Kode Baru</p>
+              <div className="flex flex-wrap items-center gap-2">
+                <input
+                  type="text"
+                  value={newVariantName}
+                  onChange={(e) => setNewVariantName(e.target.value)}
+                  placeholder="Nama / kode (mis. SMT)"
+                  className="flex-1 min-w-[120px] rounded-xl border border-amber-200 bg-white px-3 py-2 text-sm font-bold text-slate-700 outline-none focus:border-amber-400"
+                  onKeyDown={(e) => { if (e.key === "Enter") handleAddVariantInline(); }}
+                />
+                <input
+                  type="number"
+                  value={newVariantPrice}
+                  onChange={(e) => setNewVariantPrice(e.target.value)}
+                  placeholder={`Harga (${(variantModalProduct.harga ?? 0).toLocaleString("id-ID")})`}
+                  className="w-28 rounded-xl border border-amber-200 bg-white px-3 py-2 text-sm font-bold text-slate-700 outline-none focus:border-amber-400"
+                  onKeyDown={(e) => { if (e.key === "Enter") handleAddVariantInline(); }}
+                />
+                <button
+                  type="button"
+                  onClick={handleAddVariantInline}
+                  disabled={isAddingVariant}
+                  className="rounded-xl bg-amber-500 px-4 py-2 text-sm font-black text-white shadow-sm hover:bg-amber-600 disabled:opacity-50"
+                >
+                  {isAddingVariant ? "..." : "+ Tambah"}
+                </button>
+              </div>
+              <p className="mt-1.5 text-[10px] font-semibold text-slate-400">Kosongkan harga untuk pakai harga dasar produk.</p>
             </div>
           </div>
         </div>
@@ -844,9 +978,29 @@ export default function PosPage() {
          {isCartOpen && (
             <div className="bg-white rounded-3xl shadow-2xl border border-pink-100 w-[90vw] sm:w-[400px] mb-4 flex flex-col h-[60vh] sm:h-[65vh] max-h-[700px] overflow-hidden transform origin-bottom-right transition-all animate-in slide-in-from-bottom-5">
 
-              <div className="p-2 sm:p-4 bg-pink-600 text-white font-bold flex justify-between items-center shadow-md z-10">
-                <span className="flex items-center gap-2 text-xs sm:text-sm"><User size={14} className="text-pink-200"/> <span className="truncate">{namaPembeli}</span></span>
-                <button onClick={() => setIsCartOpen(false)} className="text-pink-200 hover:text-white bg-pink-700/50 p-1 rounded-full"><X size={16}/></button>
+              <div className="p-2 sm:p-4 bg-pink-600 text-white font-bold flex justify-between items-center gap-2 shadow-md z-10">
+                {isEditingCustomer ? (
+                  <div className="flex items-center gap-1.5 flex-1 min-w-0">
+                    <User size={14} className="text-pink-200 shrink-0" />
+                    <input
+                      type="text"
+                      value={customerDraft}
+                      onChange={(e) => setCustomerDraft(e.target.value)}
+                      onKeyDown={(e) => { if (e.key === "Enter") commitCustomerEdit(); if (e.key === "Escape") setIsEditingCustomer(false); }}
+                      autoFocus
+                      className="flex-1 min-w-0 rounded-lg bg-pink-700/60 px-2 py-1 text-xs sm:text-sm text-white placeholder-pink-200 outline-none border border-pink-300/40 focus:border-white"
+                      placeholder="Nama pelanggan"
+                    />
+                    <button onClick={commitCustomerEdit} className="bg-white/20 hover:bg-white/30 p-1 rounded-full shrink-0" title="Simpan nama"><Check size={16} /></button>
+                  </div>
+                ) : (
+                  <button onClick={startEditCustomer} className="flex items-center gap-2 text-xs sm:text-sm min-w-0 group" title="Klik untuk ubah nama pelanggan">
+                    <User size={14} className="text-pink-200 shrink-0" />
+                    <span className="truncate">{namaPembeli}</span>
+                    <Pencil size={12} className="text-pink-200 opacity-70 group-hover:opacity-100 shrink-0" />
+                  </button>
+                )}
+                <button onClick={() => setIsCartOpen(false)} className="text-pink-200 hover:text-white bg-pink-700/50 p-1 rounded-full shrink-0"><X size={16}/></button>
               </div>
 
               <div className="flex-1 overflow-y-auto p-2 sm:p-4 space-y-2 sm:space-y-3 bg-pink-50/50">
@@ -854,6 +1008,14 @@ export default function PosPage() {
                   cart.map((item) => (
                     <div key={item.id} className="bg-white shadow-sm p-3 rounded-2xl border border-pink-50 space-y-2.5">
                       <div className="flex justify-between items-start gap-2">
+                        {/* FOTO PRODUK DI KERANJANG — biar tahu bentukan barangnya */}
+                        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-pink-50 border border-pink-100 overflow-hidden shrink-0 flex items-center justify-center">
+                          {item.gambar ? (
+                            <img src={item.gambar} alt={item.nama_produk} className="w-full h-full object-cover" />
+                          ) : (
+                            <Flower2 size={22} className="text-pink-200" />
+                          )}
+                        </div>
                         <div className="flex-1 min-w-0">
                           <h4 className="font-bold text-sm sm:text-base text-slate-800">
                             <ScrollingName text={item.nama_produk} />
@@ -895,7 +1057,7 @@ export default function PosPage() {
                             onChange={(e) => updateSatuanPesan(item.id, e.target.value)}
                             className="text-xs sm:text-sm font-bold border border-pink-200 rounded-xl px-2.5 py-2 bg-pink-50 text-pink-600 outline-none cursor-pointer min-w-0"
                           >
-                            {(["gross", "lusin", "pcs"] as const).map(s => (
+                            {(["gross", "setengah_gross", "lusin", "pcs"] as const).map(s => (
                               <option key={s} value={s}>
                                 {SATUAN_LABELS[s]} — Rp {hitungHargaSatuan(item.hargaBase ?? item.harga, item.satuanHarga ?? "pcs", s).toLocaleString("id-ID")}
                               </option>

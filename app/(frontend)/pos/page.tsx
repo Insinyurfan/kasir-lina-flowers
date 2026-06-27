@@ -746,10 +746,10 @@ export default function PosPage() {
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h4 className="font-bold text-sm sm:text-base text-slate-800">
+                  <h4 className="font-bold text-sm sm:text-base short:text-xs! text-slate-800">
                     <ScrollingName text={item.nama_produk} />
                   </h4>
-                  <p className="text-pink-600 text-sm sm:text-base font-extrabold mt-0.5">
+                  <p className="text-pink-600 text-sm sm:text-base short:text-xs! font-extrabold mt-0.5">
                     Rp {(item.harga * item.quantity).toLocaleString("id-ID")}
                   </p>
                   <p className="text-xs font-semibold text-slate-400 mt-0.5">
@@ -825,17 +825,17 @@ export default function PosPage() {
       <div className="p-3 sm:p-5 short:p-2! bg-white border-t border-pink-100 space-y-3 sm:space-y-4 short:space-y-2! shadow-[0_-10px_20px_-10px_rgba(0,0,0,0.05)]">
         <div className="bg-pink-50 p-2 sm:p-3 short:p-1.5! rounded-lg sm:rounded-xl border border-pink-100">
           <label className="text-[9px] sm:text-[10px] uppercase font-extrabold text-slate-400 mb-0.5 sm:mb-1 flex items-center gap-1 short:hidden"><Wallet size={10}/> Metode Pembayaran</label>
-          <select value={metodePembayaran} onChange={(e) => setMetodePembayaran(e.target.value)} className="w-full bg-transparent outline-none font-bold text-pink-600 text-xs sm:text-sm cursor-pointer">
+          <select value={metodePembayaran} onChange={(e) => setMetodePembayaran(e.target.value)} className="w-full bg-transparent outline-none font-bold text-pink-600 text-xs sm:text-sm short:text-xs! cursor-pointer">
             <option value="Tunai">💵 Tunai (Cash)</option><option value="QRIS">📱 QRIS / E-Wallet</option><option value="Transfer Bank">🏦 Transfer Bank</option><option value="Belum Bayar">🔴 Belum Bayar (Piutang)</option>
           </select>
         </div>
 
         <div className="flex justify-between items-end px-1">
           <span className="text-slate-500 font-bold text-[9px] sm:text-xs uppercase">Total Tagihan</span>
-          <span className="text-lg sm:text-2xl font-black text-pink-600">Rp {getTotal().toLocaleString("id-ID")}</span>
+          <span className="text-lg sm:text-2xl short:text-base! font-black text-pink-600">Rp {getTotal().toLocaleString("id-ID")}</span>
         </div>
 
-        <button onClick={handleCheckout} disabled={isProcessing || cart.length === 0} className="w-full py-3 sm:py-4 short:py-2! bg-pink-600 text-white rounded-xl font-bold text-xs sm:text-base shadow-lg shadow-pink-200 hover:bg-pink-700 transition-all active:scale-[0.98] disabled:opacity-50">
+        <button onClick={handleCheckout} disabled={isProcessing || cart.length === 0} className="w-full py-3 sm:py-4 short:py-2! bg-pink-600 text-white rounded-xl font-bold text-xs sm:text-base short:text-xs! shadow-lg shadow-pink-200 hover:bg-pink-700 transition-all active:scale-[0.98] disabled:opacity-50">
           {isProcessing ? "MEMPROSES..." : "SELESAIKAN PESANAN"}
         </button>
       </div>
@@ -1186,7 +1186,7 @@ export default function PosPage() {
   </p>
 
   <div className="mt-auto">
-    <p className="font-black text-pink-600">
+    <p className="font-black text-pink-600 short:text-sm">
       {formatHargaPos(p)}
     </p>
   </div>
@@ -1248,10 +1248,10 @@ export default function PosPage() {
                           )}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h4 className="font-bold text-sm sm:text-base text-slate-800">
+                          <h4 className="font-bold text-sm sm:text-base short:text-xs! text-slate-800">
                             <ScrollingName text={item.nama_produk} />
                           </h4>
-                          <p className="text-pink-600 text-sm sm:text-base font-extrabold mt-0.5">
+                          <p className="text-pink-600 text-sm sm:text-base short:text-xs! font-extrabold mt-0.5">
                             Rp {(item.harga * item.quantity).toLocaleString("id-ID")}
                           </p>
                           <p className="text-xs font-semibold text-slate-400 mt-0.5">
@@ -1327,7 +1327,7 @@ export default function PosPage() {
               <div className="p-3 sm:p-5 short:p-2! bg-white border-t border-pink-100 space-y-3 sm:space-y-4 short:space-y-2! shadow-[0_-10px_20px_-10px_rgba(0,0,0,0.05)]">
                  <div className="bg-pink-50 p-2 sm:p-3 short:p-1.5! rounded-lg sm:rounded-xl border border-pink-100">
                   <label className="text-[9px] sm:text-[10px] uppercase font-extrabold text-slate-400 mb-0.5 sm:mb-1 flex items-center gap-1 short:hidden"><Wallet size={10}/> Metode Pembayaran</label>
-                  <select value={metodePembayaran} onChange={(e) => setMetodePembayaran(e.target.value)} className="w-full bg-transparent outline-none font-bold text-pink-600 text-xs sm:text-sm cursor-pointer">
+                  <select value={metodePembayaran} onChange={(e) => setMetodePembayaran(e.target.value)} className="w-full bg-transparent outline-none font-bold text-pink-600 text-xs sm:text-sm short:text-xs! cursor-pointer">
                     <option value="Tunai">💵 Tunai (Cash)</option><option value="QRIS">📱 QRIS / E-Wallet</option><option value="Transfer Bank">🏦 Transfer Bank</option><option value="Belum Bayar">🔴 Belum Bayar (Piutang)</option>
                   </select>
                 </div>
@@ -1337,7 +1337,7 @@ export default function PosPage() {
                   <span className="text-lg sm:text-2xl short:text-base! font-black text-pink-600">Rp {getTotal().toLocaleString("id-ID")}</span>
                 </div>
 
-                <button onClick={handleCheckout} disabled={isProcessing || cart.length === 0} className="w-full py-3 sm:py-4 short:py-2! bg-pink-600 text-white rounded-xl font-bold text-xs sm:text-base shadow-lg shadow-pink-200 hover:bg-pink-700 transition-all active:scale-[0.98] disabled:opacity-50">
+                <button onClick={handleCheckout} disabled={isProcessing || cart.length === 0} className="w-full py-3 sm:py-4 short:py-2! bg-pink-600 text-white rounded-xl font-bold text-xs sm:text-base short:text-xs! shadow-lg shadow-pink-200 hover:bg-pink-700 transition-all active:scale-[0.98] disabled:opacity-50">
                   {isProcessing ? "MEMPROSES..." : "SELESAIKAN PESANAN"}
                 </button>
               </div>

@@ -671,6 +671,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="id" suppressHydrationWarning>
       <head suppressHydrationWarning>
         <title>Lina Flowers</title>
+        {/* Kunci skala viewport agar tidak auto-zoom saat ganti orientasi (portrait <-> landscape) */}
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
         <meta name="application-name" content="Lina Kasir" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-title" content="Lina Kasir" />
@@ -797,7 +799,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             )}
 
             {/* MOBILE HEADER BAR: hamburger | profil + sapaan | notifikasi */}
-            <div className="desktop:hidden fixed top-0 left-0 right-0 h-16 z-50 bg-white/95 border-b border-pink-100 backdrop-blur-md shadow-sm flex items-center px-3.5 gap-2.5">
+            <div className="desktop:hidden fixed top-0 left-0 right-0 h-16 short:h-12 z-50 bg-white/95 border-b border-pink-100 backdrop-blur-md shadow-sm flex items-center px-3.5 short:px-2 gap-2.5 short:gap-1.5">
               <button
                 onClick={openMobileMenu}
                 className="p-2.5 rounded-xl bg-pink-50 text-pink-600 border border-pink-100 flex-shrink-0"
@@ -959,13 +961,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </aside>
 
             {/* KONTEN UTAMA */}
-            <main className="lina-app-content flex-1 overflow-y-auto p-4 desktop:p-8 pt-16 desktop:pt-8 pb-20 desktop:pb-8">
+            <main className="lina-app-content flex-1 overflow-y-auto p-4 desktop:p-8 short:p-2 pt-16 desktop:pt-8 short:pt-14 pb-20 desktop:pb-8 short:pb-14">
               {children}
             </main>
 
             {/* BOTTOM NAV - Mobile Only */}
             {!isGuest && user && (
-              <nav className="desktop:hidden fixed bottom-0 left-0 right-0 h-16 z-40 bg-white/95 border-t border-pink-100 backdrop-blur-md shadow-[0_-4px_20px_rgba(219,39,119,0.1)]">
+              <nav className="desktop:hidden fixed bottom-0 left-0 right-0 h-16 short:h-12 z-40 bg-white/95 border-t border-pink-100 backdrop-blur-md shadow-[0_-4px_20px_rgba(219,39,119,0.1)]">
                 <div className="flex h-full">
                   <BottomNavItem href="/dashboard" icon={<House size={20} />} label="Dashboard" pathname={pathname} />
                   <BottomNavItem href="/pos" icon={<ShoppingCart size={20} />} label="Kasir" pathname={pathname} />

@@ -9,6 +9,12 @@
    agar muat: padding & font lebih kecil, supaya isi keranjang tetap terlihat. */
 @custom-variant short (@media (max-height: 600px));
 
+/* Cegah iOS Safari memperbesar teks otomatis saat orientasi berubah. */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;

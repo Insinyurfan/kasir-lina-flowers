@@ -732,7 +732,7 @@ export default function PosPage() {
         )}
       </div>
 
-      <div className="flex-1 overflow-y-auto p-2 sm:p-4 space-y-2 sm:space-y-3 bg-pink-50/50">
+      <div className="flex-1 overflow-y-auto p-2 sm:p-4 short:p-2! space-y-2 sm:space-y-3 short:space-y-2! bg-pink-50/50">
         {cart.length > 0 ? (
           cart.map((item) => (
             <div key={item.id} className="bg-white shadow-sm p-3 rounded-2xl border border-pink-50 space-y-2.5">
@@ -822,8 +822,8 @@ export default function PosPage() {
         )}
       </div>
 
-      <div className="p-3 sm:p-5 bg-white border-t border-pink-100 space-y-3 sm:space-y-4 shadow-[0_-10px_20px_-10px_rgba(0,0,0,0.05)]">
-        <div className="bg-pink-50 p-2 sm:p-3 rounded-lg sm:rounded-xl border border-pink-100">
+      <div className="p-3 sm:p-5 short:p-2! bg-white border-t border-pink-100 space-y-3 sm:space-y-4 short:space-y-2! shadow-[0_-10px_20px_-10px_rgba(0,0,0,0.05)]">
+        <div className="bg-pink-50 p-2 sm:p-3 short:p-1.5! rounded-lg sm:rounded-xl border border-pink-100">
           <label className="text-[9px] sm:text-[10px] uppercase font-extrabold text-slate-400 mb-0.5 sm:mb-1 flex items-center gap-1"><Wallet size={10}/> Metode Pembayaran</label>
           <select value={metodePembayaran} onChange={(e) => setMetodePembayaran(e.target.value)} className="w-full bg-transparent outline-none font-bold text-pink-600 text-xs sm:text-sm cursor-pointer">
             <option value="Tunai">💵 Tunai (Cash)</option><option value="QRIS">📱 QRIS / E-Wallet</option><option value="Transfer Bank">🏦 Transfer Bank</option><option value="Belum Bayar">🔴 Belum Bayar (Piutang)</option>
@@ -835,7 +835,7 @@ export default function PosPage() {
           <span className="text-lg sm:text-2xl font-black text-pink-600">Rp {getTotal().toLocaleString("id-ID")}</span>
         </div>
 
-        <button onClick={handleCheckout} disabled={isProcessing || cart.length === 0} className="w-full py-3 sm:py-4 bg-pink-600 text-white rounded-xl font-bold text-xs sm:text-base shadow-lg shadow-pink-200 hover:bg-pink-700 transition-all active:scale-[0.98] disabled:opacity-50">
+        <button onClick={handleCheckout} disabled={isProcessing || cart.length === 0} className="w-full py-3 sm:py-4 short:py-2! bg-pink-600 text-white rounded-xl font-bold text-xs sm:text-base shadow-lg shadow-pink-200 hover:bg-pink-700 transition-all active:scale-[0.98] disabled:opacity-50">
           {isProcessing ? "MEMPROSES..." : "SELESAIKAN PESANAN"}
         </button>
       </div>
@@ -843,7 +843,7 @@ export default function PosPage() {
   );
 
   return (
-    <div className="lina-page-stack flex flex-col gap-6 h-[calc(100vh-6rem)] relative w-full">
+    <div className="lina-page-stack flex flex-col gap-6 short:gap-2 h-[calc(100dvh-9rem)] desktop:h-[calc(100vh-6rem)] relative w-full">
 
       {/* RENDER ANIMASI TERBANG */}
       {animations.map(anim => (
@@ -1082,7 +1082,7 @@ export default function PosPage() {
       {/* PRODUK (kiri) + KERANJANG PERMANEN (kanan, desktop) */}
       <div className="flex-1 min-h-0 flex gap-6">
       <div className="lina-panel flex-1 min-w-0 flex flex-col rounded-2xl border overflow-hidden">
-        <div className="lina-panel-header p-4 border-b flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div className="lina-panel-header p-4 short:p-2 border-b flex flex-col md:flex-row justify-between items-start md:items-center gap-4 short:gap-2">
           <div className="relative w-full md:max-w-md flex gap-2">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-pink-400" size={18} />
@@ -1114,10 +1114,10 @@ export default function PosPage() {
     sm:grid-cols-3
     lg:grid-cols-3
     xl:grid-cols-4
-    gap-4
+    gap-4 short:gap-2
     auto-rows-max
     items-start
-    pb-36
+    pb-36 short:pb-6
   "
 >          {filteredProduk.map((p) => (
            <article
@@ -1142,7 +1142,7 @@ export default function PosPage() {
   "
 >
               {/* FOTO: Menggunakan aspect-square persis seperti halaman utama */}
-              <div className="relative w-full aspect-square bg-pink-50 overflow-hidden shrink-0">
+              <div className="relative w-full aspect-square short:aspect-[3/2] bg-pink-50 overflow-hidden shrink-0">
   {p.gambar ? (
     <img
       src={p.gambar}
@@ -1169,14 +1169,17 @@ export default function PosPage() {
 </div>
 
               {/* INFO PRODUK & HARGA */}
-          <div className="p-3 flex flex-col flex-1">
+          <div className="p-3 short:p-2 flex flex-col flex-1">
   <p
     className="
       text-sm
+      short:text-xs
       font-bold
       text-slate-800
       line-clamp-2
+      short:line-clamp-1
       min-h-[40px]
+      short:min-h-0
     "
   >
     {p.nama_produk}
@@ -1231,7 +1234,7 @@ export default function PosPage() {
                 <button onClick={() => setIsCartOpen(false)} className="text-pink-200 hover:text-white bg-pink-700/50 p-1 rounded-full shrink-0"><X size={16}/></button>
               </div>
 
-              <div className="flex-1 overflow-y-auto p-2 sm:p-4 space-y-2 sm:space-y-3 bg-pink-50/50">
+              <div className="flex-1 overflow-y-auto p-2 sm:p-4 short:p-2! space-y-2 sm:space-y-3 short:space-y-2! bg-pink-50/50">
                 {cart.length > 0 ? (
                   cart.map((item) => (
                     <div key={item.id} className="bg-white shadow-sm p-3 rounded-2xl border border-pink-50 space-y-2.5">
@@ -1321,8 +1324,8 @@ export default function PosPage() {
                 )}
               </div>
 
-              <div className="p-3 sm:p-5 bg-white border-t border-pink-100 space-y-3 sm:space-y-4 shadow-[0_-10px_20px_-10px_rgba(0,0,0,0.05)]">
-                 <div className="bg-pink-50 p-2 sm:p-3 rounded-lg sm:rounded-xl border border-pink-100">
+              <div className="p-3 sm:p-5 short:p-2! bg-white border-t border-pink-100 space-y-3 sm:space-y-4 short:space-y-2! shadow-[0_-10px_20px_-10px_rgba(0,0,0,0.05)]">
+                 <div className="bg-pink-50 p-2 sm:p-3 short:p-1.5! rounded-lg sm:rounded-xl border border-pink-100">
                   <label className="text-[9px] sm:text-[10px] uppercase font-extrabold text-slate-400 mb-0.5 sm:mb-1 flex items-center gap-1"><Wallet size={10}/> Metode Pembayaran</label>
                   <select value={metodePembayaran} onChange={(e) => setMetodePembayaran(e.target.value)} className="w-full bg-transparent outline-none font-bold text-pink-600 text-xs sm:text-sm cursor-pointer">
                     <option value="Tunai">💵 Tunai (Cash)</option><option value="QRIS">📱 QRIS / E-Wallet</option><option value="Transfer Bank">🏦 Transfer Bank</option><option value="Belum Bayar">🔴 Belum Bayar (Piutang)</option>
@@ -1334,7 +1337,7 @@ export default function PosPage() {
                   <span className="text-lg sm:text-2xl font-black text-pink-600">Rp {getTotal().toLocaleString("id-ID")}</span>
                 </div>
 
-                <button onClick={handleCheckout} disabled={isProcessing || cart.length === 0} className="w-full py-3 sm:py-4 bg-pink-600 text-white rounded-xl font-bold text-xs sm:text-base shadow-lg shadow-pink-200 hover:bg-pink-700 transition-all active:scale-[0.98] disabled:opacity-50">
+                <button onClick={handleCheckout} disabled={isProcessing || cart.length === 0} className="w-full py-3 sm:py-4 short:py-2! bg-pink-600 text-white rounded-xl font-bold text-xs sm:text-base shadow-lg shadow-pink-200 hover:bg-pink-700 transition-all active:scale-[0.98] disabled:opacity-50">
                   {isProcessing ? "MEMPROSES..." : "SELESAIKAN PESANAN"}
                 </button>
               </div>

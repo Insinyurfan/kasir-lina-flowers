@@ -1193,14 +1193,14 @@ export default function PosPage() {
         </div>
       </div>
 
-        {/* KERANJANG PERMANEN — DESKTOP (kanan) */}
-        <aside className="hidden lg:flex lg:flex-col w-[360px] xl:w-[400px] shrink-0 min-h-0 bg-white rounded-3xl shadow-xl border border-pink-100 overflow-hidden">
+        {/* KERANJANG PERMANEN — DESKTOP & HP LANDSCAPE (≥640px) di kanan */}
+        <aside className="hidden lg:flex sm:landscape:flex flex-col w-[300px] lg:w-[360px] xl:w-[400px] shrink-0 min-h-0 bg-white rounded-3xl shadow-xl border border-pink-100 overflow-hidden">
           {renderCartPanel(false)}
         </aside>
       </div>
 
-      {/* KERANJANG MENGAMBANG — MOBILE/TABLET (lg:hidden) */}
-      <div className="lg:hidden fixed bottom-[4.5rem] right-5 md:bottom-8 md:right-8 z-50 flex flex-col items-end">
+      {/* KERANJANG MENGAMBANG — HP PORTRAIT (disembunyikan di desktop & landscape ≥640px) */}
+      <div className="lg:hidden sm:landscape:hidden fixed bottom-[4.5rem] right-5 md:bottom-8 md:right-8 z-50 flex flex-col items-end">
          
          {/* POP-UP KERANJANG */}
          {isCartOpen && (

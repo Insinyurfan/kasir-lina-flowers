@@ -702,9 +702,149 @@ export default function PosPage() {
     );
   }
 
+  // Isi keranjang dipakai bersama: panel kanan permanen (desktop) & popup mengambang (mobile).
+  const renderCartPanel = (showClose: boolean) => (
+    <>
+      <div className="p-2 sm:p-4 bg-pink-600 text-white font-bold flex justify-between items-center gap-2 shadow-md z-10">
+        {isEditingCustomer ? (
+          <div className="flex items-center gap-1.5 flex-1 min-w-0">
+            <User size={14} className="text-pink-200 shrink-0" />
+            <input
+              type="text"
+              value={customerDraft}
+              onChange={(e) => setCustomerDraft(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter") commitCustomerEdit(); if (e.key === "Escape") setIsEditingCustomer(false); }}
+              autoFocus
+              className="flex-1 min-w-0 rounded-lg bg-pink-700/60 px-2 py-1 text-xs sm:text-sm text-white placeholder-pink-200 outline-none border border-pink-300/40 focus:border-white"
+              placeholder="Nama pelanggan"
+            />
+            <button onClick={commitCustomerEdit} className="bg-white/20 hover:bg-white/30 p-1 rounded-full shrink-0" title="Simpan nama"><Check size={16} /></button>
+          </div>
+        ) : (
+          <button onClick={startEditCustomer} className="flex items-center gap-2 text-xs sm:text-sm min-w-0 group" title="Klik untuk ubah nama pelanggan">
+            <User size={14} className="text-pink-200 shrink-0" />
+            <span className="truncate">{namaPembeli}</span>
+            <Pencil size={12} className="text-pink-200 opacity-70 group-hover:opacity-100 shrink-0" />
+          </button>
+        )}
+        {showClose && (
+          <button onClick={() => setIsCartOpen(false)} className="text-pink-200 hover:text-white bg-pink-700/50 p-1 rounded-full shrink-0"><X size={16}/></button>
+        )}
+      </div>
+
+      <div className="flex-1 overflow-y-auto p-2 sm:p-4 space-y-2 sm:space-y-3 bg-pink-50/50">
+        {cart.length > 0 ? (
+          cart.map((item) => (
+            <div key={item.id} className="bg-white shadow-sm p-3 rounded-2xl border border-pink-50 space-y-2.5">
+              <div className="flex justify-between items-start gap-2">
+                {/* FOTO PRODUK DI KERANJANG — biar tahu bentukan barangnya */}
+                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-pink-50 border border-pink-100 overflow-hidden shrink-0 flex items-center justify-center">
+                  {item.gambar ? (
+                    <img src={item.gambar} alt={item.nama_produk} className="w-full h-full object-cover" />
+                  ) : (
+                    <Flower2 size={22} className="text-pink-200" />
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h4 className="font-bold text-sm sm:text-base text-slate-800">
+                    <ScrollingName text={item.nama_produk} />
+                  </h4>
+                  <p className="text-pink-600 text-sm sm:text-base font-extrabold mt-0.5">
+                    Rp {(item.harga * item.quantity).toLocaleString("id-ID")}
+                  </p>
+                  <p className="text-xs font-semibold text-slate-400 mt-0.5">
+                    Rp {item.harga.toLocaleString("id-ID")} / {SATUAN_LABELS[item.satuanPesan ?? "pcs"] ?? item.satuanPesan ?? "pcs"}
+                  </p>
+                  {item.hargaBaseAsli != null && item.hargaBase != null && item.hargaBase !== item.hargaBaseAsli && (
+                    <div className="mt-1 flex flex-wrap items-center gap-1.5">
+                      <span className="inline-flex items-center gap-1 rounded-full bg-green-50 px-2 py-0.5 text-[10px] font-black text-green-600">✓ Harga disesuaikan</span>
+                      <span className="text-[11px] font-semibold text-slate-400">
+                        <span className="line-through">Rp {item.hargaBaseAsli.toLocaleString("id-ID")}</span>
+                        {" → "}
+                        <span className="font-black text-slate-600">Rp {item.hargaBase.toLocaleString("id-ID")}</span>
+                        {" / "}{SATUAN_LABELS[item.satuanHarga ?? "pcs"] ?? item.satuanHarga}
+                      </span>
+                    </div>
+                  )}
+                </div>
+                <div className="flex items-center gap-1 shrink-0">
+                  {/* Badge variasi: di kanan bersama tombol aksi, ringkas & selalu terlihat */}
+                  {item.variantName && (
+                    <span className="max-w-[72px] truncate rounded-lg bg-amber-50 border border-amber-200 text-amber-600 px-2 py-1 text-xs font-black mr-0.5" title={item.variantName}>
+                      {item.variantName}
+                    </span>
+                  )}
+                  <button onClick={() => openPriceEdit(item)} className="p-2.5 text-slate-400 hover:bg-pink-50 hover:text-pink-600 rounded-xl" title="Sesuaikan harga"><Pencil size={18} /></button>
+                  <button onClick={() => removeFromCart(item.id)} className="p-2.5 text-red-400 hover:bg-red-50 rounded-xl" title="Hapus"><Trash2 size={18} /></button>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 flex-wrap">
+                {/* Ganti satuan (hanya untuk produk non-pcs) */}
+                {(item.satuanHarga ?? "pcs") !== "pcs" && (
+                  <select
+                    value={item.satuanPesan ?? item.satuanHarga ?? "pcs"}
+                    onChange={(e) => updateSatuanPesan(item.id, e.target.value)}
+                    className="text-xs sm:text-sm font-bold border border-pink-200 rounded-xl px-2.5 py-2 bg-pink-50 text-pink-600 outline-none cursor-pointer min-w-0"
+                  >
+                    {(["gross", "setengah_gross", "lusin", "pcs"] as const).map(s => (
+                      <option key={s} value={s}>
+                        {SATUAN_LABELS[s]} — Rp {hitungHargaSatuan(item.hargaBase ?? item.harga, item.satuanHarga ?? "pcs", s).toLocaleString("id-ID")}
+                      </option>
+                    ))}
+                  </select>
+                )}
+                <div className="flex items-center gap-1 bg-slate-50 p-1 rounded-xl border border-slate-100 ml-auto">
+                  <button onClick={() => handleQtyStep(item.id, item.quantity - 1)} className="p-2 bg-white shadow-sm rounded-lg text-slate-500 active:scale-95" aria-label="Kurangi"><Minus size={16}/></button>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    value={qtyDraft[item.id] ?? String(item.quantity)}
+                    onChange={(e) => {
+                      const digits = e.target.value.replace(/\D/g, "");
+                      setQtyDraft((prev) => ({ ...prev, [item.id]: digits }));
+                    }}
+                    onFocus={(e) => e.target.select()}
+                    onBlur={() => commitQtyDraft(item.id)}
+                    onKeyDown={(e) => { if (e.key === "Enter") (e.target as HTMLInputElement).blur(); }}
+                    className="w-12 text-center text-sm font-bold bg-transparent outline-none text-slate-700"
+                    aria-label="Jumlah"
+                  />
+                  <button onClick={() => handleQtyStep(item.id, item.quantity + 1)} className="p-2 bg-white shadow-sm rounded-lg text-pink-600 active:scale-95" aria-label="Tambah"><Plus size={16}/></button>
+                </div>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="h-full flex flex-col items-center justify-center text-slate-300 gap-2">
+            <ShoppingCart size={36} className="opacity-50" />
+            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Keranjang Kosong</p>
+          </div>
+        )}
+      </div>
+
+      <div className="p-3 sm:p-5 bg-white border-t border-pink-100 space-y-3 sm:space-y-4 shadow-[0_-10px_20px_-10px_rgba(0,0,0,0.05)]">
+        <div className="bg-pink-50 p-2 sm:p-3 rounded-lg sm:rounded-xl border border-pink-100">
+          <label className="text-[9px] sm:text-[10px] uppercase font-extrabold text-slate-400 mb-0.5 sm:mb-1 flex items-center gap-1"><Wallet size={10}/> Metode Pembayaran</label>
+          <select value={metodePembayaran} onChange={(e) => setMetodePembayaran(e.target.value)} className="w-full bg-transparent outline-none font-bold text-pink-600 text-xs sm:text-sm cursor-pointer">
+            <option value="Tunai">💵 Tunai (Cash)</option><option value="QRIS">📱 QRIS / E-Wallet</option><option value="Transfer Bank">🏦 Transfer Bank</option><option value="Belum Bayar">🔴 Belum Bayar (Piutang)</option>
+          </select>
+        </div>
+
+        <div className="flex justify-between items-end px-1">
+          <span className="text-slate-500 font-bold text-[9px] sm:text-xs uppercase">Total Tagihan</span>
+          <span className="text-lg sm:text-2xl font-black text-pink-600">Rp {getTotal().toLocaleString("id-ID")}</span>
+        </div>
+
+        <button onClick={handleCheckout} disabled={isProcessing || cart.length === 0} className="w-full py-3 sm:py-4 bg-pink-600 text-white rounded-xl font-bold text-xs sm:text-base shadow-lg shadow-pink-200 hover:bg-pink-700 transition-all active:scale-[0.98] disabled:opacity-50">
+          {isProcessing ? "MEMPROSES..." : "SELESAIKAN PESANAN"}
+        </button>
+      </div>
+    </>
+  );
+
   return (
     <div className="lina-page-stack flex flex-col gap-6 h-[calc(100vh-6rem)] relative w-full">
-      
+
       {/* RENDER ANIMASI TERBANG */}
       {animations.map(anim => (
          <FlyingItem key={anim.id} startX={anim.x} startY={anim.y} img={anim.img} />
@@ -939,8 +1079,9 @@ export default function PosPage() {
         );
       })()}
 
-      {/* AREA UTAMA: KATALOG PRODUK */}
-      <div className="lina-panel flex-1 flex flex-col rounded-2xl border overflow-hidden w-full">
+      {/* PRODUK (kiri) + KERANJANG PERMANEN (kanan, desktop) */}
+      <div className="flex-1 min-h-0 flex gap-6">
+      <div className="lina-panel flex-1 min-w-0 flex flex-col rounded-2xl border overflow-hidden">
         <div className="lina-panel-header p-4 border-b flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div className="relative w-full md:max-w-md flex gap-2">
             <div className="relative flex-1">
@@ -971,8 +1112,8 @@ export default function PosPage() {
     grid
     grid-cols-2
     sm:grid-cols-3
-    lg:grid-cols-4
-    xl:grid-cols-5
+    lg:grid-cols-3
+    xl:grid-cols-4
     gap-4
     auto-rows-max
     items-start
@@ -1052,8 +1193,14 @@ export default function PosPage() {
         </div>
       </div>
 
-      {/* FLOATING ACTION BUTTON & POP-UP KERANJANG DI POJOK KANAN BAWAH */}
-      <div className="fixed bottom-[4.5rem] right-5 md:bottom-8 md:right-8 z-50 flex flex-col items-end">
+        {/* KERANJANG PERMANEN — DESKTOP (kanan) */}
+        <aside className="hidden lg:flex lg:flex-col w-[360px] xl:w-[400px] shrink-0 min-h-0 bg-white rounded-3xl shadow-xl border border-pink-100 overflow-hidden">
+          {renderCartPanel(false)}
+        </aside>
+      </div>
+
+      {/* KERANJANG MENGAMBANG — MOBILE/TABLET (lg:hidden) */}
+      <div className="lg:hidden fixed bottom-[4.5rem] right-5 md:bottom-8 md:right-8 z-50 flex flex-col items-end">
          
          {/* POP-UP KERANJANG */}
          {isCartOpen && (

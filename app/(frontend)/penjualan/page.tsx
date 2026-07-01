@@ -2291,7 +2291,7 @@ export default function RiwayatPenjualanPage() {
                       className="mt-0.5 h-4 w-4 accent-amber-500 shrink-0"
                     />
                     <span className="text-xs leading-snug">
-                      <b className="text-amber-700">Mode Aneka (Nota Grup)</b>
+                      <b className="text-amber-700">Aktifkan Penomoran Nota (Khusus Aneka)</b>
                       <span className="block text-slate-500 mt-0.5">Kelompokkan per kode pelanggan, beri nomor nota ①②③, dan tampilkan kode produk (mis. <b>① LN 12 SMT</b>).</span>
                     </span>
                   </label>

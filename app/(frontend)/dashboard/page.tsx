@@ -27,6 +27,26 @@ export default function DashboardPage() {
   const [selectedDate, setSelectedDate] = useState(() => getTodayInputValue());
   const [transaksi, setTransaksi] = useState<Transaction[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  // Sapaan "Selamat datang" sekali setelah login berhasil (dari halaman login).
+  const [welcome, setWelcome] = useState<string | null>(null);
+
+  useEffect(() => {
+    let name: string | null = null;
+    try {
+      name = sessionStorage.getItem("welcomeToast");
+    } catch {
+      name = null;
+    }
+    if (!name) return;
+    try {
+      sessionStorage.removeItem("welcomeToast");
+    } catch {
+      /* abaikan */
+    }
+    setWelcome(name);
+    const timer = window.setTimeout(() => setWelcome(null), 5000);
+    return () => window.clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -69,6 +89,73 @@ export default function DashboardPage() {
 
   return (
     <div className="lina-page-stack space-y-6 text-slate-800 p-2">
+      {welcome && (
+        <div className="welcome-toast" role="status" aria-live="polite">
+          <span className="welcome-toast-icon">✓</span>
+          <span className="welcome-toast-text">Selamat datang, {welcome}!</span>
+          <span className="welcome-toast-shine" />
+        </div>
+      )}
+      <style jsx>{`
+        .welcome-toast {
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          z-index: 9999;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          padding: 14px 20px;
+          border-radius: 12px;
+          background: #16a34a;
+          color: #ffffff;
+          font-weight: 700;
+          font-size: 15px;
+          box-shadow: 0 12px 34px rgba(22, 163, 74, 0.35);
+          overflow: hidden;
+          max-width: 92vw;
+          animation: welcome-life 5s ease forwards;
+        }
+        .welcome-toast-icon {
+          width: 26px;
+          height: 26px;
+          border-radius: 50%;
+          background: rgba(255, 255, 255, 0.25);
+          display: grid;
+          place-items: center;
+          font-size: 15px;
+          flex-shrink: 0;
+        }
+        .welcome-toast-text { position: relative; z-index: 1; }
+        /* Cahaya yang menyapu dari kanan ke kiri selama toast tampil */
+        .welcome-toast-shine {
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          width: 70%;
+          pointer-events: none;
+          background: linear-gradient(
+            110deg,
+            transparent 25%,
+            rgba(255, 255, 255, 0.15) 42%,
+            rgba(255, 255, 255, 0.75) 50%,
+            rgba(255, 255, 255, 0.15) 58%,
+            transparent 75%
+          );
+          transform: skewX(-15deg);
+          animation: welcome-shine 1.6s ease-in-out infinite;
+        }
+        @keyframes welcome-shine {
+          0% { right: -80%; }
+          100% { right: 120%; }
+        }
+        @keyframes welcome-life {
+          0% { opacity: 0; transform: translateX(48px); }
+          6% { opacity: 1; transform: translateX(0); }
+          90% { opacity: 1; transform: translateX(0); }
+          100% { opacity: 0; transform: translateX(24px); }
+        }
+      `}</style>
       {/* Header Section */}
       <div className="lina-panel rounded-2xl border p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>

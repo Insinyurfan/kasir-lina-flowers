@@ -70,8 +70,9 @@ export default function LoginPage() {
       const rawName = String(data.fullName || data.username || username || "").trim();
       const firstName = rawName.split(/\s+/)[0] || rawName;
       const displayName = firstName ? firstName.charAt(0).toUpperCase() + firstName.slice(1) : "";
-      showToast("success", `Selamat datang, ${displayName}!`);
-      window.setTimeout(() => router.push("/dashboard"), 1200);
+      // Serahkan sapaan ke halaman dashboard (ditampilkan setelah pindah halaman).
+      try { sessionStorage.setItem("welcomeToast", displayName); } catch {}
+      router.push("/dashboard");
     } else {
       showToast("error", "Username atau password salah!");
     }

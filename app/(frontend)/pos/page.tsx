@@ -612,6 +612,13 @@ export default function PosPage() {
     setVariantModalProduct(null);
   };
 
+  // Masukkan produk ke keranjang TANPA variasi (pakai harga dasar produk).
+  const handleNoVariantSelected = (p: Product) => {
+    const base = resolveRememberedBase(p.id, 0, p.harga);
+    addToCart({ ...p, satuanPesan: p.satuanHarga ?? "pcs", hargaBase: base });
+    setVariantModalProduct(null);
+  };
+
   // Simpan perubahan nama pelanggan dari dalam keranjang.
   const startEditCustomer = () => {
     setCustomerDraft(namaPembeli);
@@ -861,7 +868,21 @@ export default function PosPage() {
               </div>
               <button onClick={() => setVariantModalProduct(null)} className="bg-white/20 hover:bg-white/30 p-2 rounded-full shrink-0"><X size={20} /></button>
             </div>
-            <div className="p-4 grid grid-cols-2 gap-3 max-h-[60vh] overflow-y-auto">
+            {/* Opsi tanpa variasi: masukkan produk memakai harga dasar (tak perlu bikin varian "(.)" ) */}
+            <button
+              type="button"
+              onClick={() => handleNoVariantSelected(variantModalProduct)}
+              className="mx-4 mt-4 flex w-[calc(100%-2rem)] items-center justify-between gap-2 rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 px-4 py-3 hover:border-slate-400 hover:bg-slate-100 active:scale-[0.99] transition-all"
+            >
+              <span className="text-sm font-black text-slate-700">Tanpa Variasi</span>
+              <span className="text-sm font-bold text-slate-500">
+                Rp {variantModalProduct.harga.toLocaleString("id-ID")}
+                {(variantModalProduct.satuanHarga ?? "pcs") !== "pcs" && (
+                  <span className="text-[10px] text-slate-400"> /{SATUAN_LABELS[variantModalProduct.satuanHarga] ?? variantModalProduct.satuanHarga}</span>
+                )}
+              </span>
+            </button>
+            <div className="px-4 pt-3 pb-4 grid grid-cols-2 gap-3 max-h-[60vh] overflow-y-auto">
               {(variantModalProduct.variants || []).map((v) => (
                 <button
                   key={v.id}

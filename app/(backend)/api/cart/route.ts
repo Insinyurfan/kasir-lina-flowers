@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { hitungHargaSatuan } from "@/lib/satuan";
+import { computeCartRowId, hitungHargaSatuan } from "@/lib/satuan";
 
 export const dynamic = "force-dynamic";
 
@@ -91,6 +91,8 @@ const getCartItems = async (userId: number, scope: CartScope) => {
 
   return rows.map((row) => ({
     ...row,
+    // Id baris ikut satuan pesan agar varian sama dengan satuan berbeda tetap baris terpisah.
+    id: computeCartRowId(row.productId, row.variantId, row.satuanPesan),
     harga: hitungHargaSatuan(row.hargaBase, row.satuanHarga, row.satuanPesan),
     hargaAwal: hitungHargaSatuan(row.hargaBaseAsli, row.satuanHarga, row.satuanPesan),
   }));

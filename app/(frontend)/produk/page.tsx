@@ -6,6 +6,7 @@ import { Package, Plus, Edit, Trash2, X, Search, Camera, Flower2, ShoppingCart, 
 import Barcode from "react-barcode";
 import { getSavedUserSession } from "@/lib/userSession";
 import { compressProductImage } from "@/lib/compressProductImage";
+import { computeCartRowId } from "@/lib/satuan";
 
 type UserSession = {
   id: number;
@@ -30,6 +31,7 @@ type Product = {
 
 type GuestCartItem = Product & {
   quantity: number;
+  productId?: number;
 };
 
 const WHATSAPP_ORDER_NUMBER = "6281247000600";
@@ -371,7 +373,10 @@ export default function ManajemenProdukPage() {
     }
 
     setGuestCart((current) => {
-      const existingItem = current.find((item) => item.id === produk.id);
+      // Id baris keranjang kini dikodekan (produk+varian+satuan) agar konsisten
+      // dengan skema id dari server (/api/cart). Keranjang tamu selalu satuan pcs.
+      const rowId = computeCartRowId(produk.id, null, "pcs");
+      const existingItem = current.find((item) => item.id === rowId);
       if (existingItem) {
         if (existingItem.quantity >= produk.stok) {
           alert("Jumlah pesanan sudah sesuai stok tersedia.");
@@ -379,11 +384,11 @@ export default function ManajemenProdukPage() {
         }
 
         return current.map((item) =>
-          item.id === produk.id ? { ...item, quantity: item.quantity + 1 } : item
+          item.id === rowId ? { ...item, quantity: item.quantity + 1 } : item
         );
       }
 
-      return [...current, { ...produk, quantity: 1 }];
+      return [...current, { ...produk, id: rowId, productId: produk.id, quantity: 1 }];
     });
     setIsGuestCartOpen(true);
   };

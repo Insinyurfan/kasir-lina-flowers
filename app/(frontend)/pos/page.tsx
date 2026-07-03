@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useCartStore, SATUAN_LABELS, hitungHargaSatuan, type CartItem } from "@/lib/store";
+import { useCartStore, SATUAN_LABELS, computeCartRowId, hitungHargaSatuan, type CartItem } from "@/lib/store";
 import { Search, Plus, Minus, Trash2, ShoppingCart, Flower2, Wallet, User, UserCheck, LogOut, Camera, X, Pencil, Check } from "lucide-react";
 import { getSavedUserSession } from "@/lib/userSession";
 
@@ -365,7 +365,12 @@ export default function PosPage() {
         // Gabungkan dengan keranjang lokal: server jadi acuan lintas-perangkat, TAPI info
         // varian/harga dari lokal dipertahankan bila server kehilangannya (mis. JOIN varian
         // stale / belum tersinkron). Ini mencegah nama varian hilang dari struk/nota/surat jalan.
-        const localCart = useCartStore.getState().cart;
+        // Normalisasi id baris lokal ke skema terbaru (produk+varian+satuan) agar keranjang
+        // lama tidak terduplikasi saat dicocokkan dengan id dari server.
+        const localCart = useCartStore.getState().cart.map((item) => ({
+          ...item,
+          id: computeCartRowId(item.productId ?? item.id, item.variantId, item.satuanPesan ?? item.satuanHarga ?? "pcs"),
+        }));
         const localById = new Map(localCart.map((item) => [item.id, item]));
         const serverItems = data.items as CartItem[];
         const serverIds = new Set(serverItems.map((item) => item.id));

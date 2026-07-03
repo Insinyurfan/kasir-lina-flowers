@@ -1,9 +1,9 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { hitungHargaSatuan } from "@/lib/satuan";
+import { computeCartRowId, hitungHargaSatuan } from "@/lib/satuan";
 
 // Re-export agar import lama `from "@/lib/store"` tetap berfungsi.
-export { PCS_PER_UNIT, SATUAN_LABELS, hitungHargaSatuan } from "@/lib/satuan";
+export { PCS_PER_UNIT, SATUAN_LABELS, computeCartRowId, hitungHargaSatuan } from "@/lib/satuan";
 
 export type CartItem = {
   id: number;          // unique cart-row id (= productId untuk non-variasi, komposit untuk variasi)
@@ -28,9 +28,8 @@ type CartProduct = Omit<CartItem, "quantity" | "hargaAwal" | "id"> & {
   satuanPesan?: string;
 };
 
-// Hitung id baris keranjang: produk variasi dapat id komposit agar varian berbeda jadi baris terpisah
-const computeCartRowId = (productId: number, variantId?: number | null) =>
-  variantId ? productId * 1000000 + variantId : productId;
+// Id baris keranjang dihitung di lib/satuan.ts (produk + varian + satuan pesan),
+// sehingga varian sama dengan satuan berbeda menjadi baris terpisah.
 
 interface CartState {
   cart: CartItem[];
@@ -54,29 +53,13 @@ export const useCartStore = create<CartState>()(
         const satuanPesan = product.satuanPesan ?? product.satuanHarga ?? "pcs";
         const hargaBase = product.hargaBase ?? product.harga;
         const hargaDihitung = hitungHargaSatuan(hargaBase, product.satuanHarga ?? "pcs", satuanPesan);
-        const rowId = computeCartRowId(product.id, product.variantId);
+        const rowId = computeCartRowId(product.id, product.variantId, satuanPesan);
         const existingItem = cart.find((item) => item.id === rowId);
 
         if (existingItem) {
-          // Jika satuan berubah, reset quantity ke 1 dengan harga baru
-          if (existingItem.satuanPesan !== satuanPesan) {
-            // Saat ganti satuan, hitung ulang dari harga dasar efektif (mempertahankan penyesuaian).
-            const hargaBaseEfektif = existingItem.hargaBase ?? hargaBase;
-            const hargaBaseAsli = existingItem.hargaBaseAsli ?? hargaBase;
-            set({
-              cart: cart.map((item) =>
-                item.id === rowId
-                  ? {
-                      ...item,
-                      satuanPesan,
-                      harga: hitungHargaSatuan(hargaBaseEfektif, product.satuanHarga ?? "pcs", satuanPesan),
-                      hargaAwal: hitungHargaSatuan(hargaBaseAsli, product.satuanHarga ?? "pcs", satuanPesan),
-                      quantity: 1,
-                    }
-                  : item
-              ),
-            });
-          } else if (existingItem.quantity < product.stok) {
+          // Id sudah mengodekan satuan → baris yang ketemu pasti satuannya sama: cukup tambah jumlah.
+          // (Varian sama dengan satuan berbeda otomatis menjadi baris terpisah.)
+          if (existingItem.quantity < product.stok) {
             set({
               cart: cart.map((item) =>
                 item.id === rowId ? { ...item, quantity: item.quantity + 1 } : item
@@ -148,20 +131,32 @@ export const useCartStore = create<CartState>()(
           }),
         })),
       updateSatuanPesan: (id, satuanPesan) =>
-        set((state) => ({
-          cart: state.cart.map((item) => {
-            if (item.id !== id) return item;
-            const satuanHarga = item.satuanHarga ?? "pcs";
-            const hargaBase = item.hargaBase ?? item.hargaAwal ?? item.harga;
-            const hargaBaseAsli = item.hargaBaseAsli ?? hargaBase;
+        set((state) => {
+          const item = state.cart.find((i) => i.id === id);
+          if (!item) return { cart: state.cart };
+          const satuanHarga = item.satuanHarga ?? "pcs";
+          const hargaBase = item.hargaBase ?? item.hargaAwal ?? item.harga;
+          const hargaBaseAsli = item.hargaBaseAsli ?? hargaBase;
+          // Id ikut satuan → ganti satuan berarti id baris berubah.
+          const newId = computeCartRowId(item.productId ?? item.id, item.variantId, satuanPesan);
+          const updated = {
+            ...item,
+            id: newId,
+            satuanPesan,
+            harga: hitungHargaSatuan(hargaBase, satuanHarga, satuanPesan),
+            hargaAwal: hitungHargaSatuan(hargaBaseAsli, satuanHarga, satuanPesan),
+          };
+          // Jika sudah ada baris lain dengan varian + satuan tujuan, gabungkan jumlahnya.
+          const clash = state.cart.find((i) => i.id !== id && i.id === newId);
+          if (clash) {
             return {
-              ...item,
-              satuanPesan,
-              harga: hitungHargaSatuan(hargaBase, satuanHarga, satuanPesan),
-              hargaAwal: hitungHargaSatuan(hargaBaseAsli, satuanHarga, satuanPesan),
+              cart: state.cart
+                .filter((i) => i.id !== id)
+                .map((i) => (i.id === newId ? { ...i, quantity: i.quantity + item.quantity } : i)),
             };
-          }),
-        })),
+          }
+          return { cart: state.cart.map((i) => (i.id === id ? updated : i)) };
+        }),
       setCart: (cart) => set({ cart }),
       clearCart: () => set({ cart: [] }),
       getTotal: () => get().cart.reduce((total, item) => total + item.harga * item.quantity, 0),

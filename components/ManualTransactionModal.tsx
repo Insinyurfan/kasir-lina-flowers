@@ -308,7 +308,7 @@ export default function ManualTransactionModal({ open, transaction, title, onClo
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 p-4 overflow-y-auto flex items-start justify-center">
-      <div className="bg-white rounded-2xl w-full max-w-5xl shadow-2xl my-4 overflow-hidden">
+      <div className="bg-white rounded-2xl w-full max-w-5xl shadow-2xl my-4 overflow-visible">
         <div className="flex items-center justify-between p-5 border-b border-slate-100">
           <div>
             <h3 className="font-bold text-lg text-slate-800">{title || (transaction ? "Edit Transaksi Manual" : "Tambah Transaksi Manual")}</h3>
@@ -381,8 +381,8 @@ export default function ManualTransactionModal({ open, transaction, title, onClo
             </div>
           </div>
 
-          <div className="border border-slate-100 rounded-xl overflow-hidden">
-            <div className="bg-slate-50 px-4 py-3 flex items-center justify-between">
+          <div className="border border-slate-100 rounded-xl overflow-visible">
+            <div className="bg-slate-50 px-4 py-3 flex items-center justify-between rounded-t-xl">
               <h4 className="font-bold text-slate-700">Produk Terjual</h4>
               <button
                 type="button"

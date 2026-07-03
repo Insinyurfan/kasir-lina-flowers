@@ -31,6 +31,11 @@ type UserSession = {
   role: string;
 };
 
+// Bersihkan nama pelanggan: buang simbol khusus (@ ! _ dll) dan paksa HURUF KAPITAL.
+// Hanya izinkan huruf, angka, spasi, dan tanda nama umum (titik, koma, apostrof, tanda hubung, kurung).
+const sanitizeCustomerName = (value: string) =>
+  value.replace(/[^A-Za-z0-9 .,'()-]/g, "").toUpperCase();
+
 // Tampilkan harga di grid POS: rentang termurah–termahal jika produk punya variasi
 const formatHargaPos = (p: Product) => {
   const vs = (p.variants ?? []).map((v) => v.priceModifier).filter((x): x is number => x != null);
@@ -705,7 +710,7 @@ export default function PosPage() {
           <div className="space-y-4 text-left">
             <div>
               <label className="text-[10px] font-extrabold text-slate-400 uppercase ml-1 tracking-widest">Nama Pelanggan</label>
-              <input type="text" value={namaPembeli} onChange={(e) => setNamaPembeli(e.target.value)} placeholder="Masukkan nama..." className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-5 py-4 outline-none focus:border-pink-500 transition-all font-bold text-slate-700" />
+              <input type="text" value={namaPembeli} onChange={(e) => setNamaPembeli(sanitizeCustomerName(e.target.value))} placeholder="Masukkan nama..." className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-5 py-4 outline-none focus:border-pink-500 transition-all font-bold text-slate-700" />
             </div>
             <button onClick={() => { if(!namaPembeli.trim()) return alert("⚠️ Masukkan nama pelanggan!"); setIsSessionStarted(true); }} className="w-full bg-pink-600 text-white font-bold py-4 rounded-2xl shadow-lg shadow-pink-200 hover:bg-pink-700 transition-all">BUKA KASIR</button>
           </div>
@@ -724,7 +729,7 @@ export default function PosPage() {
             <input
               type="text"
               value={customerDraft}
-              onChange={(e) => setCustomerDraft(e.target.value)}
+              onChange={(e) => setCustomerDraft(sanitizeCustomerName(e.target.value))}
               onKeyDown={(e) => { if (e.key === "Enter") commitCustomerEdit(); if (e.key === "Escape") setIsEditingCustomer(false); }}
               autoFocus
               className="flex-1 min-w-0 rounded-lg bg-pink-700/60 px-2 py-1 text-xs sm:text-sm text-white placeholder-pink-200 outline-none border border-pink-300/40 focus:border-white"
@@ -1242,7 +1247,7 @@ export default function PosPage() {
                     <input
                       type="text"
                       value={customerDraft}
-                      onChange={(e) => setCustomerDraft(e.target.value)}
+                      onChange={(e) => setCustomerDraft(sanitizeCustomerName(e.target.value))}
                       onKeyDown={(e) => { if (e.key === "Enter") commitCustomerEdit(); if (e.key === "Escape") setIsEditingCustomer(false); }}
                       autoFocus
                       className="flex-1 min-w-0 rounded-lg bg-pink-700/60 px-2 py-1 text-xs sm:text-sm text-white placeholder-pink-200 outline-none border border-pink-300/40 focus:border-white"

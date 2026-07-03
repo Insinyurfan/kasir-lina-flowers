@@ -134,8 +134,8 @@ export default function ReceiptPage() {
         <div className="title">{title}</div>
 
         <div className="meta">
-          <div>DATE      : {transactionDate.toLocaleDateString("id-ID")}</div>
-          <div>TIME      : {transactionDate.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}</div>
+          <div>DATE      : {transactionDate.toLocaleDateString("id-ID", { timeZone: "Asia/Jakarta" })}</div>
+          <div>TIME      : {transactionDate.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", timeZone: "Asia/Jakarta" })}</div>
           <div>CASHIER   : {(transaction.nama_kasir || "-").toUpperCase()}</div>
           <div>
             PELANGGAN : <strong>{(transaction.nama_pembeli || "-").toUpperCase()}</strong>

@@ -77,12 +77,18 @@ type Props = {
 };
 
 const formatDateTimeLocal = (date: Date) => {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  const hour = String(date.getHours()).padStart(2, "0");
-  const minute = String(date.getMinutes()).padStart(2, "0");
-  return `${year}-${month}-${day}T${hour}:${minute}`;
+  // Selalu tampilkan/isi dalam WIB (Asia/Jakarta) apa pun zona perangkat/server.
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Jakarta",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  }).formatToParts(date);
+  const get = (type: string) => parts.find((p) => p.type === type)?.value ?? "00";
+  return `${get("year")}-${get("month")}-${get("day")}T${get("hour")}:${get("minute")}`;
 };
 
 const parseISODateTimeLocal = (isoString: string) => {
@@ -276,9 +282,9 @@ export default function ManualTransactionModal({ open, transaction, title, onClo
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...(transaction ? { id: transaction.id } : {}),
-          // Input datetime-local adalah waktu LOKAL — jangan dicap "Z" (UTC),
-          // supaya jam yang tersimpan sama dengan jam yang diketik/tampil.
-          tanggal: new Date(tanggal).toISOString(),
+          // Input datetime-local diperlakukan sebagai WIB (UTC+7); simpan sebagai ISO UTC
+          // agar jam yang dipilih sama persis dengan yang tampil di riwayat.
+          tanggal: new Date(`${tanggal}:00+07:00`).toISOString(),
           nama_pembeli: namaPembeli?.toUpperCase() || "-",
           nama_kasir: namaKasir?.toUpperCase() || "-",
           metode_pembayaran: metode,

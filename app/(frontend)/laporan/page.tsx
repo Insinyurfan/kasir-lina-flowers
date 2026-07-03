@@ -372,7 +372,7 @@ export default function LaporanPage() {
           : `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, "0")}`;
       const display =
         filterMode === "month"
-          ? dateObj.toLocaleDateString("id-ID", { day: "numeric", month: "short" })
+          ? dateObj.toLocaleDateString("id-ID", { day: "numeric", month: "short", timeZone: "Asia/Jakarta" })
           : monthNames[dateObj.getMonth()].slice(0, 3);
 
       if (!groupedData[key]) groupedData[key] = { display, total: 0 };
@@ -563,7 +563,7 @@ export default function LaporanPage() {
       .map(
         (row) => `
           <tr>
-            <td>${row.tanggal.toLocaleDateString("id-ID")}</td>
+            <td>${row.tanggal.toLocaleDateString("id-ID", { timeZone: "Asia/Jakarta" })}</td>
             <td>TRX-${String(row.trxId).padStart(4, "0")}</td>
             <td class="text">${escapeHtml(row.pelanggan)}</td>
             <td class="text">${escapeHtml(row.kasir)}</td>
@@ -627,7 +627,7 @@ export default function LaporanPage() {
     const lines = [
       `LAPORAN PENJUALAN - ${periodLabel.toUpperCase()}`,
       `Periode: ${periodRange.startDate} sampai ${periodRange.endDate}`,
-      `Dibuat: ${new Date().toLocaleString("id-ID")}`,
+      `Dibuat: ${new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" })}`,
       "",
       `Total pendapatan lunas : ${formatRupiah(totalPendapatan)}`,
       `Transaksi lunas        : ${totalTransaksiLunas}`,
@@ -656,7 +656,7 @@ export default function LaporanPage() {
       "-".repeat(115),
       ...statementRows.map(
         (row) =>
-          `${padText(row.tanggal.toLocaleDateString("id-ID"), 12)}  ${padText(
+          `${padText(row.tanggal.toLocaleDateString("id-ID", { timeZone: "Asia/Jakarta" }), 12)}  ${padText(
             `TRX-${String(row.trxId).padStart(4, "0")}`,
             10
           )}  ${padText(row.pelanggan, 18)}  ${padText(row.produk, 28)}  ${padText(row.jumlah, 5, "right")}  ${padText(
@@ -999,8 +999,8 @@ export default function LaporanPage() {
                 <div className="mt-4 grid grid-cols-2 gap-2 text-sm">
                   <div className="rounded-xl bg-slate-50 p-3">
                     <p className="text-[10px] font-bold uppercase tracking-wide text-slate-400">Tanggal</p>
-                    <p className="mt-1 font-bold text-slate-700">{row.tanggal.toLocaleDateString("id-ID")}</p>
-                    <p className="text-xs text-slate-400">{row.tanggal.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}</p>
+                    <p className="mt-1 font-bold text-slate-700">{row.tanggal.toLocaleDateString("id-ID", { timeZone: "Asia/Jakarta" })}</p>
+                    <p className="text-xs text-slate-400">{row.tanggal.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", timeZone: "Asia/Jakarta" })}</p>
                   </div>
                   <div className="rounded-xl bg-slate-50 p-3">
                     <p className="text-[10px] font-bold uppercase tracking-wide text-slate-400">Kasir</p>
@@ -1141,9 +1141,9 @@ export default function LaporanPage() {
                         className="cursor-pointer border-b border-pink-50 hover:bg-pink-50/30 focus:bg-pink-50/50 focus:outline-none"
                       >
                         <td className="p-4 whitespace-nowrap">
-                          <div className="font-bold text-slate-700">{row.tanggal.toLocaleDateString("id-ID")}</div>
+                          <div className="font-bold text-slate-700">{row.tanggal.toLocaleDateString("id-ID", { timeZone: "Asia/Jakarta" })}</div>
                           <div className="text-xs text-slate-400">
-                            {row.tanggal.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}
+                            {row.tanggal.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", timeZone: "Asia/Jakarta" })}
                           </div>
                         </td>
                         <td className="p-4 font-mono text-xs text-slate-500">TRX-{String(row.trxId).padStart(4, "0")}</td>
@@ -1208,7 +1208,7 @@ export default function LaporanPage() {
                   {getCashierDisplayName(detailTransaction.nama_kasir)}
                 </h3>
                 <p className="mt-1 text-sm text-slate-500">
-                  {new Date(detailTransaction.tanggal).toLocaleString("id-ID", { dateStyle: "medium", timeStyle: "short" })}
+                  {new Date(detailTransaction.tanggal).toLocaleString("id-ID", { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Jakarta" })}
                 </p>
               </div>
               <button

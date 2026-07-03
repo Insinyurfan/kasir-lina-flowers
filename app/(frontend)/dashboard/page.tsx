@@ -209,7 +209,7 @@ export default function DashboardPage() {
                   <tr><td colSpan={4} className="p-8 text-center text-slate-400">Memuat...</td></tr>
                 ) : transaksiTerbaru.map((t) => (
                   <tr key={t.id} className="border-b border-slate-50">
-                    <td className="p-4 text-slate-500">{new Date(t.tanggal).toLocaleTimeString("id-ID", { hour: '2-digit', minute: '2-digit' })}</td>
+                    <td className="p-4 text-slate-500">{new Date(t.tanggal).toLocaleTimeString("id-ID", { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Jakarta' })}</td>
                     <td className="p-4 font-bold">{t.nama_pembeli}</td>
                     <td className="p-4 text-pink-600 font-bold">Rp {t.total_harga.toLocaleString("id-ID")}</td>
                     <td className="p-4"><span className={`px-2 py-1 rounded text-[10px] font-bold ${t.status === 'Paid' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>{t.status}</span></td>

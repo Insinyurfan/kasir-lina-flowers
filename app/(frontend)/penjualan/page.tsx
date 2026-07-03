@@ -136,7 +136,7 @@ const riwayatSortOptionByKey = riwayatSortOptions.reduce<Record<RiwayatSortKey, 
 );
 
 const formatTransactionMonth = (dateValue: string) =>
-  new Date(dateValue).toLocaleDateString("id-ID", { month: "long", year: "numeric" });
+  new Date(dateValue).toLocaleDateString("id-ID", { month: "long", year: "numeric", timeZone: "Asia/Jakarta" });
 
 const createTransactionSignature = (items: any[]) =>
   items
@@ -697,7 +697,7 @@ export default function RiwayatPenjualanPage() {
     ctx.font = `${bodyFont}px 'Courier New', monospace`;
     const trxDate = new Date(selectedTrx.tanggal);
     ctx.fillText(
-      `DATE      : ${trxDate.toLocaleDateString("id-ID")} ${trxDate.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}`,
+      `DATE      : ${trxDate.toLocaleDateString("id-ID", { timeZone: "Asia/Jakarta" })} ${trxDate.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", timeZone: "Asia/Jakarta" })}`,
       margin,
       y
     );
@@ -860,7 +860,7 @@ export default function RiwayatPenjualanPage() {
     const COL_W = Math.floor(CW / 2);
     const metaFields: [string, string][] = [
       ["No. Transaksi", formatTransactionCode(t.trxNumber ?? t.id)],
-      ["Tanggal", new Date(t.tanggal).toLocaleDateString("id-ID", { day: "2-digit", month: "long", year: "numeric" })],
+      ["Tanggal", new Date(t.tanggal).toLocaleDateString("id-ID", { day: "2-digit", month: "long", year: "numeric", timeZone: "Asia/Jakarta" })],
       ["Pelanggan", t.nama_pembeli || "-"],
       ["Kasir", t.nama_kasir || "-"],
     ];
@@ -1103,7 +1103,7 @@ export default function RiwayatPenjualanPage() {
         </section>
         <section class="meta">
           <div class="meta-cell"><b>No. Transaksi</b>${formatTransactionCode(t.trxNumber ?? t.id)}</div>
-          <div class="meta-cell"><b>Tanggal</b>${escapeHtml(transactionDate.toLocaleDateString("id-ID", { day: "2-digit", month: "long", year: "numeric" }))}</div>
+          <div class="meta-cell"><b>Tanggal</b>${escapeHtml(transactionDate.toLocaleDateString("id-ID", { day: "2-digit", month: "long", year: "numeric", timeZone: "Asia/Jakarta" }))}</div>
           <div class="meta-cell"><b>Pelanggan</b>${escapeHtml(t.nama_pembeli || "-")}</div>
           <div class="meta-cell"><b>Kasir</b>${escapeHtml(t.nama_kasir || "-")}</div>
         </section>
@@ -1618,9 +1618,9 @@ export default function RiwayatPenjualanPage() {
           </div>
         ) : (
           mobileVisibleTransaksi.map((t, index) => {
-            const currentMonth = new Date(t.tanggal).toLocaleDateString("id-ID", { month: "long", year: "numeric" });
+            const currentMonth = new Date(t.tanggal).toLocaleDateString("id-ID", { month: "long", year: "numeric", timeZone: "Asia/Jakarta" });
             const previousMonth = index > 0
-              ? new Date(mobileVisibleTransaksi[index - 1].tanggal).toLocaleDateString("id-ID", { month: "long", year: "numeric" })
+              ? new Date(mobileVisibleTransaksi[index - 1].tanggal).toLocaleDateString("id-ID", { month: "long", year: "numeric", timeZone: "Asia/Jakarta" })
               : "";
             const showMonthSeparator = index === 0 || currentMonth !== previousMonth;
             const cardTone = "border-pink-100 bg-white";
@@ -1664,7 +1664,7 @@ export default function RiwayatPenjualanPage() {
 
                     <div className="text-right shrink-0">
                       <p className="text-xs font-bold text-slate-500">
-                        {new Date(t.tanggal).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" })}
+                        {new Date(t.tanggal).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric", timeZone: "Asia/Jakarta" })}
                       </p>
                       <p className="text-[11px] text-slate-400">
                         {getTimeFromISO(t.tanggal)} WIB
@@ -1822,9 +1822,9 @@ export default function RiwayatPenjualanPage() {
               filteredTransaksi.map((t, index) => {
                 const rowStyle = "border-b border-pink-50 hover:bg-pink-50/30 transition-colors";
 
-                const currentMonth = new Date(t.tanggal).toLocaleDateString("id-ID", { month: "long", year: "numeric" });
+                const currentMonth = new Date(t.tanggal).toLocaleDateString("id-ID", { month: "long", year: "numeric", timeZone: "Asia/Jakarta" });
                 const previousMonth = index > 0
-                  ? new Date(filteredTransaksi[index - 1].tanggal).toLocaleDateString("id-ID", { month: "long", year: "numeric" })
+                  ? new Date(filteredTransaksi[index - 1].tanggal).toLocaleDateString("id-ID", { month: "long", year: "numeric", timeZone: "Asia/Jakarta" })
                   : "";
                 const showMonthSeparator = index === 0 || currentMonth !== previousMonth;
                 const adminLockedLevel = (t.notifications || [])
@@ -1862,7 +1862,7 @@ export default function RiwayatPenjualanPage() {
                     <td className="p-4">
                       <div className="font-bold flex items-center gap-1 text-slate-700">
                         <Calendar size={14} className="text-pink-400" />
-                        {new Date(t.tanggal).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" })}
+                        {new Date(t.tanggal).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric", timeZone: "Asia/Jakarta" })}
                       </div>
                       <div className="text-[10px] text-slate-400 mt-0.5 ml-5">
                         {getTimeFromISO(t.tanggal)} WIB
@@ -2100,8 +2100,8 @@ export default function RiwayatPenjualanPage() {
                     </div>
 
                     <div className="receipt-meta mt-4 space-y-1">
-                      <div>DATE      : {new Date(selectedTrx.tanggal).toLocaleDateString("id-ID")}</div>
-                      <div>TIME      : {new Date(selectedTrx.tanggal).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}</div>
+                      <div>DATE      : {new Date(selectedTrx.tanggal).toLocaleDateString("id-ID", { timeZone: "Asia/Jakarta" })}</div>
+                      <div>TIME      : {new Date(selectedTrx.tanggal).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", timeZone: "Asia/Jakarta" })}</div>
                       <div>CASHIER   : {selectedTrx.nama_kasir?.toUpperCase() || "-"}</div>
                       <div>PELANGGAN : <span className="font-bold">{selectedTrx.nama_pembeli?.toUpperCase() || "-"}</span></div>
                       <div>NO TRX    : TRX-{(selectedTrx.trxNumber ?? selectedTrx.id).toString().padStart(4, "0")}</div>
@@ -2167,7 +2167,7 @@ export default function RiwayatPenjualanPage() {
                     <div className="grid grid-cols-2 gap-px bg-pink-100 border-b border-pink-100">
                       {([
                         ["No. Transaksi", formatTransactionCode(selectedTrx.trxNumber ?? selectedTrx.id)],
-                        ["Tanggal", new Date(selectedTrx.tanggal).toLocaleDateString("id-ID", { day: "2-digit", month: "long", year: "numeric" })],
+                        ["Tanggal", new Date(selectedTrx.tanggal).toLocaleDateString("id-ID", { day: "2-digit", month: "long", year: "numeric", timeZone: "Asia/Jakarta" })],
                         ["Pelanggan", selectedTrx.nama_pembeli?.toUpperCase() || "-" || "-"],
                         ["Kasir", selectedTrx.nama_kasir?.toUpperCase() || "-" || "-"],
                       ] as [string, string][]).map(([label, value]) => (

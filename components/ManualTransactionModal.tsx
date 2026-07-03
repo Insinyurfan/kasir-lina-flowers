@@ -86,10 +86,11 @@ const formatDateTimeLocal = (date: Date) => {
 };
 
 const parseISODateTimeLocal = (isoString: string) => {
-  // Parse ISO string tanpa timezone conversion
-  const match = isoString.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/);
-  if (!match) return formatDateTimeLocal(new Date());
-  return `${match[1]}-${match[2]}-${match[3]}T${match[4]}:${match[5]}`;
+  // Konversi ISO (UTC) ke komponen waktu LOKAL agar jam di field
+  // sama dengan jam yang tampil di daftar riwayat.
+  const parsed = new Date(isoString);
+  if (Number.isNaN(parsed.getTime())) return formatDateTimeLocal(new Date());
+  return formatDateTimeLocal(parsed);
 };
 
 const newRowId = () => `${Date.now()}-${Math.random().toString(16).slice(2)}`;
@@ -115,6 +116,9 @@ export default function ManualTransactionModal({ open, transaction, title, onClo
   const [pengiriman, setPengiriman] = useState("Selesai");
   const [items, setItems] = useState<ManualItem[]>([createEmptyItem()]);
   const [isSaving, setIsSaving] = useState(false);
+  // Pemilih produk yang bisa DIKETIK: baris mana yang dropdown-nya terbuka + teks pencariannya.
+  const [pickerRow, setPickerRow] = useState<string | null>(null);
+  const [pickerSearch, setPickerSearch] = useState("");
 
   useEffect(() => {
     if (!open) return;
@@ -201,6 +205,25 @@ export default function ManualTransactionModal({ open, transaction, title, onClo
 
   const total = items.reduce((sum, item) => sum + Number(item.harga || 0) * Number(item.quantity || 0), 0);
 
+  // Daftar produk terfilter untuk dropdown pencarian (urut alfabet biar tidak berantakan).
+  const filteredPickerProducts = useMemo(() => {
+    const query = pickerSearch.trim().toLowerCase();
+    const sorted = [...products].sort((a, b) => a.nama_produk.localeCompare(b.nama_produk, "id"));
+    if (!query) return sorted;
+    return sorted.filter((p) => p.nama_produk.toLowerCase().includes(query));
+  }, [products, pickerSearch]);
+
+  const openPicker = (rowId: string) => {
+    setPickerRow(rowId);
+    setPickerSearch("");
+  };
+
+  const pickProduct = (rowId: string, productId: number) => {
+    updateItem(rowId, "productId", String(productId));
+    setPickerRow(null);
+    setPickerSearch("");
+  };
+
   const updateItem = (rowId: string, field: keyof ManualItem, value: string) => {
     setItems((current) =>
       current.map((item) => {
@@ -253,7 +276,9 @@ export default function ManualTransactionModal({ open, transaction, title, onClo
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...(transaction ? { id: transaction.id } : {}),
-          tanggal: new Date(`${tanggal}:00Z`).toISOString(),
+          // Input datetime-local adalah waktu LOKAL — jangan dicap "Z" (UTC),
+          // supaya jam yang tersimpan sama dengan jam yang diketik/tampil.
+          tanggal: new Date(tanggal).toISOString(),
           nama_pembeli: namaPembeli?.toUpperCase() || "-",
           nama_kasir: namaKasir?.toUpperCase() || "-",
           metode_pembayaran: metode,
@@ -382,18 +407,50 @@ export default function ManualTransactionModal({ open, transaction, title, onClo
                       )}
                     </div>
                     <div className="flex flex-col gap-2">
-                      <select
-                        value={item.productId}
-                        onChange={(e) => updateItem(item.rowId, "productId", e.target.value)}
-                        className="w-full border border-slate-200 rounded-xl px-3 py-2.5 outline-none focus:border-pink-500 text-sm"
-                      >
-                        <option value="">Pilih produk</option>
-                        {products.map((productOption) => (
-                          <option key={productOption.id} value={productOption.id}>
-                            {productOption.nama_produk}
-                          </option>
-                        ))}
-                      </select>
+                      {/* Pemilih produk yang bisa diketik (cari nama produk) */}
+                      <div className="relative">
+                        <input
+                          type="text"
+                          value={pickerRow === item.rowId ? pickerSearch : (product?.nama_produk ?? "")}
+                          placeholder={product ? product.nama_produk : "Ketik untuk cari produk..."}
+                          onFocus={() => openPicker(item.rowId)}
+                          onChange={(e) => {
+                            if (pickerRow !== item.rowId) openPicker(item.rowId);
+                            setPickerSearch(e.target.value);
+                          }}
+                          onBlur={() => window.setTimeout(() => setPickerRow((current) => (current === item.rowId ? null : current)), 150)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" && pickerRow === item.rowId && filteredPickerProducts.length > 0) {
+                              e.preventDefault();
+                              pickProduct(item.rowId, filteredPickerProducts[0].id);
+                            }
+                            if (e.key === "Escape") setPickerRow(null);
+                          }}
+                          className="w-full border border-slate-200 rounded-xl px-3 py-2.5 outline-none focus:border-pink-500 text-sm"
+                        />
+                        {pickerRow === item.rowId && (
+                          <div className="absolute left-0 right-0 top-full mt-1 z-30 max-h-56 overflow-y-auto rounded-xl border border-slate-200 bg-white shadow-xl">
+                            {filteredPickerProducts.length === 0 ? (
+                              <p className="px-3 py-2.5 text-sm text-slate-400">Produk tidak ditemukan.</p>
+                            ) : (
+                              filteredPickerProducts.slice(0, 50).map((productOption) => (
+                                <button
+                                  key={productOption.id}
+                                  type="button"
+                                  onMouseDown={(e) => {
+                                    e.preventDefault();
+                                    pickProduct(item.rowId, productOption.id);
+                                  }}
+                                  className={`flex w-full items-center justify-between gap-2 px-3 py-2.5 text-left text-sm hover:bg-pink-50 ${String(productOption.id) === item.productId ? "bg-pink-50 font-bold text-pink-600" : "text-slate-700"}`}
+                                >
+                                  <span className="truncate">{productOption.nama_produk}</span>
+                                  <span className="shrink-0 text-xs font-semibold text-slate-400">Rp {productOption.harga.toLocaleString("id-ID")}</span>
+                                </button>
+                              ))
+                            )}
+                          </div>
+                        )}
+                      </div>
                       {product?.variants && product.variants.length > 0 && (
                         <select
                           value={item.variantId}

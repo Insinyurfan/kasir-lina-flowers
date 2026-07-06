@@ -29,9 +29,10 @@ type Product = {
   variants?: Array<{ id: number; name: string; priceModifier: number | null }>;
 };
 
-type GuestCartItem = Product & {
+type GuestCartItem = Omit<Product, "id"> & {
+  id: string; // id baris keranjang (berbasis teks, konsisten dengan skema server)
+  productId: number;
   quantity: number;
-  productId?: number;
 };
 
 const WHATSAPP_ORDER_NUMBER = "6281247000600";
@@ -393,7 +394,7 @@ export default function ManajemenProdukPage() {
     setIsGuestCartOpen(true);
   };
 
-  const updateGuestCartQuantity = (id: number, quantity: number) => {
+  const updateGuestCartQuantity = (id: string, quantity: number) => {
     setGuestCart((current) =>
       current.flatMap((item) => {
         if (item.id !== id) return [item];
@@ -403,7 +404,7 @@ export default function ManajemenProdukPage() {
     );
   };
 
-  const removeFromGuestCart = (id: number) => {
+  const removeFromGuestCart = (id: string) => {
     setGuestCart((current) => current.filter((item) => item.id !== id));
   };
 

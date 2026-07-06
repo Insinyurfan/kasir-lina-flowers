@@ -25,6 +25,7 @@ type CartItem = {
   productId?: number | string;
   variantId?: number | string | null;
   variantName?: string | null;
+  label?: string | null; // kode pelanggan per baris (Aneka), terpisah dari variasi
   harga: number | string;
   hargaBase?: number | string; // harga dasar per satuanHarga (untuk patokan harga per pelanggan)
   quantity: number | string;
@@ -80,6 +81,7 @@ const mapCartToItems = (cart: CartItem[]) =>
     productId: resolveProductId(item),
     variantId: item.variantId != null ? Number(item.variantId) : null,
     variantName: item.variantName ?? null,
+    label: item.label ?? null,
     basePrice: Number(item.harga),
     jumlah: Number(item.quantity),
     subtotal: Number(item.harga) * Number(item.quantity),

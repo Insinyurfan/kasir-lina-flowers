@@ -7027,6 +7027,7 @@ export namespace Prisma {
     productId: number | null
     variantId: number | null
     variantName: string | null
+    label: string | null
     basePrice: number | null
     priceModifier: number | null
     jumlah: number | null
@@ -7040,6 +7041,7 @@ export namespace Prisma {
     productId: number | null
     variantId: number | null
     variantName: string | null
+    label: string | null
     basePrice: number | null
     priceModifier: number | null
     jumlah: number | null
@@ -7053,6 +7055,7 @@ export namespace Prisma {
     productId: number
     variantId: number
     variantName: number
+    label: number
     basePrice: number
     priceModifier: number
     jumlah: number
@@ -7090,6 +7093,7 @@ export namespace Prisma {
     productId?: true
     variantId?: true
     variantName?: true
+    label?: true
     basePrice?: true
     priceModifier?: true
     jumlah?: true
@@ -7103,6 +7107,7 @@ export namespace Prisma {
     productId?: true
     variantId?: true
     variantName?: true
+    label?: true
     basePrice?: true
     priceModifier?: true
     jumlah?: true
@@ -7116,6 +7121,7 @@ export namespace Prisma {
     productId?: true
     variantId?: true
     variantName?: true
+    label?: true
     basePrice?: true
     priceModifier?: true
     jumlah?: true
@@ -7216,6 +7222,7 @@ export namespace Prisma {
     productId: number
     variantId: number | null
     variantName: string | null
+    label: string | null
     basePrice: number
     priceModifier: number | null
     jumlah: number
@@ -7248,6 +7255,7 @@ export namespace Prisma {
     productId?: boolean
     variantId?: boolean
     variantName?: boolean
+    label?: boolean
     basePrice?: boolean
     priceModifier?: boolean
     jumlah?: boolean
@@ -7263,6 +7271,7 @@ export namespace Prisma {
     productId?: boolean
     variantId?: boolean
     variantName?: boolean
+    label?: boolean
     basePrice?: boolean
     priceModifier?: boolean
     jumlah?: boolean
@@ -7278,6 +7287,7 @@ export namespace Prisma {
     productId?: boolean
     variantId?: boolean
     variantName?: boolean
+    label?: boolean
     basePrice?: boolean
     priceModifier?: boolean
     jumlah?: boolean
@@ -7293,6 +7303,7 @@ export namespace Prisma {
     productId?: boolean
     variantId?: boolean
     variantName?: boolean
+    label?: boolean
     basePrice?: boolean
     priceModifier?: boolean
     jumlah?: boolean
@@ -7300,7 +7311,7 @@ export namespace Prisma {
     satuanHarga?: boolean
   }
 
-  export type TransactionItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "transactionId" | "productId" | "variantId" | "variantName" | "basePrice" | "priceModifier" | "jumlah" | "subtotal" | "satuanHarga", ExtArgs["result"]["transactionItem"]>
+  export type TransactionItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "transactionId" | "productId" | "variantId" | "variantName" | "label" | "basePrice" | "priceModifier" | "jumlah" | "subtotal" | "satuanHarga", ExtArgs["result"]["transactionItem"]>
   export type TransactionItemInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     transaction?: boolean | TransactionDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
@@ -7326,6 +7337,7 @@ export namespace Prisma {
       productId: number
       variantId: number | null
       variantName: string | null
+      label: string | null
       basePrice: number
       priceModifier: number | null
       jumlah: number
@@ -7761,6 +7773,7 @@ export namespace Prisma {
     readonly productId: FieldRef<"TransactionItem", 'Int'>
     readonly variantId: FieldRef<"TransactionItem", 'Int'>
     readonly variantName: FieldRef<"TransactionItem", 'String'>
+    readonly label: FieldRef<"TransactionItem", 'String'>
     readonly basePrice: FieldRef<"TransactionItem", 'Int'>
     readonly priceModifier: FieldRef<"TransactionItem", 'Int'>
     readonly jumlah: FieldRef<"TransactionItem", 'Int'>
@@ -13776,6 +13789,7 @@ export namespace Prisma {
     cartId: number | null
     productId: number | null
     variantId: number | null
+    label: string | null
     quantity: number | null
     priceOverride: number | null
     satuanPesan: string | null
@@ -13788,6 +13802,7 @@ export namespace Prisma {
     cartId: number | null
     productId: number | null
     variantId: number | null
+    label: string | null
     quantity: number | null
     priceOverride: number | null
     satuanPesan: string | null
@@ -13800,6 +13815,7 @@ export namespace Prisma {
     cartId: number
     productId: number
     variantId: number
+    label: number
     quantity: number
     priceOverride: number
     satuanPesan: number
@@ -13832,6 +13848,7 @@ export namespace Prisma {
     cartId?: true
     productId?: true
     variantId?: true
+    label?: true
     quantity?: true
     priceOverride?: true
     satuanPesan?: true
@@ -13844,6 +13861,7 @@ export namespace Prisma {
     cartId?: true
     productId?: true
     variantId?: true
+    label?: true
     quantity?: true
     priceOverride?: true
     satuanPesan?: true
@@ -13856,6 +13874,7 @@ export namespace Prisma {
     cartId?: true
     productId?: true
     variantId?: true
+    label?: true
     quantity?: true
     priceOverride?: true
     satuanPesan?: true
@@ -13955,6 +13974,7 @@ export namespace Prisma {
     cartId: number
     productId: number
     variantId: number | null
+    label: string | null
     quantity: number
     priceOverride: number | null
     satuanPesan: string
@@ -13986,6 +14006,7 @@ export namespace Prisma {
     cartId?: boolean
     productId?: boolean
     variantId?: boolean
+    label?: boolean
     quantity?: boolean
     priceOverride?: boolean
     satuanPesan?: boolean
@@ -14000,6 +14021,7 @@ export namespace Prisma {
     cartId?: boolean
     productId?: boolean
     variantId?: boolean
+    label?: boolean
     quantity?: boolean
     priceOverride?: boolean
     satuanPesan?: boolean
@@ -14014,6 +14036,7 @@ export namespace Prisma {
     cartId?: boolean
     productId?: boolean
     variantId?: boolean
+    label?: boolean
     quantity?: boolean
     priceOverride?: boolean
     satuanPesan?: boolean
@@ -14028,6 +14051,7 @@ export namespace Prisma {
     cartId?: boolean
     productId?: boolean
     variantId?: boolean
+    label?: boolean
     quantity?: boolean
     priceOverride?: boolean
     satuanPesan?: boolean
@@ -14035,7 +14059,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type UserCartItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "cartId" | "productId" | "variantId" | "quantity" | "priceOverride" | "satuanPesan" | "createdAt" | "updatedAt", ExtArgs["result"]["userCartItem"]>
+  export type UserCartItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "cartId" | "productId" | "variantId" | "label" | "quantity" | "priceOverride" | "satuanPesan" | "createdAt" | "updatedAt", ExtArgs["result"]["userCartItem"]>
   export type UserCartItemInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     cart?: boolean | UserCartDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
@@ -14060,6 +14084,7 @@ export namespace Prisma {
       cartId: number
       productId: number
       variantId: number | null
+      label: string | null
       quantity: number
       priceOverride: number | null
       satuanPesan: string
@@ -14494,6 +14519,7 @@ export namespace Prisma {
     readonly cartId: FieldRef<"UserCartItem", 'Int'>
     readonly productId: FieldRef<"UserCartItem", 'Int'>
     readonly variantId: FieldRef<"UserCartItem", 'Int'>
+    readonly label: FieldRef<"UserCartItem", 'String'>
     readonly quantity: FieldRef<"UserCartItem", 'Int'>
     readonly priceOverride: FieldRef<"UserCartItem", 'Int'>
     readonly satuanPesan: FieldRef<"UserCartItem", 'String'>
@@ -18474,6 +18500,7 @@ export namespace Prisma {
     productId: 'productId',
     variantId: 'variantId',
     variantName: 'variantName',
+    label: 'label',
     basePrice: 'basePrice',
     priceModifier: 'priceModifier',
     jumlah: 'jumlah',
@@ -18561,6 +18588,7 @@ export namespace Prisma {
     cartId: 'cartId',
     productId: 'productId',
     variantId: 'variantId',
+    label: 'label',
     quantity: 'quantity',
     priceOverride: 'priceOverride',
     satuanPesan: 'satuanPesan',
@@ -19055,6 +19083,7 @@ export namespace Prisma {
     productId?: IntFilter<"TransactionItem"> | number
     variantId?: IntNullableFilter<"TransactionItem"> | number | null
     variantName?: StringNullableFilter<"TransactionItem"> | string | null
+    label?: StringNullableFilter<"TransactionItem"> | string | null
     basePrice?: IntFilter<"TransactionItem"> | number
     priceModifier?: IntNullableFilter<"TransactionItem"> | number | null
     jumlah?: IntFilter<"TransactionItem"> | number
@@ -19070,6 +19099,7 @@ export namespace Prisma {
     productId?: SortOrder
     variantId?: SortOrderInput | SortOrder
     variantName?: SortOrderInput | SortOrder
+    label?: SortOrderInput | SortOrder
     basePrice?: SortOrder
     priceModifier?: SortOrderInput | SortOrder
     jumlah?: SortOrder
@@ -19088,6 +19118,7 @@ export namespace Prisma {
     productId?: IntFilter<"TransactionItem"> | number
     variantId?: IntNullableFilter<"TransactionItem"> | number | null
     variantName?: StringNullableFilter<"TransactionItem"> | string | null
+    label?: StringNullableFilter<"TransactionItem"> | string | null
     basePrice?: IntFilter<"TransactionItem"> | number
     priceModifier?: IntNullableFilter<"TransactionItem"> | number | null
     jumlah?: IntFilter<"TransactionItem"> | number
@@ -19103,6 +19134,7 @@ export namespace Prisma {
     productId?: SortOrder
     variantId?: SortOrderInput | SortOrder
     variantName?: SortOrderInput | SortOrder
+    label?: SortOrderInput | SortOrder
     basePrice?: SortOrder
     priceModifier?: SortOrderInput | SortOrder
     jumlah?: SortOrder
@@ -19124,6 +19156,7 @@ export namespace Prisma {
     productId?: IntWithAggregatesFilter<"TransactionItem"> | number
     variantId?: IntNullableWithAggregatesFilter<"TransactionItem"> | number | null
     variantName?: StringNullableWithAggregatesFilter<"TransactionItem"> | string | null
+    label?: StringNullableWithAggregatesFilter<"TransactionItem"> | string | null
     basePrice?: IntWithAggregatesFilter<"TransactionItem"> | number
     priceModifier?: IntNullableWithAggregatesFilter<"TransactionItem"> | number | null
     jumlah?: IntWithAggregatesFilter<"TransactionItem"> | number
@@ -19506,6 +19539,7 @@ export namespace Prisma {
     cartId?: IntFilter<"UserCartItem"> | number
     productId?: IntFilter<"UserCartItem"> | number
     variantId?: IntNullableFilter<"UserCartItem"> | number | null
+    label?: StringNullableFilter<"UserCartItem"> | string | null
     quantity?: IntFilter<"UserCartItem"> | number
     priceOverride?: IntNullableFilter<"UserCartItem"> | number | null
     satuanPesan?: StringFilter<"UserCartItem"> | string
@@ -19520,6 +19554,7 @@ export namespace Prisma {
     cartId?: SortOrder
     productId?: SortOrder
     variantId?: SortOrderInput | SortOrder
+    label?: SortOrderInput | SortOrder
     quantity?: SortOrder
     priceOverride?: SortOrderInput | SortOrder
     satuanPesan?: SortOrder
@@ -19537,6 +19572,7 @@ export namespace Prisma {
     cartId?: IntFilter<"UserCartItem"> | number
     productId?: IntFilter<"UserCartItem"> | number
     variantId?: IntNullableFilter<"UserCartItem"> | number | null
+    label?: StringNullableFilter<"UserCartItem"> | string | null
     quantity?: IntFilter<"UserCartItem"> | number
     priceOverride?: IntNullableFilter<"UserCartItem"> | number | null
     satuanPesan?: StringFilter<"UserCartItem"> | string
@@ -19551,6 +19587,7 @@ export namespace Prisma {
     cartId?: SortOrder
     productId?: SortOrder
     variantId?: SortOrderInput | SortOrder
+    label?: SortOrderInput | SortOrder
     quantity?: SortOrder
     priceOverride?: SortOrderInput | SortOrder
     satuanPesan?: SortOrder
@@ -19571,6 +19608,7 @@ export namespace Prisma {
     cartId?: IntWithAggregatesFilter<"UserCartItem"> | number
     productId?: IntWithAggregatesFilter<"UserCartItem"> | number
     variantId?: IntNullableWithAggregatesFilter<"UserCartItem"> | number | null
+    label?: StringNullableWithAggregatesFilter<"UserCartItem"> | string | null
     quantity?: IntWithAggregatesFilter<"UserCartItem"> | number
     priceOverride?: IntNullableWithAggregatesFilter<"UserCartItem"> | number | null
     satuanPesan?: StringWithAggregatesFilter<"UserCartItem"> | string
@@ -20130,6 +20168,7 @@ export namespace Prisma {
   export type TransactionItemCreateInput = {
     variantId?: number | null
     variantName?: string | null
+    label?: string | null
     basePrice?: number
     priceModifier?: number | null
     jumlah: number
@@ -20145,6 +20184,7 @@ export namespace Prisma {
     productId: number
     variantId?: number | null
     variantName?: string | null
+    label?: string | null
     basePrice?: number
     priceModifier?: number | null
     jumlah: number
@@ -20155,6 +20195,7 @@ export namespace Prisma {
   export type TransactionItemUpdateInput = {
     variantId?: NullableIntFieldUpdateOperationsInput | number | null
     variantName?: NullableStringFieldUpdateOperationsInput | string | null
+    label?: NullableStringFieldUpdateOperationsInput | string | null
     basePrice?: IntFieldUpdateOperationsInput | number
     priceModifier?: NullableIntFieldUpdateOperationsInput | number | null
     jumlah?: IntFieldUpdateOperationsInput | number
@@ -20170,6 +20211,7 @@ export namespace Prisma {
     productId?: IntFieldUpdateOperationsInput | number
     variantId?: NullableIntFieldUpdateOperationsInput | number | null
     variantName?: NullableStringFieldUpdateOperationsInput | string | null
+    label?: NullableStringFieldUpdateOperationsInput | string | null
     basePrice?: IntFieldUpdateOperationsInput | number
     priceModifier?: NullableIntFieldUpdateOperationsInput | number | null
     jumlah?: IntFieldUpdateOperationsInput | number
@@ -20183,6 +20225,7 @@ export namespace Prisma {
     productId: number
     variantId?: number | null
     variantName?: string | null
+    label?: string | null
     basePrice?: number
     priceModifier?: number | null
     jumlah: number
@@ -20193,6 +20236,7 @@ export namespace Prisma {
   export type TransactionItemUpdateManyMutationInput = {
     variantId?: NullableIntFieldUpdateOperationsInput | number | null
     variantName?: NullableStringFieldUpdateOperationsInput | string | null
+    label?: NullableStringFieldUpdateOperationsInput | string | null
     basePrice?: IntFieldUpdateOperationsInput | number
     priceModifier?: NullableIntFieldUpdateOperationsInput | number | null
     jumlah?: IntFieldUpdateOperationsInput | number
@@ -20206,6 +20250,7 @@ export namespace Prisma {
     productId?: IntFieldUpdateOperationsInput | number
     variantId?: NullableIntFieldUpdateOperationsInput | number | null
     variantName?: NullableStringFieldUpdateOperationsInput | string | null
+    label?: NullableStringFieldUpdateOperationsInput | string | null
     basePrice?: IntFieldUpdateOperationsInput | number
     priceModifier?: NullableIntFieldUpdateOperationsInput | number | null
     jumlah?: IntFieldUpdateOperationsInput | number
@@ -20604,6 +20649,7 @@ export namespace Prisma {
 
   export type UserCartItemCreateInput = {
     variantId?: number | null
+    label?: string | null
     quantity: number
     priceOverride?: number | null
     satuanPesan?: string
@@ -20618,6 +20664,7 @@ export namespace Prisma {
     cartId: number
     productId: number
     variantId?: number | null
+    label?: string | null
     quantity: number
     priceOverride?: number | null
     satuanPesan?: string
@@ -20627,6 +20674,7 @@ export namespace Prisma {
 
   export type UserCartItemUpdateInput = {
     variantId?: NullableIntFieldUpdateOperationsInput | number | null
+    label?: NullableStringFieldUpdateOperationsInput | string | null
     quantity?: IntFieldUpdateOperationsInput | number
     priceOverride?: NullableIntFieldUpdateOperationsInput | number | null
     satuanPesan?: StringFieldUpdateOperationsInput | string
@@ -20641,6 +20689,7 @@ export namespace Prisma {
     cartId?: IntFieldUpdateOperationsInput | number
     productId?: IntFieldUpdateOperationsInput | number
     variantId?: NullableIntFieldUpdateOperationsInput | number | null
+    label?: NullableStringFieldUpdateOperationsInput | string | null
     quantity?: IntFieldUpdateOperationsInput | number
     priceOverride?: NullableIntFieldUpdateOperationsInput | number | null
     satuanPesan?: StringFieldUpdateOperationsInput | string
@@ -20653,6 +20702,7 @@ export namespace Prisma {
     cartId: number
     productId: number
     variantId?: number | null
+    label?: string | null
     quantity: number
     priceOverride?: number | null
     satuanPesan?: string
@@ -20662,6 +20712,7 @@ export namespace Prisma {
 
   export type UserCartItemUpdateManyMutationInput = {
     variantId?: NullableIntFieldUpdateOperationsInput | number | null
+    label?: NullableStringFieldUpdateOperationsInput | string | null
     quantity?: IntFieldUpdateOperationsInput | number
     priceOverride?: NullableIntFieldUpdateOperationsInput | number | null
     satuanPesan?: StringFieldUpdateOperationsInput | string
@@ -20674,6 +20725,7 @@ export namespace Prisma {
     cartId?: IntFieldUpdateOperationsInput | number
     productId?: IntFieldUpdateOperationsInput | number
     variantId?: NullableIntFieldUpdateOperationsInput | number | null
+    label?: NullableStringFieldUpdateOperationsInput | string | null
     quantity?: IntFieldUpdateOperationsInput | number
     priceOverride?: NullableIntFieldUpdateOperationsInput | number | null
     satuanPesan?: StringFieldUpdateOperationsInput | string
@@ -21327,6 +21379,7 @@ export namespace Prisma {
     productId?: SortOrder
     variantId?: SortOrder
     variantName?: SortOrder
+    label?: SortOrder
     basePrice?: SortOrder
     priceModifier?: SortOrder
     jumlah?: SortOrder
@@ -21351,6 +21404,7 @@ export namespace Prisma {
     productId?: SortOrder
     variantId?: SortOrder
     variantName?: SortOrder
+    label?: SortOrder
     basePrice?: SortOrder
     priceModifier?: SortOrder
     jumlah?: SortOrder
@@ -21364,6 +21418,7 @@ export namespace Prisma {
     productId?: SortOrder
     variantId?: SortOrder
     variantName?: SortOrder
+    label?: SortOrder
     basePrice?: SortOrder
     priceModifier?: SortOrder
     jumlah?: SortOrder
@@ -21690,6 +21745,7 @@ export namespace Prisma {
     cartId?: SortOrder
     productId?: SortOrder
     variantId?: SortOrder
+    label?: SortOrder
     quantity?: SortOrder
     priceOverride?: SortOrder
     satuanPesan?: SortOrder
@@ -21711,6 +21767,7 @@ export namespace Prisma {
     cartId?: SortOrder
     productId?: SortOrder
     variantId?: SortOrder
+    label?: SortOrder
     quantity?: SortOrder
     priceOverride?: SortOrder
     satuanPesan?: SortOrder
@@ -21723,6 +21780,7 @@ export namespace Prisma {
     cartId?: SortOrder
     productId?: SortOrder
     variantId?: SortOrder
+    label?: SortOrder
     quantity?: SortOrder
     priceOverride?: SortOrder
     satuanPesan?: SortOrder
@@ -22792,6 +22850,7 @@ export namespace Prisma {
   export type TransactionItemCreateWithoutProductInput = {
     variantId?: number | null
     variantName?: string | null
+    label?: string | null
     basePrice?: number
     priceModifier?: number | null
     jumlah: number
@@ -22805,6 +22864,7 @@ export namespace Prisma {
     transactionId: number
     variantId?: number | null
     variantName?: string | null
+    label?: string | null
     basePrice?: number
     priceModifier?: number | null
     jumlah: number
@@ -22824,6 +22884,7 @@ export namespace Prisma {
 
   export type UserCartItemCreateWithoutProductInput = {
     variantId?: number | null
+    label?: string | null
     quantity: number
     priceOverride?: number | null
     satuanPesan?: string
@@ -22836,6 +22897,7 @@ export namespace Prisma {
     id?: number
     cartId: number
     variantId?: number | null
+    label?: string | null
     quantity: number
     priceOverride?: number | null
     satuanPesan?: string
@@ -22932,6 +22994,7 @@ export namespace Prisma {
     productId?: IntFilter<"TransactionItem"> | number
     variantId?: IntNullableFilter<"TransactionItem"> | number | null
     variantName?: StringNullableFilter<"TransactionItem"> | string | null
+    label?: StringNullableFilter<"TransactionItem"> | string | null
     basePrice?: IntFilter<"TransactionItem"> | number
     priceModifier?: IntNullableFilter<"TransactionItem"> | number | null
     jumlah?: IntFilter<"TransactionItem"> | number
@@ -22963,6 +23026,7 @@ export namespace Prisma {
     cartId?: IntFilter<"UserCartItem"> | number
     productId?: IntFilter<"UserCartItem"> | number
     variantId?: IntNullableFilter<"UserCartItem"> | number | null
+    label?: StringNullableFilter<"UserCartItem"> | string | null
     quantity?: IntFilter<"UserCartItem"> | number
     priceOverride?: IntNullableFilter<"UserCartItem"> | number | null
     satuanPesan?: StringFilter<"UserCartItem"> | string
@@ -23109,6 +23173,7 @@ export namespace Prisma {
   export type TransactionItemCreateWithoutTransactionInput = {
     variantId?: number | null
     variantName?: string | null
+    label?: string | null
     basePrice?: number
     priceModifier?: number | null
     jumlah: number
@@ -23122,6 +23187,7 @@ export namespace Prisma {
     productId: number
     variantId?: number | null
     variantName?: string | null
+    label?: string | null
     basePrice?: number
     priceModifier?: number | null
     jumlah: number
@@ -23540,6 +23606,7 @@ export namespace Prisma {
 
   export type UserCartItemCreateWithoutCartInput = {
     variantId?: number | null
+    label?: string | null
     quantity: number
     priceOverride?: number | null
     satuanPesan?: string
@@ -23552,6 +23619,7 @@ export namespace Prisma {
     id?: number
     productId: number
     variantId?: number | null
+    label?: string | null
     quantity: number
     priceOverride?: number | null
     satuanPesan?: string
@@ -24180,6 +24248,7 @@ export namespace Prisma {
     transactionId: number
     variantId?: number | null
     variantName?: string | null
+    label?: string | null
     basePrice?: number
     priceModifier?: number | null
     jumlah: number
@@ -24191,6 +24260,7 @@ export namespace Prisma {
     id?: number
     cartId: number
     variantId?: number | null
+    label?: string | null
     quantity: number
     priceOverride?: number | null
     satuanPesan?: string
@@ -24219,6 +24289,7 @@ export namespace Prisma {
   export type TransactionItemUpdateWithoutProductInput = {
     variantId?: NullableIntFieldUpdateOperationsInput | number | null
     variantName?: NullableStringFieldUpdateOperationsInput | string | null
+    label?: NullableStringFieldUpdateOperationsInput | string | null
     basePrice?: IntFieldUpdateOperationsInput | number
     priceModifier?: NullableIntFieldUpdateOperationsInput | number | null
     jumlah?: IntFieldUpdateOperationsInput | number
@@ -24232,6 +24303,7 @@ export namespace Prisma {
     transactionId?: IntFieldUpdateOperationsInput | number
     variantId?: NullableIntFieldUpdateOperationsInput | number | null
     variantName?: NullableStringFieldUpdateOperationsInput | string | null
+    label?: NullableStringFieldUpdateOperationsInput | string | null
     basePrice?: IntFieldUpdateOperationsInput | number
     priceModifier?: NullableIntFieldUpdateOperationsInput | number | null
     jumlah?: IntFieldUpdateOperationsInput | number
@@ -24244,6 +24316,7 @@ export namespace Prisma {
     transactionId?: IntFieldUpdateOperationsInput | number
     variantId?: NullableIntFieldUpdateOperationsInput | number | null
     variantName?: NullableStringFieldUpdateOperationsInput | string | null
+    label?: NullableStringFieldUpdateOperationsInput | string | null
     basePrice?: IntFieldUpdateOperationsInput | number
     priceModifier?: NullableIntFieldUpdateOperationsInput | number | null
     jumlah?: IntFieldUpdateOperationsInput | number
@@ -24253,6 +24326,7 @@ export namespace Prisma {
 
   export type UserCartItemUpdateWithoutProductInput = {
     variantId?: NullableIntFieldUpdateOperationsInput | number | null
+    label?: NullableStringFieldUpdateOperationsInput | string | null
     quantity?: IntFieldUpdateOperationsInput | number
     priceOverride?: NullableIntFieldUpdateOperationsInput | number | null
     satuanPesan?: StringFieldUpdateOperationsInput | string
@@ -24265,6 +24339,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     cartId?: IntFieldUpdateOperationsInput | number
     variantId?: NullableIntFieldUpdateOperationsInput | number | null
+    label?: NullableStringFieldUpdateOperationsInput | string | null
     quantity?: IntFieldUpdateOperationsInput | number
     priceOverride?: NullableIntFieldUpdateOperationsInput | number | null
     satuanPesan?: StringFieldUpdateOperationsInput | string
@@ -24276,6 +24351,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     cartId?: IntFieldUpdateOperationsInput | number
     variantId?: NullableIntFieldUpdateOperationsInput | number | null
+    label?: NullableStringFieldUpdateOperationsInput | string | null
     quantity?: IntFieldUpdateOperationsInput | number
     priceOverride?: NullableIntFieldUpdateOperationsInput | number | null
     satuanPesan?: StringFieldUpdateOperationsInput | string
@@ -24340,6 +24416,7 @@ export namespace Prisma {
     productId: number
     variantId?: number | null
     variantName?: string | null
+    label?: string | null
     basePrice?: number
     priceModifier?: number | null
     jumlah: number
@@ -24362,6 +24439,7 @@ export namespace Prisma {
   export type TransactionItemUpdateWithoutTransactionInput = {
     variantId?: NullableIntFieldUpdateOperationsInput | number | null
     variantName?: NullableStringFieldUpdateOperationsInput | string | null
+    label?: NullableStringFieldUpdateOperationsInput | string | null
     basePrice?: IntFieldUpdateOperationsInput | number
     priceModifier?: NullableIntFieldUpdateOperationsInput | number | null
     jumlah?: IntFieldUpdateOperationsInput | number
@@ -24375,6 +24453,7 @@ export namespace Prisma {
     productId?: IntFieldUpdateOperationsInput | number
     variantId?: NullableIntFieldUpdateOperationsInput | number | null
     variantName?: NullableStringFieldUpdateOperationsInput | string | null
+    label?: NullableStringFieldUpdateOperationsInput | string | null
     basePrice?: IntFieldUpdateOperationsInput | number
     priceModifier?: NullableIntFieldUpdateOperationsInput | number | null
     jumlah?: IntFieldUpdateOperationsInput | number
@@ -24387,6 +24466,7 @@ export namespace Prisma {
     productId?: IntFieldUpdateOperationsInput | number
     variantId?: NullableIntFieldUpdateOperationsInput | number | null
     variantName?: NullableStringFieldUpdateOperationsInput | string | null
+    label?: NullableStringFieldUpdateOperationsInput | string | null
     basePrice?: IntFieldUpdateOperationsInput | number
     priceModifier?: NullableIntFieldUpdateOperationsInput | number | null
     jumlah?: IntFieldUpdateOperationsInput | number
@@ -24433,6 +24513,7 @@ export namespace Prisma {
     id?: number
     productId: number
     variantId?: number | null
+    label?: string | null
     quantity: number
     priceOverride?: number | null
     satuanPesan?: string
@@ -24442,6 +24523,7 @@ export namespace Prisma {
 
   export type UserCartItemUpdateWithoutCartInput = {
     variantId?: NullableIntFieldUpdateOperationsInput | number | null
+    label?: NullableStringFieldUpdateOperationsInput | string | null
     quantity?: IntFieldUpdateOperationsInput | number
     priceOverride?: NullableIntFieldUpdateOperationsInput | number | null
     satuanPesan?: StringFieldUpdateOperationsInput | string
@@ -24454,6 +24536,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     productId?: IntFieldUpdateOperationsInput | number
     variantId?: NullableIntFieldUpdateOperationsInput | number | null
+    label?: NullableStringFieldUpdateOperationsInput | string | null
     quantity?: IntFieldUpdateOperationsInput | number
     priceOverride?: NullableIntFieldUpdateOperationsInput | number | null
     satuanPesan?: StringFieldUpdateOperationsInput | string
@@ -24465,6 +24548,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     productId?: IntFieldUpdateOperationsInput | number
     variantId?: NullableIntFieldUpdateOperationsInput | number | null
+    label?: NullableStringFieldUpdateOperationsInput | string | null
     quantity?: IntFieldUpdateOperationsInput | number
     priceOverride?: NullableIntFieldUpdateOperationsInput | number | null
     satuanPesan?: StringFieldUpdateOperationsInput | string

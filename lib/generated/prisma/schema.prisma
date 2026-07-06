@@ -75,6 +75,7 @@ model TransactionItem {
   product       Product     @relation(fields: [productId], references: [id])
   variantId     Int? // reference ke ProductVariant (optional, untuk info saja)
   variantName   String? // snapshot: "L", "Merah" (nullable karena produk bisa tanpa variant)
+  label         String? // kode pelanggan per baris (mis. Aneka: AMN/SMT), TERPISAH dari variasi
   basePrice     Int         @default(0) // snapshot: harga base produk saat transaksi
   priceModifier Int? // snapshot: modifier dari variant saat transaksi (nullable jika tanpa variant)
   jumlah        Int
@@ -165,6 +166,7 @@ model UserCartItem {
   productId     Int
   product       Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   variantId     Int? // selected variant (nullable)
+  label         String? // kode pelanggan per baris (Aneka), terpisah dari variasi
   quantity      Int
   priceOverride Int?
   satuanPesan   String   @default("pcs")

@@ -7,9 +7,10 @@ export const dynamic = "force-dynamic";
 type CartScope = "produk" | "pos";
 
 type CartPayloadItem = {
-  id?: number;
+  id?: number | string;
   productId?: number;
   variantId?: number | null;
+  label?: string | null;
   quantity?: number;
   harga?: number;
   hargaAwal?: number;
@@ -54,6 +55,7 @@ const getCartItems = async (userId: number, scope: CartScope) => {
       productId: number;
       variantId: number | null;
       variantName: string | null;
+      label: string | null;
       nama_produk: string;
       hargaBase: number;
       hargaBaseAsli: number;
@@ -70,6 +72,7 @@ const getCartItems = async (userId: number, scope: CartScope) => {
       p."id" AS "productId",
       ci."variantId",
       v."name" AS "variantName",
+      ci."label",
       p."nama_produk",
       COALESCE(ci."priceOverride", v."priceModifier", p."harga")::int AS "hargaBase",
       COALESCE(v."priceModifier", p."harga")::int AS "hargaBaseAsli",
@@ -91,8 +94,8 @@ const getCartItems = async (userId: number, scope: CartScope) => {
 
   return rows.map((row) => ({
     ...row,
-    // Id baris ikut satuan pesan agar varian sama dengan satuan berbeda tetap baris terpisah.
-    id: computeCartRowId(row.productId, row.variantId, row.satuanPesan),
+    // Id baris ikut satuan pesan + kode pelanggan (label) agar tetap baris terpisah.
+    id: computeCartRowId(row.productId, row.variantId, row.satuanPesan, row.label),
     harga: hitungHargaSatuan(row.hargaBase, row.satuanHarga, row.satuanPesan),
     hargaAwal: hitungHargaSatuan(row.hargaBaseAsli, row.satuanHarga, row.satuanPesan),
   }));
@@ -165,9 +168,10 @@ export async function PUT(request: Request) {
     const sessionActive = Boolean(payload.sessionActive);
     const normalizedItems = items
       .map((item) => {
-        const productId = Number(item.productId || item.id);
+        const productId = Number(item.productId);
         const variantId = item.variantId != null ? Number(item.variantId) : null;
         const quantity = Math.max(0, Math.floor(Number(item.quantity || 0)));
+        const label = typeof item.label === "string" && item.label.trim() ? item.label.trim().toUpperCase() : null;
         // Simpan HARGA DASAR yang sudah disesuaikan (per satuanHarga) bila berbeda dari harga katalog.
         const hargaBase = Number(item.hargaBase);
         const hargaBaseAsli = Number(item.hargaBaseAsli);
@@ -176,6 +180,7 @@ export async function PUT(request: Request) {
         return {
           productId,
           variantId: variantId && Number.isInteger(variantId) && variantId > 0 ? variantId : null,
+          label,
           quantity,
           satuanPesan,
           priceOverride:
@@ -196,8 +201,8 @@ export async function PUT(request: Request) {
       // dan satu produk bisa punya beberapa baris untuk variasi berbeda.
       for (const item of normalizedItems) {
         await tx.$executeRaw`
-          INSERT INTO "UserCartItem" ("cartId", "productId", "variantId", "quantity", "priceOverride", "satuanPesan", "createdAt", "updatedAt")
-          VALUES (${cartId}, ${item.productId}, ${item.variantId}, ${item.quantity}, ${item.priceOverride}, ${item.satuanPesan}, NOW(), NOW())
+          INSERT INTO "UserCartItem" ("cartId", "productId", "variantId", "label", "quantity", "priceOverride", "satuanPesan", "createdAt", "updatedAt")
+          VALUES (${cartId}, ${item.productId}, ${item.variantId}, ${item.label}, ${item.quantity}, ${item.priceOverride}, ${item.satuanPesan}, NOW(), NOW())
         `;
       }
 

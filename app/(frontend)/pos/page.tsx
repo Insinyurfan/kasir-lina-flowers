@@ -177,7 +177,7 @@ export default function PosPage() {
   // Harga khusus tersimpan untuk pelanggan sesi ini: key `${productId}-${variantId}` -> harga dasar.
   const [rememberedPrices, setRememberedPrices] = useState<Record<string, number>>({});
   const [rememberForCustomer, setRememberForCustomer] = useState(false);
-  const [qtyDraft, setQtyDraft] = useState<Record<number, string>>({});
+  const [qtyDraft, setQtyDraft] = useState<Record<string, string>>({});
   const [isPosCartLoaded, setIsPosCartLoaded] = useState(false);
 
   // Edit nama pelanggan langsung dari dalam keranjang (tanpa menutup sesi).
@@ -206,7 +206,7 @@ export default function PosPage() {
   const totalBarang = cart.reduce((total, item) => total + item.quantity, 0);
 
   // Hapus draft jumlah untuk satu item (dipakai saat tekan +/-)
-  const clearQtyDraft = (id: number) =>
+  const clearQtyDraft = (id: string) =>
     setQtyDraft((prev) => {
       if (!(id in prev)) return prev;
       const next = { ...prev };
@@ -215,7 +215,7 @@ export default function PosPage() {
     });
 
   // Simpan hasil ketik manual jumlah ke keranjang
-  const commitQtyDraft = (id: number) => {
+  const commitQtyDraft = (id: string) => {
     setQtyDraft((prev) => {
       if (!(id in prev)) return prev;
       const parsed = parseInt(prev[id], 10);
@@ -226,7 +226,7 @@ export default function PosPage() {
     });
   };
 
-  const handleQtyStep = (id: number, nextQty: number) => {
+  const handleQtyStep = (id: string, nextQty: number) => {
     clearQtyDraft(id);
     updateQuantity(id, nextQty);
   };
@@ -389,7 +389,7 @@ export default function PosPage() {
         // lama tidak terduplikasi saat dicocokkan dengan id dari server.
         const localCart = useCartStore.getState().cart.map((item) => ({
           ...item,
-          id: computeCartRowId(item.productId ?? item.id, item.variantId, item.satuanPesan ?? item.satuanHarga ?? "pcs"),
+          id: computeCartRowId(item.productId ?? 0, item.variantId, item.satuanPesan ?? item.satuanHarga ?? "pcs", item.label),
         }));
         const localById = new Map(localCart.map((item) => [item.id, item]));
         const serverItems = data.items as CartItem[];
@@ -522,7 +522,7 @@ export default function PosPage() {
   const persistCustomerPrice = async (item: CartItem, price: number) => {
     const name = namaPembeli.trim();
     if (!name) return;
-    const productId = item.productId ?? item.id;
+    const productId = item.productId ?? 0;
     setRememberedPrices((prev) => {
       const next: Record<string, number> = {};
       const prefix = `${productId}-`;

@@ -6,10 +6,11 @@ import { computeCartRowId, hitungHargaSatuan } from "@/lib/satuan";
 export { PCS_PER_UNIT, SATUAN_LABELS, computeCartRowId, hitungHargaSatuan } from "@/lib/satuan";
 
 export type CartItem = {
-  id: number;          // unique cart-row id (= productId untuk non-variasi, komposit untuk variasi)
+  id: string;          // unique cart-row id (produk + varian + satuan + kode pelanggan)
   productId?: number;  // id produk asli (untuk variasi)
   variantId?: number | null;
   variantName?: string | null;
+  label?: string | null; // kode pelanggan per baris (Aneka), terpisah dari variasi
   nama_produk: string;
   harga: number;          // harga efektif per satuan pesan
   hargaAwal?: number;     // harga asli per satuan pesan (sebelum penyesuaian)
@@ -34,11 +35,11 @@ type CartProduct = Omit<CartItem, "quantity" | "hargaAwal" | "id"> & {
 interface CartState {
   cart: CartItem[];
   addToCart: (product: CartProduct) => void;
-  removeFromCart: (id: number) => void;
-  updateQuantity: (id: number, quantity: number) => void;
-  updatePrice: (id: number, price: number) => void;
-  updateHargaBase: (id: number, hargaBase: number) => void;
-  updateSatuanPesan: (id: number, satuanPesan: string) => void;
+  removeFromCart: (id: string) => void;
+  updateQuantity: (id: string, quantity: number) => void;
+  updatePrice: (id: string, price: number) => void;
+  updateHargaBase: (id: string, hargaBase: number) => void;
+  updateSatuanPesan: (id: string, satuanPesan: string) => void;
   setCart: (cart: CartItem[]) => void;
   clearCart: () => void;
   getTotal: () => number;
@@ -53,7 +54,7 @@ export const useCartStore = create<CartState>()(
         const satuanPesan = product.satuanPesan ?? product.satuanHarga ?? "pcs";
         const hargaBase = product.hargaBase ?? product.harga;
         const hargaDihitung = hitungHargaSatuan(hargaBase, product.satuanHarga ?? "pcs", satuanPesan);
-        const rowId = computeCartRowId(product.id, product.variantId, satuanPesan);
+        const rowId = computeCartRowId(product.id, product.variantId, satuanPesan, product.label);
         const existingItem = cart.find((item) => item.id === rowId);
 
         if (existingItem) {
@@ -79,6 +80,7 @@ export const useCartStore = create<CartState>()(
                   productId: product.id,
                   variantId: product.variantId ?? null,
                   variantName: product.variantName ?? null,
+                  label: product.label ?? null,
                   harga: hargaDihitung,
                   hargaAwal: hargaDihitung,
                   hargaBase,
@@ -138,7 +140,7 @@ export const useCartStore = create<CartState>()(
           const hargaBase = item.hargaBase ?? item.hargaAwal ?? item.harga;
           const hargaBaseAsli = item.hargaBaseAsli ?? hargaBase;
           // Id ikut satuan → ganti satuan berarti id baris berubah.
-          const newId = computeCartRowId(item.productId ?? item.id, item.variantId, satuanPesan);
+          const newId = computeCartRowId(item.productId ?? 0, item.variantId, satuanPesan, item.label);
           const updated = {
             ...item,
             id: newId,

@@ -192,6 +192,10 @@ export default function PosPage() {
   // Daftar nama toko/pelanggan yang pernah ada (untuk autocomplete pilih nama → harga terhubung).
   const [customerNames, setCustomerNames] = useState<string[]>([]);
   const [customerSuggestOpen, setCustomerSuggestOpen] = useState(false);
+  // Kode pelanggan per baris (Aneka), dipilih di modal saat menambah produk.
+  const [customerCodes, setCustomerCodes] = useState<string[]>([]);
+  const [variantCode, setVariantCode] = useState("");
+  const [codeSuggestOpen, setCodeSuggestOpen] = useState(false);
   const [variantModalProduct, setVariantModalProduct] = useState<Product | null>(null); // PRODUK YANG SEDANG PILIH VARIASI
   const [animations, setAnimations] = useState<{id: number, x: number, y: number, img: string | null}[]>([]); // STATE ANIMASI TERBANG
   const animationIdRef = useRef(0);
@@ -274,6 +278,8 @@ export default function PosPage() {
               const matchedProduct = produk.find(p => p.barcode === decodedText);
               if (matchedProduct) {
                  if (matchedProduct.variants && matchedProduct.variants.length > 0) {
+                   setVariantCode("");
+                   setCodeSuggestOpen(false);
                    setVariantModalProduct(matchedProduct);
                    alert(`✅ ${matchedProduct.nama_produk} — silakan pilih variasi.`);
                  } else {
@@ -366,6 +372,18 @@ export default function PosPage() {
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data)) setCustomerNames(data);
+      })
+      .catch(() => {
+        /* abaikan; autocomplete opsional */
+      });
+  }, []);
+
+  // Muat daftar kode pelanggan (Aneka) yang pernah dipakai untuk autocomplete di modal.
+  useEffect(() => {
+    fetch("/api/kode-pelanggan", { cache: "no-store" })
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data)) setCustomerCodes(data);
       })
       .catch(() => {
         /* abaikan; autocomplete opsional */
@@ -611,18 +629,17 @@ export default function PosPage() {
     }, 700);
   };
 
-  // Klik produk → jika punya variasi, buka modal pilih variasi dulu. Jika tidak, langsung masuk keranjang.
-  const handleProductClick = (e: React.MouseEvent, p: Product) => {
-    if (p.variants && p.variants.length > 0) {
-      setVariantModalProduct(p);
-      return;
-    }
-    triggerFlyAnimation(e, p);
-    const base = resolveRememberedBase(p.id, 0, p.harga);
-    addToCart({ ...p, satuanPesan: p.satuanHarga ?? "pcs", hargaBase: base });
+  // Klik produk → selalu buka modal (pilih ukuran + kode pelanggan, lalu masukkan).
+  const handleProductClick = (_e: React.MouseEvent, p: Product) => {
+    setVariantCode("");
+    setCodeSuggestOpen(false);
+    setVariantModalProduct(p);
   };
 
-  // Setelah memilih variasi → masuk keranjang dengan harga & nama variasi
+  // Bersihkan kode: huruf/angka/spasi/strip, huruf kapital.
+  const sanitizeCode = (value: string) => value.replace(/[^A-Za-z0-9 -]/g, "").toUpperCase();
+
+  // Setelah memilih variasi → masuk keranjang dengan harga, nama variasi, dan kode pelanggan.
   const handleVariantSelected = (p: Product, variant: Variant) => {
     const hargaVarian = variant.priceModifier ?? p.harga;
     const base = resolveRememberedBase(p.id, variant.id, hargaVarian);
@@ -633,14 +650,15 @@ export default function PosPage() {
       satuanPesan: p.satuanHarga ?? "pcs",
       variantId: variant.id,
       variantName: variant.name,
+      label: variantCode.trim() || null,
     });
     setVariantModalProduct(null);
   };
 
-  // Masukkan produk ke keranjang TANPA variasi (pakai harga dasar produk).
+  // Masukkan produk ke keranjang TANPA variasi (pakai harga dasar produk) + kode pelanggan.
   const handleNoVariantSelected = (p: Product) => {
     const base = resolveRememberedBase(p.id, 0, p.harga);
-    addToCart({ ...p, satuanPesan: p.satuanHarga ?? "pcs", hargaBase: base });
+    addToCart({ ...p, satuanPesan: p.satuanHarga ?? "pcs", hargaBase: base, label: variantCode.trim() || null });
     setVariantModalProduct(null);
   };
 
@@ -836,6 +854,11 @@ export default function PosPage() {
                       {item.variantName}
                     </span>
                   )}
+                  {item.label && (
+                    <span className="max-w-[72px] truncate rounded-lg bg-pink-100 border border-pink-300 text-pink-700 px-2 py-1 text-xs font-black mr-0.5" title={`Kode: ${item.label}`}>
+                      {item.label}
+                    </span>
+                  )}
                   <button onClick={() => openPriceEdit(item)} className="p-2.5 text-slate-400 hover:bg-pink-50 hover:text-pink-600 rounded-xl" title="Sesuaikan harga"><Pencil size={18} /></button>
                   <button onClick={() => removeFromCart(item.id)} className="p-2.5 text-red-400 hover:bg-red-50 rounded-xl" title="Hapus"><Trash2 size={18} /></button>
                 </div>
@@ -923,13 +946,46 @@ export default function PosPage() {
               </div>
               <button onClick={() => setVariantModalProduct(null)} className="bg-white/20 hover:bg-white/30 p-2 rounded-full shrink-0"><X size={20} /></button>
             </div>
-            {/* Opsi tanpa variasi: masukkan produk memakai harga dasar (tak perlu bikin varian "(.)" ) */}
+            {/* Kode pelanggan (Aneka) — opsional, terpisah dari variasi. Autocomplete + boleh ketik baru. */}
+            <div className="relative mx-4 mt-4">
+              <label className="mb-1 block text-[10px] font-black uppercase tracking-widest text-amber-600">Kode Pelanggan (opsional)</label>
+              <input
+                type="text"
+                value={variantCode}
+                onChange={(e) => { setVariantCode(sanitizeCode(e.target.value)); setCodeSuggestOpen(true); }}
+                onFocus={() => setCodeSuggestOpen(true)}
+                onBlur={() => window.setTimeout(() => setCodeSuggestOpen(false), 150)}
+                placeholder="mis. AMN / SMT — kosongkan bila bukan Aneka"
+                autoComplete="off"
+                className="w-full rounded-xl border-2 border-amber-200 bg-amber-50 px-3 py-2.5 text-sm font-black text-amber-800 outline-none focus:border-amber-400"
+              />
+              {codeSuggestOpen && (() => {
+                const q = variantCode.trim().toUpperCase();
+                const matches = customerCodes.filter((c) => c !== q && (q === "" || c.includes(q))).slice(0, 8);
+                if (matches.length === 0) return null;
+                return (
+                  <div className="absolute left-0 right-0 top-full mt-1 z-30 max-h-40 overflow-y-auto rounded-xl border-2 border-amber-100 bg-white shadow-xl">
+                    {matches.map((c) => (
+                      <button
+                        key={c}
+                        type="button"
+                        onMouseDown={(e) => { e.preventDefault(); setVariantCode(c); setCodeSuggestOpen(false); }}
+                        className="block w-full px-3 py-2 text-left text-sm font-black text-amber-700 hover:bg-amber-50"
+                      >
+                        {c}
+                      </button>
+                    ))}
+                  </div>
+                );
+              })()}
+            </div>
+            {/* Masukkan tanpa variasi (harga dasar). Untuk produk tanpa ukuran, ini tombol "Tambah". */}
             <button
               type="button"
               onClick={() => handleNoVariantSelected(variantModalProduct)}
-              className="mx-4 mt-4 flex w-[calc(100%-2rem)] items-center justify-between gap-2 rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 px-4 py-3 hover:border-slate-400 hover:bg-slate-100 active:scale-[0.99] transition-all"
+              className="mx-4 mt-3 flex w-[calc(100%-2rem)] items-center justify-between gap-2 rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 px-4 py-3 hover:border-slate-400 hover:bg-slate-100 active:scale-[0.99] transition-all"
             >
-              <span className="text-sm font-black text-slate-700">Tanpa Variasi</span>
+              <span className="text-sm font-black text-slate-700">{(variantModalProduct.variants && variantModalProduct.variants.length > 0) ? "Tanpa Variasi" : "Tambah ke Keranjang"}</span>
               <span className="text-sm font-bold text-slate-500">
                 Rp {variantModalProduct.harga.toLocaleString("id-ID")}
                 {(variantModalProduct.satuanHarga ?? "pcs") !== "pcs" && (
@@ -1350,6 +1406,11 @@ export default function PosPage() {
                           {item.variantName && (
                             <span className="max-w-[72px] truncate rounded-lg bg-amber-50 border border-amber-200 text-amber-600 px-2 py-1 text-xs font-black mr-0.5" title={item.variantName}>
                               {item.variantName}
+                            </span>
+                          )}
+                          {item.label && (
+                            <span className="max-w-[72px] truncate rounded-lg bg-pink-100 border border-pink-300 text-pink-700 px-2 py-1 text-xs font-black mr-0.5" title={`Kode: ${item.label}`}>
+                              {item.label}
                             </span>
                           )}
                           <button onClick={() => openPriceEdit(item)} className="p-2.5 text-slate-400 hover:bg-pink-50 hover:text-pink-600 rounded-xl" title="Sesuaikan harga"><Pencil size={18} /></button>

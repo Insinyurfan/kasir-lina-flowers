@@ -7,8 +7,11 @@ import ManualTransactionModal, { type ManualTransaction } from "@/components/Man
 import { getSavedUserSession } from "@/lib/userSession";
 
 const getTimeFromISO = (isoString: string): string => {
-  const match = isoString.match(/T(\d{2}):(\d{2})/);
-  return match ? `${match[1]}:${match[2]}` : "--:--";
+  // Konversi ke WIB (Asia/Jakarta) — JANGAN memotong jam mentah dari string ISO
+  // (ISO tersimpan dalam UTC, sehingga pemotongan mentah menghasilkan jam -7).
+  const date = new Date(isoString);
+  if (Number.isNaN(date.getTime())) return "--:--";
+  return date.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", timeZone: "Asia/Jakarta" });
 };
 
 const MOBILE_TRANSACTION_BATCH_SIZE = 25;

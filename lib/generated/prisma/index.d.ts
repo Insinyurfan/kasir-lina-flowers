@@ -49,6 +49,11 @@ export type StoreSetting = $Result.DefaultSelection<Prisma.$StoreSettingPayload>
  */
 export type CustomerPrice = $Result.DefaultSelection<Prisma.$CustomerPricePayload>
 /**
+ * Model CustomerCode
+ * 
+ */
+export type CustomerCode = $Result.DefaultSelection<Prisma.$CustomerCodePayload>
+/**
  * Model Notification
  * 
  */
@@ -271,6 +276,16 @@ export class PrismaClient<
     * ```
     */
   get customerPrice(): Prisma.CustomerPriceDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.customerCode`: Exposes CRUD operations for the **CustomerCode** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more CustomerCodes
+    * const customerCodes = await prisma.customerCode.findMany()
+    * ```
+    */
+  get customerCode(): Prisma.CustomerCodeDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.notification`: Exposes CRUD operations for the **Notification** model.
@@ -789,6 +804,7 @@ export namespace Prisma {
     TransactionItem: 'TransactionItem',
     StoreSetting: 'StoreSetting',
     CustomerPrice: 'CustomerPrice',
+    CustomerCode: 'CustomerCode',
     Notification: 'Notification',
     ActivityLog: 'ActivityLog',
     UserCart: 'UserCart',
@@ -814,7 +830,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "product" | "productVariant" | "transaction" | "transactionItem" | "storeSetting" | "customerPrice" | "notification" | "activityLog" | "userCart" | "userCartItem" | "orderRequest" | "orderStatusHistory" | "orderRequestItem"
+      modelProps: "user" | "product" | "productVariant" | "transaction" | "transactionItem" | "storeSetting" | "customerPrice" | "customerCode" | "notification" | "activityLog" | "userCart" | "userCartItem" | "orderRequest" | "orderStatusHistory" | "orderRequestItem"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1333,6 +1349,80 @@ export namespace Prisma {
           count: {
             args: Prisma.CustomerPriceCountArgs<ExtArgs>
             result: $Utils.Optional<CustomerPriceCountAggregateOutputType> | number
+          }
+        }
+      }
+      CustomerCode: {
+        payload: Prisma.$CustomerCodePayload<ExtArgs>
+        fields: Prisma.CustomerCodeFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.CustomerCodeFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomerCodePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.CustomerCodeFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomerCodePayload>
+          }
+          findFirst: {
+            args: Prisma.CustomerCodeFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomerCodePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.CustomerCodeFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomerCodePayload>
+          }
+          findMany: {
+            args: Prisma.CustomerCodeFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomerCodePayload>[]
+          }
+          create: {
+            args: Prisma.CustomerCodeCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomerCodePayload>
+          }
+          createMany: {
+            args: Prisma.CustomerCodeCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.CustomerCodeCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomerCodePayload>[]
+          }
+          delete: {
+            args: Prisma.CustomerCodeDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomerCodePayload>
+          }
+          update: {
+            args: Prisma.CustomerCodeUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomerCodePayload>
+          }
+          deleteMany: {
+            args: Prisma.CustomerCodeDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.CustomerCodeUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.CustomerCodeUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomerCodePayload>[]
+          }
+          upsert: {
+            args: Prisma.CustomerCodeUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomerCodePayload>
+          }
+          aggregate: {
+            args: Prisma.CustomerCodeAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateCustomerCode>
+          }
+          groupBy: {
+            args: Prisma.CustomerCodeGroupByArgs<ExtArgs>
+            result: $Utils.Optional<CustomerCodeGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.CustomerCodeCountArgs<ExtArgs>
+            result: $Utils.Optional<CustomerCodeCountAggregateOutputType> | number
           }
         }
       }
@@ -1957,6 +2047,7 @@ export namespace Prisma {
     transactionItem?: TransactionItemOmit
     storeSetting?: StoreSettingOmit
     customerPrice?: CustomerPriceOmit
+    customerCode?: CustomerCodeOmit
     notification?: NotificationOmit
     activityLog?: ActivityLogOmit
     userCart?: UserCartOmit
@@ -10303,6 +10394,1009 @@ export namespace Prisma {
 
 
   /**
+   * Model CustomerCode
+   */
+
+  export type AggregateCustomerCode = {
+    _count: CustomerCodeCountAggregateOutputType | null
+    _avg: CustomerCodeAvgAggregateOutputType | null
+    _sum: CustomerCodeSumAggregateOutputType | null
+    _min: CustomerCodeMinAggregateOutputType | null
+    _max: CustomerCodeMaxAggregateOutputType | null
+  }
+
+  export type CustomerCodeAvgAggregateOutputType = {
+    id: number | null
+  }
+
+  export type CustomerCodeSumAggregateOutputType = {
+    id: number | null
+  }
+
+  export type CustomerCodeMinAggregateOutputType = {
+    id: number | null
+    code: string | null
+    createdAt: Date | null
+  }
+
+  export type CustomerCodeMaxAggregateOutputType = {
+    id: number | null
+    code: string | null
+    createdAt: Date | null
+  }
+
+  export type CustomerCodeCountAggregateOutputType = {
+    id: number
+    code: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type CustomerCodeAvgAggregateInputType = {
+    id?: true
+  }
+
+  export type CustomerCodeSumAggregateInputType = {
+    id?: true
+  }
+
+  export type CustomerCodeMinAggregateInputType = {
+    id?: true
+    code?: true
+    createdAt?: true
+  }
+
+  export type CustomerCodeMaxAggregateInputType = {
+    id?: true
+    code?: true
+    createdAt?: true
+  }
+
+  export type CustomerCodeCountAggregateInputType = {
+    id?: true
+    code?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type CustomerCodeAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which CustomerCode to aggregate.
+     */
+    where?: CustomerCodeWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CustomerCodes to fetch.
+     */
+    orderBy?: CustomerCodeOrderByWithRelationInput | CustomerCodeOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: CustomerCodeWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CustomerCodes from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CustomerCodes.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned CustomerCodes
+    **/
+    _count?: true | CustomerCodeCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: CustomerCodeAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: CustomerCodeSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: CustomerCodeMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: CustomerCodeMaxAggregateInputType
+  }
+
+  export type GetCustomerCodeAggregateType<T extends CustomerCodeAggregateArgs> = {
+        [P in keyof T & keyof AggregateCustomerCode]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateCustomerCode[P]>
+      : GetScalarType<T[P], AggregateCustomerCode[P]>
+  }
+
+
+
+
+  export type CustomerCodeGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CustomerCodeWhereInput
+    orderBy?: CustomerCodeOrderByWithAggregationInput | CustomerCodeOrderByWithAggregationInput[]
+    by: CustomerCodeScalarFieldEnum[] | CustomerCodeScalarFieldEnum
+    having?: CustomerCodeScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: CustomerCodeCountAggregateInputType | true
+    _avg?: CustomerCodeAvgAggregateInputType
+    _sum?: CustomerCodeSumAggregateInputType
+    _min?: CustomerCodeMinAggregateInputType
+    _max?: CustomerCodeMaxAggregateInputType
+  }
+
+  export type CustomerCodeGroupByOutputType = {
+    id: number
+    code: string
+    createdAt: Date
+    _count: CustomerCodeCountAggregateOutputType | null
+    _avg: CustomerCodeAvgAggregateOutputType | null
+    _sum: CustomerCodeSumAggregateOutputType | null
+    _min: CustomerCodeMinAggregateOutputType | null
+    _max: CustomerCodeMaxAggregateOutputType | null
+  }
+
+  type GetCustomerCodeGroupByPayload<T extends CustomerCodeGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<CustomerCodeGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof CustomerCodeGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], CustomerCodeGroupByOutputType[P]>
+            : GetScalarType<T[P], CustomerCodeGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type CustomerCodeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    code?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["customerCode"]>
+
+  export type CustomerCodeSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    code?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["customerCode"]>
+
+  export type CustomerCodeSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    code?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["customerCode"]>
+
+  export type CustomerCodeSelectScalar = {
+    id?: boolean
+    code?: boolean
+    createdAt?: boolean
+  }
+
+  export type CustomerCodeOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "code" | "createdAt", ExtArgs["result"]["customerCode"]>
+
+  export type $CustomerCodePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "CustomerCode"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      code: string
+      createdAt: Date
+    }, ExtArgs["result"]["customerCode"]>
+    composites: {}
+  }
+
+  type CustomerCodeGetPayload<S extends boolean | null | undefined | CustomerCodeDefaultArgs> = $Result.GetResult<Prisma.$CustomerCodePayload, S>
+
+  type CustomerCodeCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<CustomerCodeFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: CustomerCodeCountAggregateInputType | true
+    }
+
+  export interface CustomerCodeDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['CustomerCode'], meta: { name: 'CustomerCode' } }
+    /**
+     * Find zero or one CustomerCode that matches the filter.
+     * @param {CustomerCodeFindUniqueArgs} args - Arguments to find a CustomerCode
+     * @example
+     * // Get one CustomerCode
+     * const customerCode = await prisma.customerCode.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends CustomerCodeFindUniqueArgs>(args: SelectSubset<T, CustomerCodeFindUniqueArgs<ExtArgs>>): Prisma__CustomerCodeClient<$Result.GetResult<Prisma.$CustomerCodePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one CustomerCode that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {CustomerCodeFindUniqueOrThrowArgs} args - Arguments to find a CustomerCode
+     * @example
+     * // Get one CustomerCode
+     * const customerCode = await prisma.customerCode.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends CustomerCodeFindUniqueOrThrowArgs>(args: SelectSubset<T, CustomerCodeFindUniqueOrThrowArgs<ExtArgs>>): Prisma__CustomerCodeClient<$Result.GetResult<Prisma.$CustomerCodePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first CustomerCode that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CustomerCodeFindFirstArgs} args - Arguments to find a CustomerCode
+     * @example
+     * // Get one CustomerCode
+     * const customerCode = await prisma.customerCode.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends CustomerCodeFindFirstArgs>(args?: SelectSubset<T, CustomerCodeFindFirstArgs<ExtArgs>>): Prisma__CustomerCodeClient<$Result.GetResult<Prisma.$CustomerCodePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first CustomerCode that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CustomerCodeFindFirstOrThrowArgs} args - Arguments to find a CustomerCode
+     * @example
+     * // Get one CustomerCode
+     * const customerCode = await prisma.customerCode.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends CustomerCodeFindFirstOrThrowArgs>(args?: SelectSubset<T, CustomerCodeFindFirstOrThrowArgs<ExtArgs>>): Prisma__CustomerCodeClient<$Result.GetResult<Prisma.$CustomerCodePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more CustomerCodes that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CustomerCodeFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all CustomerCodes
+     * const customerCodes = await prisma.customerCode.findMany()
+     * 
+     * // Get first 10 CustomerCodes
+     * const customerCodes = await prisma.customerCode.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const customerCodeWithIdOnly = await prisma.customerCode.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends CustomerCodeFindManyArgs>(args?: SelectSubset<T, CustomerCodeFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CustomerCodePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a CustomerCode.
+     * @param {CustomerCodeCreateArgs} args - Arguments to create a CustomerCode.
+     * @example
+     * // Create one CustomerCode
+     * const CustomerCode = await prisma.customerCode.create({
+     *   data: {
+     *     // ... data to create a CustomerCode
+     *   }
+     * })
+     * 
+     */
+    create<T extends CustomerCodeCreateArgs>(args: SelectSubset<T, CustomerCodeCreateArgs<ExtArgs>>): Prisma__CustomerCodeClient<$Result.GetResult<Prisma.$CustomerCodePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many CustomerCodes.
+     * @param {CustomerCodeCreateManyArgs} args - Arguments to create many CustomerCodes.
+     * @example
+     * // Create many CustomerCodes
+     * const customerCode = await prisma.customerCode.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends CustomerCodeCreateManyArgs>(args?: SelectSubset<T, CustomerCodeCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many CustomerCodes and returns the data saved in the database.
+     * @param {CustomerCodeCreateManyAndReturnArgs} args - Arguments to create many CustomerCodes.
+     * @example
+     * // Create many CustomerCodes
+     * const customerCode = await prisma.customerCode.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many CustomerCodes and only return the `id`
+     * const customerCodeWithIdOnly = await prisma.customerCode.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends CustomerCodeCreateManyAndReturnArgs>(args?: SelectSubset<T, CustomerCodeCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CustomerCodePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a CustomerCode.
+     * @param {CustomerCodeDeleteArgs} args - Arguments to delete one CustomerCode.
+     * @example
+     * // Delete one CustomerCode
+     * const CustomerCode = await prisma.customerCode.delete({
+     *   where: {
+     *     // ... filter to delete one CustomerCode
+     *   }
+     * })
+     * 
+     */
+    delete<T extends CustomerCodeDeleteArgs>(args: SelectSubset<T, CustomerCodeDeleteArgs<ExtArgs>>): Prisma__CustomerCodeClient<$Result.GetResult<Prisma.$CustomerCodePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one CustomerCode.
+     * @param {CustomerCodeUpdateArgs} args - Arguments to update one CustomerCode.
+     * @example
+     * // Update one CustomerCode
+     * const customerCode = await prisma.customerCode.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends CustomerCodeUpdateArgs>(args: SelectSubset<T, CustomerCodeUpdateArgs<ExtArgs>>): Prisma__CustomerCodeClient<$Result.GetResult<Prisma.$CustomerCodePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more CustomerCodes.
+     * @param {CustomerCodeDeleteManyArgs} args - Arguments to filter CustomerCodes to delete.
+     * @example
+     * // Delete a few CustomerCodes
+     * const { count } = await prisma.customerCode.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends CustomerCodeDeleteManyArgs>(args?: SelectSubset<T, CustomerCodeDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more CustomerCodes.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CustomerCodeUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many CustomerCodes
+     * const customerCode = await prisma.customerCode.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends CustomerCodeUpdateManyArgs>(args: SelectSubset<T, CustomerCodeUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more CustomerCodes and returns the data updated in the database.
+     * @param {CustomerCodeUpdateManyAndReturnArgs} args - Arguments to update many CustomerCodes.
+     * @example
+     * // Update many CustomerCodes
+     * const customerCode = await prisma.customerCode.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more CustomerCodes and only return the `id`
+     * const customerCodeWithIdOnly = await prisma.customerCode.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends CustomerCodeUpdateManyAndReturnArgs>(args: SelectSubset<T, CustomerCodeUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CustomerCodePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one CustomerCode.
+     * @param {CustomerCodeUpsertArgs} args - Arguments to update or create a CustomerCode.
+     * @example
+     * // Update or create a CustomerCode
+     * const customerCode = await prisma.customerCode.upsert({
+     *   create: {
+     *     // ... data to create a CustomerCode
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the CustomerCode we want to update
+     *   }
+     * })
+     */
+    upsert<T extends CustomerCodeUpsertArgs>(args: SelectSubset<T, CustomerCodeUpsertArgs<ExtArgs>>): Prisma__CustomerCodeClient<$Result.GetResult<Prisma.$CustomerCodePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of CustomerCodes.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CustomerCodeCountArgs} args - Arguments to filter CustomerCodes to count.
+     * @example
+     * // Count the number of CustomerCodes
+     * const count = await prisma.customerCode.count({
+     *   where: {
+     *     // ... the filter for the CustomerCodes we want to count
+     *   }
+     * })
+    **/
+    count<T extends CustomerCodeCountArgs>(
+      args?: Subset<T, CustomerCodeCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], CustomerCodeCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a CustomerCode.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CustomerCodeAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends CustomerCodeAggregateArgs>(args: Subset<T, CustomerCodeAggregateArgs>): Prisma.PrismaPromise<GetCustomerCodeAggregateType<T>>
+
+    /**
+     * Group by CustomerCode.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CustomerCodeGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends CustomerCodeGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: CustomerCodeGroupByArgs['orderBy'] }
+        : { orderBy?: CustomerCodeGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, CustomerCodeGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetCustomerCodeGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the CustomerCode model
+   */
+  readonly fields: CustomerCodeFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for CustomerCode.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__CustomerCodeClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the CustomerCode model
+   */
+  interface CustomerCodeFieldRefs {
+    readonly id: FieldRef<"CustomerCode", 'Int'>
+    readonly code: FieldRef<"CustomerCode", 'String'>
+    readonly createdAt: FieldRef<"CustomerCode", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * CustomerCode findUnique
+   */
+  export type CustomerCodeFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CustomerCode
+     */
+    select?: CustomerCodeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CustomerCode
+     */
+    omit?: CustomerCodeOmit<ExtArgs> | null
+    /**
+     * Filter, which CustomerCode to fetch.
+     */
+    where: CustomerCodeWhereUniqueInput
+  }
+
+  /**
+   * CustomerCode findUniqueOrThrow
+   */
+  export type CustomerCodeFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CustomerCode
+     */
+    select?: CustomerCodeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CustomerCode
+     */
+    omit?: CustomerCodeOmit<ExtArgs> | null
+    /**
+     * Filter, which CustomerCode to fetch.
+     */
+    where: CustomerCodeWhereUniqueInput
+  }
+
+  /**
+   * CustomerCode findFirst
+   */
+  export type CustomerCodeFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CustomerCode
+     */
+    select?: CustomerCodeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CustomerCode
+     */
+    omit?: CustomerCodeOmit<ExtArgs> | null
+    /**
+     * Filter, which CustomerCode to fetch.
+     */
+    where?: CustomerCodeWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CustomerCodes to fetch.
+     */
+    orderBy?: CustomerCodeOrderByWithRelationInput | CustomerCodeOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for CustomerCodes.
+     */
+    cursor?: CustomerCodeWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CustomerCodes from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CustomerCodes.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of CustomerCodes.
+     */
+    distinct?: CustomerCodeScalarFieldEnum | CustomerCodeScalarFieldEnum[]
+  }
+
+  /**
+   * CustomerCode findFirstOrThrow
+   */
+  export type CustomerCodeFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CustomerCode
+     */
+    select?: CustomerCodeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CustomerCode
+     */
+    omit?: CustomerCodeOmit<ExtArgs> | null
+    /**
+     * Filter, which CustomerCode to fetch.
+     */
+    where?: CustomerCodeWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CustomerCodes to fetch.
+     */
+    orderBy?: CustomerCodeOrderByWithRelationInput | CustomerCodeOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for CustomerCodes.
+     */
+    cursor?: CustomerCodeWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CustomerCodes from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CustomerCodes.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of CustomerCodes.
+     */
+    distinct?: CustomerCodeScalarFieldEnum | CustomerCodeScalarFieldEnum[]
+  }
+
+  /**
+   * CustomerCode findMany
+   */
+  export type CustomerCodeFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CustomerCode
+     */
+    select?: CustomerCodeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CustomerCode
+     */
+    omit?: CustomerCodeOmit<ExtArgs> | null
+    /**
+     * Filter, which CustomerCodes to fetch.
+     */
+    where?: CustomerCodeWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CustomerCodes to fetch.
+     */
+    orderBy?: CustomerCodeOrderByWithRelationInput | CustomerCodeOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing CustomerCodes.
+     */
+    cursor?: CustomerCodeWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CustomerCodes from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CustomerCodes.
+     */
+    skip?: number
+    distinct?: CustomerCodeScalarFieldEnum | CustomerCodeScalarFieldEnum[]
+  }
+
+  /**
+   * CustomerCode create
+   */
+  export type CustomerCodeCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CustomerCode
+     */
+    select?: CustomerCodeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CustomerCode
+     */
+    omit?: CustomerCodeOmit<ExtArgs> | null
+    /**
+     * The data needed to create a CustomerCode.
+     */
+    data: XOR<CustomerCodeCreateInput, CustomerCodeUncheckedCreateInput>
+  }
+
+  /**
+   * CustomerCode createMany
+   */
+  export type CustomerCodeCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many CustomerCodes.
+     */
+    data: CustomerCodeCreateManyInput | CustomerCodeCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * CustomerCode createManyAndReturn
+   */
+  export type CustomerCodeCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CustomerCode
+     */
+    select?: CustomerCodeSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the CustomerCode
+     */
+    omit?: CustomerCodeOmit<ExtArgs> | null
+    /**
+     * The data used to create many CustomerCodes.
+     */
+    data: CustomerCodeCreateManyInput | CustomerCodeCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * CustomerCode update
+   */
+  export type CustomerCodeUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CustomerCode
+     */
+    select?: CustomerCodeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CustomerCode
+     */
+    omit?: CustomerCodeOmit<ExtArgs> | null
+    /**
+     * The data needed to update a CustomerCode.
+     */
+    data: XOR<CustomerCodeUpdateInput, CustomerCodeUncheckedUpdateInput>
+    /**
+     * Choose, which CustomerCode to update.
+     */
+    where: CustomerCodeWhereUniqueInput
+  }
+
+  /**
+   * CustomerCode updateMany
+   */
+  export type CustomerCodeUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update CustomerCodes.
+     */
+    data: XOR<CustomerCodeUpdateManyMutationInput, CustomerCodeUncheckedUpdateManyInput>
+    /**
+     * Filter which CustomerCodes to update
+     */
+    where?: CustomerCodeWhereInput
+    /**
+     * Limit how many CustomerCodes to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * CustomerCode updateManyAndReturn
+   */
+  export type CustomerCodeUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CustomerCode
+     */
+    select?: CustomerCodeSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the CustomerCode
+     */
+    omit?: CustomerCodeOmit<ExtArgs> | null
+    /**
+     * The data used to update CustomerCodes.
+     */
+    data: XOR<CustomerCodeUpdateManyMutationInput, CustomerCodeUncheckedUpdateManyInput>
+    /**
+     * Filter which CustomerCodes to update
+     */
+    where?: CustomerCodeWhereInput
+    /**
+     * Limit how many CustomerCodes to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * CustomerCode upsert
+   */
+  export type CustomerCodeUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CustomerCode
+     */
+    select?: CustomerCodeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CustomerCode
+     */
+    omit?: CustomerCodeOmit<ExtArgs> | null
+    /**
+     * The filter to search for the CustomerCode to update in case it exists.
+     */
+    where: CustomerCodeWhereUniqueInput
+    /**
+     * In case the CustomerCode found by the `where` argument doesn't exist, create a new CustomerCode with this data.
+     */
+    create: XOR<CustomerCodeCreateInput, CustomerCodeUncheckedCreateInput>
+    /**
+     * In case the CustomerCode was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<CustomerCodeUpdateInput, CustomerCodeUncheckedUpdateInput>
+  }
+
+  /**
+   * CustomerCode delete
+   */
+  export type CustomerCodeDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CustomerCode
+     */
+    select?: CustomerCodeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CustomerCode
+     */
+    omit?: CustomerCodeOmit<ExtArgs> | null
+    /**
+     * Filter which CustomerCode to delete.
+     */
+    where: CustomerCodeWhereUniqueInput
+  }
+
+  /**
+   * CustomerCode deleteMany
+   */
+  export type CustomerCodeDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which CustomerCodes to delete
+     */
+    where?: CustomerCodeWhereInput
+    /**
+     * Limit how many CustomerCodes to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * CustomerCode without action
+   */
+  export type CustomerCodeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CustomerCode
+     */
+    select?: CustomerCodeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CustomerCode
+     */
+    omit?: CustomerCodeOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Model Notification
    */
 
@@ -18536,6 +19630,15 @@ export namespace Prisma {
   export type CustomerPriceScalarFieldEnum = (typeof CustomerPriceScalarFieldEnum)[keyof typeof CustomerPriceScalarFieldEnum]
 
 
+  export const CustomerCodeScalarFieldEnum: {
+    id: 'id',
+    code: 'code',
+    createdAt: 'createdAt'
+  };
+
+  export type CustomerCodeScalarFieldEnum = (typeof CustomerCodeScalarFieldEnum)[keyof typeof CustomerCodeScalarFieldEnum]
+
+
   export const NotificationScalarFieldEnum: {
     id: 'id',
     transactionId: 'transactionId',
@@ -19286,6 +20389,50 @@ export namespace Prisma {
     price?: IntWithAggregatesFilter<"CustomerPrice"> | number
     createdAt?: DateTimeWithAggregatesFilter<"CustomerPrice"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"CustomerPrice"> | Date | string
+  }
+
+  export type CustomerCodeWhereInput = {
+    AND?: CustomerCodeWhereInput | CustomerCodeWhereInput[]
+    OR?: CustomerCodeWhereInput[]
+    NOT?: CustomerCodeWhereInput | CustomerCodeWhereInput[]
+    id?: IntFilter<"CustomerCode"> | number
+    code?: StringFilter<"CustomerCode"> | string
+    createdAt?: DateTimeFilter<"CustomerCode"> | Date | string
+  }
+
+  export type CustomerCodeOrderByWithRelationInput = {
+    id?: SortOrder
+    code?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type CustomerCodeWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    code?: string
+    AND?: CustomerCodeWhereInput | CustomerCodeWhereInput[]
+    OR?: CustomerCodeWhereInput[]
+    NOT?: CustomerCodeWhereInput | CustomerCodeWhereInput[]
+    createdAt?: DateTimeFilter<"CustomerCode"> | Date | string
+  }, "id" | "code">
+
+  export type CustomerCodeOrderByWithAggregationInput = {
+    id?: SortOrder
+    code?: SortOrder
+    createdAt?: SortOrder
+    _count?: CustomerCodeCountOrderByAggregateInput
+    _avg?: CustomerCodeAvgOrderByAggregateInput
+    _max?: CustomerCodeMaxOrderByAggregateInput
+    _min?: CustomerCodeMinOrderByAggregateInput
+    _sum?: CustomerCodeSumOrderByAggregateInput
+  }
+
+  export type CustomerCodeScalarWhereWithAggregatesInput = {
+    AND?: CustomerCodeScalarWhereWithAggregatesInput | CustomerCodeScalarWhereWithAggregatesInput[]
+    OR?: CustomerCodeScalarWhereWithAggregatesInput[]
+    NOT?: CustomerCodeScalarWhereWithAggregatesInput | CustomerCodeScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"CustomerCode"> | number
+    code?: StringWithAggregatesFilter<"CustomerCode"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"CustomerCode"> | Date | string
   }
 
   export type NotificationWhereInput = {
@@ -20386,6 +21533,45 @@ export namespace Prisma {
     price?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CustomerCodeCreateInput = {
+    code: string
+    createdAt?: Date | string
+  }
+
+  export type CustomerCodeUncheckedCreateInput = {
+    id?: number
+    code: string
+    createdAt?: Date | string
+  }
+
+  export type CustomerCodeUpdateInput = {
+    code?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CustomerCodeUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    code?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CustomerCodeCreateManyInput = {
+    id?: number
+    code: string
+    createdAt?: Date | string
+  }
+
+  export type CustomerCodeUpdateManyMutationInput = {
+    code?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CustomerCodeUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    code?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type NotificationCreateInput = {
@@ -21520,6 +22706,32 @@ export namespace Prisma {
     productId?: SortOrder
     variantId?: SortOrder
     price?: SortOrder
+  }
+
+  export type CustomerCodeCountOrderByAggregateInput = {
+    id?: SortOrder
+    code?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type CustomerCodeAvgOrderByAggregateInput = {
+    id?: SortOrder
+  }
+
+  export type CustomerCodeMaxOrderByAggregateInput = {
+    id?: SortOrder
+    code?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type CustomerCodeMinOrderByAggregateInput = {
+    id?: SortOrder
+    code?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type CustomerCodeSumOrderByAggregateInput = {
+    id?: SortOrder
   }
 
   export type TransactionNullableScalarRelationFilter = {

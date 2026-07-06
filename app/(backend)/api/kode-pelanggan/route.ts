@@ -3,15 +3,13 @@ import prisma from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
-// Daftar kode pelanggan Aneka (AMN/SMT/ST/...) untuk autocomplete di modal POS.
-// Kode saat ini KHUSUS pelanggan "ANEKA", jadi diseed dari histori Aneka:
-//  - kode BARU: kolom `label` (dari transaksi & keranjang),
-//  - kode LAMA: `variantName` pada transaksi Aneka yang belum pakai label
-//    (dulu kode disimpan sebagai "variasi").
-// Dinormalisasi UPPERCASE.
+// Daftar kode pelanggan (mis. Aneka: AMN/SMT/HARLIS) untuk autocomplete di modal POS.
+// Sumber: master `CustomerCode` (di-seed dari variasi-kode lama) + kode yang dipakai
+// pada transaksi & keranjang (kolom `label`). Dinormalisasi UPPERCASE.
 export async function GET() {
   try {
-    const [txnLabels, cartLabels, anekaVariants] = await Promise.all([
+    const [master, txnLabels, cartLabels] = await Promise.all([
+      prisma.customerCode.findMany({ select: { code: true } }),
       prisma.transactionItem.findMany({
         where: { label: { not: null } },
         distinct: ["label"],
@@ -24,29 +22,15 @@ export async function GET() {
         select: { label: true },
         take: 1000,
       }),
-      prisma.transactionItem.findMany({
-        where: {
-          label: null,
-          variantName: { not: null },
-          transaction: { nama_pembeli: { contains: "ANEKA", mode: "insensitive" } },
-        },
-        distinct: ["variantName"],
-        select: { variantName: true },
-        take: 1000,
-      }),
     ]);
 
     const codes = new Set<string>();
-    for (const row of txnLabels) {
-      const code = row.label?.trim().toUpperCase();
+    for (const row of master) {
+      const code = row.code?.trim().toUpperCase();
       if (code) codes.add(code);
     }
-    for (const row of cartLabels) {
+    for (const row of [...txnLabels, ...cartLabels]) {
       const code = row.label?.trim().toUpperCase();
-      if (code) codes.add(code);
-    }
-    for (const row of anekaVariants) {
-      const code = row.variantName?.trim().toUpperCase();
       if (code) codes.add(code);
     }
 

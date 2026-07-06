@@ -111,6 +111,22 @@ const rememberCustomerPrices = async (namaPembeli: string | undefined | null, ca
   }
 };
 
+// Tambahkan kode pelanggan baru (label) ke master CustomerCode agar muncul di autocomplete.
+const rememberCustomerCodes = async (cart: CartItem[]) => {
+  const codes = new Set<string>();
+  for (const item of cart) {
+    const code = typeof item.label === "string" ? item.label.trim().toUpperCase() : "";
+    if (code) codes.add(code);
+  }
+  for (const code of codes) {
+    try {
+      await prisma.customerCode.upsert({ where: { code }, update: {}, create: { code } });
+    } catch {
+      /* best-effort */
+    }
+  }
+};
+
 const getNotificationTargetRoles = async () => {
   try {
     const rows = await prisma.$queryRaw<Array<{ role: string }>>`
@@ -299,6 +315,8 @@ export async function POST(request: Request) {
 
     // Jadikan harga transaksi ini sebagai patokan harga pelanggan berikutnya.
     await rememberCustomerPrices(nama_pembeli, cart || []);
+    // Kode pelanggan baru dari transaksi ini → tambahkan ke master (untuk autocomplete).
+    await rememberCustomerCodes(cart || []);
 
     await createNewOrderNotifications({
       ...newTransaction,

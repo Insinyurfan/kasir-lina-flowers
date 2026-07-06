@@ -108,6 +108,14 @@ model CustomerPrice {
   @@index([customerName])
 }
 
+// Daftar kode pelanggan (mis. Aneka: AMN/SMT/HARLIS) sebagai master untuk
+// autocomplete, terpisah dari variasi produk. Tumbuh otomatis saat kode dipakai.
+model CustomerCode {
+  id        Int      @id @default(autoincrement())
+  code      String   @unique // dinormalisasi UPPERCASE
+  createdAt DateTime @default(now())
+}
+
 model Notification {
   id               Int          @id @default(autoincrement())
   transactionId    Int?

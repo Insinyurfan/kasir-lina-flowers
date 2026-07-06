@@ -983,10 +983,10 @@ export default function PosPage() {
             <button
               type="button"
               onClick={() => handleNoVariantSelected(variantModalProduct)}
-              className="mx-4 mt-3 flex w-[calc(100%-2rem)] items-center justify-between gap-2 rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 px-4 py-3 hover:border-slate-400 hover:bg-slate-100 active:scale-[0.99] transition-all"
+              className="mx-4 mt-3 flex w-[calc(100%-2rem)] items-center justify-between gap-2 rounded-2xl border-2 border-dashed border-pink-300 bg-pink-50 px-4 py-3 hover:border-pink-400 hover:bg-pink-100 active:scale-[0.99] transition-all"
             >
-              <span className="text-sm font-black text-slate-700">{(variantModalProduct.variants && variantModalProduct.variants.length > 0) ? "Tanpa Variasi" : "Tambah ke Keranjang"}</span>
-              <span className="text-sm font-bold text-slate-500">
+              <span className="text-sm font-black text-pink-700">{(variantModalProduct.variants && variantModalProduct.variants.length > 0) ? "Tanpa Variasi" : "Tambah ke Keranjang"}</span>
+              <span className="text-sm font-bold text-pink-500">
                 Rp {variantModalProduct.harga.toLocaleString("id-ID")}
                 {(variantModalProduct.satuanHarga ?? "pcs") !== "pcs" && (
                   <span className="text-[10px] text-slate-400"> /{SATUAN_LABELS[variantModalProduct.satuanHarga] ?? variantModalProduct.satuanHarga}</span>

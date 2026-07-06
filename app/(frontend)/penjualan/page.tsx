@@ -42,7 +42,7 @@ const SATUAN_LABELS: Record<string, string> = { pcs: "Pcs", lusin: "Lusin", sete
 
 // ===== MODE ANEKA (nota grup bernomor + kode produk) =====
 // Aktif lewat toggle saat cetak. Saat NONAKTIF, semua dokumen dirender persis seperti semula.
-type DocItemLike = { variantName?: string | null; product?: { nama_produk?: string | null } | null };
+type DocItemLike = { variantName?: string | null; label?: string | null; product?: { nama_produk?: string | null } | null };
 const CIRCLED_NUMS = ["", "①", "②", "③", "④", "⑤", "⑥", "⑦", "⑧", "⑨", "⑩", "⑪", "⑫", "⑬", "⑭", "⑮", "⑯", "⑰", "⑱", "⑲", "⑳"];
 const circledNo = (n: number): string => CIRCLED_NUMS[n] ?? `(${n})`;
 // Ambil kode produk dari nama, mis. "LN 13 - Bando Bunga..." -> "LN 13".
@@ -51,34 +51,42 @@ const extractKode = (nama?: string | null): string => {
   const i = nama.indexOf(" - ");
   return i > 0 ? nama.slice(0, i).trim() : nama.trim();
 };
-// Peta kode pelanggan (variantName) -> nomor nota, urut kemunculan pertama.
+// Kode pelanggan: pakai `label` (baru) bila ada; jika tidak, pakai `variantName` (data lama
+// yang menyimpan kode sebagai variasi). Ini yang menentukan pengelompokan nomor nota.
+const anekaCode = (item: DocItemLike): string => {
+  const l = (item.label || "").trim();
+  return l || (item.variantName || "").trim();
+};
+// Ukuran/variasi asli untuk ditampilkan — hanya bila kode ada di `label`
+// (kalau kode berada di variantName/data lama, tidak ada ukuran terpisah).
+const anekaSize = (item: DocItemLike): string => ((item.label || "").trim() ? (item.variantName || "").trim() : "");
+// Peta kode pelanggan -> nomor nota, urut kemunculan pertama.
 const buildNotaMap = (items: DocItemLike[]): Map<string, number> => {
   const map = new Map<string, number>();
   let n = 0;
   for (const it of items) {
-    const code = (it.variantName || "").trim();
+    const code = anekaCode(it);
     if (code && !map.has(code)) map.set(code, ++n);
   }
   return map;
 };
 // Urutkan item agar terkelompok per pelanggan (nomor nota).
 const orderItemsAneka = <T extends DocItemLike>(items: T[], notaMap: Map<string, number>): T[] =>
-  [...items].sort((a, b) => {
-    const na = notaMap.get((a.variantName || "").trim()) ?? 999;
-    const nb = notaMap.get((b.variantName || "").trim()) ?? 999;
-    return na - nb;
-  });
-// Nama tampil Mode Aneka: "① LN 12 SMT" (nomor nota + kode produk + kode pelanggan).
+  [...items].sort((a, b) => (notaMap.get(anekaCode(a)) ?? 999) - (notaMap.get(anekaCode(b)) ?? 999));
+// Nama tampil Mode Aneka: "① LN 13 (M) AMN" (nomor nota + kode produk + ukuran + kode pelanggan).
 const anekaItemName = (item: DocItemLike, notaMap: Map<string, number>): string => {
   const kode = extractKode(item.product?.nama_produk);
-  const code = (item.variantName || "").trim();
+  const code = anekaCode(item);
+  const size = anekaSize(item);
   const no = code ? notaMap.get(code) : undefined;
   const prefix = no ? `${circledNo(no)} ` : "";
-  return `${prefix}${kode}${code ? ` ${code}` : ""}`;
+  return `${prefix}${kode}${size ? ` (${size})` : ""}${code ? ` ${code}` : ""}`;
 };
-// Nama tampil normal.
+// Nama tampil normal (kode pelanggan tetap ikut bila ada, mis. "... — AMN").
 const normalItemName = (item: DocItemLike): string =>
-  (item.product?.nama_produk || "-") + (item.variantName ? ` (${item.variantName})` : "");
+  (item.product?.nama_produk || "-") +
+  (item.variantName ? ` (${item.variantName})` : "") +
+  (item.label ? ` — ${item.label}` : "");
 
 type PrintTransactionItem = {
   id?: number;
@@ -86,6 +94,7 @@ type PrintTransactionItem = {
   subtotal: number;
   satuanHarga?: string | null;
   variantName?: string | null;
+  label?: string | null;
   product?: {
     nama_produk?: string | null;
   } | null;
@@ -715,9 +724,9 @@ export default function RiwayatPenjualanPage() {
     drawDashedLine(ctx, y, width, margin);
     y += isThermal ? 16 : 24;
 
-    (selectedTrx.items || []).forEach((item: { jumlah: number; subtotal: number; satuanHarga?: string | null; variantName?: string | null; product: { nama_produk: string } }) => {
+    (selectedTrx.items || []).forEach((item: { jumlah: number; subtotal: number; satuanHarga?: string | null; variantName?: string | null; label?: string | null; product: { nama_produk: string } }) => {
       ctx.font = `bold ${bodyFont}px 'Courier New', monospace`;
-      const namaLengkap = String(item.product.nama_produk || "") + (item.variantName ? ` (${item.variantName})` : "");
+      const namaLengkap = String(item.product.nama_produk || "") + (item.variantName ? ` (${item.variantName})` : "") + (item.label ? ` - ${item.label}` : "");
       y = wrapCanvasText(ctx, namaLengkap.toUpperCase(), margin, y, contentWidth, bodyLineHeight);
 
       ctx.font = `${bodyFont}px 'Courier New', monospace`;
@@ -1059,7 +1068,7 @@ export default function RiwayatPenjualanPage() {
       const unitPrice = item.jumlah > 0 ? item.subtotal / item.jumlah : 0;
       const nameCell = aneka
         ? `<strong>${escapeHtml(anekaItemName(item, notaMap))}</strong>`
-        : `${escapeHtml(item.product?.nama_produk || "-")}${item.variantName ? ` <strong>(${escapeHtml(item.variantName)})</strong>` : ""}`;
+        : `${escapeHtml(item.product?.nama_produk || "-")}${item.variantName ? ` <strong>(${escapeHtml(item.variantName)})</strong>` : ""}${item.label ? ` &mdash; <strong>${escapeHtml(item.label)}</strong>` : ""}`;
       return `
       <tr>
         <td>${nameCell}</td>
@@ -2195,12 +2204,12 @@ export default function RiwayatPenjualanPage() {
                         {(() => {
                           const notaMap = buildNotaMap(selectedTrx.items || []);
                           const previewItems = groupAneka ? orderItemsAneka(selectedTrx.items || [], notaMap) : (selectedTrx.items || []);
-                          return previewItems.map((item: { id: number; jumlah: number; subtotal: number; satuanHarga?: string | null; variantName?: string | null; product: { nama_produk: string } }) => {
+                          return previewItems.map((item: { id: number; jumlah: number; subtotal: number; satuanHarga?: string | null; variantName?: string | null; label?: string | null; product: { nama_produk: string } }) => {
                           const satuanLabel = SATUAN_LABELS[item.satuanHarga || "pcs"] ?? "Pcs";
                           const unitPrice = item.jumlah > 0 ? item.subtotal / item.jumlah : 0;
                           return (
                             <tr key={item.id} className="border-b border-slate-50 even:bg-pink-50/30">
-                              <td className="px-4 py-2 font-semibold text-slate-700 leading-snug">{groupAneka ? <strong>{anekaItemName(item, notaMap)}</strong> : (item.product?.nama_produk || "-") + (item.variantName ? ` (${item.variantName})` : "")}</td>
+                              <td className="px-4 py-2 font-semibold text-slate-700 leading-snug">{groupAneka ? <strong>{anekaItemName(item, notaMap)}</strong> : normalItemName(item)}</td>
                               {printType === "nota" && (
                                 <td className="px-4 py-2 text-right text-slate-700">Rp {Number(unitPrice).toLocaleString("id-ID")}/{satuanLabel}</td>
                               )}

@@ -961,10 +961,11 @@ export default function PosPage() {
               />
               {codeSuggestOpen && (() => {
                 const q = variantCode.trim().toUpperCase();
-                const matches = customerCodes.filter((c) => c !== q && (q === "" || c.includes(q))).slice(0, 8);
+                // Tampilkan SEMUA kode (bisa di-scroll) saat kolom diklik; menyaring saat diketik.
+                const matches = customerCodes.filter((c) => c !== q && (q === "" || c.includes(q)));
                 if (matches.length === 0) return null;
                 return (
-                  <div className="absolute left-0 right-0 top-full mt-1 z-30 max-h-40 overflow-y-auto rounded-xl border-2 border-amber-100 bg-white shadow-xl">
+                  <div className="absolute left-0 right-0 top-full mt-1 z-30 max-h-64 overflow-y-auto rounded-xl border-2 border-amber-100 bg-white shadow-xl">
                     {matches.map((c) => (
                       <button
                         key={c}

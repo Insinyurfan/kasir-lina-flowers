@@ -26,6 +26,7 @@ type CartItem = {
   variantId?: number | string | null;
   variantName?: string | null;
   harga: number | string;
+  hargaBase?: number | string; // harga dasar per satuanHarga (untuk patokan harga per pelanggan)
   quantity: number | string;
   satuanPesan?: string;
 };
@@ -84,6 +85,29 @@ const mapCartToItems = (cart: CartItem[]) =>
     subtotal: Number(item.harga) * Number(item.quantity),
     satuanHarga: item.satuanPesan || "pcs",
   }));
+
+// Simpan harga dasar tiap baris sebagai "patokan" harga pelanggan (level produk),
+// diambil dari CO terakhir. Dipakai otomatis saat pelanggan yang sama order lagi.
+const rememberCustomerPrices = async (namaPembeli: string | undefined | null, cart: CartItem[]) => {
+  const customerName = String(namaPembeli || "").trim().toUpperCase();
+  if (!customerName) return;
+  for (const item of cart) {
+    const base = Number(item.hargaBase);
+    if (!Number.isFinite(base)) continue; // transaksi manual belum kirim hargaBase → dilewati
+    const productId = resolveProductId(item);
+    if (!Number.isInteger(productId) || productId <= 0) continue;
+    const price = Math.max(0, Math.round(base));
+    try {
+      await prisma.customerPrice.upsert({
+        where: { customerName_productId_variantId: { customerName, productId, variantId: 0 } },
+        update: { price },
+        create: { customerName, productId, variantId: 0, price },
+      });
+    } catch {
+      /* patokan harga best-effort; jangan gagalkan transaksi */
+    }
+  }
+};
 
 const getNotificationTargetRoles = async () => {
   try {
@@ -270,6 +294,9 @@ export async function POST(request: Request) {
         data: { stok: { decrement: Number(item.quantity) } },
       });
     }
+
+    // Jadikan harga transaksi ini sebagai patokan harga pelanggan berikutnya.
+    await rememberCustomerPrices(nama_pembeli, cart || []);
 
     await createNewOrderNotifications({
       ...newTransaction,

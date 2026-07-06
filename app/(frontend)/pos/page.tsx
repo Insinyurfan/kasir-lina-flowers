@@ -189,6 +189,9 @@ export default function PosPage() {
   const [isAddingVariant, setIsAddingVariant] = useState(false);
 
   const [isCartOpen, setIsCartOpen] = useState(false); // STATE BUKA/TUTUP KERANJANG
+  // Daftar nama toko/pelanggan yang pernah ada (untuk autocomplete pilih nama → harga terhubung).
+  const [customerNames, setCustomerNames] = useState<string[]>([]);
+  const [customerSuggestOpen, setCustomerSuggestOpen] = useState(false);
   const [variantModalProduct, setVariantModalProduct] = useState<Product | null>(null); // PRODUK YANG SEDANG PILIH VARIASI
   const [animations, setAnimations] = useState<{id: number, x: number, y: number, img: string | null}[]>([]); // STATE ANIMASI TERBANG
   const animationIdRef = useRef(0);
@@ -356,6 +359,18 @@ export default function PosPage() {
       cancelled = true;
     };
   }, [namaPembeli, isSessionStarted]);
+
+  // Muat daftar nama toko/pelanggan yang pernah ada untuk autocomplete.
+  useEffect(() => {
+    fetch("/api/pelanggan", { cache: "no-store" })
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data)) setCustomerNames(data);
+      })
+      .catch(() => {
+        /* abaikan; autocomplete opsional */
+      });
+  }, []);
 
   // Ambil keranjang tersimpan dari server (per akun) — dipakai saat mount & auto-refresh.
   // force=true (saat mount) tetap memuat walau ada perubahan lokal; saat auto-refresh
@@ -708,9 +723,39 @@ export default function PosPage() {
           <p className="text-slate-500 mb-8 text-sm italic">Pastikan nama pelanggan sudah benar sebelum memulai.</p>
           
           <div className="space-y-4 text-left">
-            <div>
+            <div className="relative">
               <label className="text-[10px] font-extrabold text-slate-400 uppercase ml-1 tracking-widest">Nama Pelanggan</label>
-              <input type="text" value={namaPembeli} onChange={(e) => setNamaPembeli(sanitizeCustomerName(e.target.value))} placeholder="Masukkan nama..." className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-5 py-4 outline-none focus:border-pink-500 transition-all font-bold text-slate-700" />
+              <input
+                type="text"
+                value={namaPembeli}
+                onChange={(e) => { setNamaPembeli(sanitizeCustomerName(e.target.value)); setCustomerSuggestOpen(true); }}
+                onFocus={() => setCustomerSuggestOpen(true)}
+                onBlur={() => window.setTimeout(() => setCustomerSuggestOpen(false), 150)}
+                placeholder="Ketik atau pilih nama..."
+                autoComplete="off"
+                className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-5 py-4 outline-none focus:border-pink-500 transition-all font-bold text-slate-700"
+              />
+              {customerSuggestOpen && (() => {
+                const q = namaPembeli.trim().toUpperCase();
+                const matches = customerNames.filter((n) => n !== q && (q === "" || n.includes(q))).slice(0, 8);
+                if (matches.length === 0) return null;
+                return (
+                  <div className="absolute left-0 right-0 top-full mt-1 z-30 max-h-56 overflow-y-auto rounded-2xl border-2 border-slate-100 bg-white shadow-xl text-left">
+                    <p className="px-4 pt-2 pb-1 text-[9px] font-black uppercase tracking-widest text-slate-300">Pernah order</p>
+                    {matches.map((n) => (
+                      <button
+                        key={n}
+                        type="button"
+                        onMouseDown={(e) => { e.preventDefault(); setNamaPembeli(n); setCustomerSuggestOpen(false); }}
+                        className="flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm font-bold text-slate-700 hover:bg-pink-50"
+                      >
+                        <User size={14} className="text-pink-400 shrink-0" />
+                        <span className="truncate">{n}</span>
+                      </button>
+                    ))}
+                  </div>
+                );
+              })()}
             </div>
             <button onClick={() => { if(!namaPembeli.trim()) return alert("⚠️ Masukkan nama pelanggan!"); setIsSessionStarted(true); }} className="w-full bg-pink-600 text-white font-bold py-4 rounded-2xl shadow-lg shadow-pink-200 hover:bg-pink-700 transition-all">BUKA KASIR</button>
           </div>

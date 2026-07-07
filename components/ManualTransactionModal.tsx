@@ -62,6 +62,7 @@ type ManualItem = {
   harga: string;
   satuan: string;
   label: string; // kode pelanggan per baris (Aneka), terpisah dari variasi
+  origVariantName: string; // snapshot variantName asli dari transaksi (untuk migrasi kode lama)
 };
 
 const SATUAN_OPTIONS: Array<{ value: string; label: string }> = [
@@ -112,6 +113,7 @@ const createEmptyItem = (): ManualItem => ({
   harga: "0",
   satuan: "pcs",
   label: "",
+  origVariantName: "",
 });
 
 export default function ManualTransactionModal({ open, transaction, title, onClose, onSaved }: Props) {
@@ -197,6 +199,7 @@ export default function ManualTransactionModal({ open, transaction, title, onClo
               harga: String(item.jumlah > 0 ? item.subtotal / item.jumlah : item.product.harga),
               satuan: item.satuanHarga || "pcs",
               label: item.label || "",
+              origVariantName: item.variantName || "",
             }))
           : [createEmptyItem()]
       );
@@ -229,6 +232,27 @@ export default function ManualTransactionModal({ open, transaction, title, onClo
       return result;
     }, {});
   }, [products]);
+
+  // Migrasi data lama: dulu kode pelanggan Aneka disimpan sebagai "variasi"
+  // (variantName), lalu variasi-kode dihapus saat migrasi. Saat produk sudah
+  // dimuat, pindahkan variantName yang BUKAN variasi asli produk ke kolom kode
+  // (label) agar tampil & tidak terhapus saat disimpan.
+  useEffect(() => {
+    if (!open || products.length === 0) return;
+    setItems((current) =>
+      current.map((it) => {
+        if (!it.origVariantName) return it;
+        const product = productsById[it.productId];
+        const isRealVariant = !!product?.variants?.some(
+          (v) => v.name === it.origVariantName || String(v.id) === it.variantId
+        );
+        if (isRealVariant) return it; // variasi ukuran asli → biarkan
+        if (it.label) return it.variantId ? { ...it, variantId: "" } : it;
+        return { ...it, label: it.origVariantName, variantId: "" };
+      })
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, products]);
 
   const total = items.reduce((sum, item) => sum + Number(item.harga || 0) * Number(item.quantity || 0), 0);
 

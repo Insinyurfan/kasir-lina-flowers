@@ -49,6 +49,7 @@ export type ManualTransaction = {
     satuanHarga?: string;
     variantId?: number | null;
     variantName?: string | null;
+    label?: string | null;
     product: ManualProduct;
   }>;
 };
@@ -60,6 +61,7 @@ type ManualItem = {
   quantity: string;
   harga: string;
   satuan: string;
+  label: string; // kode pelanggan per baris (Aneka), terpisah dari variasi
 };
 
 const SATUAN_OPTIONS: Array<{ value: string; label: string }> = [
@@ -109,6 +111,7 @@ const createEmptyItem = (): ManualItem => ({
   quantity: "1",
   harga: "0",
   satuan: "pcs",
+  label: "",
 });
 
 export default function ManualTransactionModal({ open, transaction, title, onClose, onSaved }: Props) {
@@ -129,6 +132,9 @@ export default function ManualTransactionModal({ open, transaction, title, onClo
   // Autocomplete nama pelanggan (dari pelanggan yang sudah pernah diinput di POS).
   const [customerNames, setCustomerNames] = useState<string[]>([]);
   const [namaOpen, setNamaOpen] = useState(false);
+  // Autocomplete kode pelanggan per baris (Aneka) + baris mana yang dropdown-nya terbuka.
+  const [customerCodes, setCustomerCodes] = useState<string[]>([]);
+  const [codeOpenRow, setCodeOpenRow] = useState<string | null>(null);
 
   useEffect(() => {
     if (!open) return;
@@ -151,6 +157,11 @@ export default function ManualTransactionModal({ open, transaction, title, onClo
       .then((res) => res.json())
       .then((data) => setCustomerNames(Array.isArray(data) ? data.map((n: string) => String(n).toUpperCase()) : []))
       .catch(() => setCustomerNames([]));
+
+    fetch("/api/kode-pelanggan", { cache: "no-store" })
+      .then((res) => res.json())
+      .then((data) => setCustomerCodes(Array.isArray(data) ? data.map((c: string) => String(c).toUpperCase()) : []))
+      .catch(() => setCustomerCodes([]));
   }, [open]);
 
   const getCashierNameFromAccount = useCallback((account: CashierAccount) => account.fullName || account.username, []);
@@ -185,6 +196,7 @@ export default function ManualTransactionModal({ open, transaction, title, onClo
               quantity: String(item.jumlah),
               harga: String(item.jumlah > 0 ? item.subtotal / item.jumlah : item.product.harga),
               satuan: item.satuanHarga || "pcs",
+              label: item.label || "",
             }))
           : [createEmptyItem()]
       );
@@ -271,6 +283,7 @@ export default function ManualTransactionModal({ open, transaction, title, onClo
           satuanPesan: item.satuan || "pcs",
           variantId: variant ? variant.id : null,
           variantName: variant ? variant.name : null,
+          label: item.label.trim() ? item.label.trim().toUpperCase() : null,
         };
       });
 
@@ -502,6 +515,38 @@ export default function ManualTransactionModal({ open, transaction, title, onClo
                           ))}
                         </select>
                       )}
+                      {/* Kode pelanggan per baris (Aneka), terpisah dari variasi ukuran */}
+                      <div className="relative">
+                        <input
+                          type="text"
+                          value={item.label}
+                          placeholder="Kode pelanggan (opsional)"
+                          onChange={(e) => { updateItem(item.rowId, "label", e.target.value.replace(/[^A-Za-z0-9 -]/g, "").toUpperCase()); setCodeOpenRow(item.rowId); }}
+                          onFocus={() => setCodeOpenRow(item.rowId)}
+                          onBlur={() => window.setTimeout(() => setCodeOpenRow((cur) => (cur === item.rowId ? null : cur)), 150)}
+                          className="w-full border border-amber-200 bg-amber-50/60 text-amber-700 rounded-xl px-3 py-2 outline-none focus:border-amber-400 text-sm font-bold placeholder:font-normal placeholder:text-amber-400"
+                          title="Kode pelanggan (Aneka)"
+                        />
+                        {codeOpenRow === item.rowId && (() => {
+                          const q = item.label.trim().toUpperCase();
+                          const matches = customerCodes.filter((c) => c !== q && (q === "" || c.includes(q)));
+                          if (matches.length === 0) return null;
+                          return (
+                            <div className="absolute left-0 right-0 top-full mt-1 z-40 max-h-56 overflow-y-auto rounded-xl border-2 border-amber-100 bg-white shadow-xl">
+                              {matches.map((c) => (
+                                <button
+                                  key={c}
+                                  type="button"
+                                  onMouseDown={(e) => { e.preventDefault(); updateItem(item.rowId, "label", c); setCodeOpenRow(null); }}
+                                  className="block w-full px-3 py-2 text-left text-sm font-black text-amber-700 hover:bg-amber-50"
+                                >
+                                  {c}
+                                </button>
+                              ))}
+                            </div>
+                          );
+                        })()}
+                      </div>
                     </div>
                     <input
                       type="number"

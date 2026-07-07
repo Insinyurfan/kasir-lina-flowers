@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { ReceiptText, Filter, X, Printer, Settings, Save, User, Trash2, Camera, Calendar, Search, Plus, Pencil, Download, Check, ArrowDown, ArrowUp, ArrowUpDown, FileText } from "lucide-react";
 import ManualTransactionModal, { type ManualTransaction } from "@/components/ManualTransactionModal";
 import { getSavedUserSession } from "@/lib/userSession";
+import { formatQtySatuan } from "@/lib/satuan";
 
 const getTimeFromISO = (isoString: string): string => {
   // Konversi ke WIB (Asia/Jakarta) — JANGAN memotong jam mentah dari string ISO
@@ -731,11 +732,11 @@ export default function RiwayatPenjualanPage() {
 
       ctx.font = `${bodyFont}px 'Courier New', monospace`;
       const unitPrice = item.jumlah > 0 ? item.subtotal / item.jumlah : 0;
-      const satuanLabel = SATUAN_LABELS[item.satuanHarga || "pcs"] ?? "Pcs";
+      const qtySatuan = formatQtySatuan(item.jumlah, item.satuanHarga);
       ctx.fillText(
         printType === "struk"
-          ? `${item.jumlah} ${satuanLabel} x ${unitPrice.toLocaleString("id-ID")}`
-          : `${item.jumlah} ${satuanLabel}`,
+          ? `${qtySatuan} x ${unitPrice.toLocaleString("id-ID")}`
+          : qtySatuan,
         margin, y + 2
       );
 
@@ -952,7 +953,7 @@ export default function RiwayatPenjualanPage() {
 
         ctx.fillStyle = "#64748b";
         ctx.font = "16px Arial, sans-serif";
-        ctx.fillText(`${item.jumlah} ${satuanLabel}`, MARGIN + PROD_W + UNIT_W + QTY_W / 2, y + 16);
+        ctx.fillText(formatQtySatuan(item.jumlah, item.satuanHarga), MARGIN + PROD_W + UNIT_W + QTY_W / 2, y + 16);
 
         ctx.fillStyle = "#334155";
         ctx.font = "bold 16px Arial, sans-serif";
@@ -962,7 +963,7 @@ export default function RiwayatPenjualanPage() {
         ctx.fillStyle = "#64748b";
         ctx.font = "16px Arial, sans-serif";
         ctx.textAlign = "center";
-        ctx.fillText(`${item.jumlah} ${SATUAN_LABELS[item.satuanHarga || "pcs"] ?? "Pcs"}`, MARGIN + PROD_W + UNIT_W + QTY_W / 2, y + 16);
+        ctx.fillText(formatQtySatuan(item.jumlah, item.satuanHarga), MARGIN + PROD_W + UNIT_W + QTY_W / 2, y + 16);
       }
       ctx.textAlign = "left";
       y += ROW_H;
@@ -1073,7 +1074,7 @@ export default function RiwayatPenjualanPage() {
       <tr>
         <td>${nameCell}</td>
         ${isNota ? `<td class="money">Rp ${Number(unitPrice).toLocaleString("id-ID")}/${satuanLabel}</td>` : ""}
-        <td class="qty">${escapeHtml(item.jumlah)} ${satuanLabel}</td>
+        <td class="qty">${escapeHtml(formatQtySatuan(item.jumlah, item.satuanHarga))}</td>
         ${isNota ? `<td class="money">Rp ${Number(item.subtotal || 0).toLocaleString("id-ID")}</td>` : ""}
       </tr>`;
     }).join("");
@@ -2122,15 +2123,15 @@ export default function RiwayatPenjualanPage() {
                     <div style={{ borderTop: "1.5px dashed #000", margin: "12px 0" }}></div>
                     <div className="space-y-3">
                       {selectedTrx.items.map((item: { id: number; jumlah: number; subtotal: number; satuanHarga?: string | null; variantName?: string | null; product: { nama_produk: string } }) => {
-                        const satuanLabel = SATUAN_LABELS[item.satuanHarga || "pcs"] ?? "Pcs";
+                        const qtySatuan = formatQtySatuan(item.jumlah, item.satuanHarga);
                         return (
                           <div key={item.id}>
                             <div className="font-bold uppercase">{item.product.nama_produk}{item.variantName ? ` (${item.variantName})` : ""}</div>
                             <div className="receipt-row flex justify-between mt-0.5">
                               <span>
                                 {printType === "struk"
-                                  ? `${item.jumlah} ${satuanLabel} x ${(item.subtotal / item.jumlah).toLocaleString("id-ID")}`
-                                  : `${item.jumlah} ${satuanLabel}`}
+                                  ? `${qtySatuan} x ${(item.subtotal / item.jumlah).toLocaleString("id-ID")}`
+                                  : qtySatuan}
                               </span>
                               {printType === "struk" && <span className="receipt-amount">Rp {item.subtotal.toLocaleString("id-ID")}</span>}
                             </div>
@@ -2213,7 +2214,7 @@ export default function RiwayatPenjualanPage() {
                               {printType === "nota" && (
                                 <td className="px-4 py-2 text-right text-slate-700">Rp {Number(unitPrice).toLocaleString("id-ID")}/{satuanLabel}</td>
                               )}
-                              <td className="px-2 py-2 text-center text-slate-600">{item.jumlah} {satuanLabel}</td>
+                              <td className="px-2 py-2 text-center text-slate-600">{formatQtySatuan(item.jumlah, item.satuanHarga)}</td>
                               {printType === "nota" && (
                                 <td className="px-4 py-2 text-right text-slate-700">Rp {Number(item.subtotal || 0).toLocaleString("id-ID")}</td>
                               )}

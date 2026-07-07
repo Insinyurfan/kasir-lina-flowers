@@ -65,6 +65,7 @@ type ManualItem = {
 const SATUAN_OPTIONS: Array<{ value: string; label: string }> = [
   { value: "pcs", label: "Pcs" },
   { value: "lusin", label: "Lusin" },
+  { value: "setengah_gross", label: "½ Gross" },
   { value: "gross", label: "Gross" },
 ];
 
@@ -125,6 +126,9 @@ export default function ManualTransactionModal({ open, transaction, title, onClo
   // Pemilih produk yang bisa DIKETIK: baris mana yang dropdown-nya terbuka + teks pencariannya.
   const [pickerRow, setPickerRow] = useState<string | null>(null);
   const [pickerSearch, setPickerSearch] = useState("");
+  // Autocomplete nama pelanggan (dari pelanggan yang sudah pernah diinput di POS).
+  const [customerNames, setCustomerNames] = useState<string[]>([]);
+  const [namaOpen, setNamaOpen] = useState(false);
 
   useEffect(() => {
     if (!open) return;
@@ -142,6 +146,11 @@ export default function ManualTransactionModal({ open, transaction, title, onClo
         setCashierAccounts(accounts);
       })
       .catch(() => setCashierAccounts([]));
+
+    fetch("/api/pelanggan", { cache: "no-store" })
+      .then((res) => res.json())
+      .then((data) => setCustomerNames(Array.isArray(data) ? data.map((n: string) => String(n).toUpperCase()) : []))
+      .catch(() => setCustomerNames([]));
   }, [open]);
 
   const getCashierNameFromAccount = useCallback((account: CashierAccount) => account.fullName || account.username, []);
@@ -336,14 +345,35 @@ export default function ManualTransactionModal({ open, transaction, title, onClo
                 className="w-full border border-slate-200 rounded-xl px-3 py-2.5 outline-none focus:border-pink-500 text-sm"
               />
             </div>
-            <div>
+            <div className="relative">
               <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Pelanggan</label>
               <input
                 value={namaPembeli}
-                onChange={(e) => setNamaPembeli(e.target.value)}
+                onChange={(e) => { setNamaPembeli(e.target.value.toUpperCase()); setNamaOpen(true); }}
+                onFocus={() => setNamaOpen(true)}
+                onBlur={() => window.setTimeout(() => setNamaOpen(false), 150)}
                 className="w-full border border-slate-200 rounded-xl px-3 py-2.5 outline-none focus:border-pink-500 text-sm"
                 placeholder="Nama pelanggan"
               />
+              {namaOpen && (() => {
+                const q = namaPembeli.trim().toUpperCase();
+                const matches = customerNames.filter((n) => n && n !== q && (q === "" || n.includes(q)));
+                if (matches.length === 0) return null;
+                return (
+                  <div className="absolute left-0 right-0 top-full mt-1 z-40 max-h-56 overflow-y-auto rounded-xl border border-slate-200 bg-white shadow-xl">
+                    {matches.map((n) => (
+                      <button
+                        key={n}
+                        type="button"
+                        onMouseDown={(e) => { e.preventDefault(); setNamaPembeli(n); setNamaOpen(false); }}
+                        className="block w-full px-3 py-2 text-left text-sm font-bold text-slate-700 hover:bg-pink-50"
+                      >
+                        {n}
+                      </button>
+                    ))}
+                  </div>
+                );
+              })()}
             </div>
             <div>
               <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Kasir</label>

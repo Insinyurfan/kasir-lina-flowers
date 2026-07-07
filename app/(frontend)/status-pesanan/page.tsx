@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { PackageCheck, Printer, RefreshCw } from "lucide-react";
 import { clearSavedUserSession, getSavedUserSession } from "@/lib/userSession";
+import { formatQtySatuan } from "@/lib/satuan";
 
 const statusOptions = ["Sedang Disiapkan", "Siap Dikirim", "Dikirim", "Selesai"];
 const normalizeStatus = (status: string) =>
@@ -32,8 +33,6 @@ type StoreInfo = {
   logo: string;
   receiptLogo: string;
 };
-
-const SATUAN_LABELS: Record<string, string> = { pcs: "Pcs", lusin: "Lusin", gross: "Gross" };
 
 type OrderItem = {
   id: number;
@@ -150,11 +149,10 @@ export default function OrderStatusPage() {
     const itemRows = (order.items || [])
       .map(
         (item) => {
-          const satuanLabel = SATUAN_LABELS[item.satuanHarga || "pcs"] ?? "Pcs";
           return `
       <tr>
         <td>${escapeHtml((item.product?.nama_produk || "-") + (item.variantName ? ` (${item.variantName})` : ""))}</td>
-        <td class="qty">${item.jumlah} ${satuanLabel}</td>
+        <td class="qty">${escapeHtml(formatQtySatuan(item.jumlah, item.satuanHarga))}</td>
         <td class="money">Rp ${Number(item.subtotal || 0).toLocaleString("id-ID")}</td>
       </tr>`;
         }
@@ -296,7 +294,7 @@ export default function OrderStatusPage() {
                         {item.product.nama_produk}
                         {item.variantName && <span className="ml-1 text-amber-600">({item.variantName})</span>}
                       </p>
-                      <p className="text-xs text-slate-500">Jumlah: {item.jumlah}</p>
+                      <p className="text-xs text-slate-500">Jumlah: {formatQtySatuan(item.jumlah, item.satuanHarga)}</p>
                     </div>
                     <strong className="text-sm text-pink-600">
                       Rp {item.subtotal.toLocaleString("id-ID")}

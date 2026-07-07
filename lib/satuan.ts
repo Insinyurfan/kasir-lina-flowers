@@ -4,6 +4,17 @@
 export const PCS_PER_UNIT: Record<string, number> = { pcs: 1, lusin: 12, setengah_gross: 72, gross: 144 };
 export const SATUAN_LABELS: Record<string, string> = { pcs: "Pcs", lusin: "Lusin", setengah_gross: "½ Gross", gross: "Gross" };
 
+// Format "jumlah + satuan" untuk ditampilkan di nota/struk/surat jalan.
+// Untuk satuan yang labelnya mengandung pecahan (mis. "½ Gross"), sisipkan "×"
+// agar tidak salah baca: "1 ½ Gross" akan terbaca sebagai 1,5 gross, sedangkan
+// "1 × ½ Gross" jelas berarti 1 unit ½ gross.
+export function formatQtySatuan(jumlah: number | string, satuanHarga?: string | null): string {
+  const key = satuanHarga || "pcs";
+  const label = SATUAN_LABELS[key] ?? "Pcs";
+  const needsSeparator = /[½¼¾]/.test(label);
+  return needsSeparator ? `${jumlah} × ${label}` : `${jumlah} ${label}`;
+}
+
 // Hitung harga untuk satuan pesan tertentu dari harga dasar (yang berbasis satuanHarga produk).
 // Contoh: hargaBase 280.000 /gross → satuanPesan "lusin" = 280.000 × 12 ÷ 144 = 23.333.
 export function hitungHargaSatuan(hargaBase: number, satuanHarga: string, satuanPesan: string): number {

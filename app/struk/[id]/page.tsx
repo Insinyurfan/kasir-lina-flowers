@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import { ArrowLeft, Printer, Share2 } from "lucide-react";
-import { formatQtySatuan } from "@/lib/satuan";
+import { formatQtySatuan, formatUnitPriceSatuan } from "@/lib/satuan";
 
 type ReceiptType = "struk" | "surat-jalan";
 
@@ -148,7 +148,7 @@ export default function ReceiptPage() {
         <div className="items">
           {transaction.items.map((item) => {
             const unitPrice = item.jumlah > 0 ? item.subtotal / item.jumlah : 0;
-
+            const unitDisplay = formatUnitPriceSatuan(unitPrice, item.satuanHarga);
             const qtySatuan = formatQtySatuan(item.jumlah, item.satuanHarga);
 
             return (
@@ -157,7 +157,7 @@ export default function ReceiptPage() {
                 <div className="row receipt-row">
                   <span>
                     {receiptType === "struk"
-                      ? `${qtySatuan} x ${unitPrice.toLocaleString("id-ID")}`
+                      ? `${qtySatuan} x ${unitDisplay.value.toLocaleString("id-ID")}`
                       : qtySatuan}
                   </span>
                   {receiptType === "struk" && <span className="receipt-amount">{formatCurrency(item.subtotal)}</span>}

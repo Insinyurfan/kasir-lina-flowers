@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { ReceiptText, Filter, X, Printer, Settings, Save, User, Trash2, Camera, Calendar, Search, Plus, Pencil, Download, Check, ArrowDown, ArrowUp, ArrowUpDown, FileText } from "lucide-react";
 import ManualTransactionModal, { type ManualTransaction } from "@/components/ManualTransactionModal";
 import { getSavedUserSession } from "@/lib/userSession";
-import { formatQtySatuan } from "@/lib/satuan";
+import { formatQtySatuan, formatUnitPriceSatuan } from "@/lib/satuan";
 
 const getTimeFromISO = (isoString: string): string => {
   // Konversi ke WIB (Asia/Jakarta) — JANGAN memotong jam mentah dari string ISO
@@ -39,7 +39,6 @@ type StoreSettingResponse = Partial<StoreInfo> & {
   detail?: string;
 };
 type PrintDocumentType = "nota" | "surat-jalan";
-const SATUAN_LABELS: Record<string, string> = { pcs: "Pcs", lusin: "Lusin", setengah_gross: "½ Gross", gross: "Gross" };
 
 // ===== MODE ANEKA (nota grup bernomor + kode produk) =====
 // Aktif lewat toggle saat cetak. Saat NONAKTIF, semua dokumen dirender persis seperti semula.
@@ -732,10 +731,11 @@ export default function RiwayatPenjualanPage() {
 
       ctx.font = `${bodyFont}px 'Courier New', monospace`;
       const unitPrice = item.jumlah > 0 ? item.subtotal / item.jumlah : 0;
+      const unitDisplay = formatUnitPriceSatuan(unitPrice, item.satuanHarga);
       const qtySatuan = formatQtySatuan(item.jumlah, item.satuanHarga);
       ctx.fillText(
         printType === "struk"
-          ? `${qtySatuan} x ${unitPrice.toLocaleString("id-ID")}`
+          ? `${qtySatuan} x ${unitDisplay.value.toLocaleString("id-ID")}`
           : qtySatuan,
         margin, y + 2
       );
@@ -944,12 +944,12 @@ export default function RiwayatPenjualanPage() {
       ctx.fillText(prodName.length > 50 ? prodName.slice(0, 49) + "…" : prodName, MARGIN + 14, y + 16);
 
       if (isNota) {
-        const satuanLabel = SATUAN_LABELS[item.satuanHarga || "pcs"] ?? "Pcs";
         const unitPrice = item.jumlah > 0 ? item.subtotal / item.jumlah : 0;
+        const unitDisplay = formatUnitPriceSatuan(unitPrice, item.satuanHarga);
         ctx.fillStyle = "#64748b";
         ctx.font = "16px Arial, sans-serif";
         ctx.textAlign = "center";
-        ctx.fillText(`Rp ${Number(unitPrice).toLocaleString("id-ID")}/${satuanLabel}`, MARGIN + PROD_W + UNIT_W / 2, y + 16);
+        ctx.fillText(`Rp ${unitDisplay.value.toLocaleString("id-ID")}/${unitDisplay.label}`, MARGIN + PROD_W + UNIT_W / 2, y + 16);
 
         ctx.fillStyle = "#64748b";
         ctx.font = "16px Arial, sans-serif";
@@ -1065,15 +1065,15 @@ export default function RiwayatPenjualanPage() {
     const notaMap = buildNotaMap(t.items || []);
     const orderedItems = aneka ? orderItemsAneka(t.items || [], notaMap) : (t.items || []);
     const itemRows = orderedItems.map((item) => {
-      const satuanLabel = SATUAN_LABELS[item.satuanHarga || "pcs"] ?? "Pcs";
       const unitPrice = item.jumlah > 0 ? item.subtotal / item.jumlah : 0;
+      const unitDisplay = formatUnitPriceSatuan(unitPrice, item.satuanHarga);
       const nameCell = aneka
         ? `<strong>${escapeHtml(anekaItemName(item, notaMap))}</strong>`
         : `${escapeHtml(item.product?.nama_produk || "-")}${item.variantName ? ` <strong>(${escapeHtml(item.variantName)})</strong>` : ""}${item.label ? ` &mdash; <strong>${escapeHtml(item.label)}</strong>` : ""}`;
       return `
       <tr>
         <td>${nameCell}</td>
-        ${isNota ? `<td class="money">Rp ${Number(unitPrice).toLocaleString("id-ID")}/${satuanLabel}</td>` : ""}
+        ${isNota ? `<td class="money">Rp ${unitDisplay.value.toLocaleString("id-ID")}/${unitDisplay.label}</td>` : ""}
         <td class="qty">${escapeHtml(formatQtySatuan(item.jumlah, item.satuanHarga))}</td>
         ${isNota ? `<td class="money">Rp ${Number(item.subtotal || 0).toLocaleString("id-ID")}</td>` : ""}
       </tr>`;
@@ -2124,13 +2124,14 @@ export default function RiwayatPenjualanPage() {
                     <div className="space-y-3">
                       {selectedTrx.items.map((item: { id: number; jumlah: number; subtotal: number; satuanHarga?: string | null; variantName?: string | null; product: { nama_produk: string } }) => {
                         const qtySatuan = formatQtySatuan(item.jumlah, item.satuanHarga);
+                        const unitDisplay = formatUnitPriceSatuan(item.jumlah > 0 ? item.subtotal / item.jumlah : 0, item.satuanHarga);
                         return (
                           <div key={item.id}>
                             <div className="font-bold uppercase">{item.product.nama_produk}{item.variantName ? ` (${item.variantName})` : ""}</div>
                             <div className="receipt-row flex justify-between mt-0.5">
                               <span>
                                 {printType === "struk"
-                                  ? `${qtySatuan} x ${(item.subtotal / item.jumlah).toLocaleString("id-ID")}`
+                                  ? `${qtySatuan} x ${unitDisplay.value.toLocaleString("id-ID")}`
                                   : qtySatuan}
                               </span>
                               {printType === "struk" && <span className="receipt-amount">Rp {item.subtotal.toLocaleString("id-ID")}</span>}
@@ -2206,13 +2207,13 @@ export default function RiwayatPenjualanPage() {
                           const notaMap = buildNotaMap(selectedTrx.items || []);
                           const previewItems = groupAneka ? orderItemsAneka(selectedTrx.items || [], notaMap) : (selectedTrx.items || []);
                           return previewItems.map((item: { id: number; jumlah: number; subtotal: number; satuanHarga?: string | null; variantName?: string | null; label?: string | null; product: { nama_produk: string } }) => {
-                          const satuanLabel = SATUAN_LABELS[item.satuanHarga || "pcs"] ?? "Pcs";
                           const unitPrice = item.jumlah > 0 ? item.subtotal / item.jumlah : 0;
+                          const unitDisplay = formatUnitPriceSatuan(unitPrice, item.satuanHarga);
                           return (
                             <tr key={item.id} className="border-b border-slate-50 even:bg-pink-50/30">
                               <td className="px-4 py-2 font-semibold text-slate-700 leading-snug">{groupAneka ? <strong>{anekaItemName(item, notaMap)}</strong> : normalItemName(item)}</td>
                               {printType === "nota" && (
-                                <td className="px-4 py-2 text-right text-slate-700">Rp {Number(unitPrice).toLocaleString("id-ID")}/{satuanLabel}</td>
+                                <td className="px-4 py-2 text-right text-slate-700">Rp {unitDisplay.value.toLocaleString("id-ID")}/{unitDisplay.label}</td>
                               )}
                               <td className="px-2 py-2 text-center text-slate-600">{formatQtySatuan(item.jumlah, item.satuanHarga)}</td>
                               {printType === "nota" && (

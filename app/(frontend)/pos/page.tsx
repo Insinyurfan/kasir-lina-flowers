@@ -647,6 +647,7 @@ export default function PosPage() {
       ...p,
       harga: base,
       hargaBase: base,
+      hargaBaseAsli: hargaVarian, // harga katalog asli varian → agar override tersimpan saat refresh
       satuanPesan: p.satuanHarga ?? "pcs",
       variantId: variant.id,
       variantName: variant.name,
@@ -658,7 +659,7 @@ export default function PosPage() {
   // Masukkan produk ke keranjang TANPA variasi (pakai harga dasar produk) + kode pelanggan.
   const handleNoVariantSelected = (p: Product) => {
     const base = resolveRememberedBase(p.id, 0, p.harga);
-    addToCart({ ...p, satuanPesan: p.satuanHarga ?? "pcs", hargaBase: base, label: variantCode.trim() || null });
+    addToCart({ ...p, satuanPesan: p.satuanHarga ?? "pcs", hargaBase: base, hargaBaseAsli: p.harga, label: variantCode.trim() || null });
     setVariantModalProduct(null);
   };
 

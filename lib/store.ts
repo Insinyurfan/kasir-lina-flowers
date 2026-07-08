@@ -53,7 +53,11 @@ export const useCartStore = create<CartState>()(
         const cart = get().cart;
         const satuanPesan = product.satuanPesan ?? product.satuanHarga ?? "pcs";
         const hargaBase = product.hargaBase ?? product.harga;
+        // Harga katalog asli (sebelum penyesuaian pelanggan). WAJIB dari pemanggil,
+        // agar penyesuaian harga bisa dibedakan & disimpan sebagai priceOverride.
+        const hargaBaseAsli = product.hargaBaseAsli ?? hargaBase;
         const hargaDihitung = hitungHargaSatuan(hargaBase, product.satuanHarga ?? "pcs", satuanPesan);
+        const hargaAwalDihitung = hitungHargaSatuan(hargaBaseAsli, product.satuanHarga ?? "pcs", satuanPesan);
         const rowId = computeCartRowId(product.id, product.variantId, satuanPesan, product.label);
         const existingItem = cart.find((item) => item.id === rowId);
 
@@ -82,9 +86,9 @@ export const useCartStore = create<CartState>()(
                   variantName: product.variantName ?? null,
                   label: product.label ?? null,
                   harga: hargaDihitung,
-                  hargaAwal: hargaDihitung,
+                  hargaAwal: hargaAwalDihitung,
                   hargaBase,
-                  hargaBaseAsli: hargaBase,
+                  hargaBaseAsli,
                   satuanPesan,
                   quantity: 1,
                 },

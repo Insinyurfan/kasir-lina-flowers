@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Plus, Save, Trash2, X } from "lucide-react";
 import { getSavedUserSession } from "@/lib/userSession";
+import { PCS_PER_UNIT, hitungHargaSatuan } from "@/lib/satuan";
 
 export type ManualVariant = {
   id: number;
@@ -59,10 +60,20 @@ type ManualItem = {
   productId: string;
   variantId: string;
   quantity: string;
-  harga: string;
-  satuan: string;
+  harga: string;        // harga per satuan pesan (yang tampil di kolom Harga)
+  satuan: string;       // satuan pesan (pcs/lusin/½ gross/gross)
+  satuanHarga: string;  // satuan dasar produk (patokan harga) — untuk hitung ulang saat ganti satuan
+  hargaBase: string;    // harga dasar per satuanHarga — tetap saat ganti satuan pesan
   label: string; // kode pelanggan per baris (Aneka), terpisah dari variasi
   origVariantName: string; // snapshot variantName asli dari transaksi (untuk migrasi kode lama)
+};
+
+// Ubah harga per-satuan-pesan menjadi harga dasar (per satuanHarga produk).
+// Kebalikan dari hitungHargaSatuan — dipakai saat harga diketik manual.
+const toHargaBase = (hargaSatuan: number, satuanHarga: string, satuanPesan: string): number => {
+  const perHarga = PCS_PER_UNIT[satuanHarga] ?? 1;
+  const perPesan = PCS_PER_UNIT[satuanPesan] ?? 1;
+  return Math.round((hargaSatuan * perHarga) / perPesan);
 };
 
 const SATUAN_OPTIONS: Array<{ value: string; label: string }> = [
@@ -112,6 +123,8 @@ const createEmptyItem = (): ManualItem => ({
   quantity: "1",
   harga: "0",
   satuan: "pcs",
+  satuanHarga: "pcs",
+  hargaBase: "0",
   label: "",
   origVariantName: "",
 });
@@ -191,16 +204,25 @@ export default function ManualTransactionModal({ open, transaction, title, onClo
       setPengiriman(transaction.status_pengiriman || "Selesai");
       setItems(
         transaction.items && transaction.items.length > 0
-          ? transaction.items.map((item) => ({
-              rowId: newRowId(),
-              productId: String(item.product.id),
-              variantId: item.variantId != null ? String(item.variantId) : "",
-              quantity: String(item.jumlah),
-              harga: String(item.jumlah > 0 ? item.subtotal / item.jumlah : item.product.harga),
-              satuan: item.satuanHarga || "pcs",
-              label: item.label || "",
-              origVariantName: item.variantName || "",
-            }))
+          ? transaction.items.map((item) => {
+              const prodSatuan = item.product.satuanHarga || "pcs"; // satuan dasar produk
+              const satuanPesan = item.satuanHarga || "pcs";        // satuan yang dipesan
+              const hargaSatuan = Math.round(item.jumlah > 0 ? item.subtotal / item.jumlah : item.product.harga);
+              return {
+                rowId: newRowId(),
+                productId: String(item.product.id),
+                variantId: item.variantId != null ? String(item.variantId) : "",
+                quantity: String(item.jumlah),
+                harga: String(hargaSatuan),
+                satuan: satuanPesan,
+                satuanHarga: prodSatuan,
+                // Turunkan harga dasar (per satuan produk) dari data harga yang ada,
+                // agar ganti satuan pesan bisa menghitung ulang harga otomatis.
+                hargaBase: String(toHargaBase(hargaSatuan, prodSatuan, satuanPesan)),
+                label: item.label || "",
+                origVariantName: item.variantName || "",
+              };
+            })
           : [createEmptyItem()]
       );
     } else {
@@ -281,13 +303,26 @@ export default function ManualTransactionModal({ open, transaction, title, onClo
         if (item.rowId !== rowId) return item;
         if (field === "productId") {
           const selected = productsById[value];
+          const prodSatuan = selected?.satuanHarga || "pcs";
           return {
             ...item,
             productId: value,
             variantId: "", // reset variasi karena beda produk beda variasi
+            satuanHarga: prodSatuan,
+            satuan: prodSatuan,
+            hargaBase: selected ? String(selected.harga) : item.hargaBase,
             harga: selected ? String(selected.harga) : item.harga,
-            satuan: selected?.satuanHarga || item.satuan,
           };
+        }
+        if (field === "satuan") {
+          // Ganti satuan pesan → harga ikut dihitung dari harga dasar (mis. ½ Gross = ½ harga Gross).
+          const harga = hitungHargaSatuan(Number(item.hargaBase) || 0, item.satuanHarga || "pcs", value);
+          return { ...item, satuan: value, harga: String(harga) };
+        }
+        if (field === "harga") {
+          // Harga diketik manual → perbarui harga dasar agar konsisten saat satuan diganti lagi.
+          const base = toHargaBase(Number(value) || 0, item.satuanHarga || "pcs", item.satuan || "pcs");
+          return { ...item, harga: value, hargaBase: String(base) };
         }
         return { ...item, [field]: value };
       })

@@ -40,7 +40,10 @@ const NOTIFICATION_POLL_INTERVAL = 5000;
 const NOTIFICATION_FETCH_TIMEOUT = 8000;
 const NOTIFICATION_MAX_BACKOFF = 60000;
 const DISMISSED_NOTIFICATION_POPUPS_KEY = "lina_dismissed_notification_popups";
-const POPUP_NOTIFICATION_STATUSES = new Set(["Order Baru", "Request Pesanan", "Siap Kirim", "Siap Dikirim"]);
+// "Order Baru" sengaja TIDAK di-popup: notifikasi tetap masuk lonceng, tapi tidak
+// memunculkan modal yang mengganggu (mis. spam saat akun baru/lama login karena
+// banyak notifikasi order lama belum terbaca).
+const POPUP_NOTIFICATION_STATUSES = new Set(["Request Pesanan", "Siap Kirim", "Siap Dikirim"]);
 const PUBLIC_ROUTES = ["/", "/login"];
 
 type UserSession = {

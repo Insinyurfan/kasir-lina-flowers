@@ -3,7 +3,7 @@ import { persist } from "zustand/middleware";
 import { computeCartRowId, hitungHargaSatuan } from "@/lib/satuan";
 
 // Re-export agar import lama `from "@/lib/store"` tetap berfungsi.
-export { PCS_PER_UNIT, SATUAN_LABELS, computeCartRowId, hitungHargaSatuan } from "@/lib/satuan";
+export { PCS_PER_UNIT, SATUAN_LABELS, computeCartRowId, hitungHargaSatuan, formatQtySatuan, formatUnitPriceSatuan } from "@/lib/satuan";
 
 export type CartItem = {
   id: string;          // unique cart-row id (produk + varian + satuan + kode pelanggan)

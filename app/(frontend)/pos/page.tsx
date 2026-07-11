@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useCartStore, SATUAN_LABELS, computeCartRowId, hitungHargaSatuan, type CartItem } from "@/lib/store";
+import { useCartStore, SATUAN_LABELS, computeCartRowId, hitungHargaSatuan, formatQtySatuan, formatUnitPriceSatuan, type CartItem } from "@/lib/store";
 import { Search, Plus, Minus, Trash2, ShoppingCart, Flower2, Wallet, User, UserCheck, LogOut, Camera, X, Pencil, Check } from "lucide-react";
 import { getSavedUserSession } from "@/lib/userSession";
 
@@ -836,6 +836,9 @@ export default function PosPage() {
                   <p className="text-xs font-semibold text-slate-400 mt-0.5">
                     Rp {item.harga.toLocaleString("id-ID")} / {SATUAN_LABELS[item.satuanPesan ?? "pcs"] ?? item.satuanPesan ?? "pcs"}
                   </p>
+                  {(item.satuanPesan ?? item.satuanHarga) === "setengah_gross" && (
+                    <p className="mt-0.5 text-[11px] font-black text-pink-500">= {formatQtySatuan(item.quantity, "setengah_gross")}</p>
+                  )}
                   {item.hargaBaseAsli != null && item.hargaBase != null && item.hargaBase !== item.hargaBaseAsli && (
                     <div className="mt-1 flex flex-wrap items-center gap-1.5">
                       <span className="inline-flex items-center gap-1 rounded-full bg-green-50 px-2 py-0.5 text-[10px] font-black text-green-600">✓ Harga disesuaikan</span>
@@ -1083,7 +1086,7 @@ export default function PosPage() {
                   <div className="min-w-0">
                     <p className="truncate text-xs font-bold text-slate-800">{item.nama_produk}</p>
                     <p className="text-[11px] font-semibold text-slate-400">
-                      {item.quantity} {SATUAN_LABELS[item.satuanPesan ?? "pcs"] ?? item.satuanPesan} x Rp {item.harga.toLocaleString("id-ID")}
+                      {formatQtySatuan(item.quantity, item.satuanPesan ?? "pcs")} x Rp {formatUnitPriceSatuan(item.harga, item.satuanPesan).value.toLocaleString("id-ID")}
                     </p>
                   </div>
                   <p className="shrink-0 text-sm font-black text-pink-600">Rp {(item.harga * item.quantity).toLocaleString("id-ID")}</p>
@@ -1151,7 +1154,7 @@ export default function PosPage() {
               <div className="flex-1 space-y-4 overflow-y-auto p-5">
                 <div className="flex items-center justify-between rounded-2xl bg-slate-50 px-4 py-3 text-xs font-semibold text-slate-500">
                   <span>Jumlah dipesan</span>
-                  <span className="font-black text-slate-700">{liveItem.quantity} {SATUAN_LABELS[satuanPesan] ?? satuanPesan}</span>
+                  <span className="font-black text-slate-700">{formatQtySatuan(liveItem.quantity, satuanPesan)}</span>
                 </div>
 
                 <div>
@@ -1391,6 +1394,9 @@ export default function PosPage() {
                           <p className="text-xs font-semibold text-slate-400 mt-0.5">
                             Rp {item.harga.toLocaleString("id-ID")} / {SATUAN_LABELS[item.satuanPesan ?? "pcs"] ?? item.satuanPesan ?? "pcs"}
                           </p>
+                          {(item.satuanPesan ?? item.satuanHarga) === "setengah_gross" && (
+                            <p className="mt-0.5 text-[11px] font-black text-pink-500">= {formatQtySatuan(item.quantity, "setengah_gross")}</p>
+                          )}
                           {item.hargaBaseAsli != null && item.hargaBase != null && item.hargaBase !== item.hargaBaseAsli && (
                             <div className="mt-1 flex flex-wrap items-center gap-1.5">
                               <span className="inline-flex items-center gap-1 rounded-full bg-green-50 px-2 py-0.5 text-[10px] font-black text-green-600">✓ Harga disesuaikan</span>

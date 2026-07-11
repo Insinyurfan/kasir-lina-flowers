@@ -5,15 +5,21 @@ export const PCS_PER_UNIT: Record<string, number> = { pcs: 1, lusin: 12, setenga
 export const SATUAN_LABELS: Record<string, string> = { pcs: "Pcs", lusin: "Lusin", setengah_gross: "½ Gross", gross: "Gross" };
 
 // Format "jumlah + satuan" untuk ditampilkan di nota/struk/surat jalan.
-// Untuk satuan pecahan (mis. "½ Gross"): jumlah 1 cukup ditulis "½ Gross"
-// (tanpa angka 1, agar tidak terbaca 1,5 gross); jumlah >1 pakai pemisah "×"
-// (mis. "2 × ½ Gross") supaya tetap jelas.
+// Khusus ½ Gross: jumlah dihitung dalam satuan Gross PENUH — angka jumlah =
+// banyaknya ½ gross, lalu ditampilkan sebagai kelipatan setengah gross.
+//   1 → "½ Gross", 2 → "1 Gross", 3 → "1½ Gross", 4 → "2 Gross", 5 → "2½ Gross".
+// Jadi pesanan "1½ gross" cukup 1 baris (½ Gross, jumlah 3) dan tetap terbaca rapi.
 export function formatQtySatuan(jumlah: number | string, satuanHarga?: string | null): string {
   const key = satuanHarga || "pcs";
+  if (key === "setengah_gross") {
+    const units = Math.max(0, Math.round(Number(jumlah) || 0)); // banyaknya ½ gross
+    const gross = Math.floor(units / 2);
+    const half = units % 2;
+    const num = `${gross > 0 ? gross : ""}${half ? "½" : ""}` || "0";
+    return `${num} Gross`;
+  }
   const label = SATUAN_LABELS[key] ?? "Pcs";
-  const isFraction = /[½¼¾]/.test(label);
-  if (!isFraction) return `${jumlah} ${label}`;
-  return Number(jumlah) === 1 ? label : `${jumlah} × ${label}`;
+  return `${jumlah} ${label}`;
 }
 
 // Harga per unit untuk TAMPILAN dokumen. Item ½ gross ditampilkan sebagai harga

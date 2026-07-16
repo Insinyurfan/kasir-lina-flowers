@@ -150,6 +150,8 @@ export default function ManualTransactionModal({ open, transaction, title, onClo
   // Autocomplete kode pelanggan per baris (Aneka) + baris mana yang dropdown-nya terbuka.
   const [customerCodes, setCustomerCodes] = useState<string[]>([]);
   const [codeOpenRow, setCodeOpenRow] = useState<string | null>(null);
+  // Simpan harga hasil edit sebagai harga khusus pelanggan (dipakai pesanan berikutnya). Default aktif.
+  const [rememberPrice, setRememberPrice] = useState(true);
 
   useEffect(() => {
     if (!open) return;
@@ -195,6 +197,7 @@ export default function ManualTransactionModal({ open, transaction, title, onClo
   // selesai dimuat setelah modal terbuka.
   useEffect(() => {
     if (!open) return;
+    setRememberPrice(true); // default aktif tiap kali modal dibuka
 
     if (transaction) {
       setTanggal(parseISODateTimeLocal(transaction.tanggal));
@@ -382,6 +385,35 @@ export default function ManualTransactionModal({ open, transaction, title, onClo
       if (!res.ok) {
         alert("Gagal menyimpan transaksi manual.");
         return;
+      }
+
+      // Ingat harga khusus pelanggan (level produk) dari harga yang di-edit, agar
+      // dipakai otomatis pada pesanan berikutnya. Hanya untuk harga yang BERBEDA
+      // dari harga katalog (benar-benar disesuaikan).
+      const buyer = namaPembeli?.trim();
+      if (rememberPrice && buyer) {
+        const seen = new Set<number>();
+        await Promise.all(
+          items
+            .filter((item) => item.productId && Number(item.quantity) > 0)
+            .map(async (item) => {
+              const productId = Number(item.productId);
+              const product = productsById[item.productId];
+              const base = Number(item.hargaBase);
+              if (!product || !Number.isFinite(base) || seen.has(productId)) return;
+              if (base === product.harga) return; // sama dengan harga katalog → tak perlu disimpan
+              seen.add(productId);
+              try {
+                await fetch("/api/harga-pelanggan", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ customerName: buyer, productId, variantId: 0, price: Math.round(base) }),
+                });
+              } catch {
+                /* best-effort; jangan gagalkan penyimpanan transaksi */
+              }
+            })
+        );
       }
 
       onSaved();
@@ -647,6 +679,22 @@ export default function ManualTransactionModal({ open, transaction, title, onClo
               })}
             </div>
           </div>
+
+          <label className="flex items-start gap-2.5 rounded-xl border border-green-200 bg-green-50 p-3 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={rememberPrice}
+              onChange={(e) => setRememberPrice(e.target.checked)}
+              className="mt-0.5 h-4 w-4 accent-green-600 shrink-0"
+            />
+            <span className="text-xs leading-snug">
+              <b className="text-green-700">Simpan harga untuk pelanggan ini</b>
+              <span className="block text-slate-500 mt-0.5">
+                Harga yang berbeda dari harga katalog akan diingat &amp; otomatis dipakai saat{" "}
+                {namaPembeli?.trim() ? <b>{namaPembeli.trim().toUpperCase()}</b> : "pelanggan ini"} memesan lagi.
+              </span>
+            </span>
+          </label>
 
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-t border-slate-100 pt-5">
             <div>

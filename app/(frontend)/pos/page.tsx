@@ -176,7 +176,7 @@ export default function PosPage() {
   const [priceEditDraft, setPriceEditDraft] = useState("");
   // Harga khusus tersimpan untuk pelanggan sesi ini: key `${productId}-${variantId}` -> harga dasar.
   const [rememberedPrices, setRememberedPrices] = useState<Record<string, number>>({});
-  const [rememberForCustomer, setRememberForCustomer] = useState(false);
+  const [rememberForCustomer, setRememberForCustomer] = useState(true);
   const [qtyDraft, setQtyDraft] = useState<Record<string, string>>({});
   const [isPosCartLoaded, setIsPosCartLoaded] = useState(false);
 
@@ -530,7 +530,7 @@ export default function PosPage() {
   const openPriceEdit = (item: CartItem) => {
     setPriceEditItem(item);
     setPriceEditDraft(String(item.hargaBase ?? item.harga));
-    setRememberForCustomer(false);
+    setRememberForCustomer(true); // default aktif agar tak lupa dicentang
     setIsCartOpen(true);
   };
 
@@ -574,7 +574,7 @@ export default function PosPage() {
     if (rememberForCustomer) void persistCustomerPrice(priceEditItem, Math.round(value));
     setPriceEditItem(null);
     setPriceEditDraft("");
-    setRememberForCustomer(false);
+    setRememberForCustomer(true);
     setIsCartOpen(true);
   };
 

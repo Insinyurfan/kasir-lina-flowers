@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getActorFromPayload, recordActivityLog } from "@/lib/activityLog";
 import { deleteProductImageFromStorage } from "@/lib/supabaseStorage";
+import { getServerSessionUser } from "@/lib/serverSession";
 
 export const dynamic = 'force-dynamic';
 
@@ -119,6 +120,14 @@ export async function PATCH(request: Request) {
     const data = await request.json();
     const actor = getActorFromPayload(data);
 
+    // Pembatasan peran (server-side): Admin boleh ubah data non-harga + arsip/pulihkan;
+    // harga, satuan harga, dan variasi hanya Owner.
+    const viewer = await getServerSessionUser(request);
+    if (!viewer || !["Owner", "Admin"].includes(viewer.role)) {
+      return NextResponse.json({ error: "Sesi Owner atau Admin diperlukan." }, { status: 401 });
+    }
+    const isOwner = viewer.role === "Owner";
+
     if (data.action === "arsipkan" || data.action === "batalkanArsip") {
       const isArchived = data.action === "arsipkan";
       const updated = await prisma.product.update({
@@ -149,14 +158,16 @@ export async function PATCH(request: Request) {
       where: { id: Number(data.id) },
       data: {
         nama_produk: data.nama_produk,
-        harga: Number(data.harga),
-        satuanHarga: data.satuanHarga || before?.satuanHarga || "pcs",
+        // Non-Owner: harga & satuan dipertahankan dari data lama (tidak boleh diubah).
+        harga: isOwner ? Number(data.harga) : (before?.harga ?? Number(data.harga)),
+        satuanHarga: isOwner ? (data.satuanHarga || before?.satuanHarga || "pcs") : (before?.satuanHarga || "pcs"),
         stok: Number(data.stok),
         barcode: finalBarcode,
         gambar: data.gambar || null,
         gambarPosX: data.gambarPosX != null ? Math.max(0, Math.min(100, Number(data.gambarPosX))) : (before?.gambarPosX ?? 50),
         gambarPosY: data.gambarPosY != null ? Math.max(0, Math.min(100, Number(data.gambarPosY))) : (before?.gambarPosY ?? 50),
-        variants: data.variants !== undefined ? {
+        // Non-Owner: variasi (memuat harga) diabaikan — tidak disentuh sama sekali.
+        variants: isOwner && data.variants !== undefined ? {
           deleteMany: {},
           create: data.variants
             .filter((v: any) => v.name && v.name.trim())
@@ -211,6 +222,12 @@ export async function PATCH(request: Request) {
 
 export async function DELETE(request: Request) {
   try {
+    // Hapus permanen bersifat destruktif → hanya Owner (dicek di server, bukan cuma UI).
+    const viewer = await getServerSessionUser(request);
+    if (!viewer || viewer.role !== "Owner") {
+      return NextResponse.json({ error: "Hanya Owner yang dapat menghapus produk secara permanen." }, { status: 403 });
+    }
+
     const data = await request.json();
     const { id } = data;
     const actor = getActorFromPayload(data);

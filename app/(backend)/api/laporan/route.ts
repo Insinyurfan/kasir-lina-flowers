@@ -1,8 +1,15 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { getServerSessionUser } from "@/lib/serverSession";
 
 export async function GET(request: Request) {
   try {
+    // Rekap laporan keuangan hanya untuk Owner (dicek di server, bukan cuma UI).
+    const viewer = await getServerSessionUser(request);
+    if (!viewer || viewer.role !== "Owner") {
+      return NextResponse.json({ error: "Hanya Owner yang dapat melihat laporan." }, { status: 403 });
+    }
+
     const { searchParams } = new URL(request.url);
     const dateParam = searchParams.get("date"); 
 

@@ -1,9 +1,16 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getActorFromPayload, recordActivityLog } from "@/lib/activityLog";
+import { getServerSessionUser } from "@/lib/serverSession";
 
 export async function POST(request: Request) {
   try {
+    // Hapus massal riwayat transaksi hanya Owner (dicek di server, bukan cuma UI).
+    const viewer = await getServerSessionUser(request);
+    if (!viewer || viewer.role !== "Owner") {
+      return NextResponse.json({ error: "Hanya Owner yang dapat menghapus riwayat transaksi." }, { status: 403 });
+    }
+
     const payload = await request.json();
     const { ids } = payload;
     const actor = getActorFromPayload(payload);

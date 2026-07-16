@@ -250,7 +250,12 @@ export default function LaporanPage() {
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {
       const savedUser = getSavedUserSession<{ role?: string }>();
-      if (savedUser) setUser(savedUser);
+      // Laporan keuangan hanya untuk Owner — peran lain dialihkan ke dashboard.
+      if (!savedUser || savedUser.role !== "Owner") {
+        window.location.replace("/dashboard");
+        return;
+      }
+      setUser(savedUser);
     }, 0);
 
     return () => window.clearTimeout(timeoutId);

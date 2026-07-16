@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { LayoutDashboard, Calendar, FileText, TrendingUp, Clock, Trophy, ChevronRight } from "lucide-react";
 import Link from "next/link";
+import { getSavedUserSession } from "@/lib/userSession";
 
 type TransactionItem = {
   jumlah: number;
@@ -29,6 +30,16 @@ export default function DashboardPage() {
   const [isLoading, setIsLoading] = useState(true);
   // Sapaan "Selamat datang" sekali setelah login berhasil (dari halaman login).
   const [welcome, setWelcome] = useState<string | null>(null);
+  // Data finansial (Total Pendapatan) hanya ditampilkan untuk Owner.
+  const [isOwner, setIsOwner] = useState(false);
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      const savedUser = getSavedUserSession<{ role?: string }>();
+      setIsOwner(savedUser?.role === "Owner");
+    }, 0);
+    return () => window.clearTimeout(timeoutId);
+  }, []);
 
   useEffect(() => {
     let name: string | null = null;
@@ -176,8 +187,8 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {/* Stats Cards — kartu pendapatan (finansial) hanya untuk Owner */}
+      <div className={`grid grid-cols-1 gap-6 ${isOwner ? "md:grid-cols-3" : "md:grid-cols-2"}`}>
         <div className="lina-panel border rounded-2xl p-6 flex items-center gap-4">
           <div className="w-14 h-14 bg-pink-50 text-pink-500 rounded-2xl flex items-center justify-center"><Calendar size={28} /></div>
           <div><p className="text-sm font-medium text-slate-500">Total Transaksi</p><h3 className="text-2xl font-bold">{totalTransaksi}</h3></div>
@@ -186,10 +197,12 @@ export default function DashboardPage() {
           <div className="w-14 h-14 bg-rose-50 text-rose-500 rounded-2xl flex items-center justify-center"><FileText size={28} /></div>
           <div><p className="text-sm font-medium text-slate-500">Transaksi Lunas</p><h3 className="text-2xl font-bold">{transaksiLunas.length}</h3></div>
         </div>
-        <div className="bg-gradient-to-br from-pink-500 to-pink-600 rounded-2xl p-6 shadow-lg text-white flex items-center gap-4">
-          <div className="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center"><TrendingUp size={28} /></div>
-          <div><p className="text-sm font-medium text-pink-100">Total Pendapatan</p><h3 className="text-2xl font-bold">Rp {pendapatan.toLocaleString("id-ID")}</h3></div>
-        </div>
+        {isOwner && (
+          <div className="bg-gradient-to-br from-pink-500 to-pink-600 rounded-2xl p-6 shadow-lg text-white flex items-center gap-4">
+            <div className="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center"><TrendingUp size={28} /></div>
+            <div><p className="text-sm font-medium text-pink-100">Total Pendapatan</p><h3 className="text-2xl font-bold">Rp {pendapatan.toLocaleString("id-ID")}</h3></div>
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

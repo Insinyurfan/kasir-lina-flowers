@@ -354,6 +354,25 @@ export async function PATCH(request: Request) {
     const payload = (await request.json()) as TransactionPayload;
     const actor = getActorFromPayload(payload as Record<string, unknown>);
     const { id, status, status_pengiriman, metode_pembayaran, tanggal, nama_pembeli, nama_kasir, cart, actorRole } = payload;
+
+    // Pembatasan peran (server-side): mengubah ISI riwayat transaksi (item, harga,
+    // tanggal, pembeli, metode, status bayar) hanya Owner — vektor kecurangan klasik.
+    // Non-Owner (Admin) hanya boleh memperbarui status pengiriman.
+    const viewer = await getServerSessionUser(request);
+    if (!viewer || !["Owner", "Admin"].includes(viewer.role)) {
+      return NextResponse.json({ error: "Sesi Owner atau Admin diperlukan." }, { status: 401 });
+    }
+    if (viewer.role !== "Owner") {
+      const mengubahIsi =
+        Array.isArray(cart) || tanggal !== undefined || nama_pembeli !== undefined ||
+        nama_kasir !== undefined || metode_pembayaran !== undefined || status !== undefined;
+      if (mengubahIsi) {
+        return NextResponse.json(
+          { error: "Hanya Owner yang dapat mengubah isi riwayat transaksi." },
+          { status: 403 }
+        );
+      }
+    }
     const before = await prisma.transaction.findUnique({
       where: { id: Number(id) },
       include: transactionInclude(),
@@ -439,6 +458,12 @@ export async function PATCH(request: Request) {
 
 export async function DELETE(request: Request) {
   try {
+    // Menghapus riwayat transaksi hanya Owner (dicek di server, bukan cuma UI).
+    const viewer = await getServerSessionUser(request);
+    if (!viewer || viewer.role !== "Owner") {
+      return NextResponse.json({ error: "Hanya Owner yang dapat menghapus riwayat transaksi." }, { status: 403 });
+    }
+
     const payload = (await request.json()) as TransactionPayload;
     const actor = getActorFromPayload(payload as Record<string, unknown>);
     const { id } = payload;

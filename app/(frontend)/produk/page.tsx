@@ -321,7 +321,7 @@ export default function ManajemenProdukPage() {
   };
 
   const handleArsipkan = async (id: number) => {
-    if (isAdmin) return;
+    // Admin BOLEH mengarsipkan (aman/bisa dipulihkan); hapus permanen tetap Owner.
     if (!confirm("Arsipkan produk ini? Produk akan disembunyikan dari katalog aktif dan tidak bisa dipilih di kasir.")) return;
     setIsLoading(true);
     try {
@@ -345,7 +345,7 @@ export default function ManajemenProdukPage() {
   };
 
   const handleBatalkanArsip = async (id: number) => {
-    if (isAdmin) return;
+    // Admin boleh memulihkan dari arsip (kebalikan arsipkan, sama-sama aman).
     setIsLoading(true);
     try {
       const res = await fetch("/api/produk", {
@@ -774,15 +774,13 @@ export default function ManajemenProdukPage() {
                         </div>
                       </div>
 
-                      <div className={`mt-3 grid gap-2 ${isAdmin ? 'grid-cols-1' : 'grid-cols-3'}`}>
+                      <div className={`mt-3 grid gap-2 ${isAdmin ? 'grid-cols-2' : 'grid-cols-3'}`}>
                         <button onClick={() => handleOpenEdit(p)} className="flex items-center justify-center gap-2 rounded-xl bg-blue-50 px-3 py-2.5 text-sm font-bold text-blue-600 transition-colors active:scale-[0.98]" title="Edit Data">
                           <Edit size={16} /> Edit
                         </button>
-                        {!isAdmin && (
-                          <button onClick={() => handleArsipkan(p.id)} className="flex items-center justify-center gap-2 rounded-xl bg-amber-50 px-3 py-2.5 text-sm font-bold text-amber-600 transition-colors active:scale-[0.98]" title="Arsipkan Produk">
-                            <Archive size={16} /> Arsip
-                          </button>
-                        )}
+                        <button onClick={() => handleArsipkan(p.id)} className="flex items-center justify-center gap-2 rounded-xl bg-amber-50 px-3 py-2.5 text-sm font-bold text-amber-600 transition-colors active:scale-[0.98]" title="Arsipkan Produk">
+                          <Archive size={16} /> Arsip
+                        </button>
                         {!isAdmin && (
                           <button onClick={() => handleHapus(p.id)} className="flex items-center justify-center gap-2 rounded-xl bg-red-50 px-3 py-2.5 text-sm font-bold text-red-600 transition-colors active:scale-[0.98]" title="Hapus Produk">
                             <Trash2 size={16} /> Hapus
@@ -869,9 +867,7 @@ export default function ManajemenProdukPage() {
                           <td className="p-4 text-center">
                             <div className="flex items-center justify-center gap-2">
                               <button onClick={() => handleOpenEdit(p)} className="p-2 text-blue-500 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors" title="Edit Data"><Edit size={16} /></button>
-                              {!isAdmin && (
-                                <button onClick={() => handleArsipkan(p.id)} className="p-2 text-amber-500 bg-amber-50 hover:bg-amber-100 rounded-lg transition-colors" title="Arsipkan Produk"><Archive size={16} /></button>
-                              )}
+                              <button onClick={() => handleArsipkan(p.id)} className="p-2 text-amber-500 bg-amber-50 hover:bg-amber-100 rounded-lg transition-colors" title="Arsipkan Produk"><Archive size={16} /></button>
                               {!isAdmin && (
                                 <button onClick={() => handleHapus(p.id)} className="p-2 text-red-500 bg-red-50 hover:bg-red-100 rounded-lg transition-colors" title="Hapus Produk"><Trash2 size={16} /></button>
                               )}
@@ -891,7 +887,7 @@ export default function ManajemenProdukPage() {
                 <Archive size={18} className="mt-0.5 shrink-0 text-amber-500" />
                 <p className="text-sm text-amber-700">
                   Produk yang diarsipkan tidak muncul di kasir dan katalog aktif.
-                  {!isAdmin && " Klik Pulihkan untuk mengaktifkan kembali, atau Hapus Permanen untuk menghapus selamanya."}
+                  {" Klik Pulihkan untuk mengaktifkan kembali"}{!isAdmin ? ", atau Hapus Permanen untuk menghapus selamanya." : "."}
                 </p>
               </div>
 
@@ -930,16 +926,16 @@ export default function ManajemenProdukPage() {
                         </div>
                       </div>
 
-                      {!isAdmin && (
-                        <div className="mt-3 grid grid-cols-2 gap-2">
-                          <button onClick={() => handleBatalkanArsip(p.id)} className="flex items-center justify-center gap-2 rounded-xl bg-green-50 px-3 py-2.5 text-sm font-bold text-green-600 transition-colors active:scale-[0.98]" title="Pulihkan Produk">
-                            <RotateCcw size={15} /> Pulihkan
-                          </button>
+                      <div className={`mt-3 grid gap-2 ${isAdmin ? "grid-cols-1" : "grid-cols-2"}`}>
+                        <button onClick={() => handleBatalkanArsip(p.id)} className="flex items-center justify-center gap-2 rounded-xl bg-green-50 px-3 py-2.5 text-sm font-bold text-green-600 transition-colors active:scale-[0.98]" title="Pulihkan Produk">
+                          <RotateCcw size={15} /> Pulihkan
+                        </button>
+                        {!isAdmin && (
                           <button onClick={() => handleHapus(p.id)} className="flex items-center justify-center gap-2 rounded-xl bg-red-50 px-3 py-2.5 text-sm font-bold text-red-600 transition-colors active:scale-[0.98]" title="Hapus Permanen">
                             <Trash2 size={15} /> Hapus Permanen
                           </button>
-                        </div>
-                      )}
+                        )}
+                      </div>
                     </div>
                   ))
                 )}
@@ -955,12 +951,12 @@ export default function ManajemenProdukPage() {
                       <th className="p-4 font-semibold">Harga</th>
                       <th className="p-4 font-semibold">Stok Terakhir</th>
                       <th className="p-4 font-semibold text-center">Barcode</th>
-                      {!isAdmin && <th className="p-4 font-semibold text-center">Aksi</th>}
+                      <th className="p-4 font-semibold text-center">Aksi</th>
                     </tr>
                   </thead>
                   <tbody className="text-sm">
                     {filteredArsip.length === 0 && !isLoading ? (
-                      <tr><td colSpan={isAdmin ? 5 : 6} className="text-center py-10 text-slate-400">Tidak ada produk yang diarsipkan.</td></tr>
+                      <tr><td colSpan={6} className="text-center py-10 text-slate-400">Tidak ada produk yang diarsipkan.</td></tr>
                     ) : (
                       filteredArsip.map((p) => (
                         <tr key={p.id} className="border-b border-amber-50 bg-amber-50/20 opacity-80">
@@ -987,18 +983,18 @@ export default function ManajemenProdukPage() {
                               <span className="text-xs text-slate-400 italic">Tidak ada barcode</span>
                             )}
                           </td>
-                          {!isAdmin && (
-                            <td className="p-4 text-center">
-                              <div className="flex items-center justify-center gap-2">
-                                <button onClick={() => handleBatalkanArsip(p.id)} className="flex items-center gap-1.5 rounded-lg bg-green-50 px-3 py-2 text-xs font-bold text-green-600 hover:bg-green-100 transition-colors" title="Pulihkan Produk">
-                                  <RotateCcw size={14} /> Pulihkan
-                                </button>
+                          <td className="p-4 text-center">
+                            <div className="flex items-center justify-center gap-2">
+                              <button onClick={() => handleBatalkanArsip(p.id)} className="flex items-center gap-1.5 rounded-lg bg-green-50 px-3 py-2 text-xs font-bold text-green-600 hover:bg-green-100 transition-colors" title="Pulihkan Produk">
+                                <RotateCcw size={14} /> Pulihkan
+                              </button>
+                              {!isAdmin && (
                                 <button onClick={() => handleHapus(p.id)} className="flex items-center gap-1.5 rounded-lg bg-red-50 px-3 py-2 text-xs font-bold text-red-600 hover:bg-red-100 transition-colors" title="Hapus Permanen">
                                   <Trash2 size={14} /> Hapus Permanen
                                 </button>
-                              </div>
-                            </td>
-                          )}
+                              )}
+                            </div>
+                          </td>
                         </tr>
                       ))
                     )}
@@ -1024,10 +1020,7 @@ export default function ManajemenProdukPage() {
               {/* UPLOAD GAMBAR */}
               <div className="flex flex-col items-center justify-center mb-2">
                 <div className="relative group cursor-pointer" onClick={() => {
-                  if (isEdit && isAdmin) {
-                    alert("Hanya Owner yang diizinkan mengubah foto produk yang sudah ada.");
-                    return;
-                  }
+                  // Admin boleh mengubah foto produk (risiko rendah — perbaikan tampilan).
                   fileInputRef.current?.click();
                 }}>
                   {formData.gambar ? (
@@ -1038,21 +1031,15 @@ export default function ManajemenProdukPage() {
                       <span className="text-[10px] font-bold uppercase tracking-wider">Upload</span>
                     </div>
                   )}
-                  {isEdit && isAdmin && (
-                    <div className="absolute inset-0 bg-black/60 rounded-2xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                      <X size={24} className="text-white" />
-                    </div>
-                  )}
                 </div>
                 <input type="file" ref={fileInputRef} onChange={handleImageUpload} className="hidden" accept="image/*" />
                 <p className="text-[10px] text-slate-400 mt-3 text-center uppercase font-bold tracking-wide">
-                  JPG/PNG/WebP, mentah maks 20MB. Otomatis dikompres ke WebP.<br />
-                  {isEdit && isAdmin && <span className="text-red-400">(Hanya Owner yang dapat ubah foto)</span>}
+                  JPG/PNG/WebP, mentah maks 20MB. Otomatis dikompres ke WebP.
                 </p>
               </div>
 
-              {/* FOCAL POINT PICKER — hanya muncul jika ada foto dan boleh edit */}
-              {formData.gambar && !(isEdit && isAdmin) && (
+              {/* FOCAL POINT PICKER — muncul jika ada foto */}
+              {formData.gambar && (
                 <div>
                   <label className="block text-xs font-bold text-slate-500 mb-1 uppercase">Posisi Fokus Foto</label>
                   <p className="text-[11px] text-slate-400 mb-2">Klik pada bagian foto yang ingin ditonjolkan di tampilan kasir.</p>
@@ -1098,28 +1085,32 @@ export default function ManajemenProdukPage() {
                   required
                   value={formData.nama_produk}
                   onChange={(e) => setFormData({ ...formData, nama_produk: e.target.value })}
-                  disabled={isEdit && isAdmin}
-                  className={`w-full border rounded-xl px-4 py-3 outline-none text-sm font-bold text-slate-700 ${isEdit && isAdmin ? 'bg-slate-100 border-slate-200 text-slate-500 cursor-not-allowed' : 'border-slate-200 focus:border-pink-500'}`}
+                  className="w-full border border-slate-200 rounded-xl px-4 py-3 outline-none text-sm font-bold text-slate-700 focus:border-pink-500"
                   placeholder="Contoh: Buket Mawar"
                 />
               </div>
 
               {!formData.hasVariants && (
               <div>
-                <label className="block text-xs font-bold text-slate-500 mb-1 uppercase">Harga (Rp)</label>
+                <label className="block text-xs font-bold text-slate-500 mb-1 uppercase">
+                  Harga (Rp)
+                  {isEdit && isAdmin && <span className="ml-2 normal-case font-semibold text-red-400">(hanya Owner yang dapat mengubah harga)</span>}
+                </label>
                 <div className="flex gap-2">
                   <input
                     type="number"
                     required={!formData.hasVariants}
                     value={formData.harga}
                     onChange={(e) => setFormData({ ...formData, harga: e.target.value })}
-                    className="flex-1 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-pink-500 text-sm font-bold text-slate-700"
+                    disabled={isEdit && isAdmin}
+                    className={`flex-1 border rounded-xl px-4 py-3 outline-none text-sm font-bold ${isEdit && isAdmin ? "bg-slate-100 border-slate-200 text-slate-500 cursor-not-allowed" : "border-slate-200 focus:border-pink-500 text-slate-700"}`}
                     placeholder="0"
                   />
                   <select
                     value={formData.satuanHarga}
                     onChange={(e) => setFormData({ ...formData, satuanHarga: e.target.value })}
-                    className="border border-slate-200 rounded-xl px-3 py-3 outline-none focus:border-pink-500 text-sm font-bold text-slate-700 bg-white min-w-[96px]"
+                    disabled={isEdit && isAdmin}
+                    className={`border rounded-xl px-3 py-3 outline-none text-sm font-bold bg-white min-w-[96px] ${isEdit && isAdmin ? "bg-slate-100 border-slate-200 text-slate-500 cursor-not-allowed" : "border-slate-200 focus:border-pink-500 text-slate-700"}`}
                   >
                     <option value="pcs">/ Pcs</option>
                     <option value="lusin">/ Lusin</option>
@@ -1163,12 +1154,13 @@ export default function ManajemenProdukPage() {
                 {!(isEdit && isAdmin) && <p className="text-[10px] text-slate-400 mt-1 italic">Jika dikosongkan, sistem otomatis membuat kode acak unik.</p>}
               </div>
 
-              {/* VARIASI SECTION */}
+              {/* VARIASI SECTION — terkunci untuk Admin saat edit (variasi memuat harga) */}
               <div className="pt-4 mt-6 border-t border-slate-100">
-                <label className="flex items-center gap-3 cursor-pointer mb-4">
+                <label className={`flex items-center gap-3 mb-4 ${isEdit && isAdmin ? "cursor-not-allowed opacity-60" : "cursor-pointer"}`}>
                   <input
                     type="checkbox"
                     checked={formData.hasVariants}
+                    disabled={isEdit && isAdmin}
                     onChange={(e) => setFormData({
                       ...formData,
                       hasVariants: e.target.checked,
@@ -1177,10 +1169,11 @@ export default function ManajemenProdukPage() {
                     className="w-5 h-5 rounded border-2 border-slate-300 cursor-pointer accent-pink-500"
                   />
                   <span className="text-sm font-bold text-slate-700">Tambahkan Variasi (Ukuran/Warna)</span>
+                  {isEdit && isAdmin && <span className="text-[11px] font-semibold text-red-400">(hanya Owner yang dapat mengubah variasi)</span>}
                 </label>
 
                 {formData.hasVariants && (
-                  <div className="space-y-3 bg-pink-50/50 p-4 rounded-2xl border border-pink-100">
+                  <div className={`space-y-3 bg-pink-50/50 p-4 rounded-2xl border border-pink-100 ${isEdit && isAdmin ? "pointer-events-none opacity-60 select-none" : ""}`}>
                     {/* HARGA UNTUK SEMUA VARIASI (jika harga sama, beda warna saja) */}
                     <div className="rounded-xl bg-white border border-amber-200 p-3">
                       <label className="block text-[11px] font-bold text-amber-700 mb-1.5">⚡ Harga sama untuk semua variasi?</label>

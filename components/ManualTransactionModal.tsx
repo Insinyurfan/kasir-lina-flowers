@@ -152,6 +152,9 @@ export default function ManualTransactionModal({ open, transaction, title, onClo
   const [codeOpenRow, setCodeOpenRow] = useState<string | null>(null);
   // Simpan harga hasil edit sebagai harga khusus pelanggan (dipakai pesanan berikutnya). Default aktif.
   const [rememberPrice, setRememberPrice] = useState(true);
+  // Harga khusus pelanggan terpilih (per productId, level produk) + peta nama→customerId.
+  const [rememberedPrices, setRememberedPrices] = useState<Record<number, number>>({});
+  const [customerIdByName, setCustomerIdByName] = useState<Record<string, number>>({});
 
   useEffect(() => {
     if (!open) return;
@@ -174,6 +177,21 @@ export default function ManualTransactionModal({ open, transaction, title, onClo
       .then((res) => res.json())
       .then((data) => setCustomerNames(Array.isArray(data) ? data.map((n: string) => String(n).toUpperCase()) : []))
       .catch(() => setCustomerNames([]));
+
+    // Master pelanggan (objek) → peta nama kanonik ke customerId untuk ambil harga khusus.
+    fetch("/api/pelanggan?master=1", { cache: "no-store" })
+      .then((res) => res.json())
+      .then((data) => {
+        if (!Array.isArray(data)) return;
+        const map: Record<string, number> = {};
+        for (const row of data) {
+          if (row && typeof row === "object" && typeof row.name === "string" && typeof row.id === "number") {
+            map[row.name.trim().toUpperCase()] = row.id;
+          }
+        }
+        setCustomerIdByName(map);
+      })
+      .catch(() => setCustomerIdByName({}));
 
     fetch("/api/kode-pelanggan", { cache: "no-store" })
       .then((res) => res.json())
@@ -279,6 +297,48 @@ export default function ManualTransactionModal({ open, transaction, title, onClo
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, products]);
 
+  // Muat harga khusus pelanggan (level produk) saat nama pelanggan berubah.
+  // Dipakai otomatis sebagai harga default saat memilih produk (seperti di POS).
+  useEffect(() => {
+    if (!open) return;
+    let cancelled = false;
+    const name = namaPembeli.trim().toUpperCase();
+    if (name.length < 2) {
+      const timeoutId = window.setTimeout(() => {
+        if (!cancelled) setRememberedPrices({});
+      }, 0);
+      return () => {
+        cancelled = true;
+        window.clearTimeout(timeoutId);
+      };
+    }
+    const customerId = customerIdByName[name];
+    const query = customerId ? `customerId=${customerId}` : `customerName=${encodeURIComponent(name)}`;
+    fetch(`/api/harga-pelanggan?${query}`, { cache: "no-store" })
+      .then((res) => res.json())
+      .then((rows) => {
+        if (cancelled || !Array.isArray(rows)) return;
+        const map: Record<number, number> = {};
+        for (const row of rows) {
+          // Harga level produk (variantId 0) sebagai acuan tunggal.
+          if (Number(row.variantId) === 0) map[Number(row.productId)] = Number(row.price);
+        }
+        setRememberedPrices(map);
+      })
+      .catch(() => {
+        if (!cancelled) setRememberedPrices({});
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [open, namaPembeli, customerIdByName]);
+
+  // Harga dasar untuk produk: pakai harga khusus pelanggan bila ada, jika tidak → harga katalog.
+  const resolveRememberedBase = useCallback(
+    (productId: number, fallback: number) => rememberedPrices[productId] ?? fallback,
+    [rememberedPrices]
+  );
+
   const total = items.reduce((sum, item) => sum + Number(item.harga || 0) * Number(item.quantity || 0), 0);
 
   // Daftar produk terfilter untuk dropdown pencarian (urut alfabet biar tidak berantakan).
@@ -307,14 +367,16 @@ export default function ManualTransactionModal({ open, transaction, title, onClo
         if (field === "productId") {
           const selected = productsById[value];
           const prodSatuan = selected?.satuanHarga || "pcs";
+          // Harga default = harga khusus pelanggan (bila ada) atau harga katalog.
+          const base = selected ? resolveRememberedBase(selected.id, selected.harga) : Number(item.hargaBase) || 0;
           return {
             ...item,
             productId: value,
             variantId: "", // reset variasi karena beda produk beda variasi
             satuanHarga: prodSatuan,
             satuan: prodSatuan,
-            hargaBase: selected ? String(selected.harga) : item.hargaBase,
-            harga: selected ? String(selected.harga) : item.harga,
+            hargaBase: selected ? String(base) : item.hargaBase,
+            harga: selected ? String(base) : item.harga,
           };
         }
         if (field === "satuan") {
@@ -404,10 +466,11 @@ export default function ManualTransactionModal({ open, transaction, title, onClo
               if (base === product.harga) return; // sama dengan harga katalog → tak perlu disimpan
               seen.add(productId);
               try {
+                const customerId = customerIdByName[buyer.toUpperCase()];
                 await fetch("/api/harga-pelanggan", {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ customerName: buyer, productId, variantId: 0, price: Math.round(base) }),
+                  body: JSON.stringify({ customerId, customerName: buyer, productId, variantId: 0, price: Math.round(base) }),
                 });
               } catch {
                 /* best-effort; jangan gagalkan penyimpanan transaksi */
@@ -522,20 +585,21 @@ export default function ManualTransactionModal({ open, transaction, title, onClo
           </div>
 
           <div className="border border-slate-100 rounded-xl overflow-visible">
-            <div className="bg-slate-50 px-4 py-3 flex items-center justify-between rounded-t-xl">
+            <div className="bg-slate-50 px-4 py-3 rounded-t-xl">
               <h4 className="font-bold text-slate-700">Produk Terjual</h4>
-              <button
-                type="button"
-                onClick={() => setItems((current) => [...current, createEmptyItem()])}
-                className="bg-pink-100 text-pink-700 px-3 py-2 rounded-lg text-sm font-bold flex items-center gap-2"
-              >
-                <Plus size={16} /> Tambah Produk
-              </button>
             </div>
 
             <div className="divide-y divide-slate-100">
               {items.map((item) => {
                 const product = productsById[item.productId];
+                // Harga universal (katalog) pada satuan pesan saat ini, untuk pembanding (dicoret).
+                const catalogUnit = product
+                  ? hitungHargaSatuan(product.harga, product.satuanHarga || "pcs", item.satuan || "pcs")
+                  : 0;
+                const hargaNum = Number(item.harga) || 0;
+                const qtyNum = Number(item.quantity) || 0;
+                const lineTotal = hargaNum * qtyNum;
+                const hasCustomPrice = !!product && catalogUnit !== hargaNum;
 
                 return (
                   <div key={item.rowId} className="grid grid-cols-1 lg:grid-cols-[72px_1fr_90px_110px_140px_44px] gap-3 p-4 items-center">
@@ -659,14 +723,29 @@ export default function ManualTransactionModal({ open, transaction, title, onClo
                         </option>
                       ))}
                     </select>
-                    <input
-                      type="number"
-                      min="0"
-                      value={item.harga}
-                      onChange={(e) => updateItem(item.rowId, "harga", e.target.value)}
-                      className="w-full border border-slate-200 rounded-xl px-3 py-2.5 outline-none focus:border-pink-500 text-sm"
-                      placeholder="Harga"
-                    />
+                    <div className="flex flex-col gap-1">
+                      <input
+                        type="number"
+                        min="0"
+                        value={item.harga}
+                        onChange={(e) => updateItem(item.rowId, "harga", e.target.value)}
+                        className="w-full border border-slate-200 rounded-xl px-3 py-2.5 outline-none focus:border-pink-500 text-sm"
+                        placeholder="Harga"
+                        title="Harga per satuan pesan"
+                      />
+                      {product && (
+                        <div className="px-1 text-[11px] leading-tight">
+                          {hasCustomPrice && (
+                            <span className="mr-1 text-slate-400 line-through">
+                              Rp {catalogUnit.toLocaleString("id-ID")}
+                            </span>
+                          )}
+                          <span className="font-bold text-pink-600">
+                            {qtyNum}× = Rp {lineTotal.toLocaleString("id-ID")}
+                          </span>
+                        </div>
+                      )}
+                    </div>
                     <button
                       type="button"
                       onClick={() => setItems((current) => (current.length > 1 ? current.filter((row) => row.rowId !== item.rowId) : current))}
@@ -677,6 +756,17 @@ export default function ManualTransactionModal({ open, transaction, title, onClo
                   </div>
                 );
               })}
+            </div>
+
+            {/* Tombol tambah produk di BAWAH daftar agar tak perlu scroll ke atas. */}
+            <div className="border-t border-slate-100 p-3">
+              <button
+                type="button"
+                onClick={() => setItems((current) => [...current, createEmptyItem()])}
+                className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-pink-200 bg-pink-50/60 py-3 text-sm font-bold text-pink-600 hover:bg-pink-100"
+              >
+                <Plus size={18} /> Tambah Produk
+              </button>
             </div>
           </div>
 

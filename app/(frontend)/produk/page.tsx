@@ -65,7 +65,7 @@ export default function ManajemenProdukPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [search, setSearch] = useState("");
-  const [sortField, setSortField] = useState<"nama_produk" | "harga">("nama_produk");
+  const [sortField, setSortField] = useState<"nama_produk" | "harga" | "id">("nama_produk");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
   const [guestCart, setGuestCart] = useState<GuestCartItem[]>([]);
   const [isGuestCartOpen, setIsGuestCartOpen] = useState(false);
@@ -432,12 +432,13 @@ export default function ManajemenProdukPage() {
     window.open(`https://wa.me/${WHATSAPP_ORDER_NUMBER}?text=${encodeURIComponent(message)}`, "_blank", "noopener,noreferrer");
   };
 
-  const toggleSort = (field: "nama_produk" | "harga") => {
+  const toggleSort = (field: "nama_produk" | "harga" | "id") => {
     if (sortField === field) {
       setSortDir((d) => (d === "asc" ? "desc" : "asc"));
     } else {
       setSortField(field);
-      setSortDir("asc");
+      // "id" (baru/lama): default tampilkan TERBARU dulu (id desc → panah naik).
+      setSortDir(field === "id" ? "desc" : "asc");
     }
   };
 
@@ -457,14 +458,16 @@ export default function ManajemenProdukPage() {
     return 0;
   };
 
-  const sortList = <T extends { nama_produk: string; harga: number }>(list: T[]): T[] => {
-    return [...list].sort((a, b) =>
-      sortField === "harga"
+  const sortList = <T extends { nama_produk: string; harga: number; id: number }>(list: T[]): T[] => {
+    return [...list].sort((a, b) => {
+      // Baru/lama pakai id (autoincrement): id besar = baru ditambahkan.
+      if (sortField === "id") return sortDir === "asc" ? a.id - b.id : b.id - a.id;
+      return sortField === "harga"
         ? sortDir === "asc" ? a.harga - b.harga : b.harga - a.harga
         : sortDir === "asc"
           ? naturalCompare(a.nama_produk, b.nama_produk)
-          : naturalCompare(b.nama_produk, a.nama_produk)
-    );
+          : naturalCompare(b.nama_produk, a.nama_produk);
+    });
   };
 
   const filteredProduk = useMemo(() =>
@@ -508,6 +511,25 @@ export default function ManajemenProdukPage() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
             <input type="text" placeholder="Cari nama atau barcode..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-full pl-10 pr-4 py-2 bg-pink-50 border border-pink-100 rounded-xl outline-none focus:border-pink-500 text-sm transition-all" />
           </div>
+
+          {/* Filter urutan: baru ditambahkan (panah naik) ↔ produk lama (panah turun). */}
+          <button
+            type="button"
+            onClick={() => toggleSort("id")}
+            title="Urutkan: baru ditambahkan (panah naik) / produk lama (panah turun)"
+            className={`flex h-10 shrink-0 items-center gap-1.5 rounded-xl border px-3 text-sm font-bold transition-all ${
+              sortField === "id"
+                ? "border-pink-300 bg-pink-600 text-white shadow-sm shadow-pink-200"
+                : "border-pink-100 bg-pink-50 text-slate-500 hover:border-pink-300"
+            }`}
+          >
+            <span className="hidden sm:inline">{sortField === "id" && sortDir === "asc" ? "Terlama" : "Terbaru"}</span>
+            {sortField === "id" ? (
+              sortDir === "desc" ? <ArrowUp size={15} /> : <ArrowDown size={15} />
+            ) : (
+              <ArrowUpDown size={15} className="opacity-50" />
+            )}
+          </button>
 
           {!isGuest && !showArsip && (
             <button

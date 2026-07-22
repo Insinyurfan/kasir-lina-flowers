@@ -305,7 +305,7 @@ export default function PelangganPage() {
   if (!user) return null;
 
   return (
-    <div className="mx-auto w-full max-w-6xl">
+    <div className="w-full">
       <div className="mb-5">
         <h1 className="flex items-center gap-2 text-2xl font-black text-slate-800">
           <Contact className="text-pink-600" /> Pelanggan
@@ -327,9 +327,9 @@ export default function PelangganPage() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-[320px_1fr]">
+      <div className="grid grid-cols-1 gap-4 md:min-h-[80vh] md:grid-cols-[360px_1fr]">
         {/* KIRI: daftar pelanggan */}
-        <div className="rounded-2xl border border-pink-100 bg-white p-4 shadow-sm">
+        <div className="flex flex-col rounded-2xl border border-pink-100 bg-white p-4 shadow-sm md:min-h-[80vh]">
           <div className="mb-3 flex items-center gap-2">
             <div className="relative flex-1">
               <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -350,7 +350,7 @@ export default function PelangganPage() {
             </button>
           </div>
 
-          <div className="max-h-[62vh] space-y-1.5 overflow-y-auto pr-1">
+          <div className="flex-1 space-y-1.5 overflow-y-auto pr-1 md:max-h-[70vh]">
             {filteredCustomers.length === 0 ? (
               <div className="rounded-xl bg-slate-50 p-4 text-center text-xs text-slate-400">
                 {customers.length === 0
@@ -415,9 +415,9 @@ export default function PelangganPage() {
         </div>
 
         {/* KANAN: detail harga */}
-        <div className="rounded-2xl border border-pink-100 bg-white p-4 shadow-sm">
+        <div className="flex flex-col rounded-2xl border border-pink-100 bg-white p-4 shadow-sm md:min-h-[80vh]">
           {!selectedCustomer ? (
-            <div className="flex h-64 flex-col items-center justify-center gap-2 text-center text-slate-400">
+            <div className="flex min-h-64 flex-1 flex-col items-center justify-center gap-2 text-center text-slate-400">
               <Contact size={40} className="text-slate-300" />
               <p className="text-sm font-semibold">Pilih pelanggan di kiri untuk mengatur harga.</p>
             </div>
@@ -461,7 +461,7 @@ export default function PelangganPage() {
                 </div>
               </div>
 
-              <div className="max-h-[58vh] overflow-y-auto">
+              <div className="flex-1 overflow-y-auto md:max-h-[68vh]">
                 <table className="w-full text-sm">
                   <thead className="sticky top-0 bg-white">
                     <tr className="border-b border-slate-100 text-left text-xs uppercase tracking-wide text-slate-400">

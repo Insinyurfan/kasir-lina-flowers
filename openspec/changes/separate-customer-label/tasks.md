@@ -6,7 +6,7 @@
 
 ## 2. Master pelanggan
 
-- [x] 2.1 CRUD pelanggan + pencarian — `/api/pelanggan` GET (nama string[] + `?master=1` objek + `?q=`), POST/PATCH/DELETE (Owner/Admin)
+- [x] 2.1 CRUD pelanggan + pencarian — API `/api/pelanggan` (GET nama string[] + `?master=1` objek + `?q=`, POST/PATCH/DELETE Owner/Admin) + **halaman `/pelanggan`** (kelola pelanggan; per pelanggan: kode terpakai + tabel harga khusus vs harga umum + badge "Belum diatur")
 - [x] 2.2 POS: pilih pelanggan dari master (autocomplete), bukan teks bebas — autocomplete kini dari master; nama cocok → `customerId` diteruskan ke harga-pelanggan (fallback nama bila belum termigrasi)
 
 ## 3. Pisahkan label dari variasi

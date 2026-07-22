@@ -90,7 +90,29 @@ const mapCartToItems = (cart: CartItem[]) =>
 
 // Simpan harga dasar tiap baris sebagai "patokan" harga pelanggan (level produk),
 // diambil dari CO terakhir. Dipakai otomatis saat pelanggan yang sama order lagi.
-const rememberCustomerPrices = async (namaPembeli: string | undefined | null, cart: CartItem[]) => {
+// Pastikan nama pembeli tercatat sebagai master Customer (nama kanonik UPPERCASE),
+// lalu kembalikan id-nya. Best-effort: bila gagal, transaksi tetap jalan (customerId null).
+const resolveCustomerId = async (namaPembeli: string | undefined | null): Promise<number | null> => {
+  const name = String(namaPembeli || "").trim().toUpperCase();
+  if (name.length < 2 || name === "-") return null;
+  try {
+    const customer = await prisma.customer.upsert({
+      where: { name },
+      update: {},
+      create: { name },
+      select: { id: true },
+    });
+    return customer.id;
+  } catch {
+    return null;
+  }
+};
+
+const rememberCustomerPrices = async (
+  namaPembeli: string | undefined | null,
+  cart: CartItem[],
+  customerId: number | null
+) => {
   const customerName = String(namaPembeli || "").trim().toUpperCase();
   if (!customerName) return;
   for (const item of cart) {
@@ -102,8 +124,8 @@ const rememberCustomerPrices = async (namaPembeli: string | undefined | null, ca
     try {
       await prisma.customerPrice.upsert({
         where: { customerName_productId_variantId: { customerName, productId, variantId: 0 } },
-        update: { price },
-        create: { customerName, productId, variantId: 0, price },
+        update: { price, ...(customerId ? { customerId } : {}) },
+        create: { customerName, productId, variantId: 0, price, ...(customerId ? { customerId } : {}) },
       });
     } catch {
       /* patokan harga best-effort; jangan gagalkan transaksi */
@@ -293,6 +315,9 @@ export async function POST(request: Request) {
 
     const total_harga = calculateTotal(cart || []);
 
+    // Catat pembeli ke master Customer (bila ada namanya) & tautkan transaksinya.
+    const customerId = await resolveCustomerId(nama_pembeli);
+
     const nextTrxNumber = await getNextTrxNumber();
     const newTransaction = await prisma.transaction.create({
       data: {
@@ -301,6 +326,7 @@ export async function POST(request: Request) {
         total_harga,
         metode_pembayaran: metode_pembayaran || "Tunai",
         nama_pembeli,
+        ...(customerId ? { customerId } : {}),
         nama_kasir,
         status: status || "Paid",
         status_pengiriman: status_pengiriman || "Sedang Disiapkan",
@@ -319,7 +345,7 @@ export async function POST(request: Request) {
     }
 
     // Jadikan harga transaksi ini sebagai patokan harga pelanggan berikutnya.
-    await rememberCustomerPrices(nama_pembeli, cart || []);
+    await rememberCustomerPrices(nama_pembeli, cart || [], customerId);
     // Kode pelanggan baru dari transaksi ini → tambahkan ke master (untuk autocomplete).
     await rememberCustomerCodes(cart || []);
 

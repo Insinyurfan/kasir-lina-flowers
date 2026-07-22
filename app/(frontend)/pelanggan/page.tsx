@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Check,
   Contact,
+  ImageOff,
   Pencil,
   Plus,
   RotateCcw,
@@ -27,6 +28,9 @@ type Product = {
   nama_produk: string;
   harga: number;
   satuanHarga?: string | null;
+  gambar?: string | null;
+  gambarPosX?: number | null;
+  gambarPosY?: number | null;
   isArchived?: boolean;
 };
 
@@ -55,6 +59,9 @@ export default function PelangganPage() {
   const [formName, setFormName] = useState("");
   const [formPhone, setFormPhone] = useState("");
   const [formBusy, setFormBusy] = useState(false);
+
+  // Pratinjau (lightbox) gambar produk.
+  const [preview, setPreview] = useState<{ src: string; name: string } | null>(null);
 
   const [feedback, setFeedback] = useState<{ type: "ok" | "err"; text: string } | null>(null);
   const flash = useCallback((type: "ok" | "err", text: string) => {
@@ -488,16 +495,45 @@ export default function PelangganPage() {
                         return (
                           <tr key={product.id} className="border-b border-slate-50 align-middle">
                             <td className="py-2.5 pr-2">
-                              <p className="font-semibold text-slate-800">{product.nama_produk}</p>
-                              {hasCustom ? (
-                                <span className="mt-0.5 inline-block rounded-md bg-emerald-50 px-1.5 py-0.5 text-[10px] font-black text-emerald-600">
-                                  HARGA KHUSUS
-                                </span>
-                              ) : (
-                                <span className="mt-0.5 inline-block rounded-md bg-slate-100 px-1.5 py-0.5 text-[10px] font-black text-slate-400">
-                                  BELUM DIATUR
-                                </span>
-                              )}
+                              <div className="flex items-center gap-3">
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    product.gambar && setPreview({ src: product.gambar, name: product.nama_produk })
+                                  }
+                                  className={`relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-lg border border-slate-200 bg-slate-50 ${
+                                    product.gambar ? "cursor-zoom-in hover:border-pink-300" : "cursor-default"
+                                  }`}
+                                  title={product.gambar ? "Klik untuk perbesar" : "Tidak ada gambar"}
+                                >
+                                  {product.gambar ? (
+                                    <img
+                                      src={product.gambar}
+                                      alt={product.nama_produk}
+                                      className="h-full w-full object-cover"
+                                      style={{
+                                        objectPosition: `${product.gambarPosX ?? 50}% ${product.gambarPosY ?? 50}%`,
+                                      }}
+                                    />
+                                  ) : (
+                                    <span className="flex h-full w-full items-center justify-center text-slate-300">
+                                      <ImageOff size={18} />
+                                    </span>
+                                  )}
+                                </button>
+                                <div className="min-w-0">
+                                  <p className="font-semibold text-slate-800">{product.nama_produk}</p>
+                                  {hasCustom ? (
+                                    <span className="mt-0.5 inline-block rounded-md bg-emerald-50 px-1.5 py-0.5 text-[10px] font-black text-emerald-600">
+                                      HARGA KHUSUS
+                                    </span>
+                                  ) : (
+                                    <span className="mt-0.5 inline-block rounded-md bg-slate-100 px-1.5 py-0.5 text-[10px] font-black text-slate-400">
+                                      BELUM DIATUR
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
                             </td>
                             <td className="px-2 py-2.5 text-slate-500">
                               {rupiah(product.harga)}
@@ -555,6 +591,37 @@ export default function PelangganPage() {
           )}
         </div>
       </div>
+
+      {/* LIGHTBOX GAMBAR PRODUK */}
+      {preview && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm"
+          onClick={() => setPreview(null)}
+        >
+          <div
+            className="w-full max-w-2xl overflow-hidden rounded-2xl bg-white shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between border-b border-slate-100 p-4">
+              <h3 className="truncate pr-4 font-bold text-slate-800">{preview.name}</h3>
+              <button
+                type="button"
+                onClick={() => setPreview(null)}
+                className="rounded-full p-2 text-slate-400 hover:bg-red-50 hover:text-red-500"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            <div className="bg-slate-50 p-5">
+              <img
+                src={preview.src}
+                alt={preview.name}
+                className="mx-auto max-h-[72vh] w-full rounded-xl border border-slate-100 bg-white object-contain"
+              />
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* MODAL FORM PELANGGAN */}
       {formOpen && (

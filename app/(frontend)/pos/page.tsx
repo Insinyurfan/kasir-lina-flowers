@@ -191,6 +191,9 @@ export default function PosPage() {
   const [isCartOpen, setIsCartOpen] = useState(false); // STATE BUKA/TUTUP KERANJANG
   // Daftar nama toko/pelanggan yang pernah ada (untuk autocomplete pilih nama → harga terhubung).
   const [customerNames, setCustomerNames] = useState<string[]>([]);
+  // Peta nama kanonik → id master Customer, agar Lock Price bisa dikunci ke customerId
+  // (bukan teks bebas). Kosong bila DB belum termigrasi → otomatis fallback ke nama.
+  const [customerIdByName, setCustomerIdByName] = useState<Record<string, number>>({});
   const [customerSuggestOpen, setCustomerSuggestOpen] = useState(false);
   // Kode pelanggan per baris (Aneka), dipilih di modal saat menambah produk.
   const [customerCodes, setCustomerCodes] = useState<string[]>([]);
@@ -348,7 +351,11 @@ export default function PosPage() {
       return;
     }
     let cancelled = false;
-    fetch(`/api/harga-pelanggan?customerName=${encodeURIComponent(name)}`, { cache: "no-store" })
+    const customerId = customerIdByName[name.toUpperCase()];
+    const query = customerId
+      ? `customerId=${customerId}`
+      : `customerName=${encodeURIComponent(name)}`;
+    fetch(`/api/harga-pelanggan?${query}`, { cache: "no-store" })
       .then((res) => res.json())
       .then((rows) => {
         if (cancelled || !Array.isArray(rows)) return;
@@ -364,9 +371,9 @@ export default function PosPage() {
     return () => {
       cancelled = true;
     };
-  }, [namaPembeli, isSessionStarted]);
+  }, [namaPembeli, isSessionStarted, customerIdByName]);
 
-  // Muat daftar nama toko/pelanggan yang pernah ada untuk autocomplete.
+  // Muat daftar nama toko/pelanggan yang pernah ada untuk autocomplete (master ∪ riwayat).
   useEffect(() => {
     fetch("/api/pelanggan", { cache: "no-store" })
       .then((res) => res.json())
@@ -375,6 +382,26 @@ export default function PosPage() {
       })
       .catch(() => {
         /* abaikan; autocomplete opsional */
+      });
+  }, []);
+
+  // Muat master Customer (objek) untuk memetakan nama → customerId. Bila belum termigrasi
+  // (master kosong / gagal), peta kosong dan Lock Price otomatis fallback ke nama.
+  useEffect(() => {
+    fetch("/api/pelanggan?master=1", { cache: "no-store" })
+      .then((res) => res.json())
+      .then((data) => {
+        if (!Array.isArray(data)) return;
+        const map: Record<string, number> = {};
+        for (const row of data) {
+          if (row && typeof row === "object" && typeof row.name === "string" && typeof row.id === "number") {
+            map[row.name.trim().toUpperCase()] = row.id;
+          }
+        }
+        setCustomerIdByName(map);
+      })
+      .catch(() => {
+        /* abaikan; fallback ke nama */
       });
   }, []);
 
@@ -552,10 +579,13 @@ export default function PosPage() {
       return next;
     });
     try {
+      const customerId = customerIdByName[name.toUpperCase()];
       await fetch("/api/harga-pelanggan", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ customerName: name, productId, variantId: 0, price }),
+        // Sertakan customerId bila nama cocok master (kunci ke pelanggan); server tetap
+        // menerima customerName sebagai fallback & snapshot.
+        body: JSON.stringify({ customerId, customerName: name, productId, variantId: 0, price }),
       });
     } catch {
       /* abaikan; cache lokal sudah diperbarui */

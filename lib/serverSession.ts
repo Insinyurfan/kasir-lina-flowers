@@ -5,10 +5,13 @@ const SESSION_COOKIE = "lina_session";
 const SESSION_MAX_AGE_SECONDS = 60 * 60 * 24 * 30;
 
 const getSessionSecret = () => {
-  // Gagal-tertutup: HANYA pakai SESSION_SECRET khusus. Jangan jatuh ke kredensial lain
-  // (DATABASE_URL / service role key) — bila bocor, token sesi bisa dipalsukan.
-  const secret = process.env.SESSION_SECRET;
-  if (!secret) throw new Error("SESSION_SECRET belum dikonfigurasi.");
+  // Utamakan secret khusus SESSION_SECRET (paling aman & terpisah dari kredensial lain).
+  // Transisi: bila belum diset, jatuh ke SUPABASE_SERVICE_ROLE_KEY — kunci yang sama
+  // dipakai versi sebelumnya, sehingga sesi lama tetap valid & tak ada yang ter-logout,
+  // dan deploy tak butuh perubahan env di Vercel. Set SESSION_SECRET untuk pengamanan
+  // penuh. Tetap gagal-tertutup: bila keduanya kosong, tolak (jangan pakai DATABASE_URL).
+  const secret = process.env.SESSION_SECRET || process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!secret) throw new Error("SESSION_SECRET / SUPABASE_SERVICE_ROLE_KEY belum dikonfigurasi.");
   return secret;
 };
 

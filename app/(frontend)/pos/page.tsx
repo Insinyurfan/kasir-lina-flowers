@@ -1014,21 +1014,8 @@ export default function PosPage() {
                 );
               })()}
             </div>
-            {/* Masukkan tanpa variasi (harga dasar). Untuk produk tanpa ukuran, ini tombol "Tambah". */}
-            <button
-              type="button"
-              onClick={() => handleNoVariantSelected(variantModalProduct)}
-              className="mx-4 mt-3 flex w-[calc(100%-2rem)] items-center justify-between gap-2 rounded-2xl border-2 border-dashed border-pink-300 bg-pink-50 px-4 py-3 hover:border-pink-400 hover:bg-pink-100 active:scale-[0.99] transition-all"
-            >
-              <span className="text-sm font-black text-pink-700">{(variantModalProduct.variants && variantModalProduct.variants.length > 0) ? "Tanpa Variasi" : "Tambah ke Keranjang"}</span>
-              <span className="text-sm font-bold text-pink-500">
-                Rp {variantModalProduct.harga.toLocaleString("id-ID")}
-                {(variantModalProduct.satuanHarga ?? "pcs") !== "pcs" && (
-                  <span className="text-[10px] text-slate-400"> /{SATUAN_LABELS[variantModalProduct.satuanHarga] ?? variantModalProduct.satuanHarga}</span>
-                )}
-              </span>
-            </button>
-            <div className="px-4 pt-3 pb-4 grid grid-cols-2 gap-3 max-h-[60vh] overflow-y-auto">
+            {variantModalProduct.variants && variantModalProduct.variants.length > 0 && (
+            <div className="px-4 pt-3 pb-4 grid grid-cols-2 gap-3 max-h-[50vh] overflow-y-auto">
               {(variantModalProduct.variants || []).map((v) => (
                 <button
                   key={v.id}
@@ -1046,36 +1033,58 @@ export default function PosPage() {
                 </button>
               ))}
             </div>
+            )}
             {/* TAMBAH VARIAN CEPAT — tanpa harus ke halaman Produk */}
             <div className="border-t border-amber-100 bg-amber-50/50 px-4 py-3">
-              <p className="text-[10px] font-black uppercase tracking-widest text-amber-600 mb-2">Tambah Varian / Kode Baru</p>
-              <div className="flex flex-wrap items-center gap-2">
+              <p className="text-[10px] font-black uppercase tracking-widest text-amber-600 mb-2">Tambah Varian</p>
+              <div className="flex flex-col gap-2">
                 <input
                   type="text"
                   value={newVariantName}
                   onChange={(e) => setNewVariantName(e.target.value)}
-                  placeholder="Nama / kode (mis. SMT)"
-                  className="flex-1 min-w-[120px] rounded-xl border border-amber-200 bg-white px-3 py-2 text-sm font-bold text-slate-700 outline-none focus:border-amber-400"
+                  placeholder="Size / Varian lain"
+                  className="w-full rounded-xl border border-amber-200 bg-white px-3 py-2.5 text-sm font-bold text-slate-700 outline-none focus:border-amber-400"
                   onKeyDown={(e) => { if (e.key === "Enter") handleAddVariantInline(); }}
                 />
-                <input
-                  type="number"
-                  value={newVariantPrice}
-                  onChange={(e) => setNewVariantPrice(e.target.value)}
-                  placeholder={`Harga (${(variantModalProduct.harga ?? 0).toLocaleString("id-ID")})`}
-                  className="w-28 rounded-xl border border-amber-200 bg-white px-3 py-2 text-sm font-bold text-slate-700 outline-none focus:border-amber-400"
-                  onKeyDown={(e) => { if (e.key === "Enter") handleAddVariantInline(); }}
-                />
-                <button
-                  type="button"
-                  onClick={handleAddVariantInline}
-                  disabled={isAddingVariant}
-                  className="rounded-xl bg-amber-500 px-4 py-2 text-sm font-black text-white shadow-sm hover:bg-amber-600 disabled:opacity-50"
-                >
-                  {isAddingVariant ? "..." : "+ Tambah"}
-                </button>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="number"
+                    value={newVariantPrice}
+                    onChange={(e) => setNewVariantPrice(e.target.value)}
+                    placeholder={`Harga Varian (${(variantModalProduct.harga ?? 0).toLocaleString("id-ID")})`}
+                    className="min-w-0 flex-1 rounded-xl border border-amber-200 bg-white px-3 py-2.5 text-sm font-bold text-slate-700 outline-none focus:border-amber-400"
+                    onKeyDown={(e) => { if (e.key === "Enter") handleAddVariantInline(); }}
+                  />
+                  <button
+                    type="button"
+                    onClick={handleAddVariantInline}
+                    disabled={isAddingVariant}
+                    className="shrink-0 rounded-xl bg-amber-500 px-4 py-2.5 text-sm font-black text-white shadow-sm hover:bg-amber-600 disabled:opacity-50"
+                  >
+                    {isAddingVariant ? "..." : "+ Tambah"}
+                  </button>
+                </div>
               </div>
               <p className="mt-1.5 text-[10px] font-semibold text-slate-400">Kosongkan harga untuk pakai harga dasar produk.</p>
+            </div>
+
+            {/* Tombol tambah ke keranjang — SELALU paling bawah agar rapi. */}
+            <div className="border-t border-slate-100 p-4">
+              <button
+                type="button"
+                onClick={() => handleNoVariantSelected(variantModalProduct)}
+                className="flex w-full items-center justify-between gap-2 rounded-2xl bg-pink-600 px-4 py-3.5 text-white shadow-lg shadow-pink-200 hover:bg-pink-700 active:scale-[0.99] transition-all"
+              >
+                <span className="text-sm font-black">
+                  {(variantModalProduct.variants && variantModalProduct.variants.length > 0) ? "Tambah Tanpa Variasi" : "Tambah ke Keranjang"}
+                </span>
+                <span className="text-sm font-bold">
+                  Rp {variantModalProduct.harga.toLocaleString("id-ID")}
+                  {(variantModalProduct.satuanHarga ?? "pcs") !== "pcs" && (
+                    <span className="text-[10px] text-white/70"> /{SATUAN_LABELS[variantModalProduct.satuanHarga] ?? variantModalProduct.satuanHarga}</span>
+                  )}
+                </span>
+              </button>
             </div>
           </div>
         </div>

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { getActorFromPayload, recordActivityLog } from "@/lib/activityLog";
+import { recordActivityLog } from "@/lib/activityLog";
+import { actorFromUser, requireRole } from "@/lib/apiAuth";
 
 // Method DELETE: Untuk dipanggil frontend saat menekan tombol "Hapus"
 export async function DELETE(
@@ -8,10 +9,12 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const auth = await requireRole(request, ["Owner", "Admin"]);
+    if (!auth.ok) return auth.response;
+    const actor = actorFromUser(auth.user);
+
     const { id: idParam } = await params;
     const id = Number(idParam);
-    const payload = await request.json().catch(() => ({}));
-    const actor = getActorFromPayload(payload as Record<string, unknown>);
     const product = await prisma.product.findUnique({ where: { id } });
 
     await prisma.product.delete({

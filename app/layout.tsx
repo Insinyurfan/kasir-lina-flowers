@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import "./globals.css";
 import Link from "next/link";
 import { clearSavedUserSession, getSavedUserSession } from "@/lib/userSession";
+import SessionExpiryHandler from "@/components/SessionExpiryHandler";
 import {
   ArrowDown,
   ArrowLeft,
@@ -686,6 +687,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="apple-touch-icon" href="/icons/lina-apple-touch-icon.png" />
       </head>
       <body className={`${inter.className} bg-pink-50 text-slate-800`} suppressHydrationWarning>
+        <SessionExpiryHandler />
         <style>{`
           @keyframes lina-bell-ring {
             0%, 100% { transform: rotate(0deg); }

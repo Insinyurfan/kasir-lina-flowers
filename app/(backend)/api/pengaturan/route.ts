@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { getActorFromPayload, recordActivityLog } from "@/lib/activityLog";
+import { recordActivityLog } from "@/lib/activityLog";
+import { actorFromUser, requireRole } from "@/lib/apiAuth";
 
 export const dynamic = "force-dynamic";
 
@@ -82,8 +83,11 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
+    const auth = await requireRole(request, ["Owner"]);
+    if (!auth.ok) return auth.response;
+    const actor = actorFromUser(auth.user);
+
     const body = (await request.json()) as StoreSettingRequestPayload;
-    const actor = getActorFromPayload(body as Record<string, unknown>);
     const current = await getStoreSetting();
     const next = {
       brand: body.brand !== undefined ? body.brand : current.brand,

@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { Prisma } from "@/lib/generated/prisma";
 import prisma from "@/lib/prisma";
-import { getActorFromPayload, recordActivityLog } from "@/lib/activityLog";
-import { getServerSessionUser } from "@/lib/serverSession";
+import { recordActivityLog } from "@/lib/activityLog";
+import { actorFromUser, requireRole, requireUser } from "@/lib/apiAuth";
 
 // Paksa Next.js agar TIDAK menyimpan cache untuk API ini
 export const dynamic = 'force-dynamic';
@@ -219,6 +219,9 @@ const createNewOrderNotifications = async (transaction: {
 };
 
 export async function GET(request: Request) {
+  const auth = await requireUser(request);
+  if (!auth.ok) return auth.response;
+
   const { searchParams } = new URL(request.url);
   const status = searchParams.get("status");
   const metode = searchParams.get("metode");
@@ -261,8 +264,7 @@ export async function GET(request: Request) {
       // FITUR BARU: Mengurutkan berdasarkan tanggal
       orderBy: { tanggal: sort === "asc" ? "asc" : "desc" },
     });
-    const viewer = await getServerSessionUser(request);
-    const canSeePhone = viewer?.role === "Owner";
+    const canSeePhone = auth.user.role === "Owner";
     const withNotifications = await attachNotifications(transaksi);
     return NextResponse.json(
       withNotifications.map((transaction) => ({
@@ -282,8 +284,11 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
+    const auth = await requireRole(request, ["Owner", "Admin"]);
+    if (!auth.ok) return auth.response;
+    const actor = actorFromUser(auth.user);
+
     const body = (await request.json()) as TransactionPayload;
-    const actor = getActorFromPayload(body as Record<string, unknown>);
     const { cart, metode_pembayaran, nama_pembeli, nama_kasir, status, status_pengiriman, tanggal, adjustStock } = body;
 
     const total_harga = calculateTotal(cart || []);
@@ -351,17 +356,17 @@ export async function POST(request: Request) {
 
 export async function PATCH(request: Request) {
   try {
-    const payload = (await request.json()) as TransactionPayload;
-    const actor = getActorFromPayload(payload as Record<string, unknown>);
-    const { id, status, status_pengiriman, metode_pembayaran, tanggal, nama_pembeli, nama_kasir, cart, actorRole } = payload;
-
     // Pembatasan peran (server-side): mengubah ISI riwayat transaksi (item, harga,
     // tanggal, pembeli, metode, status bayar) hanya Owner — vektor kecurangan klasik.
     // Non-Owner (Admin) hanya boleh memperbarui status pengiriman.
-    const viewer = await getServerSessionUser(request);
-    if (!viewer || !["Owner", "Admin"].includes(viewer.role)) {
-      return NextResponse.json({ error: "Sesi Owner atau Admin diperlukan." }, { status: 401 });
-    }
+    const auth = await requireRole(request, ["Owner", "Admin"]);
+    if (!auth.ok) return auth.response;
+    const viewer = auth.user;
+    const actor = actorFromUser(viewer);
+
+    const payload = (await request.json()) as TransactionPayload;
+    const { id, status, status_pengiriman, metode_pembayaran, tanggal, nama_pembeli, nama_kasir, cart } = payload;
+
     if (viewer.role !== "Owner") {
       const mengubahIsi =
         Array.isArray(cart) || tanggal !== undefined || nama_pembeli !== undefined ||
@@ -381,7 +386,7 @@ export async function PATCH(request: Request) {
     const dataToUpdate: Prisma.TransactionUpdateInput = {};
     if (status) dataToUpdate.status = status;
     if (status_pengiriman) {
-      if (actorRole === "Admin") {
+      if (viewer.role === "Admin") {
         const sentNotifications = await prisma.$queryRaw<Array<{ statusPengiriman: string }>>`
           SELECT "statusPengiriman"
           FROM "Notification"
@@ -459,13 +464,11 @@ export async function PATCH(request: Request) {
 export async function DELETE(request: Request) {
   try {
     // Menghapus riwayat transaksi hanya Owner (dicek di server, bukan cuma UI).
-    const viewer = await getServerSessionUser(request);
-    if (!viewer || viewer.role !== "Owner") {
-      return NextResponse.json({ error: "Hanya Owner yang dapat menghapus riwayat transaksi." }, { status: 403 });
-    }
+    const auth = await requireRole(request, ["Owner"]);
+    if (!auth.ok) return auth.response;
+    const actor = actorFromUser(auth.user);
 
     const payload = (await request.json()) as TransactionPayload;
-    const actor = getActorFromPayload(payload as Record<string, unknown>);
     const { id } = payload;
     const transaction = await prisma.transaction.findUnique({
       where: { id: Number(id) },

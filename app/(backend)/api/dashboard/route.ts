@@ -1,10 +1,14 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { requireUser } from "@/lib/apiAuth";
 
 export async function GET(request: Request) {
   try {
+    const auth = await requireUser(request);
+    if (!auth.ok) return auth.response;
+
     const { searchParams } = new URL(request.url);
-    const dateParam = searchParams.get("date"); 
+    const dateParam = searchParams.get("date");
 
     let startDate, endDate;
     

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { ensureActivityLogTable, getActorFromPayload, type ActivityLogRow } from "@/lib/activityLog";
+import { ensureActivityLogTable, type ActivityLogRow } from "@/lib/activityLog";
+import { requireRole, requireUser } from "@/lib/apiAuth";
 
 export const dynamic = "force-dynamic";
 
@@ -14,6 +15,9 @@ const normalizeLimit = (value: string | null) => {
 
 export async function GET(request: Request) {
   try {
+    const auth = await requireUser(request);
+    if (!auth.ok) return auth.response;
+
     await ensureActivityLogTable();
 
     const { searchParams } = new URL(request.url);
@@ -62,31 +66,16 @@ export async function GET(request: Request) {
 
 export async function DELETE(request: Request) {
   try {
+    const auth = await requireRole(request, ["Owner"]);
+    if (!auth.ok) return auth.response;
+
     await ensureActivityLogTable();
 
     const payload = (await request.json()) as {
       id?: number;
       ids?: number[];
       deleteAll?: boolean;
-      actorId?: number;
-      actorName?: string;
-      actorRole?: string;
     };
-    const actor = getActorFromPayload(payload as Record<string, unknown>);
-    const actorId = Number(actor.id);
-    const ownerRows = Number.isFinite(actorId)
-      ? await prisma.$queryRaw<Array<{ id: number; role: string }>>`
-          SELECT id, role
-          FROM "User"
-          WHERE id = ${actorId}
-            AND role = 'Owner'
-          LIMIT 1
-        `
-      : [];
-
-    if (!ownerRows[0]) {
-      return NextResponse.json({ error: "Hanya Owner yang dapat menghapus Log Aktivitas." }, { status: 403 });
-    }
 
     if (payload.deleteAll) {
       await prisma.$executeRaw`

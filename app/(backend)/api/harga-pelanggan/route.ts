@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { requireRole, requireUser } from "@/lib/apiAuth";
 
 export const dynamic = "force-dynamic";
 
@@ -9,6 +10,9 @@ const normalizeName = (value: unknown): string =>
 // GET /api/harga-pelanggan?customerName=ANEKA
 // Mengembalikan daftar harga khusus tersimpan untuk pelanggan tersebut.
 export async function GET(request: NextRequest) {
+  const auth = await requireUser(request);
+  if (!auth.ok) return auth.response;
+
   const { searchParams } = new URL(request.url);
   const customerName = normalizeName(searchParams.get("customerName"));
   if (!customerName) return NextResponse.json([]);
@@ -28,6 +32,9 @@ export async function GET(request: NextRequest) {
 // Simpan / perbarui (upsert) harga khusus untuk pelanggan + produk (+ varian opsional).
 export async function POST(request: NextRequest) {
   try {
+    const auth = await requireRole(request, ["Owner", "Admin"]);
+    if (!auth.ok) return auth.response;
+
     const data = await request.json();
     const customerName = normalizeName(data.customerName);
     const productId = Number(data.productId);
@@ -62,6 +69,9 @@ export async function POST(request: NextRequest) {
 // Hapus harga khusus sehingga kembali memakai harga universal.
 export async function DELETE(request: NextRequest) {
   try {
+    const auth = await requireRole(request, ["Owner", "Admin"]);
+    if (!auth.ok) return auth.response;
+
     const data = await request.json();
     const customerName = normalizeName(data.customerName);
     const productId = Number(data.productId);

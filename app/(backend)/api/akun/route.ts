@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { recordActivityLog } from "@/lib/activityLog";
+import { requireRole, requireUser } from "@/lib/apiAuth";
 
 export const dynamic = "force-dynamic";
 
@@ -69,8 +70,11 @@ const accountSelectSql = `
   id, username, "fullName", "profilePhoto", role
 `;
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    const auth = await requireUser(request);
+    if (!auth.ok) return auth.response;
+
     const users = await prisma.$queryRawUnsafe<AccountRow[]>(`
       SELECT ${accountSelectSql}
       FROM "User"
@@ -84,12 +88,11 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const { username, fullName, profilePhoto, password, role, actorId } = await request.json();
-    const actor = await findAccountById(Number(actorId));
+    const auth = await requireRole(request, ["Owner"]);
+    if (!auth.ok) return auth.response;
+    const actor = auth.user;
 
-    if (!actor || actor.role !== "Owner") {
-      return NextResponse.json({ error: "Hanya Owner yang bisa menambahkan akun." }, { status: 403 });
-    }
+    const { username, fullName, profilePhoto, password, role } = await request.json();
 
     const cleanUsername = String(username || "").trim().toLowerCase();
     const cleanFullName = String(fullName || "").trim();
@@ -135,13 +138,17 @@ export async function POST(request: Request) {
 
 export async function PATCH(request: Request) {
   try {
-    const { id, username, fullName, profilePhoto, password, oldPassword, role, actorId } = await request.json();
+    // Wajib login. Owner boleh mengubah akun mana pun; non-Owner hanya akun sendiri.
+    const auth = await requireUser(request);
+    if (!auth.ok) return auth.response;
+    const actor = auth.user;
+
+    const { id, username, fullName, profilePhoto, password, oldPassword, role } = await request.json();
     const targetId = Number(id);
-    const actor = await findAccountById(Number(actorId));
     const target = await findAccountById(targetId);
     const mainOwner = await findMainOwner();
 
-    if (!actor || !target) {
+    if (!target) {
       return NextResponse.json({ error: "Akun tidak ditemukan." }, { status: 404 });
     }
 
@@ -245,14 +252,13 @@ export async function PATCH(request: Request) {
 
 export async function DELETE(request: Request) {
   try {
-    const { id, actorId } = await request.json();
-    const targetId = Number(id);
-    const actor = await findAccountById(Number(actorId));
-    const mainOwner = await findMainOwner();
+    const auth = await requireRole(request, ["Owner"]);
+    if (!auth.ok) return auth.response;
+    const actor = auth.user;
 
-    if (!actor || actor.role !== "Owner") {
-      return NextResponse.json({ error: "Hanya Owner yang bisa menghapus akun." }, { status: 403 });
-    }
+    const { id } = await request.json();
+    const targetId = Number(id);
+    const mainOwner = await findMainOwner();
 
     if (actor.id === targetId) {
       return NextResponse.json({ error: "Anda tidak bisa menghapus akun yang sedang dipakai." }, { status: 400 });

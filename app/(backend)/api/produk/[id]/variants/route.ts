@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { getActorFromPayload, recordActivityLog } from "@/lib/activityLog";
+import { recordActivityLog } from "@/lib/activityLog";
+import { actorFromUser, requireRole } from "@/lib/apiAuth";
 
 export const dynamic = 'force-dynamic';
 
@@ -25,9 +26,12 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const auth = await requireRole(request, ["Owner", "Admin"]);
+    if (!auth.ok) return auth.response;
+    const actor = actorFromUser(auth.user);
+
     const { id } = await params;
     const data = await request.json();
-    const actor = getActorFromPayload(data);
     const productId = Number(id);
 
     // Check jika produk ada
@@ -86,9 +90,11 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const auth = await requireRole(request, ["Owner", "Admin"]);
+    if (!auth.ok) return auth.response;
+
     const { id } = await params;
     const data = await request.json();
-    const actor = getActorFromPayload(data);
     const productId = Number(id);
 
     // Check duplicate name jika mengubah name
@@ -125,9 +131,12 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const auth = await requireRole(request, ["Owner", "Admin"]);
+    if (!auth.ok) return auth.response;
+    const actor = actorFromUser(auth.user);
+
     const { id } = await params;
     const data = await request.json();
-    const actor = getActorFromPayload(data);
     const productId = Number(id);
 
     const variant = await prisma.productVariant.findUnique({

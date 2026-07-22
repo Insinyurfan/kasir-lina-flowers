@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { Prisma } from "@/lib/generated/prisma";
-import { getActorFromPayload, recordActivityLog } from "@/lib/activityLog";
+import { recordActivityLog } from "@/lib/activityLog";
+import { actorFromUser, requireRole, requireUser } from "@/lib/apiAuth";
 
 type NotificationRow = {
   id: number;
@@ -48,6 +49,9 @@ const ensureNotificationHiddenColumn = async () => {
 
 export async function GET(request: Request) {
   try {
+    const auth = await requireUser(request);
+    if (!auth.ok) return auth.response;
+
     await ensureNotificationHiddenColumn();
 
     const { searchParams } = new URL(request.url);
@@ -93,6 +97,10 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
+    const auth = await requireRole(request, ["Owner", "Admin"]);
+    if (!auth.ok) return auth.response;
+    const actor = actorFromUser(auth.user);
+
     await ensureNotificationHiddenColumn();
 
     const { transactionId, senderRole, senderName, statusPengiriman } = (await request.json()) as {
@@ -101,7 +109,6 @@ export async function POST(request: Request) {
       senderName?: string;
       statusPengiriman?: string;
     };
-    const actor = getActorFromPayload({ senderRole, senderName });
 
     if (!transactionId || !senderRole || !statusPengiriman) {
       return NextResponse.json({ error: "Data notifikasi belum lengkap" }, { status: 400 });
@@ -174,6 +181,10 @@ export async function POST(request: Request) {
 
 export async function PATCH(request: Request) {
   try {
+    const auth = await requireRole(request, ["Owner", "Admin"]);
+    if (!auth.ok) return auth.response;
+    const actor = actorFromUser(auth.user);
+
     await ensureNotificationHiddenColumn();
 
     const payload = (await request.json()) as {
@@ -182,12 +193,8 @@ export async function PATCH(request: Request) {
       role?: string;
       readAll?: boolean;
       isRead?: boolean;
-      actorId?: number;
-      actorName?: string;
-      actorRole?: string;
     };
     const { id, ids, role, readAll, isRead } = payload;
-    const actor = getActorFromPayload(payload as Record<string, unknown>);
     const nextReadState = isRead === false ? false : true;
 
     if (readAll && role) {
@@ -248,6 +255,10 @@ export async function PATCH(request: Request) {
 
 export async function DELETE(request: Request) {
   try {
+    const auth = await requireRole(request, ["Owner", "Admin"]);
+    if (!auth.ok) return auth.response;
+    const actor = actorFromUser(auth.user);
+
     await ensureNotificationHiddenColumn();
 
     const payload = (await request.json()) as {
@@ -255,12 +266,8 @@ export async function DELETE(request: Request) {
       ids?: number[];
       role?: string;
       deleteAll?: boolean;
-      actorId?: number;
-      actorName?: string;
-      actorRole?: string;
     };
     const { id, ids, role, deleteAll } = payload;
-    const actor = getActorFromPayload(payload as Record<string, unknown>);
 
     if (deleteAll && role) {
       await prisma.$executeRaw`

@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { getActorFromPayload, recordActivityLog } from "@/lib/activityLog";
+import { recordActivityLog } from "@/lib/activityLog";
 import { deleteProductImageFromStorage } from "@/lib/supabaseStorage";
-import { getServerSessionUser } from "@/lib/serverSession";
+import { actorFromUser, requireRole } from "@/lib/apiAuth";
 
 export const dynamic = 'force-dynamic';
 
@@ -59,8 +59,11 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
+    const auth = await requireRole(request, ["Owner", "Admin"]);
+    if (!auth.ok) return auth.response;
+    const actor = actorFromUser(auth.user);
+
     const data = await request.json();
-    const actor = getActorFromPayload(data);
 
     let finalBarcode = data.barcode;
     if (!finalBarcode || finalBarcode.trim() === "") {
@@ -117,16 +120,14 @@ export async function POST(request: Request) {
 
 export async function PATCH(request: Request) {
   try {
-    const data = await request.json();
-    const actor = getActorFromPayload(data);
-
     // Pembatasan peran (server-side): Admin boleh ubah data non-harga + arsip/pulihkan;
     // harga, satuan harga, dan variasi hanya Owner.
-    const viewer = await getServerSessionUser(request);
-    if (!viewer || !["Owner", "Admin"].includes(viewer.role)) {
-      return NextResponse.json({ error: "Sesi Owner atau Admin diperlukan." }, { status: 401 });
-    }
-    const isOwner = viewer.role === "Owner";
+    const auth = await requireRole(request, ["Owner", "Admin"]);
+    if (!auth.ok) return auth.response;
+    const actor = actorFromUser(auth.user);
+    const isOwner = auth.user.role === "Owner";
+
+    const data = await request.json();
 
     if (data.action === "arsipkan" || data.action === "batalkanArsip") {
       const isArchived = data.action === "arsipkan";
@@ -223,14 +224,12 @@ export async function PATCH(request: Request) {
 export async function DELETE(request: Request) {
   try {
     // Hapus permanen bersifat destruktif → hanya Owner (dicek di server, bukan cuma UI).
-    const viewer = await getServerSessionUser(request);
-    if (!viewer || viewer.role !== "Owner") {
-      return NextResponse.json({ error: "Hanya Owner yang dapat menghapus produk secara permanen." }, { status: 403 });
-    }
+    const auth = await requireRole(request, ["Owner"]);
+    if (!auth.ok) return auth.response;
+    const actor = actorFromUser(auth.user);
 
     const data = await request.json();
     const { id } = data;
-    const actor = getActorFromPayload(data);
     const product = await prisma.product.findUnique({ where: { id: Number(id) } });
 
     await prisma.$transaction(async (tx) => {

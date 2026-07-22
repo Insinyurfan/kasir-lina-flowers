@@ -5,10 +5,9 @@ const SESSION_COOKIE = "lina_session";
 const SESSION_MAX_AGE_SECONDS = 60 * 60 * 24 * 30;
 
 const getSessionSecret = () => {
-  const secret =
-    process.env.SESSION_SECRET ||
-    process.env.SUPABASE_SERVICE_ROLE_KEY ||
-    process.env.DATABASE_URL;
+  // Gagal-tertutup: HANYA pakai SESSION_SECRET khusus. Jangan jatuh ke kredensial lain
+  // (DATABASE_URL / service role key) — bila bocor, token sesi bisa dipalsukan.
+  const secret = process.env.SESSION_SECRET;
   if (!secret) throw new Error("SESSION_SECRET belum dikonfigurasi.");
   return secret;
 };

@@ -1,11 +1,15 @@
 import { NextResponse } from "next/server";
 import { uploadProductImage } from "@/lib/supabaseStorage";
+import { requireUser } from "@/lib/apiAuth";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
   try {
+    const auth = await requireUser(request);
+    if (!auth.ok) return auth.response;
+
     const formData = await request.formData();
     const file = formData.get("file");
     const productName = formData.get("nama_produk");

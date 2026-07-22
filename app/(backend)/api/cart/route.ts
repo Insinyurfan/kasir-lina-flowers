@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { computeCartRowId, hitungHargaSatuan } from "@/lib/satuan";
+import { requireUser } from "@/lib/apiAuth";
 
 export const dynamic = "force-dynamic";
 
@@ -21,11 +22,6 @@ type CartPayloadItem = {
 
 const normalizeScope = (value: string | null | undefined): CartScope =>
   value === "pos" ? "pos" : "produk";
-
-const normalizeUserId = (value: string | number | null | undefined) => {
-  const userId = Number(value);
-  return Number.isInteger(userId) && userId > 0 ? userId : null;
-};
 
 type QueryClient = Pick<typeof prisma, "$queryRaw" | "$executeRaw">;
 
@@ -129,13 +125,13 @@ const getCartMeta = async (userId: number, scope: CartScope) => {
 };
 
 export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const userId = normalizeUserId(searchParams.get("userId"));
-  const scope = normalizeScope(searchParams.get("scope"));
+  const auth = await requireUser(request);
+  if (!auth.ok) return auth.response;
 
-  if (!userId) {
-    return NextResponse.json({ error: "userId tidak valid." }, { status: 400 });
-  }
+  const { searchParams } = new URL(request.url);
+  // Kepemilikan data: userId SELALU dari sesi, abaikan userId dari query.
+  const userId = auth.user.id;
+  const scope = normalizeScope(searchParams.get("scope"));
 
   try {
     const items = await getCartItems(userId, scope);
@@ -148,13 +144,13 @@ export async function GET(request: Request) {
 
 export async function PUT(request: Request) {
   try {
-    const payload = await request.json();
-    const userId = normalizeUserId(payload.userId);
-    const scope = normalizeScope(payload.scope);
+    const auth = await requireUser(request);
+    if (!auth.ok) return auth.response;
 
-    if (!userId) {
-      return NextResponse.json({ error: "userId tidak valid." }, { status: 400 });
-    }
+    const payload = await request.json();
+    // Kepemilikan data: userId SELALU dari sesi, abaikan userId dari body.
+    const userId = auth.user.id;
+    const scope = normalizeScope(payload.scope);
 
     const items = Array.isArray(payload.items) ? (payload.items as CartPayloadItem[]) : [];
     const customerName =
@@ -227,13 +223,13 @@ export async function PUT(request: Request) {
 
 export async function DELETE(request: Request) {
   try {
-    const payload = await request.json();
-    const userId = normalizeUserId(payload.userId);
-    const scope = normalizeScope(payload.scope);
+    const auth = await requireUser(request);
+    if (!auth.ok) return auth.response;
 
-    if (!userId) {
-      return NextResponse.json({ error: "userId tidak valid." }, { status: 400 });
-    }
+    const payload = await request.json().catch(() => ({}));
+    // Kepemilikan data: userId SELALU dari sesi, abaikan userId dari body.
+    const userId = auth.user.id;
+    const scope = normalizeScope(payload.scope);
 
     const existing = await prisma.$queryRaw<Array<{ id: number }>>`
       SELECT "id" FROM "UserCart" WHERE "userId" = ${userId} AND "scope" = ${scope} LIMIT 1

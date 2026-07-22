@@ -1036,7 +1036,7 @@ export default function PosPage() {
             )}
             {/* TAMBAH VARIAN CEPAT — tanpa harus ke halaman Produk */}
             <div className="border-t border-amber-100 bg-amber-50/50 px-4 py-3">
-              <p className="text-[10px] font-black uppercase tracking-widest text-amber-600 mb-2">Tambah Varian</p>
+              <p className="text-[10px] font-black uppercase tracking-widest text-amber-600 mb-2">Tambah Varian (Opsional)</p>
               <div className="flex flex-col gap-2">
                 <input
                   type="text"
@@ -1073,18 +1073,19 @@ export default function PosPage() {
               <button
                 type="button"
                 onClick={() => handleNoVariantSelected(variantModalProduct)}
-                className="flex w-full items-center justify-between gap-2 rounded-2xl bg-pink-600 px-4 py-3.5 text-white shadow-lg shadow-pink-200 hover:bg-pink-700 active:scale-[0.99] transition-all"
+                className="flex w-full items-center justify-between gap-2 rounded-2xl border-2 border-dashed border-pink-300 bg-pink-50 px-4 py-3 hover:border-pink-400 hover:bg-pink-100 active:scale-[0.99] transition-all"
               >
-                <span className="text-sm font-black">
-                  {(variantModalProduct.variants && variantModalProduct.variants.length > 0) ? "Tambah Tanpa Variasi" : "Tambah ke Keranjang"}
-                </span>
-                <span className="text-sm font-bold">
+                <span className="text-sm font-black text-pink-700">Tambah ke Keranjang</span>
+                <span className="text-sm font-bold text-pink-500">
                   Rp {variantModalProduct.harga.toLocaleString("id-ID")}
                   {(variantModalProduct.satuanHarga ?? "pcs") !== "pcs" && (
-                    <span className="text-[10px] text-white/70"> /{SATUAN_LABELS[variantModalProduct.satuanHarga] ?? variantModalProduct.satuanHarga}</span>
+                    <span className="text-[10px] text-slate-400"> /{SATUAN_LABELS[variantModalProduct.satuanHarga] ?? variantModalProduct.satuanHarga}</span>
                   )}
                 </span>
               </button>
+              <p className="mt-2 text-center text-[11px] font-semibold text-slate-400">
+                Jika tidak ada variasi &amp; kode pelanggan, langsung masukkan ke keranjang.
+              </p>
             </div>
           </div>
         </div>

@@ -85,6 +85,8 @@ model TransactionItem {
   jumlah          Int
   subtotal        Int         // (basePrice + priceModifier) × jumlah
   satuanHarga     String      @default("pcs")
+  packed          Boolean     @default(false) // checklist packing: sudah masuk mobil?
+  packedAt        DateTime?   // waktu dicentang masuk mobil
 }
 
 model StoreSetting {

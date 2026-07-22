@@ -59,12 +59,16 @@ model Transaction {
   metode_pembayaran String
   status            String            @default("Paid")
   nama_pembeli      String?
+  customerId        Int? // tautan opsional ke master Customer; nama_pembeli tetap snapshot tampilan
+  customer          Customer?         @relation(fields: [customerId], references: [id], onDelete: SetNull)
   nama_kasir        String?
   status_pengiriman String            @default("Diproses")
   nama_pengrajin    String?
   items             TransactionItem[]
   notifications     Notification[]
   orderRequest      OrderRequest?
+
+  @@index([customerId])
 }
 
 model TransactionItem {
@@ -81,6 +85,8 @@ model TransactionItem {
   jumlah        Int
   subtotal      Int // (basePrice + priceModifier) × jumlah
   satuanHarga   String      @default("pcs")
+  packed        Boolean     @default(false) // checklist packing: sudah masuk mobil?
+  packedAt      DateTime? // waktu dicentang masuk mobil
 }
 
 model StoreSetting {
@@ -96,16 +102,34 @@ model StoreSetting {
 // universal). Diingat otomatis saat kasir menyesuaikan harga, lalu dipakai
 // kembali untuk pelanggan yang sama. variantId 0 = harga level produk (tanpa varian).
 model CustomerPrice {
-  id           Int      @id @default(autoincrement())
-  customerName String // dinormalisasi UPPERCASE
+  id           Int       @id @default(autoincrement())
+  customerName String // dinormalisasi UPPERCASE — snapshot/fallback selama transisi
+  customerId   Int? // kunci utama harga khusus setelah migrasi (master Customer)
+  customer     Customer? @relation(fields: [customerId], references: [id], onDelete: Cascade)
   productId    Int
-  variantId    Int      @default(0)
+  variantId    Int       @default(0)
   price        Int // harga dasar (per satuanHarga produk)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 
   @@unique([customerName, productId, variantId])
   @@index([customerName])
+  @@index([customerId])
+}
+
+// Master pelanggan (nama kanonik). Kode Aneka (AMN/SMT/ST) TIDAK di sini —
+// itu tetap `label` per baris pada TransactionItem/UserCartItem.
+model Customer {
+  id           Int             @id @default(autoincrement())
+  name         String          @unique // nama kanonik, dinormalisasi UPPERCASE
+  phone        String?
+  note         String?
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  prices       CustomerPrice[]
+  transactions Transaction[]
+
+  @@index([name])
 }
 
 // Daftar kode pelanggan (mis. Aneka: AMN/SMT/HARLIS) sebagai master untuk

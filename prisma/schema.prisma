@@ -111,7 +111,6 @@ model CustomerPrice {
   updatedAt    DateTime  @updatedAt
 
   @@unique([customerName, productId, variantId])
-  @@unique([customerId, productId, variantId])
   @@index([customerName])
   @@index([customerId])
 }

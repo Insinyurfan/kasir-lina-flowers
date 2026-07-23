@@ -11,6 +11,7 @@ import {
   Truck,
 } from "lucide-react";
 import { getSavedUserSession } from "@/lib/userSession";
+import { formatQtySatuan } from "@/lib/satuan";
 
 type PackingItem = {
   id: number;
@@ -304,7 +305,7 @@ export default function PackingPage() {
                             </p>
                             <div className="mt-0.5 flex flex-wrap items-center gap-1.5">
                               <span className="text-xs font-bold text-pink-600">
-                                {item.jumlah} {item.satuan || "pcs"}
+                                {formatQtySatuan(item.jumlah, item.satuan)}
                               </span>
                               {item.label && (
                                 <span className="rounded bg-pink-100 px-1.5 py-0.5 text-[10px] font-black text-pink-700">

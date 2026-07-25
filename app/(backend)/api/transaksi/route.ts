@@ -3,6 +3,7 @@ import { Prisma } from "@/lib/generated/prisma";
 import prisma from "@/lib/prisma";
 import { recordActivityLog } from "@/lib/activityLog";
 import { actorFromUser, requireRole, requireUser } from "@/lib/apiAuth";
+import { diffTransactionItems } from "@/lib/transactionItems";
 
 // Paksa Next.js agar TIDAK menyimpan cache untuk API ini
 export const dynamic = 'force-dynamic';
@@ -439,9 +440,17 @@ export async function PATCH(request: Request) {
     if (nama_kasir !== undefined) dataToUpdate.nama_kasir = nama_kasir;
     if (Array.isArray(cart)) {
       dataToUpdate.total_harga = calculateTotal(cart);
+      // Sinkronkan item TANPA membuang centang packing. Dulu semua item dihapus lalu
+      // dibuat ulang, jadi setiap edit orderan (tambah/kurang produk) mereset checklist.
+      // Sekarang baris lama yang masih ada dipakai ulang: id, packed, dan packedAt lestari.
+      const { update, create, removedIds } = diffTransactionItems(
+        before?.items ?? [],
+        mapCartToItems(cart)
+      );
       dataToUpdate.items = {
-        deleteMany: {},
-        create: mapCartToItems(cart),
+        ...(removedIds.length ? { deleteMany: { id: { in: removedIds } } } : {}),
+        ...(update.length ? { update } : {}),
+        ...(create.length ? { create } : {}),
       };
     }
 

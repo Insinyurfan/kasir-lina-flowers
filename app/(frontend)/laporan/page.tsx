@@ -22,6 +22,7 @@ import {
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import ManualTransactionModal, { type ManualTransaction } from "@/components/ManualTransactionModal";
 import { getSavedUserSession } from "@/lib/userSession";
+import { toast } from "@/lib/toast";
 
 type Product = {
   id: number;
@@ -547,8 +548,13 @@ export default function LaporanPage() {
       body: JSON.stringify({ id: transaction.id }),
     });
 
-    if (res.ok) fetchLaporan();
-    else alert("Gagal menghapus transaksi.");
+    if (res.ok) {
+      fetchLaporan();
+      toast.success("Transaksi berhasil dihapus.");
+    } else {
+      const data = await res.json().catch(() => null);
+      toast.error(data?.error || "Gagal menghapus transaksi.");
+    }
   };
 
   const exportExcel = () => {
@@ -626,6 +632,7 @@ export default function LaporanPage() {
       `laporan-penjualan-${periodLabel.toLowerCase().replace(/\s+/g, "-")}.xls`,
       "application/vnd.ms-excel;charset=utf-8"
     );
+    toast.success("Laporan Excel berhasil diunduh.");
   };
 
   const exportPdf = () => {
@@ -678,6 +685,7 @@ export default function LaporanPage() {
       `laporan-penjualan-${periodLabel.toLowerCase().replace(/\s+/g, "-")}.pdf`,
       "application/pdf"
     );
+    toast.success("Laporan PDF berhasil diunduh.");
   };
 
   return (
@@ -750,7 +758,7 @@ export default function LaporanPage() {
             </button>
             <button
               onClick={exportPdf}
-              className="flex-1 lg:flex-none bg-slate-800 hover:bg-slate-900 text-white px-4 py-3 rounded-xl flex items-center justify-center gap-2 font-bold text-sm transition-colors"
+              className="flex-1 lg:flex-none bg-rose-500 hover:bg-rose-600 text-white px-4 py-3 rounded-xl flex items-center justify-center gap-2 font-bold text-sm transition-colors"
             >
               <FileText size={18} /> PDF
             </button>

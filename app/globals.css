@@ -75,6 +75,16 @@ body {
   background: rgba(255, 227, 238, 0.86) !important;
 }
 
+/* Animasi masuk toast (lihat components/ToastHost.tsx). */
+@keyframes toast-masuk {
+  from { opacity: 0; transform: translateY(-10px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.toast-masuk {
+  animation: toast-masuk 0.22s ease-out;
+}
+
 .lina-soft-field {
   border-color: var(--lina-blush-200) !important;
   background: var(--lina-blush-100) !important;

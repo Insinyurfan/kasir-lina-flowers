@@ -41,19 +41,28 @@ export default function DashboardPage() {
     return () => window.clearTimeout(timeoutId);
   }, []);
 
+  // Sapaan muncul sekali per sesi browser. Dua jalannya:
+  // 1. Baru saja login  -> halaman login menitipkan nama lewat "welcomeToast".
+  // 2. Sesi masih aktif -> tidak lewat halaman login sama sekali, jadi nama
+  //    diambil dari sesi tersimpan. Penanda "welcomeShown" mencegah sapaan
+  //    muncul lagi tiap kali pindah ke dashboard dalam sesi yang sama.
+  // sessionStorage kosong lagi setiap web dibuka baru, jadi sapaan tetap
+  // muncul pada kunjungan pertama meskipun tidak login ulang.
   useEffect(() => {
     let name: string | null = null;
     try {
       name = sessionStorage.getItem("welcomeToast");
+      if (name) {
+        sessionStorage.removeItem("welcomeToast");
+      } else if (!sessionStorage.getItem("welcomeShown")) {
+        const savedUser = getSavedUserSession<{ fullName?: string; username?: string }>();
+        name = savedUser?.fullName || savedUser?.username || null;
+      }
+      if (name) sessionStorage.setItem("welcomeShown", "1");
     } catch {
       name = null;
     }
     if (!name) return;
-    try {
-      sessionStorage.removeItem("welcomeToast");
-    } catch {
-      /* abaikan */
-    }
     setWelcome(name);
     const timer = window.setTimeout(() => setWelcome(null), 5000);
     return () => window.clearTimeout(timer);

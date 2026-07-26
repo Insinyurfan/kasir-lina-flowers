@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { PackageCheck, Printer, RefreshCw } from "lucide-react";
 import { clearSavedUserSession, getSavedUserSession } from "@/lib/userSession";
 import { formatQtySatuan } from "@/lib/satuan";
+import { toast } from "@/lib/toast";
 
 const statusOptions = ["Sedang Disiapkan", "Siap Dikirim", "Dikirim", "Selesai"];
 const normalizeStatus = (status: string) =>
@@ -133,8 +134,11 @@ export default function OrderStatusPage() {
       if (!response.ok) throw new Error(data.error || "Gagal memperbarui pesanan.");
       await fetchOrders();
       window.dispatchEvent(new Event("lina_notifications_updated"));
+      toast.success(
+        payload.status ? `Status pesanan diubah menjadi "${payload.status}".` : "Pesanan berhasil diperbarui."
+      );
     } catch (error) {
-      alert(error instanceof Error ? error.message : "Gagal memperbarui pesanan.");
+      toast.error(error instanceof Error ? error.message : "Gagal memperbarui pesanan.");
     } finally {
       setSavingId(null);
     }
@@ -142,7 +146,7 @@ export default function OrderStatusPage() {
 
   const printOrderNote = (order: ActiveOrder) => {
     const printWindow = window.open("", "_blank", "width=900,height=700");
-    if (!printWindow) return alert("Popup cetak diblokir browser. Izinkan pop-up lalu coba lagi.");
+    if (!printWindow) return toast.error("Popup cetak diblokir browser. Izinkan pop-up lalu coba lagi.");
 
     const logoSrc = storeInfo.receiptLogo || storeInfo.logo;
     const transactionDate = new Date(order.tanggal);

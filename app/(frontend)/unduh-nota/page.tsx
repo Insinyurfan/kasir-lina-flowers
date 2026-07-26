@@ -20,6 +20,7 @@ import {
   downloadNotaAsPdf,
   formatTransactionCode,
 } from "@/lib/notaDocument";
+import { toast } from "@/lib/toast";
 
 const formatTanggal = (iso: string) => {
   const d = new Date(iso);
@@ -45,7 +46,6 @@ export default function UnduhNotaPage() {
   const [isLoading, setIsLoading] = useState(true);
   // Menandai baris mana yang sedang dibuatkan berkas, mis. "12-pdf".
   const [busy, setBusy] = useState<string | null>(null);
-  const [pesan, setPesan] = useState<string | null>(null);
 
   useEffect(() => {
     const saved = getSavedUserSession<{ role?: string }>();
@@ -70,7 +70,7 @@ export default function UnduhNotaPage() {
           });
         }
       })
-      .catch(() => setPesan("Gagal memuat data transaksi."))
+      .catch(() => toast.error("Gagal memuat data transaksi."))
       .finally(() => setIsLoading(false));
   }, []);
 
@@ -90,13 +90,16 @@ export default function UnduhNotaPage() {
     async (t: NotaTransaction, format: "pdf" | "jpg") => {
       const tanda = `${t.id}-${format}`;
       setBusy(tanda);
-      setPesan(null);
       try {
         if (format === "pdf") await downloadNotaAsPdf(storeInfo, t, "nota");
         else await downloadNotaAsJpg(storeInfo, t, "nota");
-        setPesan(`Nota ${formatTransactionCode(t.trxNumber ?? t.id)} berhasil diunduh sebagai ${format.toUpperCase()}.`);
-      } catch {
-        setPesan("Gagal membuat nota. Coba lagi.");
+        toast.success(
+          `Nota ${formatTransactionCode(t.trxNumber ?? t.id)} berhasil diunduh sebagai ${format.toUpperCase()}.`
+        );
+      } catch (error) {
+        toast.error(
+          error instanceof Error ? `Gagal membuat nota: ${error.message}` : "Gagal membuat nota. Coba lagi."
+        );
       } finally {
         setBusy(null);
       }
@@ -140,12 +143,6 @@ export default function UnduhNotaPage() {
           </button>
         )}
       </div>
-
-      {pesan && (
-        <div className="mb-4 rounded-2xl border border-pink-200 bg-pink-50 px-4 py-3 text-sm font-bold text-pink-700">
-          {pesan}
-        </div>
-      )}
 
       {/* DAFTAR PESANAN */}
       {isLoading ? (

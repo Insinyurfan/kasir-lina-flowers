@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Plus, Save, Trash2, X } from "lucide-react";
 import { getSavedUserSession } from "@/lib/userSession";
 import { PCS_PER_UNIT, hitungHargaSatuan } from "@/lib/satuan";
+import { toast } from "@/lib/toast";
 
 export type ManualVariant = {
   id: number;
@@ -412,12 +413,12 @@ export default function ManualTransactionModal({ open, transaction, title, onClo
       });
 
     if (cart.length === 0) {
-      alert("Tambahkan minimal satu produk.");
+      toast.error("Tambahkan minimal satu produk.");
       return;
     }
 
     if (!namaKasir) {
-      alert("Pilih nama kasir dari daftar akun.");
+      toast.error("Pilih nama kasir dari daftar akun.");
       return;
     }
 
@@ -445,7 +446,7 @@ export default function ManualTransactionModal({ open, transaction, title, onClo
       });
 
       if (!res.ok) {
-        alert("Gagal menyimpan transaksi manual.");
+        toast.error("Gagal menyimpan transaksi manual.");
         return;
       }
 
@@ -481,6 +482,7 @@ export default function ManualTransactionModal({ open, transaction, title, onClo
 
       onSaved();
       onClose();
+      toast.success(transaction ? "Riwayat penjualan berhasil diperbarui." : "Transaksi manual berhasil ditambahkan.");
     } finally {
       setIsSaving(false);
     }

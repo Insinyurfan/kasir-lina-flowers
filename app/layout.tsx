@@ -7,6 +7,7 @@ import "./globals.css";
 import Link from "next/link";
 import { clearSavedUserSession, getSavedUserSession } from "@/lib/userSession";
 import SessionExpiryHandler from "@/components/SessionExpiryHandler";
+import ToastHost from "@/components/ToastHost";
 import {
   ArrowDown,
   ArrowLeft,
@@ -693,6 +694,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className={`${inter.className} bg-pink-50 text-slate-800`} suppressHydrationWarning>
         <SessionExpiryHandler />
+        {/* Penampil notifikasi global — dipanggil dari halaman mana pun
+            lewat toast.success/error di "@/lib/toast". */}
+        <ToastHost />
         <style>{`
           @keyframes lina-bell-ring {
             0%, 100% { transform: rotate(0deg); }
@@ -820,24 +824,23 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <Menu size={26} />
               </button>
 
-              {/* Menekan logo membuka pratinjau/ganti logo toko — fungsi yang dulu
-                  menempel pada logo di puncak sidebar, ikut pindah ke sini. */}
+              {/* HANYA kotak logo yang bisa ditekan (membuka pratinjau/ganti logo
+                  toko). Nama toko di sebelahnya sengaja teks biasa — kalau ikut
+                  jadi tombol, area kosong header ikut tertekan. */}
               <button
                 type="button"
                 onClick={() => setIsStoreLogoPreviewOpen(true)}
                 aria-label="Lihat logo toko"
                 title="Lihat Logo Toko"
-                className="flex items-center gap-2.5 flex-1 min-w-0 text-left"
+                className="w-11 h-11 rounded-xl bg-white border-2 border-pink-200 flex items-center justify-center overflow-hidden text-pink-500 flex-shrink-0 shadow-sm transition-colors hover:border-pink-400"
               >
-                <span className="w-11 h-11 rounded-xl bg-white border-2 border-pink-200 flex items-center justify-center overflow-hidden text-pink-500 flex-shrink-0 shadow-sm">
-                  {logo ? (
-                    <img src={logo} alt="Logo" className="w-full h-full object-contain p-0.5" />
-                  ) : (
-                    <Flower2 size={22} />
-                  )}
-                </span>
-                <span className="text-sm font-black text-rose-950 truncate leading-tight">{brand}</span>
+                {logo ? (
+                  <img src={logo} alt="Logo" className="w-full h-full object-contain p-0.5" />
+                ) : (
+                  <Flower2 size={22} />
+                )}
               </button>
+              <span className="flex-1 min-w-0 text-sm font-black text-rose-950 truncate leading-tight">{brand}</span>
 
               {!isGuest && (
                 <Link

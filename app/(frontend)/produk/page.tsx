@@ -7,6 +7,7 @@ import Barcode from "react-barcode";
 import { getSavedUserSession } from "@/lib/userSession";
 import { compressProductImage } from "@/lib/compressProductImage";
 import { computeCartRowId } from "@/lib/satuan";
+import { toast } from "@/lib/toast";
 
 type UserSession = {
   id: number;
@@ -229,7 +230,7 @@ export default function ManajemenProdukPage() {
         reader.onloadend = () => setFormData((current) => ({ ...current, gambar: reader.result as string }));
         reader.readAsDataURL(compressedFile);
       } catch (error) {
-        alert(error instanceof Error ? error.message : "Gagal mengompres foto.");
+        toast.error(error instanceof Error ? error.message : "Gagal mengompres foto.");
       } finally {
         e.target.value = "";
       }
@@ -286,11 +287,16 @@ export default function ManajemenProdukPage() {
         setSelectedImageFile(null);
         setIsModalOpen(false);
         fetchProduk();
+        toast.success(
+          isEdit
+            ? `Produk "${formData.nama_produk}" berhasil diperbarui.`
+            : `Produk "${formData.nama_produk}" berhasil ditambahkan.`
+        );
       } else {
-        alert("❌ Gagal menyimpan: " + (result.error || "Terjadi kesalahan server"));
+        toast.error("Gagal menyimpan produk: " + (result.error || "Terjadi kesalahan server"));
       }
     } catch {
-      alert("❌ Terjadi kesalahan koneksi jaringan.");
+      toast.error("Gagal menyimpan produk: koneksi jaringan bermasalah.");
     } finally {
       setIsSaving(false);
     }
@@ -309,12 +315,13 @@ export default function ManajemenProdukPage() {
       if (res.ok) {
         fetchProduk();
         fetchArsip();
+        toast.success("Produk berhasil dihapus permanen.");
       } else {
         const result = await res.json();
-        alert("❌ " + (result.error || "Gagal menghapus produk"));
+        toast.error(result.error || "Gagal menghapus produk.");
       }
     } catch {
-      alert("❌ Terjadi kesalahan koneksi jaringan.");
+      toast.error("Gagal menghapus produk: koneksi jaringan bermasalah.");
     } finally {
       setIsLoading(false);
     }
@@ -333,12 +340,13 @@ export default function ManajemenProdukPage() {
       if (res.ok) {
         await fetchProduk();
         await fetchArsip();
+        toast.success("Produk berhasil diarsipkan.");
       } else {
         const result = await res.json();
-        alert("❌ " + (result.error || "Gagal mengarsipkan produk"));
+        toast.error(result.error || "Gagal mengarsipkan produk.");
       }
     } catch {
-      alert("❌ Terjadi kesalahan koneksi jaringan.");
+      toast.error("Gagal mengarsipkan produk: koneksi jaringan bermasalah.");
     } finally {
       setIsLoading(false);
     }
@@ -356,12 +364,13 @@ export default function ManajemenProdukPage() {
       if (res.ok) {
         await fetchArsip();
         await fetchProduk();
+        toast.success("Produk berhasil dipulihkan dari arsip.");
       } else {
         const result = await res.json();
-        alert("❌ " + (result.error || "Gagal memulihkan produk"));
+        toast.error(result.error || "Gagal memulihkan produk.");
       }
     } catch {
-      alert("❌ Terjadi kesalahan koneksi jaringan.");
+      toast.error("Gagal memulihkan produk: koneksi jaringan bermasalah.");
     } finally {
       setIsLoading(false);
     }
@@ -369,7 +378,7 @@ export default function ManajemenProdukPage() {
 
   const addToGuestCart = (produk: Product) => {
     if (produk.stok <= 0) {
-      alert("Stok produk ini sedang habis.");
+      toast.info("Stok produk ini sedang habis.");
       return;
     }
 
@@ -380,7 +389,7 @@ export default function ManajemenProdukPage() {
       const existingItem = current.find((item) => item.id === rowId);
       if (existingItem) {
         if (existingItem.quantity >= produk.stok) {
-          alert("Jumlah pesanan sudah sesuai stok tersedia.");
+          toast.info("Jumlah pesanan sudah sesuai stok tersedia.");
           return current;
         }
 
@@ -410,7 +419,7 @@ export default function ManajemenProdukPage() {
 
   const handleGuestWhatsappCheckout = () => {
     if (guestCart.length === 0) {
-      alert("Keranjang masih kosong.");
+      toast.info("Keranjang masih kosong.");
       return;
     }
 

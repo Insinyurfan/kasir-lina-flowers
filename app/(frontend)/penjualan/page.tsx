@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { ReceiptText, Filter, X, Printer, Settings, Save, User, Trash2, Camera, Calendar, Search, Plus, Pencil, Download, Check, ArrowDown, ArrowUp, ArrowUpDown, FileText } from "lucide-react";
 import ManualTransactionModal, { type ManualTransaction } from "@/components/ManualTransactionModal";
 import { getSavedUserSession } from "@/lib/userSession";
+import { toast } from "@/lib/toast";
 import { formatQtySatuan, formatUnitPriceSatuan } from "@/lib/satuan";
 // Pembuat dokumen Nota/Surat Jalan dipindah ke lib supaya halaman pintasan
 // "Download Nota" memakai fungsi yang sama persis (lihat lib/notaDocument.ts).
@@ -271,7 +272,7 @@ export default function RiwayatPenjualanPage() {
 
   const updateStatusTransaksi = async (id: number, field: string, value: string) => {
     if ((field === "status" || field === "metode_pembayaran") && user?.role !== "Owner") {
-      alert("Hanya Owner yang dapat mengubah data ini!");
+      toast.error("Hanya Owner yang dapat mengubah data ini.");
       return;
     }
 
@@ -300,12 +301,13 @@ export default function RiwayatPenjualanPage() {
       if (res.ok) {
         const updated = await res.json();
         setTransaksi(transaksi.map((t) => (t.id === id ? { ...t, ...updated } : t)));
+        toast.success("Transaksi berhasil diperbarui.");
       } else {
         const data = await res.json();
-        alert(data.error || "Gagal memperbarui status.");
+        toast.error(data.error || "Gagal memperbarui status.");
       }
     } catch (error) {
-      alert("Gagal memperbarui status.");
+      toast.error("Gagal memperbarui status: koneksi jaringan bermasalah.");
     }
   };
 
@@ -356,13 +358,13 @@ export default function RiwayatPenjualanPage() {
       });
       const data = await res.json().catch(() => null);
       if (!res.ok) {
-        alert(data?.detail ? `${data.error || "Gagal menyimpan pengaturan ke database."}\n${data.detail}` : data?.error || "Gagal menyimpan pengaturan ke database.");
+        toast.error(data?.detail ? `${data.error || "Gagal menyimpan pengaturan ke database."} ${data.detail}` : data?.error || "Gagal menyimpan pengaturan ke database.");
         fetchPengaturan();
         return false;
       }
 
       applySavedStoreInfo(data);
-      if (successMessage) alert(successMessage);
+      if (successMessage) toast.success(successMessage);
       return true;
     } finally {
       setIsSavingSetting(false);
@@ -378,7 +380,7 @@ export default function RiwayatPenjualanPage() {
     if (!file) return;
 
     if (file.size > 3 * 1024 * 1024) {
-      alert("Ukuran logo struk maksimal 3MB!");
+      toast.error("Ukuran logo struk maksimal 3MB.");
       return;
     }
 
@@ -406,13 +408,15 @@ export default function RiwayatPenjualanPage() {
         body: JSON.stringify({ ids: selectedIds, ...actorPayload }),
       });
       if (res.ok) {
+        const jumlah = selectedIds.length;
         setSelectedIds([]);
         fetchTransaksi();
+        toast.success(`${jumlah} transaksi berhasil dihapus.`);
       } else {
-        alert("Gagal menghapus data.");
+        toast.error("Gagal menghapus data transaksi.");
       }
     } catch (err) {
-      alert("Terjadi kesalahan.");
+      toast.error("Gagal menghapus data: koneksi jaringan bermasalah.");
     }
   };
 
@@ -436,10 +440,12 @@ export default function RiwayatPenjualanPage() {
         body: JSON.stringify({ id: transaction.id, ...actorPayload }),
       });
 
-      if (res.ok) fetchTransaksi();
-      else alert("Gagal menghapus transaksi.");
+      if (res.ok) {
+        fetchTransaksi();
+        toast.success("Transaksi berhasil dihapus.");
+      } else toast.error("Gagal menghapus transaksi.");
     } catch (err) {
-      alert("Terjadi kesalahan.");
+      toast.error("Gagal menghapus transaksi: koneksi jaringan bermasalah.");
     }
   };
 
@@ -641,14 +647,14 @@ export default function RiwayatPenjualanPage() {
       const pdfBlob = createImagePdfBlob(imageBytes, imageSize.width, imageSize.height);
       downloadBlobFile(pdfBlob, getPrintFileName("pdf"));
     } catch {
-      alert("Gagal membuat PDF struk.");
+      toast.error("Gagal membuat PDF struk.");
     }
   };
 
   const handleDownloadA4Jpg = async () => {
     if (!selectedTrx) return;
     const blob = await createA4DocumentBlob(storeInfo, selectedTrx as PrintTransaction, printType as PrintDocumentType, "image/jpeg", groupAneka, notaStartNo);
-    if (!blob) return alert("Gagal membuat gambar dokumen.");
+    if (!blob) return toast.error("Gagal membuat gambar dokumen.");
     downloadBlobFile(blob, getPrintFileName("jpg"));
   };
 
@@ -656,7 +662,7 @@ export default function RiwayatPenjualanPage() {
     if (!selectedTrx) return;
     try {
       const imageBlob = await createA4DocumentBlob(storeInfo, selectedTrx as PrintTransaction, printType as PrintDocumentType, "image/jpeg", groupAneka, notaStartNo);
-      if (!imageBlob) return alert("Gagal membuat gambar dokumen.");
+      if (!imageBlob) return toast.error("Gagal membuat gambar dokumen.");
       const [imageBytes, imageSize] = await Promise.all([
         imageBlob.arrayBuffer().then((b) => new Uint8Array(b)),
         getBlobImageSize(imageBlob),
@@ -665,13 +671,13 @@ export default function RiwayatPenjualanPage() {
       const pdfBlob = createImagePdfBlob(imageBytes, imageSize.width, imageSize.height, 210);
       downloadBlobFile(pdfBlob, getPrintFileName("pdf"));
     } catch {
-      alert("Gagal membuat PDF dokumen.");
+      toast.error("Gagal membuat PDF dokumen.");
     }
   };
 
   const printOrderDocument = (t: PrintTransaction, documentType: PrintDocumentType, aneka = false, startNo = 1) => {
     const printWindow = window.open("", "_blank", "width=900,height=700");
-    if (!printWindow) return alert("Popup cetak diblokir browser. Izinkan pop-up lalu coba lagi.");
+    if (!printWindow) return toast.error("Popup cetak diblokir browser. Izinkan pop-up lalu coba lagi.");
     const isNota = documentType === "nota";
     const documentTitle = isNota ? "NOTA PESANAN" : "SURAT JALAN";
     const transactionDate = new Date(t.tanggal);
@@ -952,7 +958,7 @@ export default function RiwayatPenjualanPage() {
 
     if (!printWindow) {
       // Fallback jika popup diblokir (umum terjadi di iOS Safari)
-      alert("Pop-up diblokir. Silakan izinkan pop-up, atau gunakan tombol Download JPG untuk kirim struk digital.");
+      toast.error("Pop-up diblokir. Izinkan pop-up, atau pakai tombol Download JPG untuk kirim struk digital.");
       URL.revokeObjectURL(url);
       return;
     }

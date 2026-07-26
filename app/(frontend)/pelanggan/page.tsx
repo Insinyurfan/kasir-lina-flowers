@@ -15,6 +15,7 @@ import {
   X,
 } from "lucide-react";
 import { getSavedUserSession } from "@/lib/userSession";
+import { toast } from "@/lib/toast";
 
 type Customer = {
   id: number;
@@ -63,10 +64,11 @@ export default function PelangganPage() {
   // Pratinjau (lightbox) gambar produk.
   const [preview, setPreview] = useState<{ src: string; name: string } | null>(null);
 
-  const [feedback, setFeedback] = useState<{ type: "ok" | "err"; text: string } | null>(null);
+  // Dulu pesan hanya muncul sebagai banner di dalam halaman ini. Sekarang
+  // diteruskan ke notifikasi global supaya seragam dengan halaman lain.
   const flash = useCallback((type: "ok" | "err", text: string) => {
-    setFeedback({ type, text });
-    window.setTimeout(() => setFeedback(null), 2800);
+    if (type === "ok") toast.success(text);
+    else toast.error(text);
   }, []);
 
   // Hanya Owner/Admin yang boleh mengelola pelanggan & harga.
@@ -88,7 +90,7 @@ export default function PelangganPage() {
       const data = await res.json();
       if (Array.isArray(data)) setCustomers(data as Customer[]);
     } catch {
-      /* diamkan; tampilkan kosong */
+      toast.error("Gagal memuat daftar pelanggan.");
     }
   }, []);
 
@@ -100,7 +102,7 @@ export default function PelangganPage() {
         if (Array.isArray(data)) setCustomers(data as Customer[]);
       })
       .catch(() => {
-        /* diamkan */
+        toast.error("Gagal memuat daftar pelanggan.");
       });
     fetch("/api/produk", { cache: "no-store" })
       .then((res) => res.json())
@@ -108,7 +110,7 @@ export default function PelangganPage() {
         if (Array.isArray(data)) setProducts((data as Product[]).filter((p) => !p.isArchived));
       })
       .catch(() => {
-        /* diamkan */
+        toast.error("Gagal memuat daftar produk.");
       });
   }, [user]);
 
@@ -136,7 +138,10 @@ export default function PelangganPage() {
         setDraftByProduct({});
       })
       .catch(() => {
-        if (!cancelled) setPriceByProduct({});
+        if (!cancelled) {
+          setPriceByProduct({});
+          toast.error("Gagal memuat harga khusus pelanggan ini.");
+        }
       });
 
     // Kode pelanggan (label baris) diturunkan dari riwayat transaksi pelanggan ini.
@@ -322,18 +327,6 @@ export default function PelangganPage() {
         </p>
       </div>
 
-      {feedback && (
-        <div
-          className={`mb-4 rounded-xl border px-4 py-3 text-sm font-semibold ${
-            feedback.type === "ok"
-              ? "border-emerald-200 bg-emerald-50 text-emerald-700"
-              : "border-red-200 bg-red-50 text-red-700"
-          }`}
-        >
-          {feedback.text}
-        </div>
-      )}
-
       <div className="grid grid-cols-1 gap-4 md:min-h-[80vh] md:grid-cols-[360px_1fr]">
         {/* KIRI: daftar pelanggan */}
         <div className="flex flex-col rounded-2xl border border-pink-100 bg-white p-4 shadow-sm md:min-h-[80vh]">
@@ -398,7 +391,7 @@ export default function PelangganPage() {
                         e.stopPropagation();
                         openEditForm(customer);
                       }}
-                      className="hidden rounded-lg p-1.5 text-slate-400 hover:bg-white hover:text-pink-600 group-hover:block"
+                      className="block rounded-lg p-2 text-slate-400 hover:bg-white hover:text-pink-600 desktop:hidden desktop:p-1.5 desktop:group-hover:block"
                       title="Edit"
                     >
                       <Pencil size={15} />
@@ -409,7 +402,7 @@ export default function PelangganPage() {
                         e.stopPropagation();
                         void deleteCustomer(customer);
                       }}
-                      className="hidden rounded-lg p-1.5 text-slate-400 hover:bg-white hover:text-red-600 group-hover:block"
+                      className="block rounded-lg p-2 text-slate-400 hover:bg-white hover:text-red-600 desktop:hidden desktop:p-1.5 desktop:group-hover:block"
                       title="Hapus"
                     >
                       <Trash2 size={15} />

@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
-import { Flower2, Search, LogIn, X, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
+import { Flower2, Search, LogIn, X, ArrowUpDown, ArrowUp, ArrowDown, Check } from "lucide-react";
 
 type Variant = {
   id: number;
@@ -25,13 +25,27 @@ type StoreInfo = {
   logo: string | null;
 };
 
+type SortKey = "name-asc" | "name-desc" | "newest" | "oldest";
+
+type SortOption = { key: SortKey; label: string; icon: React.ReactNode };
+
+const SORT_OPTIONS: SortOption[] = [
+  { key: "name-asc", label: "A → Z", icon: <ArrowUp size={13} /> },
+  { key: "name-desc", label: "Z → A", icon: <ArrowDown size={13} /> },
+  { key: "newest", label: "Terbaru", icon: null },
+  { key: "oldest", label: "Terlama", icon: null },
+];
+
 export default function KatalogPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [storeInfo, setStoreInfo] = useState<StoreInfo>({ brand: "Lina Flowers", logo: null });
   const [search, setSearch] = useState("");
-  const [sortBy, setSortBy] = useState<"name-asc" | "name-desc" | "newest" | "oldest">("name-asc");
+  const [sortBy, setSortBy] = useState<SortKey>("name-asc");
   const [isLoading, setIsLoading] = useState(true);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  // Menu urutan sekarang tinggal di header (sticky), jadi tidak perlu scroll
+  // ke atas dulu untuk ganti urutan produk.
+  const [isSortOpen, setIsSortOpen] = useState(false);
 
   useEffect(() => {
     Promise.all([
@@ -65,6 +79,8 @@ export default function KatalogPage() {
     return 0;
   };
 
+  const activeSort = SORT_OPTIONS.find((o) => o.key === sortBy) ?? SORT_OPTIONS[0];
+
   const filtered = useMemo(() => {
     const kw = search.trim().toLowerCase();
     let list = kw ? products.filter((p) => p.nama_produk.toLowerCase().includes(kw)) : [...products];
@@ -82,89 +98,77 @@ export default function KatalogPage() {
     <div className="min-h-screen bg-pink-50 flex flex-col">
       {/* HEADER */}
       <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-pink-100 shadow-sm shadow-pink-100">
-        <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3 min-w-0">
-            <div className="w-10 h-10 flex-shrink-0 rounded-xl overflow-hidden border-2 border-pink-200 bg-white flex items-center justify-center shadow-sm">
-              {storeInfo.logo ? (
-                <img src={storeInfo.logo} alt="Logo" className="w-full h-full object-contain p-0.5" />
-              ) : (
-                <Flower2 size={22} className="text-pink-500" />
-              )}
+        <div className="mx-auto w-full max-w-[1600px] px-4 md:px-6 lg:px-8 py-3">
+          {/* Baris 1: logo + nama toko, lalu (di layar lebar) search & urutan, lalu login. */}
+          <div className="flex items-center gap-3 lg:gap-4">
+            <div className="flex items-center gap-3 min-w-0 shrink-0">
+              <div className="w-10 h-10 flex-shrink-0 rounded-xl overflow-hidden border-2 border-pink-200 bg-white flex items-center justify-center shadow-sm">
+                {storeInfo.logo ? (
+                  <img src={storeInfo.logo} alt="Logo" className="w-full h-full object-contain p-0.5" />
+                ) : (
+                  <Flower2 size={22} className="text-pink-500" />
+                )}
+              </div>
+              <div className="min-w-0">
+                <h1 className="font-black text-rose-950 leading-tight text-base truncate">{storeInfo.brand}</h1>
+                <p className="text-[11px] text-pink-500 font-semibold">Katalog Produk</p>
+              </div>
             </div>
-            <div className="min-w-0">
-              <h1 className="font-black text-rose-950 leading-tight text-base truncate">{storeInfo.brand}</h1>
-              <p className="text-[11px] text-pink-500 font-semibold">Katalog Produk</p>
+
+            {/* Layar lebar: search & urutan sebaris dengan logo. */}
+            <div className="hidden md:flex flex-1 items-center gap-2 min-w-0">
+              <SearchBox search={search} setSearch={setSearch} />
+              <SortButton
+                options={SORT_OPTIONS}
+                activeSort={activeSort}
+                sortBy={sortBy}
+                setSortBy={setSortBy}
+                isOpen={isSortOpen}
+                setIsOpen={setIsSortOpen}
+              />
             </div>
+
+            <Link
+              href="/login"
+              className="flex items-center gap-2 bg-pink-600 hover:bg-pink-700 text-white text-sm font-bold px-4 py-2.5 rounded-xl transition-colors shadow-md shadow-pink-200 flex-shrink-0 ml-auto md:ml-0"
+            >
+              <LogIn size={16} />
+              <span>Login</span>
+            </Link>
           </div>
-          <Link
-            href="/login"
-            className="flex items-center gap-2 bg-pink-600 hover:bg-pink-700 text-white text-sm font-bold px-4 py-2.5 rounded-xl transition-colors shadow-md shadow-pink-200 flex-shrink-0"
-          >
-            <LogIn size={16} />
-            <span className="hidden sm:inline">Login</span>
-            <span className="sm:hidden">Login</span>
-          </Link>
+
+          {/* Layar kecil: search & urutan turun ke baris kedua supaya tidak sempit. */}
+          <div className="md:hidden mt-2.5 flex items-center gap-2">
+            <SearchBox search={search} setSearch={setSearch} />
+            <SortButton
+              options={SORT_OPTIONS}
+              activeSort={activeSort}
+              sortBy={sortBy}
+              setSortBy={setSortBy}
+              isOpen={isSortOpen}
+              setIsOpen={setIsSortOpen}
+            />
+          </div>
         </div>
       </header>
 
-      <main className="flex-1 max-w-5xl w-full mx-auto px-4 py-6 pb-16">
+      {/* Lebar katalog dinaikkan dari 1024px (max-w-5xl) ke 1600px supaya monitor
+          lebar tidak terlalu kosong, tapi TIDAK full-width — kartu produk tetap
+          besar dan enak dilihat, mengikuti pola kyou.id. Mau lebih lebar/sempit?
+          Cukup ubah angka 1600px di sini DAN di header agar tetap sejajar. */}
+      <main className="flex-1 mx-auto w-full max-w-[1600px] px-4 md:px-6 lg:px-8 py-6 pb-16">
         {/* JUDUL */}
         <div className="mb-5 text-center">
           <p className="text-slate-500 text-sm">Temukan produk pilihan kami di bawah ini</p>
         </div>
 
-        {/* SEARCH */}
-        <div className="relative mb-6">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={18} />
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Cari produk..."
-            className="w-full pl-11 pr-4 py-3.5 bg-white border border-pink-100 rounded-2xl outline-none focus:border-pink-400 text-sm shadow-sm transition-all"
-          />
-          {search && (
-            <button
-              type="button"
-              onClick={() => setSearch("")}
-              className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-full text-slate-400 hover:text-pink-600 hover:bg-pink-50 transition-colors"
-            >
-              <X size={16} />
-            </button>
-          )}
-        </div>
-
-        {/* SORT */}
-        <div className="flex items-center gap-2 mb-5 flex-wrap">
-          <span className="text-xs text-slate-400 font-semibold shrink-0">Urutkan:</span>
-          {(
-            [
-              { key: "name-asc", label: "A → Z", icon: <ArrowUp size={11} /> },
-              { key: "name-desc", label: "Z → A", icon: <ArrowDown size={11} /> },
-              { key: "newest", label: "Terbaru", icon: null },
-              { key: "oldest", label: "Terlama", icon: null },
-            ] as const
-          ).map(({ key, label, icon }) => (
-            <button
-              key={key}
-              type="button"
-              onClick={() => setSortBy(key)}
-              className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
-                sortBy === key
-                  ? "bg-pink-600 text-white shadow-sm shadow-pink-200"
-                  : "bg-white border border-pink-100 text-slate-500 hover:border-pink-300 hover:text-pink-600"
-              }`}
-            >
-              {icon}
-              {label}
-            </button>
-          ))}
-        </div>
+        {/* Search & urutan sudah pindah ke header agar tetap terjangkau
+            walau sudah scroll jauh ke bawah. */}
 
         {/* GRID PRODUK */}
         {isLoading ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 md:gap-4">
-            {Array.from({ length: 8 }).map((_, i) => (
+          <div className="katalog-grid">
+            {Array.from({ length: 12 }).map((_, i) => (
               <div key={i} className="rounded-2xl bg-white border border-pink-100 overflow-hidden animate-pulse">
                 <div className="aspect-square bg-pink-50" />
                 <div className="p-3 space-y-2">
@@ -191,7 +195,7 @@ export default function KatalogPage() {
         ) : (
           <>
             <p className="text-xs text-slate-400 font-semibold mb-3">{filtered.length} produk{search ? ` untuk "${search}"` : ""}</p>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 md:gap-4">
+            <div className="katalog-grid">
               {filtered.map((product) => (
                 <article
                   key={product.id}
@@ -295,6 +299,108 @@ export default function KatalogPage() {
             </div>
           </div>
         </div>
+      )}
+    </div>
+  );
+}
+
+// Kotak pencarian dipakai dua kali (baris atas untuk layar lebar, baris kedua
+// untuk layar kecil), jadi dijadikan komponen supaya isinya tidak dobel.
+function SearchBox({
+  search,
+  setSearch,
+}: {
+  search: string;
+  setSearch: (value: string) => void;
+}) {
+  return (
+    <div className="relative flex-1 min-w-0">
+      <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={17} />
+      <input
+        type="text"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        placeholder="Cari produk..."
+        className="w-full pl-10 pr-9 py-2.5 bg-white border border-pink-100 rounded-xl outline-none focus:border-pink-400 text-sm shadow-sm transition-all"
+      />
+      {search && (
+        <button
+          type="button"
+          onClick={() => setSearch("")}
+          aria-label="Hapus pencarian"
+          className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-full text-slate-400 hover:text-pink-600 hover:bg-pink-50 transition-colors"
+        >
+          <X size={15} />
+        </button>
+      )}
+    </div>
+  );
+}
+
+// Tombol urutan di header. Empat pilihan lama dipindah ke dalam dropdown supaya
+// header tetap ringkas tapi urutan tetap bisa diganti dari mana saja.
+function SortButton({
+  options,
+  activeSort,
+  sortBy,
+  setSortBy,
+  isOpen,
+  setIsOpen,
+}: {
+  options: SortOption[];
+  activeSort: SortOption;
+  sortBy: SortKey;
+  setSortBy: (key: SortKey) => void;
+  isOpen: boolean;
+  setIsOpen: (open: boolean) => void;
+}) {
+  return (
+    <div className="relative flex-shrink-0">
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        aria-haspopup="menu"
+        aria-expanded={isOpen}
+        className={`flex items-center gap-1.5 px-3 py-2.5 rounded-xl text-sm font-bold border transition-colors ${
+          isOpen
+            ? "bg-pink-600 border-pink-600 text-white shadow-md shadow-pink-200"
+            : "bg-white border-pink-100 text-slate-600 hover:border-pink-300 hover:text-pink-600 shadow-sm"
+        }`}
+        title={`Urutkan: ${activeSort.label}`}
+      >
+        <ArrowUpDown size={16} />
+        <span className="hidden lg:inline">{activeSort.label}</span>
+      </button>
+
+      {isOpen && (
+        <>
+          {/* Lapisan tak terlihat: ketuk di luar menu untuk menutup. */}
+          <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
+          <div
+            role="menu"
+            className="absolute right-0 top-full mt-2 z-50 w-44 rounded-2xl border border-pink-100 bg-white p-1.5 shadow-xl shadow-pink-100"
+          >
+            <p className="px-2.5 py-1.5 text-[11px] font-bold text-slate-400">Urutkan produk</p>
+            {options.map(({ key, label, icon }) => (
+              <button
+                key={key}
+                type="button"
+                role="menuitem"
+                onClick={() => {
+                  setSortBy(key);
+                  setIsOpen(false);
+                }}
+                className={`flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-sm font-bold transition-colors ${
+                  sortBy === key ? "bg-pink-50 text-pink-600" : "text-slate-600 hover:bg-pink-50/60"
+                }`}
+              >
+                {icon}
+                <span className="flex-1 text-left">{label}</span>
+                {sortBy === key && <Check size={15} />}
+              </button>
+            ))}
+          </div>
+        </>
       )}
     </div>
   );

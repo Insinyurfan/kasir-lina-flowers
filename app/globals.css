@@ -80,6 +80,45 @@ body {
   background: var(--lina-blush-100) !important;
 }
 
+/* Grid katalog produk: jumlah kolom menyesuaikan sendiri (auto-fill), tanpa
+   breakpoint manual. Dipakai di dalam container yang dibatasi 1600px (lihat
+   page.tsx), jadi di monitor ultrawide kartu tetap besar dan tidak jadi
+   belasan kolom kecil.
+
+   PENTING - di bawah 768px SENGAJA tetap pakai breakpoint tetap (2 kolom, lalu
+   3 kolom mulai 640px) persis seperti versi lama. Tampilan HP sudah pas dan
+   tidak boleh berubah: kalau auto-fill dipakai sampai ke bawah, layar ~515px
+   ikut jadi 3 kolom sempit padahal seharusnya 2 kolom besar.
+
+   Auto-fill baru mulai 768px ke atas, karena di sanalah masalah ruang kosong
+   di monitor lebar terjadi:
+   - 220px = lebar minimum kartu. Patokannya lebar kartu lama di desktop
+     (~236px). Angka lebih besar (mis. 240px) bikin kartu melar sampai ~304px
+     di laptop 1280px, tepat sebelum kolom berikutnya muat.
+   - min(220px, (100% - 2rem) / 3) -> jaring pengaman supaya tidak pernah
+     kurang dari 3 kolom di layar >=768px.
+
+   Hasil: 390px -> 2 kolom, 515px -> 2, 640px -> 3, 768px -> 3, 1024px -> 4,
+   1366px -> 5, 1600px ke atas -> 6 kolom (mentok container 1600px). */
+.katalog-grid {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (min-width: 640px) {
+  .katalog-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 768px) {
+  .katalog-grid {
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(min(220px, (100% - 2rem) / 3), 1fr));
+  }
+}
+
 .lina-app-shell .bg-white\/90 {
   background-color: rgba(255, 244, 249, 0.94) !important;
 }

@@ -29,6 +29,7 @@ import {
   ClipboardList,
   ClipboardCheck,
   PackageCheck,
+  FileDown,
   Eye,
   Minus,
   RotateCcw,
@@ -112,6 +113,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const isStandaloneReceipt = pathname.startsWith("/struk");
   const isPublicPage = PUBLIC_ROUTES.some((route) => pathname === route || pathname.startsWith(`${route}/`));
   const [logo, setLogo] = useState<string | null>(null);
+  const [brand, setBrand] = useState("Lina Flowers");
   const [user, setUser] = useState<UserSession | null>(() => getStoredUser());
   const [isLoading, setIsLoading] = useState(pathname !== "/login");
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
@@ -185,6 +187,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       .then((res) => res.json())
       .then((data) => {
         if (data && data.logo) setLogo(data.logo);
+        if (data && data.brand) setBrand(data.brand);
       })
       .catch(() => {
         hasLoadedSettingsRef.current = false;
@@ -805,7 +808,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </div>
             )}
 
-            {/* MOBILE HEADER BAR: hamburger | profil + sapaan | notifikasi */}
+            {/* MOBILE HEADER BAR: hamburger | logo + nama toko | keranjang | notifikasi.
+                Foto profil & sapaan diganti identitas toko (samakan dengan halaman
+                katalog), dan tombol Kasir/keranjang naik ke sini supaya bottom nav
+                tidak terlalu padat. */}
             <div className="desktop:hidden fixed top-0 left-0 right-0 h-16 short:h-12 z-50 bg-white/95 border-b border-pink-100 backdrop-blur-md shadow-sm flex items-center px-3.5 short:px-2 gap-2.5 short:gap-1.5">
               <button
                 onClick={openMobileMenu}
@@ -814,19 +820,38 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <Menu size={26} />
               </button>
 
-              <div className="flex items-center gap-2.5 flex-1 min-w-0">
-                <div className="w-11 h-11 rounded-full bg-pink-50 border-2 border-pink-200 flex items-center justify-center overflow-hidden text-pink-400 flex-shrink-0">
-                  {user?.profilePhoto ? (
-                    <img src={user.profilePhoto} alt="" className="w-full h-full object-cover" />
+              {/* Menekan logo membuka pratinjau/ganti logo toko — fungsi yang dulu
+                  menempel pada logo di puncak sidebar, ikut pindah ke sini. */}
+              <button
+                type="button"
+                onClick={() => setIsStoreLogoPreviewOpen(true)}
+                aria-label="Lihat logo toko"
+                title="Lihat Logo Toko"
+                className="flex items-center gap-2.5 flex-1 min-w-0 text-left"
+              >
+                <span className="w-11 h-11 rounded-xl bg-white border-2 border-pink-200 flex items-center justify-center overflow-hidden text-pink-500 flex-shrink-0 shadow-sm">
+                  {logo ? (
+                    <img src={logo} alt="Logo" className="w-full h-full object-contain p-0.5" />
                   ) : (
-                    <UserRound size={22} />
+                    <Flower2 size={22} />
                   )}
-                </div>
-                <div className="min-w-0">
-                  <p className="text-[11px] text-slate-400 font-medium leading-none mb-0.5">Selamat datang,</p>
-                  <p className="text-sm font-bold text-slate-800 truncate leading-tight">{user?.fullName || user?.username || "Pengguna"}</p>
-                </div>
-              </div>
+                </span>
+                <span className="text-sm font-black text-rose-950 truncate leading-tight">{brand}</span>
+              </button>
+
+              {!isGuest && (
+                <Link
+                  href="/pos"
+                  aria-label="Kasir"
+                  className={`w-11 h-11 rounded-xl border flex items-center justify-center flex-shrink-0 transition-colors ${
+                    pathname === "/pos"
+                      ? "bg-pink-600 border-pink-600 text-white shadow-md shadow-pink-200"
+                      : "bg-pink-50 border-pink-100 text-pink-600"
+                  }`}
+                >
+                  <ShoppingCart size={22} />
+                </Link>
+              )}
 
               {!isGuest && (
                 <div className="relative flex-shrink-0">
@@ -860,34 +885,72 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full desktop:translate-x-0"}
             `}>
 
-              <div className="flex items-start justify-between mb-8 short:mb-3 mt-2 short:mt-0 desktop:px-0">
-                <div className="flex items-center gap-3 min-w-0 desktop:w-full desktop:justify-center desktop:group-hover/sidebar:justify-start">
-                  {/* LOGO DENGAN BACKGROUND PUTIH AGAR PNG TRANSPARAN TERLIHAT JELAS */}
+              {/* IDENTITAS PENGGUNA (dulu di bawah). Logo & nama toko sudah pindah
+                  ke header depan, jadi posisi teratas ini diisi profil: foto, nama,
+                  @username, dan label Role yang tetap dipertahankan. */}
+              <div className="flex items-start justify-between mb-6 short:mb-3 mt-2 short:mt-0 desktop:px-0">
+                <div ref={accountMenuRef} className="relative flex-1 min-w-0">
                   <button
                     type="button"
-                    onClick={() => setIsStoreLogoPreviewOpen(true)}
-                    className="group relative w-12 h-12 flex-shrink-0 bg-white border-2 border-pink-200 rounded-xl flex items-center justify-center overflow-hidden transition-all shadow-md shadow-pink-100 cursor-pointer hover:border-pink-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink-300"
-                    title="Lihat Logo Toko"
+                    onClick={() => setIsAccountMenuOpen((current) => !current)}
+                    className="w-full flex items-center gap-3 min-w-0 text-left desktop:justify-center desktop:group-hover/sidebar:justify-start"
+                    title="Menu akun"
                   >
-                    {logo ? (
-                      <img src={logo} alt="Logo" className="w-full h-full object-contain p-1" />
-                    ) : (
-                      <Flower2 size={24} className="text-pink-500" />
-                    )}
-                    <span className="absolute inset-0 flex items-center justify-center bg-pink-950/45 opacity-0 transition-all duration-200 group-hover:opacity-100 group-focus-visible:opacity-100">
-                      <Eye size={18} className="scale-50 text-white opacity-0 transition-all duration-300 group-hover:scale-100 group-hover:opacity-100 group-focus-visible:scale-100 group-focus-visible:opacity-100" />
+                    <span className="w-12 h-12 rounded-full bg-white border-2 border-pink-200 flex items-center justify-center overflow-hidden text-pink-500 flex-shrink-0 shadow-md shadow-pink-100">
+                      {user?.profilePhoto ? (
+                        <img src={user.profilePhoto} alt={user?.fullName || user?.username || "Akun"} className="w-full h-full object-cover" />
+                      ) : (
+                        <UserRound size={24} />
+                      )}
+                    </span>
+                    <span className="min-w-0 block overflow-hidden transition-all duration-300 desktop:max-w-0 desktop:opacity-0 desktop:group-hover/sidebar:max-w-40 desktop:group-hover/sidebar:opacity-100">
+                      <span className="block text-base font-bold leading-tight text-rose-950 truncate">{user?.fullName || user?.username || "Pengguna"}</span>
+                      <span className="block text-[11px] text-pink-600 truncate">@{user?.username || "user"}</span>
+                      <span className="text-[10px] text-pink-700 bg-pink-50 border border-pink-100 px-2 py-0.5 rounded inline-block mt-1 font-medium tracking-wide">Role: {user?.role}</span>
                     </span>
                   </button>
-                  <div className="min-w-0 overflow-hidden transition-all duration-300 desktop:max-w-0 desktop:opacity-0 desktop:group-hover/sidebar:max-w-40 desktop:group-hover/sidebar:opacity-100">
-                    <h1 className="text-lg font-bold tracking-wider leading-tight text-rose-950">Lina Flowers</h1>
-                    <p className="text-[10px] text-pink-700 bg-pink-50 border border-pink-100 px-2 py-0.5 rounded inline-block mt-1 font-medium tracking-wide">Role: {user?.role}</p>
-                  </div>
+
+                  {isAccountMenuOpen && (
+                    <div className="absolute top-full left-0 mt-2 w-60 rounded-xl border border-pink-100 bg-white p-2 text-slate-700 shadow-2xl z-[90]">
+                      {user?.profilePhoto && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsProfilePreviewOpen(true);
+                            setIsAccountMenuOpen(false);
+                          }}
+                          className="w-full flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-bold hover:bg-pink-50 hover:text-pink-600 transition-colors"
+                        >
+                          <Eye size={18} /> Lihat Foto
+                        </button>
+                      )}
+                      {!isGuest && (
+                        <Link
+                          href="/akun?edit=me"
+                          onClick={() => {
+                            setIsAccountMenuOpen(false);
+                            closeMobileMenu();
+                          }}
+                          className="flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-bold hover:bg-pink-50 hover:text-pink-600 transition-colors"
+                        >
+                          <Settings size={18} /> Pengaturan Akun
+                        </Link>
+                      )}
+                      <button
+                        type="button"
+                        onClick={handleLogout}
+                        className="w-full flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-bold text-red-600 hover:bg-red-50 transition-colors"
+                      >
+                        <LogOut size={18} /> Logout
+                      </button>
+                    </div>
+                  )}
                 </div>
 
                 {/* TOMBOL TUTUP SIDEBAR DI MOBILE */}
               <button
                   onClick={closeMobileMenu}
-                  className="desktop:hidden text-pink-500 hover:text-pink-700 p-1"
+                  className="desktop:hidden text-pink-500 hover:text-pink-700 p-1 flex-shrink-0"
                 >
                   <X size={24} />
                 </button>
@@ -901,6 +964,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 {!isGuest && <NavItem href="/packing" icon={<PackageCheck />} label="Checklist Packing" pathname={pathname} onClick={closeMobileMenu} />}
                 {!isGuest && <NavItem href="/pelanggan" icon={<Contact />} label="Pelanggan" pathname={pathname} onClick={closeMobileMenu} />}
                 {!isGuest && <NavItem href="/penjualan" icon={<ReceiptHistoryIcon />} label="Riwayat Penjualan" pathname={pathname} onClick={closeMobileMenu} />}
+                {!isGuest && <NavItem href="/unduh-nota" icon={<FileDown />} label="Unduh Nota" pathname={pathname} onClick={closeMobileMenu} />}
                 {user?.role === "Owner" && <NavItem href="/laporan" icon={<LineChart />} label="Laporan" pathname={pathname} onClick={closeMobileMenu} />}
                 {!isGuest && <NavItem href="/log-aktivitas" icon={<ClipboardList />} label="Log Aktivitas" pathname={pathname} onClick={closeMobileMenu} />}
 
@@ -911,62 +975,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 )}
               </nav>
 
-              <div ref={accountMenuRef} className="relative mt-6 short:mt-2">
-                {isAccountMenuOpen && (
-                  <div className="absolute bottom-full left-0 mb-3 w-60 rounded-xl border border-pink-100 bg-white p-2 text-slate-700 shadow-2xl z-[90]">
-                    {user?.profilePhoto && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setIsProfilePreviewOpen(true);
-                          setIsAccountMenuOpen(false);
-                        }}
-                        className="w-full flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-bold hover:bg-pink-50 hover:text-pink-600 transition-colors"
-                      >
-                        <Eye size={18} /> Lihat Foto
-                      </button>
-                    )}
-                    {!isGuest && (
-                      <Link
-                        href="/akun?edit=me"
-                        onClick={() => {
-                          setIsAccountMenuOpen(false);
-                          closeMobileMenu();
-                        }}
-                        className="flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-bold hover:bg-pink-50 hover:text-pink-600 transition-colors"
-                      >
-                        <Settings size={18} /> Pengaturan Akun
-                      </Link>
-                    )}
-                    <button
-                      type="button"
-                      onClick={handleLogout}
-                      className="w-full flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-bold text-red-600 hover:bg-red-50 transition-colors"
-                    >
-                      <LogOut size={18} /> Logout
-                    </button>
-                  </div>
-                )}
-
-                <button
-                  type="button"
-                  onClick={() => setIsAccountMenuOpen((current) => !current)}
-                    className="w-full flex items-center desktop:justify-center desktop:group-hover/sidebar:justify-start gap-3 p-3 bg-pink-50 rounded-xl hover:bg-pink-100 transition-colors duration-200 text-rose-950 border border-pink-100 shadow-inner shadow-pink-50"
-                  title="Menu akun"
-                >
-                  <div className="w-11 h-11 rounded-full bg-white/95 border border-pink-200 flex items-center justify-center overflow-hidden text-pink-500 flex-shrink-0">
-                    {user?.profilePhoto ? (
-                      <img src={user.profilePhoto} alt={user?.fullName || user?.username || "Akun"} className="w-full h-full object-cover" />
-                    ) : (
-                      <UserRound size={22} />
-                    )}
-                  </div>
-                  <div className="min-w-0 flex-1 text-left overflow-hidden transition-all duration-300 desktop:max-w-0 desktop:opacity-0 desktop:group-hover/sidebar:max-w-40 desktop:group-hover/sidebar:opacity-100">
-                    <p className="text-sm font-bold truncate">{user?.fullName || user?.username || "Akun"}</p>
-                    <p className="text-[11px] text-pink-600 truncate">@{user?.username || "user"} - {user?.role}</p>
-                  </div>
-                </button>
-              </div>
+              {/* Identitas akun sudah pindah ke bagian atas sidebar. */}
             </aside>
 
             {/* KONTEN UTAMA */}
@@ -978,11 +987,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             {!isGuest && user && (
               <nav className="desktop:hidden fixed bottom-0 left-0 right-0 h-16 short:h-12 z-40 bg-white/95 border-t border-pink-100 backdrop-blur-md shadow-[0_-4px_20px_rgba(219,39,119,0.1)]">
                 <div className="flex h-full">
+                  {/* Kasir/keranjang sudah pindah ke header atas. Riwayat Penjualan
+                      tetap ada di sidebar. */}
                   <BottomNavItem href="/dashboard" icon={<House size={20} />} label="Dashboard" pathname={pathname} />
-                  <BottomNavItem href="/pos" icon={<ShoppingCart size={20} />} label="Kasir" pathname={pathname} />
                   <BottomNavItem href="/produk" icon={<Package size={20} />} label="Produk" pathname={pathname} />
                   <BottomNavItem href="/status-pesanan" icon={<ClipboardCheck size={20} />} label="Pesanan" pathname={pathname} />
-                  <BottomNavItem href="/penjualan" icon={<ReceiptHistoryIcon />} label="Riwayat" pathname={pathname} />
+                  <BottomNavItem href="/packing" icon={<PackageCheck size={20} />} label="Checklist" pathname={pathname} />
+                  <BottomNavItem href="/unduh-nota" icon={<FileDown size={20} />} label="Nota" pathname={pathname} />
                 </div>
               </nav>
             )}

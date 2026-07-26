@@ -117,7 +117,7 @@ export default function UnduhNotaPage() {
           </div>
           <div className="min-w-0">
             <h1 className="text-xl font-black text-rose-950 leading-tight">Unduh Nota</h1>
-            <p className="text-sm text-slate-500">Cari pesanan, lalu tekan PDF atau JPG. Selesai.</p>
+            <p className="text-sm text-slate-500">Cari pesanan, lalu tekan PDF atau JPG. Akan Terdownload otomatis dan tersimpan pada Galeri HP.</p>
           </div>
         </div>
       </div>

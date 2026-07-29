@@ -67,8 +67,50 @@ model Transaction {
   items             TransactionItem[]
   notifications     Notification[]
   orderRequest      OrderRequest?
+  payments          Payment[]
 
   @@index([customerId])
+}
+
+// Pembayaran atas sebuah transaksi. Satu transaksi boleh menerima beberapa
+// pembayaran (cicilan). Sisa tagihan = total_harga − Σ nominal pembayaran.
+//
+// Kolom `Transaction.status` TIDAK dihapus: ia menjadi cache yang HANYA ditulis
+// server bersamaan dengan perubahan di tabel ini, supaya seluruh kode lama yang
+// menyaring `status === "Paid"` (dashboard, laporan, ekspor) tetap benar.
+model Payment {
+  id            Int         @id @default(autoincrement())
+  transactionId Int
+  transaction   Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+  tanggal       DateTime    @default(now()) // kapan uang benar-benar diterima
+  nominal       Int
+  metode        String // Tunai | Transfer Bank | QRIS
+  catatan       String?
+  pencatatId    Int?
+  pencatatNama  String?
+  createdAt     DateTime    @default(now())
+
+  @@index([transactionId])
+  @@index([tanggal])
+}
+
+// Pengeluaran usaha. Kategori "Ambilan Pribadi" (prive) ikut mengurangi kas
+// tetapi TIDAK mengurangi laba usaha — pemisahannya ada di lib/pengeluaran.ts.
+model Expense {
+  id           Int      @id @default(autoincrement())
+  tanggal      DateTime @default(now())
+  nominal      Int
+  kategori     String
+  catatan      String?
+  metode       String   @default("Tunai")
+  fotoUrl      String?  @db.Text
+  pencatatId   Int?
+  pencatatNama String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([tanggal])
+  @@index([kategori])
 }
 
 model TransactionItem {

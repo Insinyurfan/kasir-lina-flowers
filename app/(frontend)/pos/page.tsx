@@ -621,15 +621,17 @@ export default function PosPage() {
 
     setIsProcessing(true);
     setIsCheckoutConfirmOpen(false);
-    const statusTransaksi = metodePembayaran === "Belum Bayar" ? "Unpaid" : "Paid";
-    
+
+    // Status pelunasan TIDAK lagi dikirim dari sini. Server menurunkannya dari
+    // pembayaran: metode "Belum Bayar" berarti piutang (tanpa pembayaran),
+    // metode lain berarti dibayar lunas di tempat (server membuat pembayarannya).
     try {
       const res = await fetch("/api/transaksi", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           cart, metode_pembayaran: metodePembayaran, nama_pembeli: namaPembeli.toUpperCase(),
-          nama_kasir: cashierDisplayName?.toUpperCase(), status: statusTransaksi, status_pengiriman: "Sedang Disiapkan",
+          nama_kasir: cashierDisplayName?.toUpperCase(), status_pengiriman: "Sedang Disiapkan",
           ...actorPayload,
         }),
       });

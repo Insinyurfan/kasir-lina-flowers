@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { LayoutDashboard, Calendar, FileText, TrendingUp, Clock, Trophy, ChevronRight } from "lucide-react";
+import { LayoutDashboard, Calendar, FileText, TrendingUp, Clock, Trophy, ChevronRight, HandCoins, Wallet, Scale } from "lucide-react";
 import Link from "next/link";
 import { getSavedUserSession } from "@/lib/userSession";
 
@@ -28,6 +28,9 @@ export default function DashboardPage() {
   const [selectedDate, setSelectedDate] = useState(() => getTodayInputValue());
   const [transaksi, setTransaksi] = useState<Transaction[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [totalPiutang, setTotalPiutang] = useState<number | null>(null);
+  const [pengeluaranBulanIni, setPengeluaranBulanIni] = useState<number | null>(null);
+  const [labaBulanIni, setLabaBulanIni] = useState<number | null>(null);
   // Sapaan "Selamat datang" sekali setelah login berhasil (dari halaman login).
   const [welcome, setWelcome] = useState<string | null>(null);
   // Data finansial (Total Pendapatan) hanya ditampilkan untuk Owner.
@@ -66,6 +69,37 @@ export default function DashboardPage() {
     setWelcome(name);
     const timer = window.setTimeout(() => setWelcome(null), 5000);
     return () => window.clearTimeout(timer);
+  }, []);
+
+  // Ringkasan keuangan bulan berjalan: piutang berjalan, pengeluaran, dan laba.
+  // Sengaja terpisah dari data harian di atas karena rentangnya berbeda (bulan,
+  // bukan tanggal yang dipilih) dan sumbernya endpoint lain.
+  useEffect(() => {
+    const idTimeout = window.setTimeout(() => {
+      fetch("/api/piutang", { cache: "no-store" })
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          if (data) setTotalPiutang(data.totalPiutang ?? 0);
+        })
+        .catch(() => {});
+
+      fetch("/api/pengeluaran", { cache: "no-store" })
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          if (data) setPengeluaranBulanIni(data.total ?? 0);
+        })
+        .catch(() => {});
+
+      // Laba rugi hanya dapat dibaca Owner; peran lain akan menerima 403 dan
+      // kartunya tidak ditampilkan.
+      fetch("/api/laba-rugi", { cache: "no-store" })
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          if (data?.periode) setLabaBulanIni(data.periode.labaUsaha ?? 0);
+        })
+        .catch(() => {});
+    }, 0);
+    return () => window.clearTimeout(idTimeout);
   }, []);
 
   useEffect(() => {
@@ -211,6 +245,65 @@ export default function DashboardPage() {
             <div className="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center"><TrendingUp size={28} /></div>
             <div><p className="text-sm font-medium text-pink-100">Total Pendapatan</p><h3 className="text-2xl font-bold">Rp {pendapatan.toLocaleString("id-ID")}</h3></div>
           </div>
+        )}
+      </div>
+
+      {/* Ringkasan keuangan bulan berjalan — tiap kartu membuka halaman rinciannya */}
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+        <Link
+          href="/piutang"
+          className="lina-panel border rounded-2xl p-6 flex items-center gap-4 transition hover:border-amber-300"
+        >
+          <div className="w-14 h-14 bg-amber-50 text-amber-500 rounded-2xl flex items-center justify-center">
+            <HandCoins size={28} />
+          </div>
+          <div className="min-w-0">
+            <p className="text-sm font-medium text-slate-500">Piutang Berjalan</p>
+            <h3 className="text-2xl font-bold">
+              {totalPiutang === null ? "…" : `Rp ${totalPiutang.toLocaleString("id-ID")}`}
+            </h3>
+            <p className="text-[10px] text-slate-400">Sudah dikirim, uang belum masuk</p>
+          </div>
+        </Link>
+
+        <Link
+          href="/pengeluaran"
+          className="lina-panel border rounded-2xl p-6 flex items-center gap-4 transition hover:border-rose-300"
+        >
+          <div className="w-14 h-14 bg-rose-50 text-rose-500 rounded-2xl flex items-center justify-center">
+            <Wallet size={28} />
+          </div>
+          <div className="min-w-0">
+            <p className="text-sm font-medium text-slate-500">Pengeluaran Bulan Ini</p>
+            <h3 className="text-2xl font-bold">
+              {pengeluaranBulanIni === null
+                ? "…"
+                : `Rp ${pengeluaranBulanIni.toLocaleString("id-ID")}`}
+            </h3>
+            <p className="text-[10px] text-slate-400">Termasuk ambilan pribadi</p>
+          </div>
+        </Link>
+
+        {isOwner && (
+          <Link
+            href="/laba-rugi"
+            className="lina-panel border rounded-2xl p-6 flex items-center gap-4 transition hover:border-violet-300"
+          >
+            <div className="w-14 h-14 bg-violet-50 text-violet-500 rounded-2xl flex items-center justify-center">
+              <Scale size={28} />
+            </div>
+            <div className="min-w-0">
+              <p className="text-sm font-medium text-slate-500">Laba Usaha Bulan Ini</p>
+              <h3
+                className={`text-2xl font-bold ${
+                  labaBulanIni !== null && labaBulanIni < 0 ? "text-rose-600" : ""
+                }`}
+              >
+                {labaBulanIni === null ? "…" : `Rp ${labaBulanIni.toLocaleString("id-ID")}`}
+              </h3>
+              <p className="text-[10px] text-slate-400">Omzet dikurangi biaya usaha</p>
+            </div>
+          </Link>
         )}
       </div>
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { Fragment, useState, useEffect, useMemo, useRef } from "react";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { ReceiptText, Filter, X, Printer, Settings, Save, User, Trash2, Camera, Calendar, Search, Plus, Pencil, Download, Check, ArrowDown, ArrowUp, ArrowUpDown, FileText } from "lucide-react";
 import ManualTransactionModal, { type ManualTransaction } from "@/components/ManualTransactionModal";
@@ -31,6 +32,11 @@ const getTimeFromISO = (isoString: string): string => {
   if (Number.isNaN(date.getTime())) return "--:--";
   return date.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", timeZone: "Asia/Jakarta" });
 };
+
+// Sisa tagihan sebenarnya = total nota − pembayaran yang sudah tercatat.
+// `total_harga` saja keliru untuk transaksi yang dibayar dicicil.
+const sisaTagihanTrx = (t: { total_harga: number; payments?: { nominal: number }[] }) =>
+  Math.max(0, t.total_harga - (t.payments ?? []).reduce((jumlah, bayar) => jumlah + bayar.nominal, 0));
 
 const MOBILE_TRANSACTION_BATCH_SIZE = 25;
 const pengirimanOptions = ["Diproses", "Siap Kirim", "Dikirim", "Selesai"];
@@ -276,21 +282,10 @@ export default function RiwayatPenjualanPage() {
       return;
     }
 
-    const currentTrx = transaksi.find((t) => t.id === id);
-
+    // Status pelunasan TIDAK lagi ikut dikirim dari sini. Ia diturunkan server
+    // dari pembayaran yang tercatat, jadi mengubah metode hanya mengganti label
+    // metodenya saja. Untuk membatalkan pelunasan, pakai "Batalkan Pelunasan".
     const payload: any = { id, [field]: value, ...actorPayload };
-
-    if (field === "metode_pembayaran") {
-      payload.status = value === "Belum Bayar" ? "Unpaid" : "Paid";
-    } else if (field === "status") {
-      if (value === "Unpaid") {
-        payload.metode_pembayaran = "Belum Bayar";
-      } else if (value === "Paid") {
-        if (currentTrx && currentTrx.metode_pembayaran === "Belum Bayar") {
-          payload.metode_pembayaran = "Tunai";
-        }
-      }
-    }
 
     try {
       const res = await fetch("/api/transaksi", {
@@ -308,6 +303,39 @@ export default function RiwayatPenjualanPage() {
       }
     } catch (error) {
       toast.error("Gagal memperbarui status: koneksi jaringan bermasalah.");
+    }
+  };
+
+  // Kembalikan nota lunas menjadi piutang dengan menghapus bukti pembayarannya.
+  // Dibutuhkan terutama untuk nota lama hasil migrasi: dulu semua nota otomatis
+  // bertanda lunas, padahal sebagian sebenarnya belum dibayar.
+  const batalkanPelunasan = async (t: { id: number; trxNumber?: number | null; payments?: { id: number }[] }) => {
+    const daftarPembayaran = t.payments ?? [];
+    if (daftarPembayaran.length === 0) {
+      toast.error("Nota ini belum punya catatan pembayaran untuk dibatalkan.");
+      return;
+    }
+
+    const nomor = t.trxNumber ? `#${t.trxNumber}` : `ID ${t.id}`;
+    if (
+      !confirm(
+        `Batalkan pelunasan nota ${nomor}?\n\n${daftarPembayaran.length} catatan pembayaran akan dihapus dan nota ini kembali muncul di halaman Piutang.`
+      )
+    )
+      return;
+
+    try {
+      for (const bayar of daftarPembayaran) {
+        const res = await fetch(`/api/pembayaran/${bayar.id}`, { method: "DELETE" });
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          throw new Error(data.error || "Gagal menghapus pembayaran.");
+        }
+      }
+      toast.success(`Nota ${nomor} kembali jadi piutang.`);
+      await fetchTransaksi();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Gagal membatalkan pelunasan.");
     }
   };
 
@@ -1369,6 +1397,26 @@ export default function RiwayatPenjualanPage() {
                           {t.metode_pembayaran}
                         </p>
                       )}
+                      {/* Pelunasan tidak lagi diubah dari sini — dicatat sebagai
+                          pembayaran ber-tanggal di halaman Piutang. */}
+                      {t.status === "Unpaid" ? (
+                        <Link
+                          href="/piutang"
+                          className="mt-2 flex items-center justify-center gap-1.5 rounded-xl bg-emerald-500 px-3 py-2 text-[11px] font-bold text-white active:scale-95"
+                        >
+                          Catat Pembayaran · sisa Rp {sisaTagihanTrx(t).toLocaleString("id-ID")}
+                        </Link>
+                      ) : (
+                        user?.role === "Owner" && (t.payments?.length ?? 0) > 0 && (
+                          <button
+                            type="button"
+                            onClick={() => batalkanPelunasan(t)}
+                            className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[11px] font-bold text-slate-500 active:scale-95"
+                          >
+                            Batalkan Pelunasan
+                          </button>
+                        )
+                      )}
                     </div>
                   </div>
 
@@ -1535,6 +1583,24 @@ export default function RiwayatPenjualanPage() {
                         <div className={`text-[10px] font-medium ${t.status === "Unpaid" ? "text-red-500" : "text-slate-500"}`}>
                           {t.metode_pembayaran}
                         </div>
+                      )}
+                      {t.status === "Unpaid" ? (
+                        <Link
+                          href="/piutang"
+                          className="mt-1.5 block rounded-md bg-emerald-500 px-2 py-1 text-center text-[10px] font-bold text-white hover:bg-emerald-600"
+                        >
+                          Catat Bayar · sisa Rp {sisaTagihanTrx(t).toLocaleString("id-ID")}
+                        </Link>
+                      ) : (
+                        user?.role === "Owner" && (t.payments?.length ?? 0) > 0 && (
+                          <button
+                            type="button"
+                            onClick={() => batalkanPelunasan(t)}
+                            className="mt-1.5 block w-full rounded-md border border-slate-200 px-2 py-1 text-center text-[10px] font-bold text-slate-500 hover:bg-slate-50"
+                          >
+                            Batalkan Pelunasan
+                          </button>
+                        )
                       )}
                     </td>
                     {false && <td className="p-4">

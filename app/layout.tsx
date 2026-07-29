@@ -37,7 +37,10 @@ import {
   Settings,
   UserRound,
   Trash2,
-  ZoomIn
+  ZoomIn,
+  Wallet,
+  HandCoins,
+  Scale
 } from "lucide-react";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -968,6 +971,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 {!isGuest && <NavItem href="/pelanggan" icon={<Contact />} label="Pelanggan" pathname={pathname} onClick={closeMobileMenu} />}
                 {!isGuest && <NavItem href="/penjualan" icon={<ReceiptHistoryIcon />} label="Riwayat Penjualan" pathname={pathname} onClick={closeMobileMenu} />}
                 {!isGuest && <NavItem href="/unduh-nota" icon={<FileDown />} label="Unduh Nota" pathname={pathname} onClick={closeMobileMenu} />}
+                {!isGuest && <NavItem href="/piutang" icon={<HandCoins />} label="Piutang" pathname={pathname} onClick={closeMobileMenu} />}
+                {(user?.role === "Owner" || user?.role === "Admin") && <NavItem href="/pengeluaran" icon={<Wallet />} label="Pengeluaran" pathname={pathname} onClick={closeMobileMenu} />}
+                {user?.role === "Owner" && <NavItem href="/laba-rugi" icon={<Scale />} label="Laba Rugi" pathname={pathname} onClick={closeMobileMenu} />}
                 {user?.role === "Owner" && <NavItem href="/laporan" icon={<LineChart />} label="Laporan" pathname={pathname} onClick={closeMobileMenu} />}
                 {!isGuest && <NavItem href="/log-aktivitas" icon={<ClipboardList />} label="Log Aktivitas" pathname={pathname} onClick={closeMobileMenu} />}
 

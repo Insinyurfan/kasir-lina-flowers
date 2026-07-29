@@ -34,6 +34,16 @@ export type ProductVariant = $Result.DefaultSelection<Prisma.$ProductVariantPayl
  */
 export type Transaction = $Result.DefaultSelection<Prisma.$TransactionPayload>
 /**
+ * Model Payment
+ * 
+ */
+export type Payment = $Result.DefaultSelection<Prisma.$PaymentPayload>
+/**
+ * Model Expense
+ * 
+ */
+export type Expense = $Result.DefaultSelection<Prisma.$ExpensePayload>
+/**
  * Model TransactionItem
  * 
  */
@@ -251,6 +261,26 @@ export class PrismaClient<
     * ```
     */
   get transaction(): Prisma.TransactionDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.payment`: Exposes CRUD operations for the **Payment** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Payments
+    * const payments = await prisma.payment.findMany()
+    * ```
+    */
+  get payment(): Prisma.PaymentDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.expense`: Exposes CRUD operations for the **Expense** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Expenses
+    * const expenses = await prisma.expense.findMany()
+    * ```
+    */
+  get expense(): Prisma.ExpenseDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.transactionItem`: Exposes CRUD operations for the **TransactionItem** model.
@@ -816,6 +846,8 @@ export namespace Prisma {
     Product: 'Product',
     ProductVariant: 'ProductVariant',
     Transaction: 'Transaction',
+    Payment: 'Payment',
+    Expense: 'Expense',
     TransactionItem: 'TransactionItem',
     StoreSetting: 'StoreSetting',
     CustomerPrice: 'CustomerPrice',
@@ -846,7 +878,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "product" | "productVariant" | "transaction" | "transactionItem" | "storeSetting" | "customerPrice" | "customer" | "customerCode" | "notification" | "activityLog" | "userCart" | "userCartItem" | "orderRequest" | "orderStatusHistory" | "orderRequestItem"
+      modelProps: "user" | "product" | "productVariant" | "transaction" | "payment" | "expense" | "transactionItem" | "storeSetting" | "customerPrice" | "customer" | "customerCode" | "notification" | "activityLog" | "userCart" | "userCartItem" | "orderRequest" | "orderStatusHistory" | "orderRequestItem"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1143,6 +1175,154 @@ export namespace Prisma {
           count: {
             args: Prisma.TransactionCountArgs<ExtArgs>
             result: $Utils.Optional<TransactionCountAggregateOutputType> | number
+          }
+        }
+      }
+      Payment: {
+        payload: Prisma.$PaymentPayload<ExtArgs>
+        fields: Prisma.PaymentFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.PaymentFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PaymentPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.PaymentFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PaymentPayload>
+          }
+          findFirst: {
+            args: Prisma.PaymentFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PaymentPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.PaymentFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PaymentPayload>
+          }
+          findMany: {
+            args: Prisma.PaymentFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PaymentPayload>[]
+          }
+          create: {
+            args: Prisma.PaymentCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PaymentPayload>
+          }
+          createMany: {
+            args: Prisma.PaymentCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.PaymentCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PaymentPayload>[]
+          }
+          delete: {
+            args: Prisma.PaymentDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PaymentPayload>
+          }
+          update: {
+            args: Prisma.PaymentUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PaymentPayload>
+          }
+          deleteMany: {
+            args: Prisma.PaymentDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.PaymentUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.PaymentUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PaymentPayload>[]
+          }
+          upsert: {
+            args: Prisma.PaymentUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PaymentPayload>
+          }
+          aggregate: {
+            args: Prisma.PaymentAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregatePayment>
+          }
+          groupBy: {
+            args: Prisma.PaymentGroupByArgs<ExtArgs>
+            result: $Utils.Optional<PaymentGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.PaymentCountArgs<ExtArgs>
+            result: $Utils.Optional<PaymentCountAggregateOutputType> | number
+          }
+        }
+      }
+      Expense: {
+        payload: Prisma.$ExpensePayload<ExtArgs>
+        fields: Prisma.ExpenseFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ExpenseFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ExpensePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ExpenseFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ExpensePayload>
+          }
+          findFirst: {
+            args: Prisma.ExpenseFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ExpensePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ExpenseFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ExpensePayload>
+          }
+          findMany: {
+            args: Prisma.ExpenseFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ExpensePayload>[]
+          }
+          create: {
+            args: Prisma.ExpenseCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ExpensePayload>
+          }
+          createMany: {
+            args: Prisma.ExpenseCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ExpenseCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ExpensePayload>[]
+          }
+          delete: {
+            args: Prisma.ExpenseDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ExpensePayload>
+          }
+          update: {
+            args: Prisma.ExpenseUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ExpensePayload>
+          }
+          deleteMany: {
+            args: Prisma.ExpenseDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ExpenseUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ExpenseUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ExpensePayload>[]
+          }
+          upsert: {
+            args: Prisma.ExpenseUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ExpensePayload>
+          }
+          aggregate: {
+            args: Prisma.ExpenseAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateExpense>
+          }
+          groupBy: {
+            args: Prisma.ExpenseGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ExpenseGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ExpenseCountArgs<ExtArgs>
+            result: $Utils.Optional<ExpenseCountAggregateOutputType> | number
           }
         }
       }
@@ -2134,6 +2314,8 @@ export namespace Prisma {
     product?: ProductOmit
     productVariant?: ProductVariantOmit
     transaction?: TransactionOmit
+    payment?: PaymentOmit
+    expense?: ExpenseOmit
     transactionItem?: TransactionItemOmit
     storeSetting?: StoreSettingOmit
     customerPrice?: CustomerPriceOmit
@@ -2317,11 +2499,13 @@ export namespace Prisma {
   export type TransactionCountOutputType = {
     items: number
     notifications: number
+    payments: number
   }
 
   export type TransactionCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     items?: boolean | TransactionCountOutputTypeCountItemsArgs
     notifications?: boolean | TransactionCountOutputTypeCountNotificationsArgs
+    payments?: boolean | TransactionCountOutputTypeCountPaymentsArgs
   }
 
   // Custom InputTypes
@@ -2347,6 +2531,13 @@ export namespace Prisma {
    */
   export type TransactionCountOutputTypeCountNotificationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: NotificationWhereInput
+  }
+
+  /**
+   * TransactionCountOutputType without action
+   */
+  export type TransactionCountOutputTypeCountPaymentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PaymentWhereInput
   }
 
 
@@ -6243,6 +6434,7 @@ export namespace Prisma {
     items?: boolean | Transaction$itemsArgs<ExtArgs>
     notifications?: boolean | Transaction$notificationsArgs<ExtArgs>
     orderRequest?: boolean | Transaction$orderRequestArgs<ExtArgs>
+    payments?: boolean | Transaction$paymentsArgs<ExtArgs>
     _count?: boolean | TransactionCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["transaction"]>
 
@@ -6296,6 +6488,7 @@ export namespace Prisma {
     items?: boolean | Transaction$itemsArgs<ExtArgs>
     notifications?: boolean | Transaction$notificationsArgs<ExtArgs>
     orderRequest?: boolean | Transaction$orderRequestArgs<ExtArgs>
+    payments?: boolean | Transaction$paymentsArgs<ExtArgs>
     _count?: boolean | TransactionCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type TransactionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -6312,6 +6505,7 @@ export namespace Prisma {
       items: Prisma.$TransactionItemPayload<ExtArgs>[]
       notifications: Prisma.$NotificationPayload<ExtArgs>[]
       orderRequest: Prisma.$OrderRequestPayload<ExtArgs> | null
+      payments: Prisma.$PaymentPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -6723,6 +6917,7 @@ export namespace Prisma {
     items<T extends Transaction$itemsArgs<ExtArgs> = {}>(args?: Subset<T, Transaction$itemsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TransactionItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     notifications<T extends Transaction$notificationsArgs<ExtArgs> = {}>(args?: Subset<T, Transaction$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     orderRequest<T extends Transaction$orderRequestArgs<ExtArgs> = {}>(args?: Subset<T, Transaction$orderRequestArgs<ExtArgs>>): Prisma__OrderRequestClient<$Result.GetResult<Prisma.$OrderRequestPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    payments<T extends Transaction$paymentsArgs<ExtArgs> = {}>(args?: Subset<T, Transaction$paymentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -7245,6 +7440,30 @@ export namespace Prisma {
   }
 
   /**
+   * Transaction.payments
+   */
+  export type Transaction$paymentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Payment
+     */
+    select?: PaymentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Payment
+     */
+    omit?: PaymentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PaymentInclude<ExtArgs> | null
+    where?: PaymentWhereInput
+    orderBy?: PaymentOrderByWithRelationInput | PaymentOrderByWithRelationInput[]
+    cursor?: PaymentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: PaymentScalarFieldEnum | PaymentScalarFieldEnum[]
+  }
+
+  /**
    * Transaction without action
    */
   export type TransactionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -7260,6 +7479,2277 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: TransactionInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Payment
+   */
+
+  export type AggregatePayment = {
+    _count: PaymentCountAggregateOutputType | null
+    _avg: PaymentAvgAggregateOutputType | null
+    _sum: PaymentSumAggregateOutputType | null
+    _min: PaymentMinAggregateOutputType | null
+    _max: PaymentMaxAggregateOutputType | null
+  }
+
+  export type PaymentAvgAggregateOutputType = {
+    id: number | null
+    transactionId: number | null
+    nominal: number | null
+    pencatatId: number | null
+  }
+
+  export type PaymentSumAggregateOutputType = {
+    id: number | null
+    transactionId: number | null
+    nominal: number | null
+    pencatatId: number | null
+  }
+
+  export type PaymentMinAggregateOutputType = {
+    id: number | null
+    transactionId: number | null
+    tanggal: Date | null
+    nominal: number | null
+    metode: string | null
+    catatan: string | null
+    pencatatId: number | null
+    pencatatNama: string | null
+    createdAt: Date | null
+  }
+
+  export type PaymentMaxAggregateOutputType = {
+    id: number | null
+    transactionId: number | null
+    tanggal: Date | null
+    nominal: number | null
+    metode: string | null
+    catatan: string | null
+    pencatatId: number | null
+    pencatatNama: string | null
+    createdAt: Date | null
+  }
+
+  export type PaymentCountAggregateOutputType = {
+    id: number
+    transactionId: number
+    tanggal: number
+    nominal: number
+    metode: number
+    catatan: number
+    pencatatId: number
+    pencatatNama: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type PaymentAvgAggregateInputType = {
+    id?: true
+    transactionId?: true
+    nominal?: true
+    pencatatId?: true
+  }
+
+  export type PaymentSumAggregateInputType = {
+    id?: true
+    transactionId?: true
+    nominal?: true
+    pencatatId?: true
+  }
+
+  export type PaymentMinAggregateInputType = {
+    id?: true
+    transactionId?: true
+    tanggal?: true
+    nominal?: true
+    metode?: true
+    catatan?: true
+    pencatatId?: true
+    pencatatNama?: true
+    createdAt?: true
+  }
+
+  export type PaymentMaxAggregateInputType = {
+    id?: true
+    transactionId?: true
+    tanggal?: true
+    nominal?: true
+    metode?: true
+    catatan?: true
+    pencatatId?: true
+    pencatatNama?: true
+    createdAt?: true
+  }
+
+  export type PaymentCountAggregateInputType = {
+    id?: true
+    transactionId?: true
+    tanggal?: true
+    nominal?: true
+    metode?: true
+    catatan?: true
+    pencatatId?: true
+    pencatatNama?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type PaymentAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Payment to aggregate.
+     */
+    where?: PaymentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Payments to fetch.
+     */
+    orderBy?: PaymentOrderByWithRelationInput | PaymentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: PaymentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Payments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Payments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Payments
+    **/
+    _count?: true | PaymentCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: PaymentAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: PaymentSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: PaymentMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: PaymentMaxAggregateInputType
+  }
+
+  export type GetPaymentAggregateType<T extends PaymentAggregateArgs> = {
+        [P in keyof T & keyof AggregatePayment]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregatePayment[P]>
+      : GetScalarType<T[P], AggregatePayment[P]>
+  }
+
+
+
+
+  export type PaymentGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PaymentWhereInput
+    orderBy?: PaymentOrderByWithAggregationInput | PaymentOrderByWithAggregationInput[]
+    by: PaymentScalarFieldEnum[] | PaymentScalarFieldEnum
+    having?: PaymentScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: PaymentCountAggregateInputType | true
+    _avg?: PaymentAvgAggregateInputType
+    _sum?: PaymentSumAggregateInputType
+    _min?: PaymentMinAggregateInputType
+    _max?: PaymentMaxAggregateInputType
+  }
+
+  export type PaymentGroupByOutputType = {
+    id: number
+    transactionId: number
+    tanggal: Date
+    nominal: number
+    metode: string
+    catatan: string | null
+    pencatatId: number | null
+    pencatatNama: string | null
+    createdAt: Date
+    _count: PaymentCountAggregateOutputType | null
+    _avg: PaymentAvgAggregateOutputType | null
+    _sum: PaymentSumAggregateOutputType | null
+    _min: PaymentMinAggregateOutputType | null
+    _max: PaymentMaxAggregateOutputType | null
+  }
+
+  type GetPaymentGroupByPayload<T extends PaymentGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<PaymentGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof PaymentGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], PaymentGroupByOutputType[P]>
+            : GetScalarType<T[P], PaymentGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type PaymentSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    transactionId?: boolean
+    tanggal?: boolean
+    nominal?: boolean
+    metode?: boolean
+    catatan?: boolean
+    pencatatId?: boolean
+    pencatatNama?: boolean
+    createdAt?: boolean
+    transaction?: boolean | TransactionDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["payment"]>
+
+  export type PaymentSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    transactionId?: boolean
+    tanggal?: boolean
+    nominal?: boolean
+    metode?: boolean
+    catatan?: boolean
+    pencatatId?: boolean
+    pencatatNama?: boolean
+    createdAt?: boolean
+    transaction?: boolean | TransactionDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["payment"]>
+
+  export type PaymentSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    transactionId?: boolean
+    tanggal?: boolean
+    nominal?: boolean
+    metode?: boolean
+    catatan?: boolean
+    pencatatId?: boolean
+    pencatatNama?: boolean
+    createdAt?: boolean
+    transaction?: boolean | TransactionDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["payment"]>
+
+  export type PaymentSelectScalar = {
+    id?: boolean
+    transactionId?: boolean
+    tanggal?: boolean
+    nominal?: boolean
+    metode?: boolean
+    catatan?: boolean
+    pencatatId?: boolean
+    pencatatNama?: boolean
+    createdAt?: boolean
+  }
+
+  export type PaymentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "transactionId" | "tanggal" | "nominal" | "metode" | "catatan" | "pencatatId" | "pencatatNama" | "createdAt", ExtArgs["result"]["payment"]>
+  export type PaymentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    transaction?: boolean | TransactionDefaultArgs<ExtArgs>
+  }
+  export type PaymentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    transaction?: boolean | TransactionDefaultArgs<ExtArgs>
+  }
+  export type PaymentIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    transaction?: boolean | TransactionDefaultArgs<ExtArgs>
+  }
+
+  export type $PaymentPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Payment"
+    objects: {
+      transaction: Prisma.$TransactionPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      transactionId: number
+      tanggal: Date
+      nominal: number
+      metode: string
+      catatan: string | null
+      pencatatId: number | null
+      pencatatNama: string | null
+      createdAt: Date
+    }, ExtArgs["result"]["payment"]>
+    composites: {}
+  }
+
+  type PaymentGetPayload<S extends boolean | null | undefined | PaymentDefaultArgs> = $Result.GetResult<Prisma.$PaymentPayload, S>
+
+  type PaymentCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<PaymentFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: PaymentCountAggregateInputType | true
+    }
+
+  export interface PaymentDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Payment'], meta: { name: 'Payment' } }
+    /**
+     * Find zero or one Payment that matches the filter.
+     * @param {PaymentFindUniqueArgs} args - Arguments to find a Payment
+     * @example
+     * // Get one Payment
+     * const payment = await prisma.payment.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends PaymentFindUniqueArgs>(args: SelectSubset<T, PaymentFindUniqueArgs<ExtArgs>>): Prisma__PaymentClient<$Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Payment that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {PaymentFindUniqueOrThrowArgs} args - Arguments to find a Payment
+     * @example
+     * // Get one Payment
+     * const payment = await prisma.payment.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends PaymentFindUniqueOrThrowArgs>(args: SelectSubset<T, PaymentFindUniqueOrThrowArgs<ExtArgs>>): Prisma__PaymentClient<$Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Payment that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PaymentFindFirstArgs} args - Arguments to find a Payment
+     * @example
+     * // Get one Payment
+     * const payment = await prisma.payment.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends PaymentFindFirstArgs>(args?: SelectSubset<T, PaymentFindFirstArgs<ExtArgs>>): Prisma__PaymentClient<$Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Payment that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PaymentFindFirstOrThrowArgs} args - Arguments to find a Payment
+     * @example
+     * // Get one Payment
+     * const payment = await prisma.payment.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends PaymentFindFirstOrThrowArgs>(args?: SelectSubset<T, PaymentFindFirstOrThrowArgs<ExtArgs>>): Prisma__PaymentClient<$Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Payments that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PaymentFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Payments
+     * const payments = await prisma.payment.findMany()
+     * 
+     * // Get first 10 Payments
+     * const payments = await prisma.payment.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const paymentWithIdOnly = await prisma.payment.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends PaymentFindManyArgs>(args?: SelectSubset<T, PaymentFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Payment.
+     * @param {PaymentCreateArgs} args - Arguments to create a Payment.
+     * @example
+     * // Create one Payment
+     * const Payment = await prisma.payment.create({
+     *   data: {
+     *     // ... data to create a Payment
+     *   }
+     * })
+     * 
+     */
+    create<T extends PaymentCreateArgs>(args: SelectSubset<T, PaymentCreateArgs<ExtArgs>>): Prisma__PaymentClient<$Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Payments.
+     * @param {PaymentCreateManyArgs} args - Arguments to create many Payments.
+     * @example
+     * // Create many Payments
+     * const payment = await prisma.payment.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends PaymentCreateManyArgs>(args?: SelectSubset<T, PaymentCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Payments and returns the data saved in the database.
+     * @param {PaymentCreateManyAndReturnArgs} args - Arguments to create many Payments.
+     * @example
+     * // Create many Payments
+     * const payment = await prisma.payment.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Payments and only return the `id`
+     * const paymentWithIdOnly = await prisma.payment.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends PaymentCreateManyAndReturnArgs>(args?: SelectSubset<T, PaymentCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Payment.
+     * @param {PaymentDeleteArgs} args - Arguments to delete one Payment.
+     * @example
+     * // Delete one Payment
+     * const Payment = await prisma.payment.delete({
+     *   where: {
+     *     // ... filter to delete one Payment
+     *   }
+     * })
+     * 
+     */
+    delete<T extends PaymentDeleteArgs>(args: SelectSubset<T, PaymentDeleteArgs<ExtArgs>>): Prisma__PaymentClient<$Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Payment.
+     * @param {PaymentUpdateArgs} args - Arguments to update one Payment.
+     * @example
+     * // Update one Payment
+     * const payment = await prisma.payment.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends PaymentUpdateArgs>(args: SelectSubset<T, PaymentUpdateArgs<ExtArgs>>): Prisma__PaymentClient<$Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Payments.
+     * @param {PaymentDeleteManyArgs} args - Arguments to filter Payments to delete.
+     * @example
+     * // Delete a few Payments
+     * const { count } = await prisma.payment.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends PaymentDeleteManyArgs>(args?: SelectSubset<T, PaymentDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Payments.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PaymentUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Payments
+     * const payment = await prisma.payment.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends PaymentUpdateManyArgs>(args: SelectSubset<T, PaymentUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Payments and returns the data updated in the database.
+     * @param {PaymentUpdateManyAndReturnArgs} args - Arguments to update many Payments.
+     * @example
+     * // Update many Payments
+     * const payment = await prisma.payment.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Payments and only return the `id`
+     * const paymentWithIdOnly = await prisma.payment.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends PaymentUpdateManyAndReturnArgs>(args: SelectSubset<T, PaymentUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Payment.
+     * @param {PaymentUpsertArgs} args - Arguments to update or create a Payment.
+     * @example
+     * // Update or create a Payment
+     * const payment = await prisma.payment.upsert({
+     *   create: {
+     *     // ... data to create a Payment
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Payment we want to update
+     *   }
+     * })
+     */
+    upsert<T extends PaymentUpsertArgs>(args: SelectSubset<T, PaymentUpsertArgs<ExtArgs>>): Prisma__PaymentClient<$Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Payments.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PaymentCountArgs} args - Arguments to filter Payments to count.
+     * @example
+     * // Count the number of Payments
+     * const count = await prisma.payment.count({
+     *   where: {
+     *     // ... the filter for the Payments we want to count
+     *   }
+     * })
+    **/
+    count<T extends PaymentCountArgs>(
+      args?: Subset<T, PaymentCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], PaymentCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Payment.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PaymentAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends PaymentAggregateArgs>(args: Subset<T, PaymentAggregateArgs>): Prisma.PrismaPromise<GetPaymentAggregateType<T>>
+
+    /**
+     * Group by Payment.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PaymentGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends PaymentGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: PaymentGroupByArgs['orderBy'] }
+        : { orderBy?: PaymentGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, PaymentGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetPaymentGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Payment model
+   */
+  readonly fields: PaymentFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Payment.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__PaymentClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    transaction<T extends TransactionDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TransactionDefaultArgs<ExtArgs>>): Prisma__TransactionClient<$Result.GetResult<Prisma.$TransactionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Payment model
+   */
+  interface PaymentFieldRefs {
+    readonly id: FieldRef<"Payment", 'Int'>
+    readonly transactionId: FieldRef<"Payment", 'Int'>
+    readonly tanggal: FieldRef<"Payment", 'DateTime'>
+    readonly nominal: FieldRef<"Payment", 'Int'>
+    readonly metode: FieldRef<"Payment", 'String'>
+    readonly catatan: FieldRef<"Payment", 'String'>
+    readonly pencatatId: FieldRef<"Payment", 'Int'>
+    readonly pencatatNama: FieldRef<"Payment", 'String'>
+    readonly createdAt: FieldRef<"Payment", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Payment findUnique
+   */
+  export type PaymentFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Payment
+     */
+    select?: PaymentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Payment
+     */
+    omit?: PaymentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PaymentInclude<ExtArgs> | null
+    /**
+     * Filter, which Payment to fetch.
+     */
+    where: PaymentWhereUniqueInput
+  }
+
+  /**
+   * Payment findUniqueOrThrow
+   */
+  export type PaymentFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Payment
+     */
+    select?: PaymentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Payment
+     */
+    omit?: PaymentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PaymentInclude<ExtArgs> | null
+    /**
+     * Filter, which Payment to fetch.
+     */
+    where: PaymentWhereUniqueInput
+  }
+
+  /**
+   * Payment findFirst
+   */
+  export type PaymentFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Payment
+     */
+    select?: PaymentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Payment
+     */
+    omit?: PaymentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PaymentInclude<ExtArgs> | null
+    /**
+     * Filter, which Payment to fetch.
+     */
+    where?: PaymentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Payments to fetch.
+     */
+    orderBy?: PaymentOrderByWithRelationInput | PaymentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Payments.
+     */
+    cursor?: PaymentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Payments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Payments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Payments.
+     */
+    distinct?: PaymentScalarFieldEnum | PaymentScalarFieldEnum[]
+  }
+
+  /**
+   * Payment findFirstOrThrow
+   */
+  export type PaymentFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Payment
+     */
+    select?: PaymentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Payment
+     */
+    omit?: PaymentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PaymentInclude<ExtArgs> | null
+    /**
+     * Filter, which Payment to fetch.
+     */
+    where?: PaymentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Payments to fetch.
+     */
+    orderBy?: PaymentOrderByWithRelationInput | PaymentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Payments.
+     */
+    cursor?: PaymentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Payments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Payments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Payments.
+     */
+    distinct?: PaymentScalarFieldEnum | PaymentScalarFieldEnum[]
+  }
+
+  /**
+   * Payment findMany
+   */
+  export type PaymentFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Payment
+     */
+    select?: PaymentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Payment
+     */
+    omit?: PaymentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PaymentInclude<ExtArgs> | null
+    /**
+     * Filter, which Payments to fetch.
+     */
+    where?: PaymentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Payments to fetch.
+     */
+    orderBy?: PaymentOrderByWithRelationInput | PaymentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Payments.
+     */
+    cursor?: PaymentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Payments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Payments.
+     */
+    skip?: number
+    distinct?: PaymentScalarFieldEnum | PaymentScalarFieldEnum[]
+  }
+
+  /**
+   * Payment create
+   */
+  export type PaymentCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Payment
+     */
+    select?: PaymentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Payment
+     */
+    omit?: PaymentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PaymentInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Payment.
+     */
+    data: XOR<PaymentCreateInput, PaymentUncheckedCreateInput>
+  }
+
+  /**
+   * Payment createMany
+   */
+  export type PaymentCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Payments.
+     */
+    data: PaymentCreateManyInput | PaymentCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Payment createManyAndReturn
+   */
+  export type PaymentCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Payment
+     */
+    select?: PaymentSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Payment
+     */
+    omit?: PaymentOmit<ExtArgs> | null
+    /**
+     * The data used to create many Payments.
+     */
+    data: PaymentCreateManyInput | PaymentCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PaymentIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Payment update
+   */
+  export type PaymentUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Payment
+     */
+    select?: PaymentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Payment
+     */
+    omit?: PaymentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PaymentInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Payment.
+     */
+    data: XOR<PaymentUpdateInput, PaymentUncheckedUpdateInput>
+    /**
+     * Choose, which Payment to update.
+     */
+    where: PaymentWhereUniqueInput
+  }
+
+  /**
+   * Payment updateMany
+   */
+  export type PaymentUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Payments.
+     */
+    data: XOR<PaymentUpdateManyMutationInput, PaymentUncheckedUpdateManyInput>
+    /**
+     * Filter which Payments to update
+     */
+    where?: PaymentWhereInput
+    /**
+     * Limit how many Payments to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Payment updateManyAndReturn
+   */
+  export type PaymentUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Payment
+     */
+    select?: PaymentSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Payment
+     */
+    omit?: PaymentOmit<ExtArgs> | null
+    /**
+     * The data used to update Payments.
+     */
+    data: XOR<PaymentUpdateManyMutationInput, PaymentUncheckedUpdateManyInput>
+    /**
+     * Filter which Payments to update
+     */
+    where?: PaymentWhereInput
+    /**
+     * Limit how many Payments to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PaymentIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Payment upsert
+   */
+  export type PaymentUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Payment
+     */
+    select?: PaymentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Payment
+     */
+    omit?: PaymentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PaymentInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Payment to update in case it exists.
+     */
+    where: PaymentWhereUniqueInput
+    /**
+     * In case the Payment found by the `where` argument doesn't exist, create a new Payment with this data.
+     */
+    create: XOR<PaymentCreateInput, PaymentUncheckedCreateInput>
+    /**
+     * In case the Payment was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<PaymentUpdateInput, PaymentUncheckedUpdateInput>
+  }
+
+  /**
+   * Payment delete
+   */
+  export type PaymentDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Payment
+     */
+    select?: PaymentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Payment
+     */
+    omit?: PaymentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PaymentInclude<ExtArgs> | null
+    /**
+     * Filter which Payment to delete.
+     */
+    where: PaymentWhereUniqueInput
+  }
+
+  /**
+   * Payment deleteMany
+   */
+  export type PaymentDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Payments to delete
+     */
+    where?: PaymentWhereInput
+    /**
+     * Limit how many Payments to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Payment without action
+   */
+  export type PaymentDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Payment
+     */
+    select?: PaymentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Payment
+     */
+    omit?: PaymentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PaymentInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Expense
+   */
+
+  export type AggregateExpense = {
+    _count: ExpenseCountAggregateOutputType | null
+    _avg: ExpenseAvgAggregateOutputType | null
+    _sum: ExpenseSumAggregateOutputType | null
+    _min: ExpenseMinAggregateOutputType | null
+    _max: ExpenseMaxAggregateOutputType | null
+  }
+
+  export type ExpenseAvgAggregateOutputType = {
+    id: number | null
+    nominal: number | null
+    pencatatId: number | null
+  }
+
+  export type ExpenseSumAggregateOutputType = {
+    id: number | null
+    nominal: number | null
+    pencatatId: number | null
+  }
+
+  export type ExpenseMinAggregateOutputType = {
+    id: number | null
+    tanggal: Date | null
+    nominal: number | null
+    kategori: string | null
+    catatan: string | null
+    metode: string | null
+    fotoUrl: string | null
+    pencatatId: number | null
+    pencatatNama: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ExpenseMaxAggregateOutputType = {
+    id: number | null
+    tanggal: Date | null
+    nominal: number | null
+    kategori: string | null
+    catatan: string | null
+    metode: string | null
+    fotoUrl: string | null
+    pencatatId: number | null
+    pencatatNama: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ExpenseCountAggregateOutputType = {
+    id: number
+    tanggal: number
+    nominal: number
+    kategori: number
+    catatan: number
+    metode: number
+    fotoUrl: number
+    pencatatId: number
+    pencatatNama: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type ExpenseAvgAggregateInputType = {
+    id?: true
+    nominal?: true
+    pencatatId?: true
+  }
+
+  export type ExpenseSumAggregateInputType = {
+    id?: true
+    nominal?: true
+    pencatatId?: true
+  }
+
+  export type ExpenseMinAggregateInputType = {
+    id?: true
+    tanggal?: true
+    nominal?: true
+    kategori?: true
+    catatan?: true
+    metode?: true
+    fotoUrl?: true
+    pencatatId?: true
+    pencatatNama?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type ExpenseMaxAggregateInputType = {
+    id?: true
+    tanggal?: true
+    nominal?: true
+    kategori?: true
+    catatan?: true
+    metode?: true
+    fotoUrl?: true
+    pencatatId?: true
+    pencatatNama?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type ExpenseCountAggregateInputType = {
+    id?: true
+    tanggal?: true
+    nominal?: true
+    kategori?: true
+    catatan?: true
+    metode?: true
+    fotoUrl?: true
+    pencatatId?: true
+    pencatatNama?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type ExpenseAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Expense to aggregate.
+     */
+    where?: ExpenseWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Expenses to fetch.
+     */
+    orderBy?: ExpenseOrderByWithRelationInput | ExpenseOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ExpenseWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Expenses from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Expenses.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Expenses
+    **/
+    _count?: true | ExpenseCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: ExpenseAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ExpenseSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ExpenseMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ExpenseMaxAggregateInputType
+  }
+
+  export type GetExpenseAggregateType<T extends ExpenseAggregateArgs> = {
+        [P in keyof T & keyof AggregateExpense]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateExpense[P]>
+      : GetScalarType<T[P], AggregateExpense[P]>
+  }
+
+
+
+
+  export type ExpenseGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ExpenseWhereInput
+    orderBy?: ExpenseOrderByWithAggregationInput | ExpenseOrderByWithAggregationInput[]
+    by: ExpenseScalarFieldEnum[] | ExpenseScalarFieldEnum
+    having?: ExpenseScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ExpenseCountAggregateInputType | true
+    _avg?: ExpenseAvgAggregateInputType
+    _sum?: ExpenseSumAggregateInputType
+    _min?: ExpenseMinAggregateInputType
+    _max?: ExpenseMaxAggregateInputType
+  }
+
+  export type ExpenseGroupByOutputType = {
+    id: number
+    tanggal: Date
+    nominal: number
+    kategori: string
+    catatan: string | null
+    metode: string
+    fotoUrl: string | null
+    pencatatId: number | null
+    pencatatNama: string | null
+    createdAt: Date
+    updatedAt: Date
+    _count: ExpenseCountAggregateOutputType | null
+    _avg: ExpenseAvgAggregateOutputType | null
+    _sum: ExpenseSumAggregateOutputType | null
+    _min: ExpenseMinAggregateOutputType | null
+    _max: ExpenseMaxAggregateOutputType | null
+  }
+
+  type GetExpenseGroupByPayload<T extends ExpenseGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ExpenseGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ExpenseGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ExpenseGroupByOutputType[P]>
+            : GetScalarType<T[P], ExpenseGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ExpenseSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tanggal?: boolean
+    nominal?: boolean
+    kategori?: boolean
+    catatan?: boolean
+    metode?: boolean
+    fotoUrl?: boolean
+    pencatatId?: boolean
+    pencatatNama?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["expense"]>
+
+  export type ExpenseSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tanggal?: boolean
+    nominal?: boolean
+    kategori?: boolean
+    catatan?: boolean
+    metode?: boolean
+    fotoUrl?: boolean
+    pencatatId?: boolean
+    pencatatNama?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["expense"]>
+
+  export type ExpenseSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tanggal?: boolean
+    nominal?: boolean
+    kategori?: boolean
+    catatan?: boolean
+    metode?: boolean
+    fotoUrl?: boolean
+    pencatatId?: boolean
+    pencatatNama?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["expense"]>
+
+  export type ExpenseSelectScalar = {
+    id?: boolean
+    tanggal?: boolean
+    nominal?: boolean
+    kategori?: boolean
+    catatan?: boolean
+    metode?: boolean
+    fotoUrl?: boolean
+    pencatatId?: boolean
+    pencatatNama?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type ExpenseOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "tanggal" | "nominal" | "kategori" | "catatan" | "metode" | "fotoUrl" | "pencatatId" | "pencatatNama" | "createdAt" | "updatedAt", ExtArgs["result"]["expense"]>
+
+  export type $ExpensePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Expense"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      tanggal: Date
+      nominal: number
+      kategori: string
+      catatan: string | null
+      metode: string
+      fotoUrl: string | null
+      pencatatId: number | null
+      pencatatNama: string | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["expense"]>
+    composites: {}
+  }
+
+  type ExpenseGetPayload<S extends boolean | null | undefined | ExpenseDefaultArgs> = $Result.GetResult<Prisma.$ExpensePayload, S>
+
+  type ExpenseCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ExpenseFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ExpenseCountAggregateInputType | true
+    }
+
+  export interface ExpenseDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Expense'], meta: { name: 'Expense' } }
+    /**
+     * Find zero or one Expense that matches the filter.
+     * @param {ExpenseFindUniqueArgs} args - Arguments to find a Expense
+     * @example
+     * // Get one Expense
+     * const expense = await prisma.expense.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ExpenseFindUniqueArgs>(args: SelectSubset<T, ExpenseFindUniqueArgs<ExtArgs>>): Prisma__ExpenseClient<$Result.GetResult<Prisma.$ExpensePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Expense that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ExpenseFindUniqueOrThrowArgs} args - Arguments to find a Expense
+     * @example
+     * // Get one Expense
+     * const expense = await prisma.expense.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ExpenseFindUniqueOrThrowArgs>(args: SelectSubset<T, ExpenseFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ExpenseClient<$Result.GetResult<Prisma.$ExpensePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Expense that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ExpenseFindFirstArgs} args - Arguments to find a Expense
+     * @example
+     * // Get one Expense
+     * const expense = await prisma.expense.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ExpenseFindFirstArgs>(args?: SelectSubset<T, ExpenseFindFirstArgs<ExtArgs>>): Prisma__ExpenseClient<$Result.GetResult<Prisma.$ExpensePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Expense that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ExpenseFindFirstOrThrowArgs} args - Arguments to find a Expense
+     * @example
+     * // Get one Expense
+     * const expense = await prisma.expense.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ExpenseFindFirstOrThrowArgs>(args?: SelectSubset<T, ExpenseFindFirstOrThrowArgs<ExtArgs>>): Prisma__ExpenseClient<$Result.GetResult<Prisma.$ExpensePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Expenses that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ExpenseFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Expenses
+     * const expenses = await prisma.expense.findMany()
+     * 
+     * // Get first 10 Expenses
+     * const expenses = await prisma.expense.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const expenseWithIdOnly = await prisma.expense.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ExpenseFindManyArgs>(args?: SelectSubset<T, ExpenseFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ExpensePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Expense.
+     * @param {ExpenseCreateArgs} args - Arguments to create a Expense.
+     * @example
+     * // Create one Expense
+     * const Expense = await prisma.expense.create({
+     *   data: {
+     *     // ... data to create a Expense
+     *   }
+     * })
+     * 
+     */
+    create<T extends ExpenseCreateArgs>(args: SelectSubset<T, ExpenseCreateArgs<ExtArgs>>): Prisma__ExpenseClient<$Result.GetResult<Prisma.$ExpensePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Expenses.
+     * @param {ExpenseCreateManyArgs} args - Arguments to create many Expenses.
+     * @example
+     * // Create many Expenses
+     * const expense = await prisma.expense.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ExpenseCreateManyArgs>(args?: SelectSubset<T, ExpenseCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Expenses and returns the data saved in the database.
+     * @param {ExpenseCreateManyAndReturnArgs} args - Arguments to create many Expenses.
+     * @example
+     * // Create many Expenses
+     * const expense = await prisma.expense.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Expenses and only return the `id`
+     * const expenseWithIdOnly = await prisma.expense.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ExpenseCreateManyAndReturnArgs>(args?: SelectSubset<T, ExpenseCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ExpensePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Expense.
+     * @param {ExpenseDeleteArgs} args - Arguments to delete one Expense.
+     * @example
+     * // Delete one Expense
+     * const Expense = await prisma.expense.delete({
+     *   where: {
+     *     // ... filter to delete one Expense
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ExpenseDeleteArgs>(args: SelectSubset<T, ExpenseDeleteArgs<ExtArgs>>): Prisma__ExpenseClient<$Result.GetResult<Prisma.$ExpensePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Expense.
+     * @param {ExpenseUpdateArgs} args - Arguments to update one Expense.
+     * @example
+     * // Update one Expense
+     * const expense = await prisma.expense.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ExpenseUpdateArgs>(args: SelectSubset<T, ExpenseUpdateArgs<ExtArgs>>): Prisma__ExpenseClient<$Result.GetResult<Prisma.$ExpensePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Expenses.
+     * @param {ExpenseDeleteManyArgs} args - Arguments to filter Expenses to delete.
+     * @example
+     * // Delete a few Expenses
+     * const { count } = await prisma.expense.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ExpenseDeleteManyArgs>(args?: SelectSubset<T, ExpenseDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Expenses.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ExpenseUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Expenses
+     * const expense = await prisma.expense.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ExpenseUpdateManyArgs>(args: SelectSubset<T, ExpenseUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Expenses and returns the data updated in the database.
+     * @param {ExpenseUpdateManyAndReturnArgs} args - Arguments to update many Expenses.
+     * @example
+     * // Update many Expenses
+     * const expense = await prisma.expense.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Expenses and only return the `id`
+     * const expenseWithIdOnly = await prisma.expense.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ExpenseUpdateManyAndReturnArgs>(args: SelectSubset<T, ExpenseUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ExpensePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Expense.
+     * @param {ExpenseUpsertArgs} args - Arguments to update or create a Expense.
+     * @example
+     * // Update or create a Expense
+     * const expense = await prisma.expense.upsert({
+     *   create: {
+     *     // ... data to create a Expense
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Expense we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ExpenseUpsertArgs>(args: SelectSubset<T, ExpenseUpsertArgs<ExtArgs>>): Prisma__ExpenseClient<$Result.GetResult<Prisma.$ExpensePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Expenses.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ExpenseCountArgs} args - Arguments to filter Expenses to count.
+     * @example
+     * // Count the number of Expenses
+     * const count = await prisma.expense.count({
+     *   where: {
+     *     // ... the filter for the Expenses we want to count
+     *   }
+     * })
+    **/
+    count<T extends ExpenseCountArgs>(
+      args?: Subset<T, ExpenseCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ExpenseCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Expense.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ExpenseAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ExpenseAggregateArgs>(args: Subset<T, ExpenseAggregateArgs>): Prisma.PrismaPromise<GetExpenseAggregateType<T>>
+
+    /**
+     * Group by Expense.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ExpenseGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ExpenseGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ExpenseGroupByArgs['orderBy'] }
+        : { orderBy?: ExpenseGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ExpenseGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetExpenseGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Expense model
+   */
+  readonly fields: ExpenseFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Expense.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ExpenseClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Expense model
+   */
+  interface ExpenseFieldRefs {
+    readonly id: FieldRef<"Expense", 'Int'>
+    readonly tanggal: FieldRef<"Expense", 'DateTime'>
+    readonly nominal: FieldRef<"Expense", 'Int'>
+    readonly kategori: FieldRef<"Expense", 'String'>
+    readonly catatan: FieldRef<"Expense", 'String'>
+    readonly metode: FieldRef<"Expense", 'String'>
+    readonly fotoUrl: FieldRef<"Expense", 'String'>
+    readonly pencatatId: FieldRef<"Expense", 'Int'>
+    readonly pencatatNama: FieldRef<"Expense", 'String'>
+    readonly createdAt: FieldRef<"Expense", 'DateTime'>
+    readonly updatedAt: FieldRef<"Expense", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Expense findUnique
+   */
+  export type ExpenseFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Expense
+     */
+    select?: ExpenseSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Expense
+     */
+    omit?: ExpenseOmit<ExtArgs> | null
+    /**
+     * Filter, which Expense to fetch.
+     */
+    where: ExpenseWhereUniqueInput
+  }
+
+  /**
+   * Expense findUniqueOrThrow
+   */
+  export type ExpenseFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Expense
+     */
+    select?: ExpenseSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Expense
+     */
+    omit?: ExpenseOmit<ExtArgs> | null
+    /**
+     * Filter, which Expense to fetch.
+     */
+    where: ExpenseWhereUniqueInput
+  }
+
+  /**
+   * Expense findFirst
+   */
+  export type ExpenseFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Expense
+     */
+    select?: ExpenseSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Expense
+     */
+    omit?: ExpenseOmit<ExtArgs> | null
+    /**
+     * Filter, which Expense to fetch.
+     */
+    where?: ExpenseWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Expenses to fetch.
+     */
+    orderBy?: ExpenseOrderByWithRelationInput | ExpenseOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Expenses.
+     */
+    cursor?: ExpenseWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Expenses from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Expenses.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Expenses.
+     */
+    distinct?: ExpenseScalarFieldEnum | ExpenseScalarFieldEnum[]
+  }
+
+  /**
+   * Expense findFirstOrThrow
+   */
+  export type ExpenseFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Expense
+     */
+    select?: ExpenseSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Expense
+     */
+    omit?: ExpenseOmit<ExtArgs> | null
+    /**
+     * Filter, which Expense to fetch.
+     */
+    where?: ExpenseWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Expenses to fetch.
+     */
+    orderBy?: ExpenseOrderByWithRelationInput | ExpenseOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Expenses.
+     */
+    cursor?: ExpenseWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Expenses from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Expenses.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Expenses.
+     */
+    distinct?: ExpenseScalarFieldEnum | ExpenseScalarFieldEnum[]
+  }
+
+  /**
+   * Expense findMany
+   */
+  export type ExpenseFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Expense
+     */
+    select?: ExpenseSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Expense
+     */
+    omit?: ExpenseOmit<ExtArgs> | null
+    /**
+     * Filter, which Expenses to fetch.
+     */
+    where?: ExpenseWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Expenses to fetch.
+     */
+    orderBy?: ExpenseOrderByWithRelationInput | ExpenseOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Expenses.
+     */
+    cursor?: ExpenseWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Expenses from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Expenses.
+     */
+    skip?: number
+    distinct?: ExpenseScalarFieldEnum | ExpenseScalarFieldEnum[]
+  }
+
+  /**
+   * Expense create
+   */
+  export type ExpenseCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Expense
+     */
+    select?: ExpenseSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Expense
+     */
+    omit?: ExpenseOmit<ExtArgs> | null
+    /**
+     * The data needed to create a Expense.
+     */
+    data: XOR<ExpenseCreateInput, ExpenseUncheckedCreateInput>
+  }
+
+  /**
+   * Expense createMany
+   */
+  export type ExpenseCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Expenses.
+     */
+    data: ExpenseCreateManyInput | ExpenseCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Expense createManyAndReturn
+   */
+  export type ExpenseCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Expense
+     */
+    select?: ExpenseSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Expense
+     */
+    omit?: ExpenseOmit<ExtArgs> | null
+    /**
+     * The data used to create many Expenses.
+     */
+    data: ExpenseCreateManyInput | ExpenseCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Expense update
+   */
+  export type ExpenseUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Expense
+     */
+    select?: ExpenseSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Expense
+     */
+    omit?: ExpenseOmit<ExtArgs> | null
+    /**
+     * The data needed to update a Expense.
+     */
+    data: XOR<ExpenseUpdateInput, ExpenseUncheckedUpdateInput>
+    /**
+     * Choose, which Expense to update.
+     */
+    where: ExpenseWhereUniqueInput
+  }
+
+  /**
+   * Expense updateMany
+   */
+  export type ExpenseUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Expenses.
+     */
+    data: XOR<ExpenseUpdateManyMutationInput, ExpenseUncheckedUpdateManyInput>
+    /**
+     * Filter which Expenses to update
+     */
+    where?: ExpenseWhereInput
+    /**
+     * Limit how many Expenses to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Expense updateManyAndReturn
+   */
+  export type ExpenseUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Expense
+     */
+    select?: ExpenseSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Expense
+     */
+    omit?: ExpenseOmit<ExtArgs> | null
+    /**
+     * The data used to update Expenses.
+     */
+    data: XOR<ExpenseUpdateManyMutationInput, ExpenseUncheckedUpdateManyInput>
+    /**
+     * Filter which Expenses to update
+     */
+    where?: ExpenseWhereInput
+    /**
+     * Limit how many Expenses to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Expense upsert
+   */
+  export type ExpenseUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Expense
+     */
+    select?: ExpenseSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Expense
+     */
+    omit?: ExpenseOmit<ExtArgs> | null
+    /**
+     * The filter to search for the Expense to update in case it exists.
+     */
+    where: ExpenseWhereUniqueInput
+    /**
+     * In case the Expense found by the `where` argument doesn't exist, create a new Expense with this data.
+     */
+    create: XOR<ExpenseCreateInput, ExpenseUncheckedCreateInput>
+    /**
+     * In case the Expense was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ExpenseUpdateInput, ExpenseUncheckedUpdateInput>
+  }
+
+  /**
+   * Expense delete
+   */
+  export type ExpenseDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Expense
+     */
+    select?: ExpenseSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Expense
+     */
+    omit?: ExpenseOmit<ExtArgs> | null
+    /**
+     * Filter which Expense to delete.
+     */
+    where: ExpenseWhereUniqueInput
+  }
+
+  /**
+   * Expense deleteMany
+   */
+  export type ExpenseDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Expenses to delete
+     */
+    where?: ExpenseWhereInput
+    /**
+     * Limit how many Expenses to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Expense without action
+   */
+  export type ExpenseDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Expense
+     */
+    select?: ExpenseSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Expense
+     */
+    omit?: ExpenseOmit<ExtArgs> | null
   }
 
 
@@ -21044,6 +23534,38 @@ export namespace Prisma {
   export type TransactionScalarFieldEnum = (typeof TransactionScalarFieldEnum)[keyof typeof TransactionScalarFieldEnum]
 
 
+  export const PaymentScalarFieldEnum: {
+    id: 'id',
+    transactionId: 'transactionId',
+    tanggal: 'tanggal',
+    nominal: 'nominal',
+    metode: 'metode',
+    catatan: 'catatan',
+    pencatatId: 'pencatatId',
+    pencatatNama: 'pencatatNama',
+    createdAt: 'createdAt'
+  };
+
+  export type PaymentScalarFieldEnum = (typeof PaymentScalarFieldEnum)[keyof typeof PaymentScalarFieldEnum]
+
+
+  export const ExpenseScalarFieldEnum: {
+    id: 'id',
+    tanggal: 'tanggal',
+    nominal: 'nominal',
+    kategori: 'kategori',
+    catatan: 'catatan',
+    metode: 'metode',
+    fotoUrl: 'fotoUrl',
+    pencatatId: 'pencatatId',
+    pencatatNama: 'pencatatNama',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type ExpenseScalarFieldEnum = (typeof ExpenseScalarFieldEnum)[keyof typeof ExpenseScalarFieldEnum]
+
+
   export const TransactionItemScalarFieldEnum: {
     id: 'id',
     transactionId: 'transactionId',
@@ -21579,6 +24101,7 @@ export namespace Prisma {
     items?: TransactionItemListRelationFilter
     notifications?: NotificationListRelationFilter
     orderRequest?: XOR<OrderRequestNullableScalarRelationFilter, OrderRequestWhereInput> | null
+    payments?: PaymentListRelationFilter
   }
 
   export type TransactionOrderByWithRelationInput = {
@@ -21597,6 +24120,7 @@ export namespace Prisma {
     items?: TransactionItemOrderByRelationAggregateInput
     notifications?: NotificationOrderByRelationAggregateInput
     orderRequest?: OrderRequestOrderByWithRelationInput
+    payments?: PaymentOrderByRelationAggregateInput
   }
 
   export type TransactionWhereUniqueInput = Prisma.AtLeast<{
@@ -21618,6 +24142,7 @@ export namespace Prisma {
     items?: TransactionItemListRelationFilter
     notifications?: NotificationListRelationFilter
     orderRequest?: XOR<OrderRequestNullableScalarRelationFilter, OrderRequestWhereInput> | null
+    payments?: PaymentListRelationFilter
   }, "id" | "trxNumber">
 
   export type TransactionOrderByWithAggregationInput = {
@@ -21654,6 +24179,167 @@ export namespace Prisma {
     nama_kasir?: StringNullableWithAggregatesFilter<"Transaction"> | string | null
     status_pengiriman?: StringWithAggregatesFilter<"Transaction"> | string
     nama_pengrajin?: StringNullableWithAggregatesFilter<"Transaction"> | string | null
+  }
+
+  export type PaymentWhereInput = {
+    AND?: PaymentWhereInput | PaymentWhereInput[]
+    OR?: PaymentWhereInput[]
+    NOT?: PaymentWhereInput | PaymentWhereInput[]
+    id?: IntFilter<"Payment"> | number
+    transactionId?: IntFilter<"Payment"> | number
+    tanggal?: DateTimeFilter<"Payment"> | Date | string
+    nominal?: IntFilter<"Payment"> | number
+    metode?: StringFilter<"Payment"> | string
+    catatan?: StringNullableFilter<"Payment"> | string | null
+    pencatatId?: IntNullableFilter<"Payment"> | number | null
+    pencatatNama?: StringNullableFilter<"Payment"> | string | null
+    createdAt?: DateTimeFilter<"Payment"> | Date | string
+    transaction?: XOR<TransactionScalarRelationFilter, TransactionWhereInput>
+  }
+
+  export type PaymentOrderByWithRelationInput = {
+    id?: SortOrder
+    transactionId?: SortOrder
+    tanggal?: SortOrder
+    nominal?: SortOrder
+    metode?: SortOrder
+    catatan?: SortOrderInput | SortOrder
+    pencatatId?: SortOrderInput | SortOrder
+    pencatatNama?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    transaction?: TransactionOrderByWithRelationInput
+  }
+
+  export type PaymentWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    AND?: PaymentWhereInput | PaymentWhereInput[]
+    OR?: PaymentWhereInput[]
+    NOT?: PaymentWhereInput | PaymentWhereInput[]
+    transactionId?: IntFilter<"Payment"> | number
+    tanggal?: DateTimeFilter<"Payment"> | Date | string
+    nominal?: IntFilter<"Payment"> | number
+    metode?: StringFilter<"Payment"> | string
+    catatan?: StringNullableFilter<"Payment"> | string | null
+    pencatatId?: IntNullableFilter<"Payment"> | number | null
+    pencatatNama?: StringNullableFilter<"Payment"> | string | null
+    createdAt?: DateTimeFilter<"Payment"> | Date | string
+    transaction?: XOR<TransactionScalarRelationFilter, TransactionWhereInput>
+  }, "id">
+
+  export type PaymentOrderByWithAggregationInput = {
+    id?: SortOrder
+    transactionId?: SortOrder
+    tanggal?: SortOrder
+    nominal?: SortOrder
+    metode?: SortOrder
+    catatan?: SortOrderInput | SortOrder
+    pencatatId?: SortOrderInput | SortOrder
+    pencatatNama?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    _count?: PaymentCountOrderByAggregateInput
+    _avg?: PaymentAvgOrderByAggregateInput
+    _max?: PaymentMaxOrderByAggregateInput
+    _min?: PaymentMinOrderByAggregateInput
+    _sum?: PaymentSumOrderByAggregateInput
+  }
+
+  export type PaymentScalarWhereWithAggregatesInput = {
+    AND?: PaymentScalarWhereWithAggregatesInput | PaymentScalarWhereWithAggregatesInput[]
+    OR?: PaymentScalarWhereWithAggregatesInput[]
+    NOT?: PaymentScalarWhereWithAggregatesInput | PaymentScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"Payment"> | number
+    transactionId?: IntWithAggregatesFilter<"Payment"> | number
+    tanggal?: DateTimeWithAggregatesFilter<"Payment"> | Date | string
+    nominal?: IntWithAggregatesFilter<"Payment"> | number
+    metode?: StringWithAggregatesFilter<"Payment"> | string
+    catatan?: StringNullableWithAggregatesFilter<"Payment"> | string | null
+    pencatatId?: IntNullableWithAggregatesFilter<"Payment"> | number | null
+    pencatatNama?: StringNullableWithAggregatesFilter<"Payment"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"Payment"> | Date | string
+  }
+
+  export type ExpenseWhereInput = {
+    AND?: ExpenseWhereInput | ExpenseWhereInput[]
+    OR?: ExpenseWhereInput[]
+    NOT?: ExpenseWhereInput | ExpenseWhereInput[]
+    id?: IntFilter<"Expense"> | number
+    tanggal?: DateTimeFilter<"Expense"> | Date | string
+    nominal?: IntFilter<"Expense"> | number
+    kategori?: StringFilter<"Expense"> | string
+    catatan?: StringNullableFilter<"Expense"> | string | null
+    metode?: StringFilter<"Expense"> | string
+    fotoUrl?: StringNullableFilter<"Expense"> | string | null
+    pencatatId?: IntNullableFilter<"Expense"> | number | null
+    pencatatNama?: StringNullableFilter<"Expense"> | string | null
+    createdAt?: DateTimeFilter<"Expense"> | Date | string
+    updatedAt?: DateTimeFilter<"Expense"> | Date | string
+  }
+
+  export type ExpenseOrderByWithRelationInput = {
+    id?: SortOrder
+    tanggal?: SortOrder
+    nominal?: SortOrder
+    kategori?: SortOrder
+    catatan?: SortOrderInput | SortOrder
+    metode?: SortOrder
+    fotoUrl?: SortOrderInput | SortOrder
+    pencatatId?: SortOrderInput | SortOrder
+    pencatatNama?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ExpenseWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    AND?: ExpenseWhereInput | ExpenseWhereInput[]
+    OR?: ExpenseWhereInput[]
+    NOT?: ExpenseWhereInput | ExpenseWhereInput[]
+    tanggal?: DateTimeFilter<"Expense"> | Date | string
+    nominal?: IntFilter<"Expense"> | number
+    kategori?: StringFilter<"Expense"> | string
+    catatan?: StringNullableFilter<"Expense"> | string | null
+    metode?: StringFilter<"Expense"> | string
+    fotoUrl?: StringNullableFilter<"Expense"> | string | null
+    pencatatId?: IntNullableFilter<"Expense"> | number | null
+    pencatatNama?: StringNullableFilter<"Expense"> | string | null
+    createdAt?: DateTimeFilter<"Expense"> | Date | string
+    updatedAt?: DateTimeFilter<"Expense"> | Date | string
+  }, "id">
+
+  export type ExpenseOrderByWithAggregationInput = {
+    id?: SortOrder
+    tanggal?: SortOrder
+    nominal?: SortOrder
+    kategori?: SortOrder
+    catatan?: SortOrderInput | SortOrder
+    metode?: SortOrder
+    fotoUrl?: SortOrderInput | SortOrder
+    pencatatId?: SortOrderInput | SortOrder
+    pencatatNama?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: ExpenseCountOrderByAggregateInput
+    _avg?: ExpenseAvgOrderByAggregateInput
+    _max?: ExpenseMaxOrderByAggregateInput
+    _min?: ExpenseMinOrderByAggregateInput
+    _sum?: ExpenseSumOrderByAggregateInput
+  }
+
+  export type ExpenseScalarWhereWithAggregatesInput = {
+    AND?: ExpenseScalarWhereWithAggregatesInput | ExpenseScalarWhereWithAggregatesInput[]
+    OR?: ExpenseScalarWhereWithAggregatesInput[]
+    NOT?: ExpenseScalarWhereWithAggregatesInput | ExpenseScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"Expense"> | number
+    tanggal?: DateTimeWithAggregatesFilter<"Expense"> | Date | string
+    nominal?: IntWithAggregatesFilter<"Expense"> | number
+    kategori?: StringWithAggregatesFilter<"Expense"> | string
+    catatan?: StringNullableWithAggregatesFilter<"Expense"> | string | null
+    metode?: StringWithAggregatesFilter<"Expense"> | string
+    fotoUrl?: StringNullableWithAggregatesFilter<"Expense"> | string | null
+    pencatatId?: IntNullableWithAggregatesFilter<"Expense"> | number | null
+    pencatatNama?: StringNullableWithAggregatesFilter<"Expense"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"Expense"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Expense"> | Date | string
   }
 
   export type TransactionItemWhereInput = {
@@ -22788,6 +25474,7 @@ export namespace Prisma {
     items?: TransactionItemCreateNestedManyWithoutTransactionInput
     notifications?: NotificationCreateNestedManyWithoutTransactionInput
     orderRequest?: OrderRequestCreateNestedOneWithoutTransactionInput
+    payments?: PaymentCreateNestedManyWithoutTransactionInput
   }
 
   export type TransactionUncheckedCreateInput = {
@@ -22805,6 +25492,7 @@ export namespace Prisma {
     items?: TransactionItemUncheckedCreateNestedManyWithoutTransactionInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutTransactionInput
     orderRequest?: OrderRequestUncheckedCreateNestedOneWithoutTransactionInput
+    payments?: PaymentUncheckedCreateNestedManyWithoutTransactionInput
   }
 
   export type TransactionUpdateInput = {
@@ -22821,6 +25509,7 @@ export namespace Prisma {
     items?: TransactionItemUpdateManyWithoutTransactionNestedInput
     notifications?: NotificationUpdateManyWithoutTransactionNestedInput
     orderRequest?: OrderRequestUpdateOneWithoutTransactionNestedInput
+    payments?: PaymentUpdateManyWithoutTransactionNestedInput
   }
 
   export type TransactionUncheckedUpdateInput = {
@@ -22838,6 +25527,7 @@ export namespace Prisma {
     items?: TransactionItemUncheckedUpdateManyWithoutTransactionNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutTransactionNestedInput
     orderRequest?: OrderRequestUncheckedUpdateOneWithoutTransactionNestedInput
+    payments?: PaymentUncheckedUpdateManyWithoutTransactionNestedInput
   }
 
   export type TransactionCreateManyInput = {
@@ -22878,6 +25568,181 @@ export namespace Prisma {
     nama_kasir?: NullableStringFieldUpdateOperationsInput | string | null
     status_pengiriman?: StringFieldUpdateOperationsInput | string
     nama_pengrajin?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type PaymentCreateInput = {
+    tanggal?: Date | string
+    nominal: number
+    metode: string
+    catatan?: string | null
+    pencatatId?: number | null
+    pencatatNama?: string | null
+    createdAt?: Date | string
+    transaction: TransactionCreateNestedOneWithoutPaymentsInput
+  }
+
+  export type PaymentUncheckedCreateInput = {
+    id?: number
+    transactionId: number
+    tanggal?: Date | string
+    nominal: number
+    metode: string
+    catatan?: string | null
+    pencatatId?: number | null
+    pencatatNama?: string | null
+    createdAt?: Date | string
+  }
+
+  export type PaymentUpdateInput = {
+    tanggal?: DateTimeFieldUpdateOperationsInput | Date | string
+    nominal?: IntFieldUpdateOperationsInput | number
+    metode?: StringFieldUpdateOperationsInput | string
+    catatan?: NullableStringFieldUpdateOperationsInput | string | null
+    pencatatId?: NullableIntFieldUpdateOperationsInput | number | null
+    pencatatNama?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    transaction?: TransactionUpdateOneRequiredWithoutPaymentsNestedInput
+  }
+
+  export type PaymentUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    transactionId?: IntFieldUpdateOperationsInput | number
+    tanggal?: DateTimeFieldUpdateOperationsInput | Date | string
+    nominal?: IntFieldUpdateOperationsInput | number
+    metode?: StringFieldUpdateOperationsInput | string
+    catatan?: NullableStringFieldUpdateOperationsInput | string | null
+    pencatatId?: NullableIntFieldUpdateOperationsInput | number | null
+    pencatatNama?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PaymentCreateManyInput = {
+    id?: number
+    transactionId: number
+    tanggal?: Date | string
+    nominal: number
+    metode: string
+    catatan?: string | null
+    pencatatId?: number | null
+    pencatatNama?: string | null
+    createdAt?: Date | string
+  }
+
+  export type PaymentUpdateManyMutationInput = {
+    tanggal?: DateTimeFieldUpdateOperationsInput | Date | string
+    nominal?: IntFieldUpdateOperationsInput | number
+    metode?: StringFieldUpdateOperationsInput | string
+    catatan?: NullableStringFieldUpdateOperationsInput | string | null
+    pencatatId?: NullableIntFieldUpdateOperationsInput | number | null
+    pencatatNama?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PaymentUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    transactionId?: IntFieldUpdateOperationsInput | number
+    tanggal?: DateTimeFieldUpdateOperationsInput | Date | string
+    nominal?: IntFieldUpdateOperationsInput | number
+    metode?: StringFieldUpdateOperationsInput | string
+    catatan?: NullableStringFieldUpdateOperationsInput | string | null
+    pencatatId?: NullableIntFieldUpdateOperationsInput | number | null
+    pencatatNama?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ExpenseCreateInput = {
+    tanggal?: Date | string
+    nominal: number
+    kategori: string
+    catatan?: string | null
+    metode?: string
+    fotoUrl?: string | null
+    pencatatId?: number | null
+    pencatatNama?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ExpenseUncheckedCreateInput = {
+    id?: number
+    tanggal?: Date | string
+    nominal: number
+    kategori: string
+    catatan?: string | null
+    metode?: string
+    fotoUrl?: string | null
+    pencatatId?: number | null
+    pencatatNama?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ExpenseUpdateInput = {
+    tanggal?: DateTimeFieldUpdateOperationsInput | Date | string
+    nominal?: IntFieldUpdateOperationsInput | number
+    kategori?: StringFieldUpdateOperationsInput | string
+    catatan?: NullableStringFieldUpdateOperationsInput | string | null
+    metode?: StringFieldUpdateOperationsInput | string
+    fotoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    pencatatId?: NullableIntFieldUpdateOperationsInput | number | null
+    pencatatNama?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ExpenseUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    tanggal?: DateTimeFieldUpdateOperationsInput | Date | string
+    nominal?: IntFieldUpdateOperationsInput | number
+    kategori?: StringFieldUpdateOperationsInput | string
+    catatan?: NullableStringFieldUpdateOperationsInput | string | null
+    metode?: StringFieldUpdateOperationsInput | string
+    fotoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    pencatatId?: NullableIntFieldUpdateOperationsInput | number | null
+    pencatatNama?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ExpenseCreateManyInput = {
+    id?: number
+    tanggal?: Date | string
+    nominal: number
+    kategori: string
+    catatan?: string | null
+    metode?: string
+    fotoUrl?: string | null
+    pencatatId?: number | null
+    pencatatNama?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ExpenseUpdateManyMutationInput = {
+    tanggal?: DateTimeFieldUpdateOperationsInput | Date | string
+    nominal?: IntFieldUpdateOperationsInput | number
+    kategori?: StringFieldUpdateOperationsInput | string
+    catatan?: NullableStringFieldUpdateOperationsInput | string | null
+    metode?: StringFieldUpdateOperationsInput | string
+    fotoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    pencatatId?: NullableIntFieldUpdateOperationsInput | number | null
+    pencatatNama?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ExpenseUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    tanggal?: DateTimeFieldUpdateOperationsInput | Date | string
+    nominal?: IntFieldUpdateOperationsInput | number
+    kategori?: StringFieldUpdateOperationsInput | string
+    catatan?: NullableStringFieldUpdateOperationsInput | string | null
+    metode?: StringFieldUpdateOperationsInput | string
+    fotoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    pencatatId?: NullableIntFieldUpdateOperationsInput | number | null
+    pencatatNama?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type TransactionItemCreateInput = {
@@ -24160,7 +27025,17 @@ export namespace Prisma {
     isNot?: OrderRequestWhereInput | null
   }
 
+  export type PaymentListRelationFilter = {
+    every?: PaymentWhereInput
+    some?: PaymentWhereInput
+    none?: PaymentWhereInput
+  }
+
   export type NotificationOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type PaymentOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -24220,6 +27095,115 @@ export namespace Prisma {
     customerId?: SortOrder
   }
 
+  export type TransactionScalarRelationFilter = {
+    is?: TransactionWhereInput
+    isNot?: TransactionWhereInput
+  }
+
+  export type PaymentCountOrderByAggregateInput = {
+    id?: SortOrder
+    transactionId?: SortOrder
+    tanggal?: SortOrder
+    nominal?: SortOrder
+    metode?: SortOrder
+    catatan?: SortOrder
+    pencatatId?: SortOrder
+    pencatatNama?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type PaymentAvgOrderByAggregateInput = {
+    id?: SortOrder
+    transactionId?: SortOrder
+    nominal?: SortOrder
+    pencatatId?: SortOrder
+  }
+
+  export type PaymentMaxOrderByAggregateInput = {
+    id?: SortOrder
+    transactionId?: SortOrder
+    tanggal?: SortOrder
+    nominal?: SortOrder
+    metode?: SortOrder
+    catatan?: SortOrder
+    pencatatId?: SortOrder
+    pencatatNama?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type PaymentMinOrderByAggregateInput = {
+    id?: SortOrder
+    transactionId?: SortOrder
+    tanggal?: SortOrder
+    nominal?: SortOrder
+    metode?: SortOrder
+    catatan?: SortOrder
+    pencatatId?: SortOrder
+    pencatatNama?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type PaymentSumOrderByAggregateInput = {
+    id?: SortOrder
+    transactionId?: SortOrder
+    nominal?: SortOrder
+    pencatatId?: SortOrder
+  }
+
+  export type ExpenseCountOrderByAggregateInput = {
+    id?: SortOrder
+    tanggal?: SortOrder
+    nominal?: SortOrder
+    kategori?: SortOrder
+    catatan?: SortOrder
+    metode?: SortOrder
+    fotoUrl?: SortOrder
+    pencatatId?: SortOrder
+    pencatatNama?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ExpenseAvgOrderByAggregateInput = {
+    id?: SortOrder
+    nominal?: SortOrder
+    pencatatId?: SortOrder
+  }
+
+  export type ExpenseMaxOrderByAggregateInput = {
+    id?: SortOrder
+    tanggal?: SortOrder
+    nominal?: SortOrder
+    kategori?: SortOrder
+    catatan?: SortOrder
+    metode?: SortOrder
+    fotoUrl?: SortOrder
+    pencatatId?: SortOrder
+    pencatatNama?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ExpenseMinOrderByAggregateInput = {
+    id?: SortOrder
+    tanggal?: SortOrder
+    nominal?: SortOrder
+    kategori?: SortOrder
+    catatan?: SortOrder
+    metode?: SortOrder
+    fotoUrl?: SortOrder
+    pencatatId?: SortOrder
+    pencatatNama?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ExpenseSumOrderByAggregateInput = {
+    id?: SortOrder
+    nominal?: SortOrder
+    pencatatId?: SortOrder
+  }
+
   export type DateTimeNullableFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
@@ -24229,11 +27213,6 @@ export namespace Prisma {
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
-  }
-
-  export type TransactionScalarRelationFilter = {
-    is?: TransactionWhereInput
-    isNot?: TransactionWhereInput
   }
 
   export type TransactionItemCountOrderByAggregateInput = {
@@ -25196,6 +28175,13 @@ export namespace Prisma {
     connect?: OrderRequestWhereUniqueInput
   }
 
+  export type PaymentCreateNestedManyWithoutTransactionInput = {
+    create?: XOR<PaymentCreateWithoutTransactionInput, PaymentUncheckedCreateWithoutTransactionInput> | PaymentCreateWithoutTransactionInput[] | PaymentUncheckedCreateWithoutTransactionInput[]
+    connectOrCreate?: PaymentCreateOrConnectWithoutTransactionInput | PaymentCreateOrConnectWithoutTransactionInput[]
+    createMany?: PaymentCreateManyTransactionInputEnvelope
+    connect?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
+  }
+
   export type TransactionItemUncheckedCreateNestedManyWithoutTransactionInput = {
     create?: XOR<TransactionItemCreateWithoutTransactionInput, TransactionItemUncheckedCreateWithoutTransactionInput> | TransactionItemCreateWithoutTransactionInput[] | TransactionItemUncheckedCreateWithoutTransactionInput[]
     connectOrCreate?: TransactionItemCreateOrConnectWithoutTransactionInput | TransactionItemCreateOrConnectWithoutTransactionInput[]
@@ -25214,6 +28200,13 @@ export namespace Prisma {
     create?: XOR<OrderRequestCreateWithoutTransactionInput, OrderRequestUncheckedCreateWithoutTransactionInput>
     connectOrCreate?: OrderRequestCreateOrConnectWithoutTransactionInput
     connect?: OrderRequestWhereUniqueInput
+  }
+
+  export type PaymentUncheckedCreateNestedManyWithoutTransactionInput = {
+    create?: XOR<PaymentCreateWithoutTransactionInput, PaymentUncheckedCreateWithoutTransactionInput> | PaymentCreateWithoutTransactionInput[] | PaymentUncheckedCreateWithoutTransactionInput[]
+    connectOrCreate?: PaymentCreateOrConnectWithoutTransactionInput | PaymentCreateOrConnectWithoutTransactionInput[]
+    createMany?: PaymentCreateManyTransactionInputEnvelope
+    connect?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
   }
 
   export type CustomerUpdateOneWithoutTransactionsNestedInput = {
@@ -25264,6 +28257,20 @@ export namespace Prisma {
     update?: XOR<XOR<OrderRequestUpdateToOneWithWhereWithoutTransactionInput, OrderRequestUpdateWithoutTransactionInput>, OrderRequestUncheckedUpdateWithoutTransactionInput>
   }
 
+  export type PaymentUpdateManyWithoutTransactionNestedInput = {
+    create?: XOR<PaymentCreateWithoutTransactionInput, PaymentUncheckedCreateWithoutTransactionInput> | PaymentCreateWithoutTransactionInput[] | PaymentUncheckedCreateWithoutTransactionInput[]
+    connectOrCreate?: PaymentCreateOrConnectWithoutTransactionInput | PaymentCreateOrConnectWithoutTransactionInput[]
+    upsert?: PaymentUpsertWithWhereUniqueWithoutTransactionInput | PaymentUpsertWithWhereUniqueWithoutTransactionInput[]
+    createMany?: PaymentCreateManyTransactionInputEnvelope
+    set?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
+    disconnect?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
+    delete?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
+    connect?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
+    update?: PaymentUpdateWithWhereUniqueWithoutTransactionInput | PaymentUpdateWithWhereUniqueWithoutTransactionInput[]
+    updateMany?: PaymentUpdateManyWithWhereWithoutTransactionInput | PaymentUpdateManyWithWhereWithoutTransactionInput[]
+    deleteMany?: PaymentScalarWhereInput | PaymentScalarWhereInput[]
+  }
+
   export type TransactionItemUncheckedUpdateManyWithoutTransactionNestedInput = {
     create?: XOR<TransactionItemCreateWithoutTransactionInput, TransactionItemUncheckedCreateWithoutTransactionInput> | TransactionItemCreateWithoutTransactionInput[] | TransactionItemUncheckedCreateWithoutTransactionInput[]
     connectOrCreate?: TransactionItemCreateOrConnectWithoutTransactionInput | TransactionItemCreateOrConnectWithoutTransactionInput[]
@@ -25300,6 +28307,34 @@ export namespace Prisma {
     delete?: OrderRequestWhereInput | boolean
     connect?: OrderRequestWhereUniqueInput
     update?: XOR<XOR<OrderRequestUpdateToOneWithWhereWithoutTransactionInput, OrderRequestUpdateWithoutTransactionInput>, OrderRequestUncheckedUpdateWithoutTransactionInput>
+  }
+
+  export type PaymentUncheckedUpdateManyWithoutTransactionNestedInput = {
+    create?: XOR<PaymentCreateWithoutTransactionInput, PaymentUncheckedCreateWithoutTransactionInput> | PaymentCreateWithoutTransactionInput[] | PaymentUncheckedCreateWithoutTransactionInput[]
+    connectOrCreate?: PaymentCreateOrConnectWithoutTransactionInput | PaymentCreateOrConnectWithoutTransactionInput[]
+    upsert?: PaymentUpsertWithWhereUniqueWithoutTransactionInput | PaymentUpsertWithWhereUniqueWithoutTransactionInput[]
+    createMany?: PaymentCreateManyTransactionInputEnvelope
+    set?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
+    disconnect?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
+    delete?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
+    connect?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
+    update?: PaymentUpdateWithWhereUniqueWithoutTransactionInput | PaymentUpdateWithWhereUniqueWithoutTransactionInput[]
+    updateMany?: PaymentUpdateManyWithWhereWithoutTransactionInput | PaymentUpdateManyWithWhereWithoutTransactionInput[]
+    deleteMany?: PaymentScalarWhereInput | PaymentScalarWhereInput[]
+  }
+
+  export type TransactionCreateNestedOneWithoutPaymentsInput = {
+    create?: XOR<TransactionCreateWithoutPaymentsInput, TransactionUncheckedCreateWithoutPaymentsInput>
+    connectOrCreate?: TransactionCreateOrConnectWithoutPaymentsInput
+    connect?: TransactionWhereUniqueInput
+  }
+
+  export type TransactionUpdateOneRequiredWithoutPaymentsNestedInput = {
+    create?: XOR<TransactionCreateWithoutPaymentsInput, TransactionUncheckedCreateWithoutPaymentsInput>
+    connectOrCreate?: TransactionCreateOrConnectWithoutPaymentsInput
+    upsert?: TransactionUpsertWithoutPaymentsInput
+    connect?: TransactionWhereUniqueInput
+    update?: XOR<XOR<TransactionUpdateToOneWithWhereWithoutPaymentsInput, TransactionUpdateWithoutPaymentsInput>, TransactionUncheckedUpdateWithoutPaymentsInput>
   }
 
   export type TransactionCreateNestedOneWithoutItemsInput = {
@@ -26418,6 +29453,37 @@ export namespace Prisma {
     create: XOR<OrderRequestCreateWithoutTransactionInput, OrderRequestUncheckedCreateWithoutTransactionInput>
   }
 
+  export type PaymentCreateWithoutTransactionInput = {
+    tanggal?: Date | string
+    nominal: number
+    metode: string
+    catatan?: string | null
+    pencatatId?: number | null
+    pencatatNama?: string | null
+    createdAt?: Date | string
+  }
+
+  export type PaymentUncheckedCreateWithoutTransactionInput = {
+    id?: number
+    tanggal?: Date | string
+    nominal: number
+    metode: string
+    catatan?: string | null
+    pencatatId?: number | null
+    pencatatNama?: string | null
+    createdAt?: Date | string
+  }
+
+  export type PaymentCreateOrConnectWithoutTransactionInput = {
+    where: PaymentWhereUniqueInput
+    create: XOR<PaymentCreateWithoutTransactionInput, PaymentUncheckedCreateWithoutTransactionInput>
+  }
+
+  export type PaymentCreateManyTransactionInputEnvelope = {
+    data: PaymentCreateManyTransactionInput | PaymentCreateManyTransactionInput[]
+    skipDuplicates?: boolean
+  }
+
   export type CustomerUpsertWithoutTransactionsInput = {
     update: XOR<CustomerUpdateWithoutTransactionsInput, CustomerUncheckedUpdateWithoutTransactionsInput>
     create: XOR<CustomerCreateWithoutTransactionsInput, CustomerUncheckedCreateWithoutTransactionsInput>
@@ -26534,6 +29600,119 @@ export namespace Prisma {
     statusHistory?: OrderStatusHistoryUncheckedUpdateManyWithoutOrderRequestNestedInput
   }
 
+  export type PaymentUpsertWithWhereUniqueWithoutTransactionInput = {
+    where: PaymentWhereUniqueInput
+    update: XOR<PaymentUpdateWithoutTransactionInput, PaymentUncheckedUpdateWithoutTransactionInput>
+    create: XOR<PaymentCreateWithoutTransactionInput, PaymentUncheckedCreateWithoutTransactionInput>
+  }
+
+  export type PaymentUpdateWithWhereUniqueWithoutTransactionInput = {
+    where: PaymentWhereUniqueInput
+    data: XOR<PaymentUpdateWithoutTransactionInput, PaymentUncheckedUpdateWithoutTransactionInput>
+  }
+
+  export type PaymentUpdateManyWithWhereWithoutTransactionInput = {
+    where: PaymentScalarWhereInput
+    data: XOR<PaymentUpdateManyMutationInput, PaymentUncheckedUpdateManyWithoutTransactionInput>
+  }
+
+  export type PaymentScalarWhereInput = {
+    AND?: PaymentScalarWhereInput | PaymentScalarWhereInput[]
+    OR?: PaymentScalarWhereInput[]
+    NOT?: PaymentScalarWhereInput | PaymentScalarWhereInput[]
+    id?: IntFilter<"Payment"> | number
+    transactionId?: IntFilter<"Payment"> | number
+    tanggal?: DateTimeFilter<"Payment"> | Date | string
+    nominal?: IntFilter<"Payment"> | number
+    metode?: StringFilter<"Payment"> | string
+    catatan?: StringNullableFilter<"Payment"> | string | null
+    pencatatId?: IntNullableFilter<"Payment"> | number | null
+    pencatatNama?: StringNullableFilter<"Payment"> | string | null
+    createdAt?: DateTimeFilter<"Payment"> | Date | string
+  }
+
+  export type TransactionCreateWithoutPaymentsInput = {
+    trxNumber?: number | null
+    tanggal?: Date | string
+    total_harga: number
+    metode_pembayaran: string
+    status?: string
+    nama_pembeli?: string | null
+    nama_kasir?: string | null
+    status_pengiriman?: string
+    nama_pengrajin?: string | null
+    customer?: CustomerCreateNestedOneWithoutTransactionsInput
+    items?: TransactionItemCreateNestedManyWithoutTransactionInput
+    notifications?: NotificationCreateNestedManyWithoutTransactionInput
+    orderRequest?: OrderRequestCreateNestedOneWithoutTransactionInput
+  }
+
+  export type TransactionUncheckedCreateWithoutPaymentsInput = {
+    id?: number
+    trxNumber?: number | null
+    tanggal?: Date | string
+    total_harga: number
+    metode_pembayaran: string
+    status?: string
+    nama_pembeli?: string | null
+    customerId?: number | null
+    nama_kasir?: string | null
+    status_pengiriman?: string
+    nama_pengrajin?: string | null
+    items?: TransactionItemUncheckedCreateNestedManyWithoutTransactionInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutTransactionInput
+    orderRequest?: OrderRequestUncheckedCreateNestedOneWithoutTransactionInput
+  }
+
+  export type TransactionCreateOrConnectWithoutPaymentsInput = {
+    where: TransactionWhereUniqueInput
+    create: XOR<TransactionCreateWithoutPaymentsInput, TransactionUncheckedCreateWithoutPaymentsInput>
+  }
+
+  export type TransactionUpsertWithoutPaymentsInput = {
+    update: XOR<TransactionUpdateWithoutPaymentsInput, TransactionUncheckedUpdateWithoutPaymentsInput>
+    create: XOR<TransactionCreateWithoutPaymentsInput, TransactionUncheckedCreateWithoutPaymentsInput>
+    where?: TransactionWhereInput
+  }
+
+  export type TransactionUpdateToOneWithWhereWithoutPaymentsInput = {
+    where?: TransactionWhereInput
+    data: XOR<TransactionUpdateWithoutPaymentsInput, TransactionUncheckedUpdateWithoutPaymentsInput>
+  }
+
+  export type TransactionUpdateWithoutPaymentsInput = {
+    trxNumber?: NullableIntFieldUpdateOperationsInput | number | null
+    tanggal?: DateTimeFieldUpdateOperationsInput | Date | string
+    total_harga?: IntFieldUpdateOperationsInput | number
+    metode_pembayaran?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    nama_pembeli?: NullableStringFieldUpdateOperationsInput | string | null
+    nama_kasir?: NullableStringFieldUpdateOperationsInput | string | null
+    status_pengiriman?: StringFieldUpdateOperationsInput | string
+    nama_pengrajin?: NullableStringFieldUpdateOperationsInput | string | null
+    customer?: CustomerUpdateOneWithoutTransactionsNestedInput
+    items?: TransactionItemUpdateManyWithoutTransactionNestedInput
+    notifications?: NotificationUpdateManyWithoutTransactionNestedInput
+    orderRequest?: OrderRequestUpdateOneWithoutTransactionNestedInput
+  }
+
+  export type TransactionUncheckedUpdateWithoutPaymentsInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    trxNumber?: NullableIntFieldUpdateOperationsInput | number | null
+    tanggal?: DateTimeFieldUpdateOperationsInput | Date | string
+    total_harga?: IntFieldUpdateOperationsInput | number
+    metode_pembayaran?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    nama_pembeli?: NullableStringFieldUpdateOperationsInput | string | null
+    customerId?: NullableIntFieldUpdateOperationsInput | number | null
+    nama_kasir?: NullableStringFieldUpdateOperationsInput | string | null
+    status_pengiriman?: StringFieldUpdateOperationsInput | string
+    nama_pengrajin?: NullableStringFieldUpdateOperationsInput | string | null
+    items?: TransactionItemUncheckedUpdateManyWithoutTransactionNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutTransactionNestedInput
+    orderRequest?: OrderRequestUncheckedUpdateOneWithoutTransactionNestedInput
+  }
+
   export type TransactionCreateWithoutItemsInput = {
     trxNumber?: number | null
     tanggal?: Date | string
@@ -26547,6 +29726,7 @@ export namespace Prisma {
     customer?: CustomerCreateNestedOneWithoutTransactionsInput
     notifications?: NotificationCreateNestedManyWithoutTransactionInput
     orderRequest?: OrderRequestCreateNestedOneWithoutTransactionInput
+    payments?: PaymentCreateNestedManyWithoutTransactionInput
   }
 
   export type TransactionUncheckedCreateWithoutItemsInput = {
@@ -26563,6 +29743,7 @@ export namespace Prisma {
     nama_pengrajin?: string | null
     notifications?: NotificationUncheckedCreateNestedManyWithoutTransactionInput
     orderRequest?: OrderRequestUncheckedCreateNestedOneWithoutTransactionInput
+    payments?: PaymentUncheckedCreateNestedManyWithoutTransactionInput
   }
 
   export type TransactionCreateOrConnectWithoutItemsInput = {
@@ -26630,6 +29811,7 @@ export namespace Prisma {
     customer?: CustomerUpdateOneWithoutTransactionsNestedInput
     notifications?: NotificationUpdateManyWithoutTransactionNestedInput
     orderRequest?: OrderRequestUpdateOneWithoutTransactionNestedInput
+    payments?: PaymentUpdateManyWithoutTransactionNestedInput
   }
 
   export type TransactionUncheckedUpdateWithoutItemsInput = {
@@ -26646,6 +29828,7 @@ export namespace Prisma {
     nama_pengrajin?: NullableStringFieldUpdateOperationsInput | string | null
     notifications?: NotificationUncheckedUpdateManyWithoutTransactionNestedInput
     orderRequest?: OrderRequestUncheckedUpdateOneWithoutTransactionNestedInput
+    payments?: PaymentUncheckedUpdateManyWithoutTransactionNestedInput
   }
 
   export type ProductUpsertWithoutTransactionItemsInput = {
@@ -26786,6 +29969,7 @@ export namespace Prisma {
     items?: TransactionItemCreateNestedManyWithoutTransactionInput
     notifications?: NotificationCreateNestedManyWithoutTransactionInput
     orderRequest?: OrderRequestCreateNestedOneWithoutTransactionInput
+    payments?: PaymentCreateNestedManyWithoutTransactionInput
   }
 
   export type TransactionUncheckedCreateWithoutCustomerInput = {
@@ -26802,6 +29986,7 @@ export namespace Prisma {
     items?: TransactionItemUncheckedCreateNestedManyWithoutTransactionInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutTransactionInput
     orderRequest?: OrderRequestUncheckedCreateNestedOneWithoutTransactionInput
+    payments?: PaymentUncheckedCreateNestedManyWithoutTransactionInput
   }
 
   export type TransactionCreateOrConnectWithoutCustomerInput = {
@@ -26890,6 +30075,7 @@ export namespace Prisma {
     customer?: CustomerCreateNestedOneWithoutTransactionsInput
     items?: TransactionItemCreateNestedManyWithoutTransactionInput
     orderRequest?: OrderRequestCreateNestedOneWithoutTransactionInput
+    payments?: PaymentCreateNestedManyWithoutTransactionInput
   }
 
   export type TransactionUncheckedCreateWithoutNotificationsInput = {
@@ -26906,6 +30092,7 @@ export namespace Prisma {
     nama_pengrajin?: string | null
     items?: TransactionItemUncheckedCreateNestedManyWithoutTransactionInput
     orderRequest?: OrderRequestUncheckedCreateNestedOneWithoutTransactionInput
+    payments?: PaymentUncheckedCreateNestedManyWithoutTransactionInput
   }
 
   export type TransactionCreateOrConnectWithoutNotificationsInput = {
@@ -26937,6 +30124,7 @@ export namespace Prisma {
     customer?: CustomerUpdateOneWithoutTransactionsNestedInput
     items?: TransactionItemUpdateManyWithoutTransactionNestedInput
     orderRequest?: OrderRequestUpdateOneWithoutTransactionNestedInput
+    payments?: PaymentUpdateManyWithoutTransactionNestedInput
   }
 
   export type TransactionUncheckedUpdateWithoutNotificationsInput = {
@@ -26953,6 +30141,7 @@ export namespace Prisma {
     nama_pengrajin?: NullableStringFieldUpdateOperationsInput | string | null
     items?: TransactionItemUncheckedUpdateManyWithoutTransactionNestedInput
     orderRequest?: OrderRequestUncheckedUpdateOneWithoutTransactionNestedInput
+    payments?: PaymentUncheckedUpdateManyWithoutTransactionNestedInput
   }
 
   export type UserCreateWithoutCartsInput = {
@@ -27203,6 +30392,7 @@ export namespace Prisma {
     customer?: CustomerCreateNestedOneWithoutTransactionsInput
     items?: TransactionItemCreateNestedManyWithoutTransactionInput
     notifications?: NotificationCreateNestedManyWithoutTransactionInput
+    payments?: PaymentCreateNestedManyWithoutTransactionInput
   }
 
   export type TransactionUncheckedCreateWithoutOrderRequestInput = {
@@ -27219,6 +30409,7 @@ export namespace Prisma {
     nama_pengrajin?: string | null
     items?: TransactionItemUncheckedCreateNestedManyWithoutTransactionInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutTransactionInput
+    payments?: PaymentUncheckedCreateNestedManyWithoutTransactionInput
   }
 
   export type TransactionCreateOrConnectWithoutOrderRequestInput = {
@@ -27300,6 +30491,7 @@ export namespace Prisma {
     customer?: CustomerUpdateOneWithoutTransactionsNestedInput
     items?: TransactionItemUpdateManyWithoutTransactionNestedInput
     notifications?: NotificationUpdateManyWithoutTransactionNestedInput
+    payments?: PaymentUpdateManyWithoutTransactionNestedInput
   }
 
   export type TransactionUncheckedUpdateWithoutOrderRequestInput = {
@@ -27316,6 +30508,7 @@ export namespace Prisma {
     nama_pengrajin?: NullableStringFieldUpdateOperationsInput | string | null
     items?: TransactionItemUncheckedUpdateManyWithoutTransactionNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutTransactionNestedInput
+    payments?: PaymentUncheckedUpdateManyWithoutTransactionNestedInput
   }
 
   export type OrderRequestItemUpsertWithWhereUniqueWithoutOrderRequestInput = {
@@ -27823,6 +31016,17 @@ export namespace Prisma {
     createdAt?: Date | string
   }
 
+  export type PaymentCreateManyTransactionInput = {
+    id?: number
+    tanggal?: Date | string
+    nominal: number
+    metode: string
+    catatan?: string | null
+    pencatatId?: number | null
+    pencatatNama?: string | null
+    createdAt?: Date | string
+  }
+
   export type TransactionItemUpdateWithoutTransactionInput = {
     variantId?: NullableIntFieldUpdateOperationsInput | number | null
     variantName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -27902,6 +31106,38 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type PaymentUpdateWithoutTransactionInput = {
+    tanggal?: DateTimeFieldUpdateOperationsInput | Date | string
+    nominal?: IntFieldUpdateOperationsInput | number
+    metode?: StringFieldUpdateOperationsInput | string
+    catatan?: NullableStringFieldUpdateOperationsInput | string | null
+    pencatatId?: NullableIntFieldUpdateOperationsInput | number | null
+    pencatatNama?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PaymentUncheckedUpdateWithoutTransactionInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    tanggal?: DateTimeFieldUpdateOperationsInput | Date | string
+    nominal?: IntFieldUpdateOperationsInput | number
+    metode?: StringFieldUpdateOperationsInput | string
+    catatan?: NullableStringFieldUpdateOperationsInput | string | null
+    pencatatId?: NullableIntFieldUpdateOperationsInput | number | null
+    pencatatNama?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PaymentUncheckedUpdateManyWithoutTransactionInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    tanggal?: DateTimeFieldUpdateOperationsInput | Date | string
+    nominal?: IntFieldUpdateOperationsInput | number
+    metode?: StringFieldUpdateOperationsInput | string
+    catatan?: NullableStringFieldUpdateOperationsInput | string | null
+    pencatatId?: NullableIntFieldUpdateOperationsInput | number | null
+    pencatatNama?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type CustomerPriceCreateManyCustomerInput = {
     id?: number
     customerName: string
@@ -27967,6 +31203,7 @@ export namespace Prisma {
     items?: TransactionItemUpdateManyWithoutTransactionNestedInput
     notifications?: NotificationUpdateManyWithoutTransactionNestedInput
     orderRequest?: OrderRequestUpdateOneWithoutTransactionNestedInput
+    payments?: PaymentUpdateManyWithoutTransactionNestedInput
   }
 
   export type TransactionUncheckedUpdateWithoutCustomerInput = {
@@ -27983,6 +31220,7 @@ export namespace Prisma {
     items?: TransactionItemUncheckedUpdateManyWithoutTransactionNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutTransactionNestedInput
     orderRequest?: OrderRequestUncheckedUpdateOneWithoutTransactionNestedInput
+    payments?: PaymentUncheckedUpdateManyWithoutTransactionNestedInput
   }
 
   export type TransactionUncheckedUpdateManyWithoutCustomerInput = {

@@ -138,7 +138,6 @@ export default function ManualTransactionModal({ open, transaction, title, onClo
   const [namaPembeli, setNamaPembeli] = useState("");
   const [namaKasir, setNamaKasir] = useState("");
   const [metode, setMetode] = useState("Tunai");
-  const [status, setStatus] = useState("Paid");
   const [pengiriman, setPengiriman] = useState("Selesai");
   const [items, setItems] = useState<ManualItem[]>([createEmptyItem()]);
   const [isSaving, setIsSaving] = useState(false);
@@ -222,7 +221,6 @@ export default function ManualTransactionModal({ open, transaction, title, onClo
       setTanggal(parseISODateTimeLocal(transaction.tanggal));
       setNamaPembeli(transaction.nama_pembeli || "");
       setMetode(transaction.metode_pembayaran || "Tunai");
-      setStatus(transaction.status || "Paid");
       setPengiriman(transaction.status_pengiriman || "Selesai");
       setItems(
         transaction.items && transaction.items.length > 0
@@ -251,7 +249,6 @@ export default function ManualTransactionModal({ open, transaction, title, onClo
       setTanggal(formatDateTimeLocal(new Date()));
       setNamaPembeli("");
       setMetode("Tunai");
-      setStatus("Paid");
       setPengiriman("Selesai");
       setItems([createEmptyItem()]);
     }
@@ -435,7 +432,7 @@ export default function ManualTransactionModal({ open, transaction, title, onClo
           nama_pembeli: namaPembeli?.toUpperCase() || "-",
           nama_kasir: namaKasir?.toUpperCase() || "-",
           metode_pembayaran: metode,
-          status,
+          // `status` sengaja tidak dikirim — server menurunkannya dari pembayaran.
           status_pengiriman: pengiriman,
           cart,
           adjustStock: false,
@@ -568,13 +565,10 @@ export default function ManualTransactionModal({ open, transaction, title, onClo
                 <option value="Belum Bayar">Belum Bayar</option>
               </select>
             </div>
-            <div>
-              <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Status Bayar</label>
-              <select value={status} onChange={(e) => setStatus(e.target.value)} className="w-full border border-slate-200 rounded-xl px-3 py-2.5 outline-none focus:border-pink-500 text-sm">
-                <option value="Paid">Lunas</option>
-                <option value="Unpaid">Belum Lunas</option>
-              </select>
-            </div>
+            {/* Pilihan Lunas/Belum Lunas dihapus: status pelunasan sekarang
+                diturunkan dari pembayaran yang tercatat. Metode "Belum Bayar"
+                berarti piutang; metode lain berarti lunas di tempat. Pelunasan
+                menyusul dicatat di halaman Piutang. */}
             <div>
               <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Pengiriman</label>
               <select value={pengiriman} onChange={(e) => setPengiriman(e.target.value)} className="w-full border border-slate-200 rounded-xl px-3 py-2.5 outline-none focus:border-pink-500 text-sm">

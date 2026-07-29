@@ -4,6 +4,12 @@ import prisma from "@/lib/prisma";
 import { recordActivityLog } from "@/lib/activityLog";
 import { actorFromUser, requireRole, requireUser } from "@/lib/apiAuth";
 import { diffTransactionItems } from "@/lib/transactionItems";
+import {
+  jumlahkanPembayaran,
+  STATUS_BELUM_LUNAS,
+  STATUS_LUNAS,
+  turunkanStatus,
+} from "@/lib/piutang";
 
 // Paksa Next.js agar TIDAK menyimpan cache untuk API ini
 export const dynamic = 'force-dynamic';
@@ -185,6 +191,12 @@ const transactionInclude = (includeProductImage = false) => ({
       phone: true,
     },
   },
+  // Dipakai frontend untuk menghitung sisa tagihan yang benar pada transaksi
+  // yang dibayar sebagian — `total_harga` saja tidak cukup.
+  payments: {
+    select: { id: true, tanggal: true, nominal: true, metode: true },
+    orderBy: { tanggal: "asc" as const },
+  },
 });
 
 const attachNotifications = async <T extends { id: number }>(transactions: T[]) => {
@@ -312,9 +324,15 @@ export async function POST(request: Request) {
     const actor = actorFromUser(auth.user);
 
     const body = (await request.json()) as TransactionPayload;
-    const { cart, metode_pembayaran, nama_pembeli, nama_kasir, status, status_pengiriman, tanggal, adjustStock } = body;
+    const { cart, metode_pembayaran, nama_pembeli, nama_kasir, status_pengiriman, tanggal, adjustStock } = body;
 
     const total_harga = calculateTotal(cart || []);
+
+    // `status` dari body SENGAJA DIABAIKAN. Pelunasan sekarang diturunkan dari
+    // tabel Payment, bukan dipilih klien. Metode "Belum Bayar" berarti piutang:
+    // transaksi dibuat tanpa pembayaran sama sekali.
+    const metode = metode_pembayaran || "Tunai";
+    const dibayarLunas = metode !== "Belum Bayar";
 
     // Catat pembeli ke master Customer (bila ada namanya) & tautkan transaksinya.
     const customerId = await resolveCustomerId(nama_pembeli);
@@ -325,11 +343,11 @@ export async function POST(request: Request) {
         ...(tanggal ? { tanggal: new Date(tanggal) } : {}),
         trxNumber: nextTrxNumber,
         total_harga,
-        metode_pembayaran: metode_pembayaran || "Tunai",
+        metode_pembayaran: metode,
         nama_pembeli,
         ...(customerId ? { customerId } : {}),
         nama_kasir,
-        status: status || "Paid",
+        status: dibayarLunas ? STATUS_LUNAS : STATUS_BELUM_LUNAS,
         status_pengiriman: status_pengiriman || "Sedang Disiapkan",
         items: {
           create: mapCartToItems(cart || []),
@@ -337,6 +355,21 @@ export async function POST(request: Request) {
       },
       include: transactionInclude(),
     });
+
+    // Transaksi yang dibayar di tempat langsung punya bukti pembayarannya, supaya
+    // laporan posisi kas memakai sumber yang sama dengan pelunasan piutang.
+    if (dibayarLunas && total_harga > 0) {
+      await prisma.payment.create({
+        data: {
+          transactionId: newTransaction.id,
+          tanggal: newTransaction.tanggal,
+          nominal: total_harga,
+          metode,
+          pencatatId: auth.user.id,
+          pencatatNama: actor.name,
+        },
+      });
+    }
 
     if (adjustStock !== false) for (const item of cart || []) {
       await prisma.product.update({
@@ -392,12 +425,12 @@ export async function PATCH(request: Request) {
     const actor = actorFromUser(viewer);
 
     const payload = (await request.json()) as TransactionPayload;
-    const { id, status, status_pengiriman, metode_pembayaran, tanggal, nama_pembeli, nama_kasir, cart } = payload;
+    const { id, status_pengiriman, metode_pembayaran, tanggal, nama_pembeli, nama_kasir, cart } = payload;
 
     if (viewer.role !== "Owner") {
       const mengubahIsi =
         Array.isArray(cart) || tanggal !== undefined || nama_pembeli !== undefined ||
-        nama_kasir !== undefined || metode_pembayaran !== undefined || status !== undefined;
+        nama_kasir !== undefined || metode_pembayaran !== undefined;
       if (mengubahIsi) {
         return NextResponse.json(
           { error: "Hanya Owner yang dapat mengubah isi riwayat transaksi." },
@@ -411,7 +444,8 @@ export async function PATCH(request: Request) {
     });
     
     const dataToUpdate: Prisma.TransactionUpdateInput = {};
-    if (status) dataToUpdate.status = status;
+    // `status` dari body TIDAK dipakai — ia diturunkan dari pembayaran di bawah,
+    // setelah kemungkinan perubahan total_harga akibat penyuntingan item.
     if (status_pengiriman) {
       if (viewer.role === "Admin") {
         const sentNotifications = await prisma.$queryRaw<Array<{ statusPengiriman: string }>>`
@@ -454,11 +488,31 @@ export async function PATCH(request: Request) {
       };
     }
 
-    const updated = await prisma.transaction.update({
+    let updated = await prisma.transaction.update({
       where: { id: Number(id) },
       data: dataToUpdate,
       include: transactionInclude(),
     });
+
+    // Menyunting item bisa mengubah total_harga, sehingga transaksi yang tadinya
+    // lunas jadi kurang bayar (atau sebaliknya). Status selalu diselaraskan ulang
+    // dengan pembayaran yang benar-benar tercatat.
+    //
+    // Catatan: mengubah metode_pembayaran saja TIDAK membuat/menghapus pembayaran.
+    // Untuk membatalkan pelunasan, hapus pembayarannya lewat /api/pembayaran/[id].
+    const pembayaran = await prisma.payment.findMany({
+      where: { transactionId: updated.id },
+      select: { nominal: true },
+    });
+    const statusSeharusnya = turunkanStatus(updated.total_harga, jumlahkanPembayaran(pembayaran));
+    if (statusSeharusnya !== updated.status) {
+      updated = await prisma.transaction.update({
+        where: { id: updated.id },
+        data: { status: statusSeharusnya },
+        include: transactionInclude(),
+      });
+    }
+
     await recordActivityLog({
       action: "UPDATE",
       entity: "Transaksi",

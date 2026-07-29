@@ -1,4 +1,5 @@
 const PRODUCT_IMAGE_BUCKET = "produk";
+const RECEIPT_IMAGE_BUCKET = "struk";
 const STORAGE_KEY_CANDIDATES = [
   "SUPABASE_SERVICE_ROLE_KEY",
   "SUPABASE_SECRET_KEY",
@@ -50,10 +51,11 @@ const storageHeaders = (serviceKey: string) => ({
 });
 
 export const productImageBucket = PRODUCT_IMAGE_BUCKET;
+export const receiptImageBucket = RECEIPT_IMAGE_BUCKET;
 
-export const ensureProductImageBucket = async () => {
+const ensureBucket = async (bucket: string, labelGagal: string) => {
   const { url, serviceKey } = getStorageConfig();
-  const bucketUrl = `${url}/storage/v1/bucket/${PRODUCT_IMAGE_BUCKET}`;
+  const bucketUrl = `${url}/storage/v1/bucket/${bucket}`;
 
   const existing = await fetch(bucketUrl, {
     headers: storageHeaders(serviceKey),
@@ -69,8 +71,8 @@ export const ensureProductImageBucket = async () => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      id: PRODUCT_IMAGE_BUCKET,
-      name: PRODUCT_IMAGE_BUCKET,
+      id: bucket,
+      name: bucket,
       public: true,
       file_size_limit: 3 * 1024 * 1024,
       allowed_mime_types: ["image/jpeg", "image/png", "image/webp"],
@@ -78,9 +80,15 @@ export const ensureProductImageBucket = async () => {
   });
 
   if (!created.ok && created.status !== 409) {
-    throw new Error("Gagal menyiapkan bucket foto produk.");
+    throw new Error(labelGagal);
   }
 };
+
+export const ensureProductImageBucket = async () =>
+  ensureBucket(PRODUCT_IMAGE_BUCKET, "Gagal menyiapkan bucket foto produk.");
+
+export const ensureReceiptImageBucket = async () =>
+  ensureBucket(RECEIPT_IMAGE_BUCKET, "Gagal menyiapkan bucket foto struk.");
 
 const getFileExtension = (file: File) => {
   const extensionByType: Record<string, string> = {
@@ -135,6 +143,66 @@ export const uploadProductImage = async (file: File, productName?: string) => {
     path: objectPath,
     url: `${url}/storage/v1/object/public/${PRODUCT_IMAGE_BUCKET}/${objectPath}`,
   };
+};
+
+// Foto struk belanja. Bucket terpisah dari foto produk supaya bukti pengeluaran
+// tidak tercampur dengan katalog dan bisa diatur retensinya sendiri.
+export const uploadReceiptImage = async (file: File, kategori?: string) => {
+  if (!file.type.startsWith("image/")) {
+    throw new Error("File harus berupa gambar.");
+  }
+
+  if (file.size > 3 * 1024 * 1024) {
+    throw new Error("Ukuran foto maksimal 3MB.");
+  }
+
+  await ensureReceiptImageBucket();
+
+  const { url, serviceKey } = getStorageConfig();
+  const namePart = sanitizeSegment(kategori || "struk") || "struk";
+  const objectPath = `${namePart}/${Date.now()}-${crypto.randomUUID()}.${getFileExtension(file)}`;
+
+  const uploaded = await fetch(
+    `${url}/storage/v1/object/${RECEIPT_IMAGE_BUCKET}/${objectPath}`,
+    {
+      method: "POST",
+      headers: {
+        ...storageHeaders(serviceKey),
+        "Content-Type": file.type || "application/octet-stream",
+        "x-upsert": "false",
+      },
+      body: file,
+    }
+  );
+
+  if (!uploaded.ok) {
+    throw new Error("Gagal upload foto struk ke Supabase Storage.");
+  }
+
+  return {
+    path: objectPath,
+    url: `${url}/storage/v1/object/public/${RECEIPT_IMAGE_BUCKET}/${objectPath}`,
+  };
+};
+
+export const deleteReceiptImageFromStorage = async (imageUrl?: string | null) => {
+  if (!imageUrl) return;
+  const marker = `/storage/v1/object/public/${RECEIPT_IMAGE_BUCKET}/`;
+  const index = imageUrl.indexOf(marker);
+  if (index === -1) return;
+
+  const path = imageUrl.slice(index + marker.length).split("?")[0];
+  if (!path) return;
+
+  const { url, serviceKey } = getStorageConfig();
+  await fetch(`${url}/storage/v1/object/${RECEIPT_IMAGE_BUCKET}`, {
+    method: "DELETE",
+    headers: {
+      ...storageHeaders(serviceKey),
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ prefixes: [path] }),
+  });
 };
 
 export const getProductImagePathFromUrl = (imageUrl?: string | null) => {

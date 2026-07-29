@@ -108,15 +108,15 @@ export default function UnduhNotaPage() {
   );
 
   return (
-    <div className="lina-page-stack max-w-4xl mx-auto">
+    <div className="lina-page-stack">
       {/* JUDUL */}
-      <div className="lina-panel rounded-3xl border border-pink-100 bg-white p-5 shadow-sm mb-4">
+      <div className="lina-panel rounded-2xl border p-6 mb-6">
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-2xl bg-pink-100 text-pink-600 flex items-center justify-center flex-shrink-0">
             <FileDown size={26} />
           </div>
           <div className="min-w-0">
-            <h1 className="text-xl font-black text-rose-950 leading-tight">Unduh Nota</h1>
+            <h1 className="text-2xl font-black text-slate-800 leading-tight">Unduh Nota</h1>
             <p className="text-sm text-slate-500">Cari pesanan, lalu tekan PDF atau JPG. Akan Terdownload otomatis dan tersimpan pada Galeri HP.</p>
           </div>
         </div>

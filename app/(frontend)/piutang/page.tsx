@@ -265,33 +265,39 @@ export default function PiutangPage() {
   );
 
   return (
-    <div className="mx-auto w-full max-w-4xl px-3 pb-24 pt-3 desktop:px-6 desktop:pt-6">
-      <header className="mb-4">
-        <h1 className="flex items-center gap-2 text-xl font-bold text-slate-800 desktop:text-2xl">
-          <HandCoins className="text-amber-500" size={24} /> Piutang
+    <div className="lina-page-stack space-y-6">
+      <header className="lina-panel rounded-2xl border p-6">
+        <h1 className="flex items-center gap-2 text-2xl font-black text-slate-800">
+          <HandCoins className="text-pink-500" /> Piutang
         </h1>
-        <p className="mt-1 text-xs text-slate-500 desktop:text-sm">
+        <p className="mt-1 text-sm text-slate-500">
           Nota yang barangnya sudah dikirim tapi uangnya belum masuk. Yang paling lama menunggak ada
           di atas.
         </p>
       </header>
 
       {/* ---------- Ringkasan ---------- */}
-      <section className="grid grid-cols-2 gap-3">
-        <div className="rounded-2xl border border-slate-200 bg-white p-4">
-          <p className="text-[11px] font-medium text-slate-500">Total piutang berjalan</p>
-          <p className="text-2xl font-bold text-slate-800">{rupiah(data?.totalPiutang ?? 0)}</p>
+      <section className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="lina-panel rounded-2xl border p-5">
+          <p className="text-[11px] font-black uppercase tracking-wide text-slate-400">
+            Total piutang berjalan
+          </p>
+          <p className="mt-1 text-3xl font-black text-slate-800">
+            {rupiah(data?.totalPiutang ?? 0)}
+          </p>
         </div>
-        <div className="rounded-2xl border border-slate-200 bg-white p-4">
-          <p className="text-[11px] font-medium text-slate-500">Dari berapa pelanggan</p>
-          <p className="text-2xl font-bold text-slate-800">{data?.jumlahPelanggan ?? 0}</p>
+        <div className="lina-panel rounded-2xl border p-5">
+          <p className="text-[11px] font-black uppercase tracking-wide text-slate-400">
+            Dari berapa pelanggan
+          </p>
+          <p className="mt-1 text-3xl font-black text-slate-800">{data?.jumlahPelanggan ?? 0}</p>
         </div>
       </section>
 
       {adaLewatTigaPuluh && (
-        <div className="mt-3 flex items-start gap-2 rounded-2xl border border-rose-200 bg-rose-50 p-3">
-          <AlertTriangle size={16} className="mt-0.5 shrink-0 text-rose-500" />
-          <p className="text-xs leading-relaxed text-rose-700">
+        <div className="flex items-start gap-3 rounded-2xl border border-red-200 bg-red-50 p-4">
+          <AlertTriangle size={18} className="mt-0.5 shrink-0 text-red-500" />
+          <p className="text-xs leading-relaxed text-red-700">
             Ada <b>{data?.ringkasanUmur[">30"].jumlahTransaksi} nota</b> yang sudah lewat 30 hari
             senilai <b>{rupiah(data?.ringkasanUmur[">30"].nominal ?? 0)}</b>. Semakin lama menunggak,
             semakin kecil peluang tertagih.
@@ -300,75 +306,86 @@ export default function PiutangPage() {
       )}
 
       {/* Sebaran umur */}
-      <section className="mt-3 grid grid-cols-4 gap-2">
-        {KELOMPOK_UMUR.map((kelompok) => (
-          <div
-            key={kelompok}
-            className={`rounded-xl border p-2 text-center ${WARNA_KELOMPOK_UMUR[kelompok]}`}
-          >
-            <p className="text-[10px] font-semibold leading-tight">
-              {LABEL_KELOMPOK_UMUR[kelompok]}
-            </p>
-            <p className="mt-0.5 text-sm font-bold">
-              {rupiah(data?.ringkasanUmur[kelompok]?.nominal ?? 0)}
-            </p>
-          </div>
-        ))}
+      <section className="lina-panel rounded-2xl border p-5">
+        <p className="mb-3 text-[11px] font-black uppercase tracking-wide text-slate-400">
+          Sebaran umur tagihan
+        </p>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {KELOMPOK_UMUR.map((kelompok) => (
+            <div
+              key={kelompok}
+              className={`rounded-xl border p-3 text-center ${WARNA_KELOMPOK_UMUR[kelompok]}`}
+            >
+              <p className="text-[10px] font-black leading-tight">
+                {LABEL_KELOMPOK_UMUR[kelompok]}
+              </p>
+              <p className="mt-1 text-sm font-black">
+                {rupiah(data?.ringkasanUmur[kelompok]?.nominal ?? 0)}
+              </p>
+            </div>
+          ))}
+        </div>
       </section>
 
       {/* ---------- Kendali ---------- */}
-      <section className="mt-4 flex flex-wrap items-center gap-2">
-        <button
-          onClick={() => setTampilkanSemua((n) => !n)}
-          className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50"
-        >
-          {tampilkanSemua ? "Tampilkan 90 hari terakhir" : "Tampilkan seluruh riwayat"}
-        </button>
-
-        {bolehMenulis && (
+      <section className="lina-panel rounded-2xl border p-5">
+        <div className="flex flex-wrap items-center gap-2">
           <button
-            onClick={() => {
-              setModePembersihan((n) => !n);
-              setTerpilih(new Set());
-            }}
-            className={`rounded-xl border px-3 py-2 text-xs font-semibold transition ${
-              modePembersihan
-                ? "border-sky-300 bg-sky-50 text-sky-700"
-                : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
-            }`}
+            onClick={() => setTampilkanSemua((n) => !n)}
+            className="rounded-xl border border-pink-100 bg-white px-3 py-2 text-xs font-bold text-pink-600 hover:bg-pink-50"
           >
-            {modePembersihan ? "Batal pembersihan" : "Mode pembersihan"}
+            {tampilkanSemua ? "Tampilkan 90 hari terakhir" : "Tampilkan seluruh riwayat"}
           </button>
-        )}
 
-        {modePembersihan && terpilih.size > 0 && (
-          <button
-            onClick={tandaiLunasMassal}
-            disabled={memproses}
-            className="flex items-center gap-1.5 rounded-xl bg-emerald-500 px-3 py-2 text-xs font-bold text-white hover:bg-emerald-600 disabled:opacity-60"
-          >
-            {memproses ? <Loader2 size={13} className="animate-spin" /> : <Check size={13} />}
-            Tandai {terpilih.size} nota lunas
-          </button>
+          {bolehMenulis && (
+            <button
+              onClick={() => {
+                setModePembersihan((n) => !n);
+                setTerpilih(new Set());
+              }}
+              className={`rounded-xl border px-3 py-2 text-xs font-bold transition ${
+                modePembersihan
+                  ? "border-pink-300 bg-pink-600 text-white shadow-md shadow-pink-200"
+                  : "border-pink-100 bg-white text-pink-600 hover:bg-pink-50"
+              }`}
+            >
+              {modePembersihan ? "Batal pembersihan" : "Mode pembersihan"}
+            </button>
+          )}
+
+          {modePembersihan && terpilih.size > 0 && (
+            <button
+              onClick={tandaiLunasMassal}
+              disabled={memproses}
+              className="flex items-center gap-1.5 rounded-xl bg-emerald-600 px-3 py-2 text-xs font-black text-white shadow-md shadow-emerald-100 hover:bg-emerald-700 disabled:opacity-60"
+            >
+              {memproses ? <Loader2 size={13} className="animate-spin" /> : <Check size={13} />}
+              Tandai {terpilih.size} nota lunas
+            </button>
+          )}
+        </div>
+
+        {modePembersihan && (
+          <p className="mt-3 rounded-xl border border-pink-100 bg-pink-50 px-3 py-2 text-[11px] leading-relaxed text-slate-600">
+            Mode pembersihan untuk merapikan piutang lama yang sebenarnya sudah dibayar tetapi
+            statusnya tidak pernah diperbarui. Pembayarannya dicatat bertanggal nota asli, jadi
+            laporan kas bulan ini tidak ikut melonjak.
+          </p>
         )}
       </section>
 
-      {modePembersihan && (
-        <p className="mt-2 rounded-xl bg-sky-50 px-3 py-2 text-[11px] leading-relaxed text-sky-800">
-          Mode pembersihan untuk merapikan piutang lama yang sebenarnya sudah dibayar tetapi
-          statusnya tidak pernah diperbarui. Pembayarannya dicatat bertanggal nota asli, jadi laporan
-          kas bulan ini tidak ikut melonjak.
-        </p>
-      )}
-
       {/* ---------- Daftar per pelanggan ---------- */}
-      <section className="mt-4 space-y-3">
-        {memuat && <p className="py-10 text-center text-sm text-slate-400">Memuat…</p>}
+      <section className="space-y-4">
+        {memuat && (
+          <div className="lina-panel rounded-2xl border p-12 text-center font-bold text-slate-400">
+            Memuat piutang...
+          </div>
+        )}
 
         {!memuat && (data?.pelanggan.length ?? 0) === 0 && (
-          <div className="rounded-2xl border border-dashed border-slate-300 py-12 text-center">
-            <p className="text-sm font-medium text-slate-600">Tidak ada piutang. 🎉</p>
-            <p className="mt-1 text-xs text-slate-400">
+          <div className="lina-panel rounded-2xl border p-12 text-center">
+            <p className="font-bold text-slate-500">Tidak ada piutang. 🎉</p>
+            <p className="mt-2 text-xs text-slate-400">
               Semua nota{tampilkanSemua ? "" : " dalam 90 hari terakhir"} sudah dibayar.
             </p>
           </div>
@@ -377,34 +394,31 @@ export default function PiutangPage() {
         {data?.pelanggan.map((kelompok) => {
           const terbuka = dibuka.has(kelompok.kunci);
           return (
-            <div
-              key={kelompok.kunci}
-              className="overflow-hidden rounded-2xl border border-slate-200 bg-white"
-            >
-              <div className="flex items-center gap-3 p-4">
+            <article key={kelompok.kunci} className="lina-panel overflow-hidden rounded-2xl border">
+              <div className="flex items-center gap-3 border-b border-pink-100 bg-pink-50 p-5">
                 <button
                   onClick={() => toggleBuka(kelompok.kunci)}
                   className="flex min-w-0 flex-1 items-center gap-3 text-left"
                 >
                   {terbuka ? (
-                    <ChevronDown size={16} className="shrink-0 text-slate-400" />
+                    <ChevronDown size={18} className="shrink-0 text-pink-500" />
                   ) : (
-                    <ChevronRight size={16} className="shrink-0 text-slate-400" />
+                    <ChevronRight size={18} className="shrink-0 text-pink-500" />
                   )}
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-bold text-slate-800">
+                    <h2 className="truncate text-lg font-black text-slate-800">
                       {kelompok.namaPelanggan}
-                    </p>
-                    <p className="text-[11px] text-slate-500">
+                    </h2>
+                    <p className="text-xs text-slate-500">
                       {kelompok.transaksi.length} nota · tertua {kelompok.umurTertua} hari
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="text-base font-bold text-slate-800">
+                    <p className="text-lg font-black text-pink-700">
                       {rupiah(kelompok.totalSisa)}
                     </p>
                     <span
-                      className={`mt-0.5 inline-block rounded-md border px-1.5 py-0.5 text-[9px] font-bold ${WARNA_KELOMPOK_UMUR[kelompok.kelompokUmurTertua]}`}
+                      className={`mt-0.5 inline-block rounded-md border px-1.5 py-0.5 text-[9px] font-black ${WARNA_KELOMPOK_UMUR[kelompok.kelompokUmurTertua]}`}
                     >
                       {LABEL_KELOMPOK_UMUR[kelompok.kelompokUmurTertua]}
                     </span>
@@ -412,7 +426,7 @@ export default function PiutangPage() {
                 </button>
                 <button
                   onClick={() => salinTagihan(kelompok)}
-                  className="shrink-0 rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-emerald-600"
+                  className="shrink-0 rounded-xl border border-pink-200 bg-white p-2.5 text-pink-600 transition-colors hover:bg-pink-100"
                   title="Salin teks tagihan untuk WhatsApp"
                   aria-label="Salin teks tagihan"
                 >
@@ -421,12 +435,12 @@ export default function PiutangPage() {
               </div>
 
               {terbuka && (
-                <div className="border-t border-slate-100 bg-slate-50/60 p-3">
+                <div className="p-4">
                   <div className="space-y-2">
                     {kelompok.transaksi.map((trx) => (
                       <div
                         key={trx.id}
-                        className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-3"
+                        className="flex items-center gap-3 rounded-xl border border-slate-100 bg-white p-3"
                       >
                         {modePembersihan && (
                           <input
@@ -437,27 +451,27 @@ export default function PiutangPage() {
                           />
                         )}
                         <div className="min-w-0 flex-1">
-                          <p className="text-xs font-bold text-slate-700">
+                          <p className="font-mono text-xs font-black text-pink-700">
                             {trx.trxNumber ? `Nota #${trx.trxNumber}` : `Nota ID ${trx.id}`}
                           </p>
                           <p className="text-[11px] text-slate-500">
                             {tanggalPendek(trx.tanggal)} · {trx.umurHari} hari
                           </p>
                           {trx.totalDibayar > 0 && (
-                            <p className="text-[10px] text-emerald-600">
+                            <p className="text-[10px] font-bold text-emerald-600">
                               sudah dibayar {rupiah(trx.totalDibayar)} dari{" "}
                               {rupiah(trx.totalHarga)}
                             </p>
                           )}
                         </div>
                         <div className="text-right">
-                          <p className="text-sm font-bold text-slate-800">
+                          <p className="text-sm font-black text-slate-800">
                             {rupiah(trx.sisaTagihan)}
                           </p>
                           {bolehMenulis && !modePembersihan && (
                             <button
                               onClick={() => bukaModal(trx)}
-                              className="mt-1 rounded-lg bg-emerald-500 px-2.5 py-1 text-[10px] font-bold text-white hover:bg-emerald-600"
+                              className="mt-1 rounded-lg bg-pink-600 px-2.5 py-1.5 text-[10px] font-black text-white shadow-sm shadow-pink-200 hover:bg-pink-700"
                             >
                               Catat Bayar
                             </button>
@@ -468,7 +482,7 @@ export default function PiutangPage() {
                   </div>
                 </div>
               )}
-            </div>
+            </article>
           );
         })}
       </section>
@@ -476,53 +490,55 @@ export default function PiutangPage() {
       {/* ---------- Modal catat pembayaran ---------- */}
       {modal && (
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 p-0 desktop:items-center desktop:p-4">
-          <div className="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-t-3xl bg-white p-5 desktop:rounded-2xl">
+          <div className="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-t-3xl bg-white p-6 shadow-2xl desktop:rounded-3xl">
             <div className="mb-4 flex items-start justify-between">
               <div>
-                <h2 className="text-base font-bold text-slate-800">Catat Pembayaran</h2>
-                <p className="text-xs text-slate-500">
+                <h2 className="text-lg font-black text-slate-800">Catat Pembayaran</h2>
+                <p className="font-mono text-xs font-bold text-pink-600">
                   {modal.trxNumber ? `Nota #${modal.trxNumber}` : `Nota ID ${modal.id}`} ·{" "}
                   {tanggalPendek(modal.tanggal)}
                 </p>
               </div>
               <button
                 onClick={() => setModal(null)}
-                className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100"
+                className="rounded-xl border border-pink-100 p-2 text-pink-600 hover:bg-pink-50"
                 aria-label="Tutup"
               >
                 <X size={18} />
               </button>
             </div>
 
-            <div className="mb-4 grid grid-cols-3 gap-2 rounded-xl bg-slate-50 p-3 text-center">
+            <div className="mb-4 grid grid-cols-3 gap-2 rounded-xl border border-pink-100 bg-pink-50 p-3 text-center">
               <div>
-                <p className="text-[10px] text-slate-500">Total nota</p>
-                <p className="text-xs font-bold text-slate-700">{rupiah(modal.totalHarga)}</p>
+                <p className="text-[10px] font-bold text-slate-500">Total nota</p>
+                <p className="text-xs font-black text-slate-700">{rupiah(modal.totalHarga)}</p>
               </div>
               <div>
-                <p className="text-[10px] text-slate-500">Sudah dibayar</p>
-                <p className="text-xs font-bold text-emerald-600">{rupiah(modal.totalDibayar)}</p>
+                <p className="text-[10px] font-bold text-slate-500">Sudah dibayar</p>
+                <p className="text-xs font-black text-emerald-600">{rupiah(modal.totalDibayar)}</p>
               </div>
               <div>
-                <p className="text-[10px] text-slate-500">Sisa</p>
-                <p className="text-xs font-bold text-rose-600">{rupiah(modal.sisaTagihan)}</p>
+                <p className="text-[10px] font-bold text-slate-500">Sisa</p>
+                <p className="text-xs font-black text-red-600">{rupiah(modal.sisaTagihan)}</p>
               </div>
             </div>
 
-            <label className="block text-xs font-semibold text-slate-500">Nominal dibayar</label>
-            <div className="mt-1 flex items-baseline gap-2 border-b-2 border-slate-200 pb-2 focus-within:border-emerald-400">
-              <span className="text-base font-bold text-slate-400">Rp</span>
+            <label className="block text-[11px] font-black uppercase tracking-wide text-slate-400">
+              Nominal dibayar
+            </label>
+            <div className="mt-1 flex items-baseline gap-2 border-b-2 border-pink-100 pb-2 focus-within:border-pink-400">
+              <span className="text-base font-black text-pink-400">Rp</span>
               <input
                 value={nominalBayar}
                 onChange={(e) => setNominalBayar(formatRibuan(e.target.value))}
                 inputMode="numeric"
-                className="w-full bg-transparent text-2xl font-bold text-slate-800 outline-none"
+                className="w-full bg-transparent text-2xl font-black text-slate-800 outline-none"
               />
             </div>
             <div className="mt-2 flex gap-2">
               <button
                 onClick={() => setNominalBayar(modal.sisaTagihan.toLocaleString("id-ID"))}
-                className="rounded-lg border border-slate-200 px-2 py-1 text-[11px] font-semibold text-slate-600 hover:bg-slate-50"
+                className="rounded-lg border border-pink-100 bg-white px-2.5 py-1 text-[11px] font-bold text-pink-600 hover:bg-pink-50"
               >
                 Lunasi semua
               </button>
@@ -530,7 +546,7 @@ export default function PiutangPage() {
                 onClick={() =>
                   setNominalBayar(Math.round(modal.sisaTagihan / 2).toLocaleString("id-ID"))
                 }
-                className="rounded-lg border border-slate-200 px-2 py-1 text-[11px] font-semibold text-slate-600 hover:bg-slate-50"
+                className="rounded-lg border border-pink-100 bg-white px-2.5 py-1 text-[11px] font-bold text-pink-600 hover:bg-pink-50"
               >
                 Setengah
               </button>
@@ -538,11 +554,13 @@ export default function PiutangPage() {
 
             <div className="mt-4 grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-semibold text-slate-500">Lewat</label>
+                <label className="block text-[11px] font-black uppercase tracking-wide text-slate-400">
+                  Lewat
+                </label>
                 <select
                   value={metodeBayar}
                   onChange={(e) => setMetodeBayar(e.target.value as MetodePembayaran)}
-                  className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-emerald-400"
+                  className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm font-bold text-slate-700 outline-none focus:border-pink-400"
                 >
                   {METODE_PEMBAYARAN.map((nama) => (
                     <option key={nama} value={nama}>
@@ -552,12 +570,14 @@ export default function PiutangPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-500">Tanggal terima</label>
+                <label className="block text-[11px] font-black uppercase tracking-wide text-slate-400">
+                  Tanggal terima
+                </label>
                 <input
                   type="date"
                   value={tanggalBayar}
                   onChange={(e) => setTanggalBayar(e.target.value)}
-                  className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-emerald-400"
+                  className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm font-bold text-slate-700 outline-none focus:border-pink-400"
                 />
               </div>
             </div>
@@ -566,26 +586,28 @@ export default function PiutangPage() {
               value={catatanBayar}
               onChange={(e) => setCatatanBayar(e.target.value)}
               placeholder="Catatan (opsional)"
-              className="mt-3 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-emerald-400"
+              className="mt-3 w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm outline-none focus:border-pink-400"
             />
 
             <button
               onClick={catatPembayaran}
               disabled={menyimpan}
-              className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500 py-3 text-sm font-bold text-white hover:bg-emerald-600 disabled:opacity-60"
+              className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-pink-600 py-3.5 text-sm font-black text-white shadow-lg shadow-pink-200 transition-all hover:bg-pink-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {menyimpan ? <Loader2 size={16} className="animate-spin" /> : <Check size={16} />}
               Simpan Pembayaran
             </button>
 
             {riwayat.length > 0 && (
-              <div className="mt-5 border-t border-slate-100 pt-4">
-                <h3 className="mb-2 text-xs font-bold text-slate-600">Riwayat pembayaran</h3>
+              <div className="mt-5 border-t border-pink-100 pt-4">
+                <h3 className="mb-2 text-[11px] font-black uppercase tracking-wide text-slate-400">
+                  Riwayat pembayaran
+                </h3>
                 <div className="space-y-2">
                   {riwayat.map((bayar) => (
                     <div
                       key={bayar.id}
-                      className="flex items-center gap-2 rounded-xl bg-slate-50 px-3 py-2"
+                      className="flex items-center gap-2 rounded-xl border border-pink-100 bg-pink-50 px-3 py-2"
                     >
                       <div className="min-w-0 flex-1">
                         <p className="text-xs font-semibold text-slate-700">

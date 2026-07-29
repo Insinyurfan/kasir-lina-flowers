@@ -46,39 +46,35 @@ export const isBiayaUsaha = (kategori: string): boolean =>
 export const isPrive = (kategori: string): boolean =>
   (KATEGORI_NON_BIAYA as readonly string[]).includes(kategori);
 
-// Warna & keterangan per kategori untuk dipakai seragam di seluruh antarmuka.
+// Ikon & keterangan per kategori. Warnanya sengaja TIDAK ditaruh di sini:
+// seluruh antarmuka memakai palet blush/pink dari app/globals.css, jadi warna
+// per kategori hanya akan membuat halaman keluar dari tema.
 export const INFO_KATEGORI: Record<
   KategoriPengeluaran,
-  { emoji: string; warna: string; keterangan: string }
+  { emoji: string; keterangan: string }
 > = {
   "Bahan Baku": {
     emoji: "🧵",
-    warna: "bg-rose-100 text-rose-700 border-rose-200",
     keterangan: "Bando polos, pita, pompom, lem, benang",
   },
   Transport: {
     emoji: "⛽",
-    warna: "bg-amber-100 text-amber-700 border-amber-200",
     keterangan: "Bensin, tol, parkir",
   },
   Konsumsi: {
     emoji: "🍚",
-    warna: "bg-lime-100 text-lime-700 border-lime-200",
     keterangan: "Makan & minum selama kirim",
   },
   "Upah Pengrajin": {
     emoji: "🧑‍🏭",
-    warna: "bg-sky-100 text-sky-700 border-sky-200",
     keterangan: "Bayaran pengrajin per setoran",
   },
   "Operasional Lain": {
     emoji: "🧾",
-    warna: "bg-violet-100 text-violet-700 border-violet-200",
     keterangan: "Plastik, kertas nota, servis, listrik",
   },
   "Ambilan Pribadi": {
     emoji: "👛",
-    warna: "bg-slate-100 text-slate-700 border-slate-300",
     keterangan: "Uang usaha yang dipakai pribadi — bukan biaya, tidak mengurangi laba",
   },
 };

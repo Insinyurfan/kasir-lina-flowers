@@ -241,27 +241,29 @@ export default function PengeluaranPage() {
 
   if (user && user.role !== "Owner" && user.role !== "Admin") {
     return (
-      <div className="p-6 text-center text-slate-500">
-        Halaman ini hanya untuk Owner dan Admin.
+      <div className="lina-page-stack">
+        <div className="lina-panel rounded-2xl border p-12 text-center font-bold text-slate-400">
+          Halaman ini hanya untuk Owner dan Admin.
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="mx-auto w-full max-w-3xl px-3 pb-24 pt-3 desktop:px-6 desktop:pt-6">
-      <header className="mb-4">
-        <h1 className="flex items-center gap-2 text-xl font-bold text-slate-800 desktop:text-2xl">
-          <Wallet className="text-rose-500" size={24} /> Pengeluaran
+    <div className="lina-page-stack space-y-6">
+      <header className="lina-panel rounded-2xl border p-6">
+        <h1 className="flex items-center gap-2 text-2xl font-black text-slate-800">
+          <Wallet className="text-pink-500" /> Pengeluaran
         </h1>
-        <p className="mt-1 text-xs text-slate-500 desktop:text-sm">
+        <p className="mt-1 text-sm text-slate-500">
           Catat belanja bahan, bensin, dan upah selagi masih di jalan — jangan menunggu sampai lupa.
         </p>
       </header>
 
       {/* ---------- Formulir: dirancang muat satu layar HP ---------- */}
-      <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+      <section className="lina-panel rounded-2xl border p-5">
         {idDiubah && (
-          <div className="mb-3 flex items-center justify-between rounded-xl bg-amber-50 px-3 py-2 text-xs font-medium text-amber-700">
+          <div className="mb-3 flex items-center justify-between rounded-xl bg-amber-50 px-3 py-2 text-xs font-bold text-amber-700">
             Sedang mengubah pengeluaran
             <button onClick={kosongkanForm} className="rounded-lg p-1 hover:bg-amber-100">
               <X size={14} />
@@ -269,20 +271,24 @@ export default function PengeluaranPage() {
           </div>
         )}
 
-        <label className="block text-xs font-semibold text-slate-500">Nominal</label>
-        <div className="mt-1 flex items-baseline gap-2 border-b-2 border-slate-200 pb-2 focus-within:border-rose-400">
-          <span className="text-lg font-bold text-slate-400">Rp</span>
+        <label className="block text-[11px] font-black uppercase tracking-wide text-slate-400">
+          Nominal
+        </label>
+        <div className="mt-1 flex items-baseline gap-2 border-b-2 border-pink-100 pb-2 focus-within:border-pink-400">
+          <span className="text-lg font-black text-pink-400">Rp</span>
           <input
             value={nominal}
             onChange={(e) => setNominal(formatRibuan(e.target.value))}
             inputMode="numeric"
             placeholder="0"
-            className="w-full bg-transparent text-3xl font-bold text-slate-800 outline-none placeholder:text-slate-300"
+            className="w-full bg-transparent text-3xl font-black text-slate-800 outline-none placeholder:text-pink-200"
           />
         </div>
 
-        <label className="mt-4 block text-xs font-semibold text-slate-500">Kategori</label>
-        <div className="mt-2 grid grid-cols-2 gap-2">
+        <label className="mt-5 block text-[11px] font-black uppercase tracking-wide text-slate-400">
+          Kategori
+        </label>
+        <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3">
           {KATEGORI_PENGELUARAN.map((nama) => {
             const aktif = kategori === nama;
             return (
@@ -290,10 +296,10 @@ export default function PengeluaranPage() {
                 key={nama}
                 type="button"
                 onClick={() => setKategori(nama)}
-                className={`flex items-center gap-2 rounded-xl border px-3 py-3 text-left text-xs font-semibold transition ${
+                className={`flex items-center gap-2 rounded-xl border px-3 py-3 text-left text-xs font-bold transition ${
                   aktif
-                    ? `${INFO_KATEGORI[nama].warna} ring-2 ring-offset-1 ring-rose-300`
-                    : "border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100"
+                    ? "border-pink-300 bg-pink-600 text-white shadow-md shadow-pink-200"
+                    : "border-pink-100 bg-white text-slate-600 hover:bg-pink-50"
                 }`}
               >
                 <span className="text-base">{INFO_KATEGORI[nama].emoji}</span>
@@ -312,20 +318,22 @@ export default function PengeluaranPage() {
         {/* Penjelasan prive: tanpa ini orang enggan mengisinya karena mengira
             angkanya akan dihitung sebagai kerugian usaha. */}
         {kategori === KATEGORI_PRIVE && (
-          <p className="mt-2 rounded-xl bg-slate-50 px-3 py-2 text-[11px] leading-relaxed text-slate-600">
+          <p className="mt-2 rounded-xl border border-pink-100 bg-pink-50 px-3 py-2 text-[11px] leading-relaxed text-slate-600">
             Ini <b>bukan biaya usaha</b> dan <b>tidak mengurangi laba</b>. Ambilan pribadi adalah
             bagian keuntungan yang dipakai sendiri — dicatat supaya kelihatan berapa banyak uang
             usaha yang keluar untuk keperluan di luar usaha.
           </p>
         )}
 
-        <div className="mt-4 grid grid-cols-2 gap-3">
+        <div className="mt-5 grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-xs font-semibold text-slate-500">Bayar pakai</label>
+            <label className="block text-[11px] font-black uppercase tracking-wide text-slate-400">
+              Bayar pakai
+            </label>
             <select
               value={metode}
               onChange={(e) => setMetode(e.target.value as MetodePengeluaran)}
-              className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-rose-400"
+              className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-bold text-slate-700 outline-none focus:border-pink-400"
             >
               {METODE_PENGELUARAN.map((nama) => (
                 <option key={nama} value={nama}>
@@ -335,12 +343,14 @@ export default function PengeluaranPage() {
             </select>
           </div>
           <div>
-            <label className="block text-xs font-semibold text-slate-500">Tanggal</label>
+            <label className="block text-[11px] font-black uppercase tracking-wide text-slate-400">
+              Tanggal
+            </label>
             <input
               type="date"
               value={tanggal}
               onChange={(e) => setTanggal(e.target.value)}
-              className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-rose-400"
+              className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-bold text-slate-700 outline-none focus:border-pink-400"
             />
           </div>
         </div>
@@ -349,7 +359,7 @@ export default function PengeluaranPage() {
           value={catatan}
           onChange={(e) => setCatatan(e.target.value)}
           placeholder="Catatan (opsional) — mis. Pasar Asemka, pita & pompom"
-          className="mt-3 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-rose-400"
+          className="mt-3 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none focus:border-pink-400"
         />
 
         <div className="mt-3 flex items-center gap-2">
@@ -365,7 +375,7 @@ export default function PengeluaranPage() {
             type="button"
             onClick={() => inputFotoRef.current?.click()}
             disabled={mengunggahFoto}
-            className="flex items-center gap-2 rounded-xl border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50 disabled:opacity-60"
+            className="flex items-center gap-2 rounded-xl border border-pink-100 bg-white px-3 py-2 text-xs font-bold text-pink-600 hover:bg-pink-50 disabled:opacity-60"
           >
             {mengunggahFoto ? <Loader2 size={14} className="animate-spin" /> : <Camera size={14} />}
             {fotoUrl ? "Ganti foto struk" : "Foto struk (opsional)"}
@@ -395,7 +405,7 @@ export default function PengeluaranPage() {
         <button
           onClick={simpan}
           disabled={menyimpan}
-          className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-rose-500 py-3 text-sm font-bold text-white transition hover:bg-rose-600 disabled:opacity-60"
+          className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-pink-600 py-3.5 text-sm font-black text-white shadow-lg shadow-pink-200 transition-all hover:bg-pink-700 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {menyimpan ? <Loader2 size={16} className="animate-spin" /> : <Check size={16} />}
           {idDiubah ? "Simpan Perubahan" : "Catat Pengeluaran"}
@@ -403,48 +413,56 @@ export default function PengeluaranPage() {
       </section>
 
       {/* ---------- Ringkasan bulan ---------- */}
-      <section className="mt-5">
+      <section className="lina-panel rounded-2xl border p-5">
         <div className="flex items-center justify-between">
           <button
             onClick={() => setGeserBulan((n) => n - 1)}
-            className="rounded-lg p-2 text-slate-400 hover:bg-slate-100"
+            className="rounded-xl border border-pink-100 bg-white p-2 text-pink-600 hover:bg-pink-50"
             aria-label="Bulan sebelumnya"
           >
             <ChevronLeft size={18} />
           </button>
-          <h2 className="text-sm font-bold text-slate-700">{labelBulan}</h2>
+          <h2 className="text-base font-black text-slate-800">{labelBulan}</h2>
           <button
             onClick={() => setGeserBulan((n) => Math.min(0, n + 1))}
             disabled={geserBulan >= 0}
-            className="rounded-lg p-2 text-slate-400 hover:bg-slate-100 disabled:opacity-30"
+            className="rounded-xl border border-pink-100 bg-white p-2 text-pink-600 hover:bg-pink-50 disabled:opacity-30"
             aria-label="Bulan berikutnya"
           >
             <ChevronRight size={18} />
           </button>
         </div>
 
-        <div className="mt-2 grid grid-cols-2 gap-3">
-          <div className="rounded-2xl border border-slate-200 bg-white p-3">
-            <p className="text-[11px] font-medium text-slate-500">Biaya usaha</p>
-            <p className="text-lg font-bold text-slate-800">{rupiah(totalBiayaUsaha)}</p>
-            <p className="mt-0.5 text-[10px] text-slate-400">Mengurangi laba</p>
+        <div className="mt-4 grid grid-cols-2 gap-3">
+          <div className="rounded-xl border border-pink-100 bg-pink-50 p-4">
+            <p className="text-[11px] font-black uppercase tracking-wide text-slate-400">
+              Biaya usaha
+            </p>
+            <p className="mt-1 text-xl font-black text-slate-800">{rupiah(totalBiayaUsaha)}</p>
+            <p className="mt-0.5 text-[10px] text-slate-500">Mengurangi laba</p>
           </div>
-          <div className="rounded-2xl border border-slate-200 bg-white p-3">
-            <p className="text-[11px] font-medium text-slate-500">Ambilan pribadi</p>
-            <p className="text-lg font-bold text-slate-800">{rupiah(totalPrive)}</p>
-            <p className="mt-0.5 text-[10px] text-slate-400">Tidak mengurangi laba</p>
+          <div className="rounded-xl border border-pink-100 bg-white p-4">
+            <p className="text-[11px] font-black uppercase tracking-wide text-slate-400">
+              Ambilan pribadi
+            </p>
+            <p className="mt-1 text-xl font-black text-slate-800">{rupiah(totalPrive)}</p>
+            <p className="mt-0.5 text-[10px] text-slate-500">Tidak mengurangi laba</p>
           </div>
         </div>
       </section>
 
       {/* ---------- Daftar per hari ---------- */}
-      <section className="mt-5 space-y-4">
-        {memuat && <p className="py-8 text-center text-sm text-slate-400">Memuat…</p>}
+      <section className="space-y-5">
+        {memuat && (
+          <div className="lina-panel rounded-2xl border p-12 text-center font-bold text-slate-400">
+            Memuat pengeluaran...
+          </div>
+        )}
 
         {!memuat && perHari.length === 0 && (
-          <div className="rounded-2xl border border-dashed border-slate-300 py-10 text-center">
-            <p className="text-sm font-medium text-slate-500">Belum ada pengeluaran bulan ini.</p>
-            <p className="mt-1 text-xs text-slate-400">
+          <div className="lina-panel rounded-2xl border p-12 text-center">
+            <p className="font-bold text-slate-500">Belum ada pengeluaran bulan ini.</p>
+            <p className="mx-auto mt-2 max-w-md text-xs text-slate-400">
               Setiap belanja yang tidak dicatat membuat angka laba terlihat lebih besar dari
               kenyataan.
             </p>
@@ -454,22 +472,22 @@ export default function PengeluaranPage() {
         {perHari.map(([kunciHari, item]) => {
           const subtotal = item.reduce((jumlah, baris) => jumlah + baris.nominal, 0);
           return (
-            <div key={kunciHari}>
-              <div className="mb-2 flex items-baseline justify-between">
-                <h3 className="text-xs font-bold text-slate-600">
+            <div key={kunciHari} className="lina-panel overflow-hidden rounded-2xl border">
+              <div className="flex items-baseline justify-between border-b border-pink-100 bg-pink-50 px-5 py-3">
+                <h3 className="text-sm font-black text-slate-700">
                   {tanggalPanjang(item[0].tanggal)}
                 </h3>
-                <span className="text-xs font-bold text-slate-500">{rupiah(subtotal)}</span>
+                <span className="text-sm font-black text-pink-700">{rupiah(subtotal)}</span>
               </div>
-              <div className="space-y-2">
+              <div className="space-y-2 p-4">
                 {item.map((baris) => (
                   <div
                     key={baris.id}
-                    className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-3"
+                    className="flex items-center gap-3 rounded-xl border border-slate-100 bg-white p-3"
                   >
                     <span className="text-lg">{INFO_KATEGORI[baris.kategori]?.emoji ?? "🧾"}</span>
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-semibold text-slate-700">
+                      <p className="truncate text-sm font-black text-slate-700">
                         {baris.kategori}
                       </p>
                       {baris.catatan && (
@@ -491,18 +509,18 @@ export default function PengeluaranPage() {
                       </button>
                     )}
                     <div className="text-right">
-                      <p className="text-sm font-bold text-slate-800">{rupiah(baris.nominal)}</p>
+                      <p className="text-sm font-black text-slate-800">{rupiah(baris.nominal)}</p>
                       <div className="mt-1 flex justify-end gap-1">
                         <button
                           onClick={() => mulaiUbah(baris)}
-                          className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-sky-600"
+                          className="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-pink-50 hover:text-pink-600"
                           aria-label="Ubah"
                         >
                           <Pencil size={13} />
                         </button>
                         <button
                           onClick={() => hapus(baris)}
-                          className="rounded-lg p-1.5 text-slate-400 hover:bg-rose-50 hover:text-rose-600"
+                          className="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600"
                           aria-label="Hapus"
                         >
                           <Trash2 size={13} />

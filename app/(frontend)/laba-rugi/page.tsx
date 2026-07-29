@@ -96,11 +96,13 @@ export default function LabaRugiPage() {
 
   if (siapMemeriksa && user?.role !== "Owner") {
     return (
-      <div className="p-8 text-center">
-        <Scale className="mx-auto mb-3 text-slate-300" size={40} />
-        <p className="text-sm font-medium text-slate-600">
-          Laporan laba rugi hanya dapat dibuka oleh Owner.
-        </p>
+      <div className="lina-page-stack">
+        <div className="lina-panel rounded-2xl border p-12 text-center">
+          <Scale className="mx-auto mb-3 text-pink-300" size={40} />
+          <p className="font-bold text-slate-500">
+            Laporan laba rugi hanya dapat dibuka oleh Owner.
+          </p>
+        </div>
       </div>
     );
   }
@@ -108,18 +110,18 @@ export default function LabaRugiPage() {
   const p = data?.periode;
 
   return (
-    <div className="mx-auto w-full max-w-4xl px-3 pb-24 pt-3 desktop:px-6 desktop:pt-6">
-      <header className="mb-4">
-        <h1 className="flex items-center gap-2 text-xl font-bold text-slate-800 desktop:text-2xl">
-          <Scale className="text-violet-500" size={24} /> Laba Rugi
+    <div className="lina-page-stack space-y-6">
+      <header className="lina-panel rounded-2xl border p-6">
+        <h1 className="flex items-center gap-2 text-2xl font-black text-slate-800">
+          <Scale className="text-pink-500" /> Laba Rugi
         </h1>
-        <p className="mt-1 text-xs text-slate-500 desktop:text-sm">
+        <p className="mt-1 text-sm text-slate-500">
           Dua angka yang harus dibaca bersamaan: <b>untung berapa</b> dan <b>uangnya ke mana</b>.
         </p>
       </header>
 
       {/* ---------- Pemilih periode ---------- */}
-      <section className="rounded-2xl border border-slate-200 bg-white p-3">
+      <section className="lina-panel rounded-2xl border p-5">
         <div className="flex flex-wrap gap-2">
           {(
             [
@@ -131,10 +133,10 @@ export default function LabaRugiPage() {
             <button
               key={nilai}
               onClick={() => setMode(nilai)}
-              className={`rounded-xl px-3 py-2 text-xs font-semibold transition ${
+              className={`rounded-xl border px-4 py-2 text-xs font-bold transition ${
                 mode === nilai
-                  ? "bg-violet-500 text-white"
-                  : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                  ? "border-pink-300 bg-pink-600 text-white shadow-md shadow-pink-200"
+                  : "border-pink-100 bg-white text-pink-600 hover:bg-pink-50"
               }`}
             >
               {teks}
@@ -143,82 +145,92 @@ export default function LabaRugiPage() {
         </div>
 
         {mode === "bebas" && (
-          <div className="mt-3 grid grid-cols-2 gap-3">
+          <div className="mt-4 grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-[11px] font-semibold text-slate-500">Dari</label>
+              <label className="block text-[11px] font-black uppercase tracking-wide text-slate-400">
+                Dari
+              </label>
               <input
                 type="date"
                 value={mulai}
                 onChange={(e) => setMulai(e.target.value)}
-                className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-violet-400"
+                className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-bold text-slate-700 outline-none focus:border-pink-400"
               />
             </div>
             <div>
-              <label className="block text-[11px] font-semibold text-slate-500">Sampai</label>
+              <label className="block text-[11px] font-black uppercase tracking-wide text-slate-400">
+                Sampai
+              </label>
               <input
                 type="date"
                 value={selesai}
                 onChange={(e) => setSelesai(e.target.value)}
-                className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-violet-400"
+                className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-bold text-slate-700 outline-none focus:border-pink-400"
               />
             </div>
           </div>
         )}
       </section>
 
-      {memuat && <p className="py-12 text-center text-sm text-slate-400">Menghitung…</p>}
+      {memuat && (
+        <div className="lina-panel rounded-2xl border p-12 text-center font-bold text-slate-400">
+          Menghitung...
+        </div>
+      )}
 
       {!memuat && p && data && (
         <>
           {/* ---------- Dua angka berdampingan ---------- */}
-          <section className="mt-4 grid grid-cols-1 gap-3 desktop:grid-cols-2">
+          <section className="grid grid-cols-1 gap-4 xl:grid-cols-2">
             <div
-              className={`rounded-2xl border-2 p-4 ${
-                p.rugi ? "border-rose-200 bg-rose-50" : "border-emerald-200 bg-emerald-50"
+              className={`rounded-2xl border-2 p-6 ${
+                p.rugi ? "border-red-200 bg-red-50" : "border-emerald-200 bg-emerald-50"
               }`}
             >
               <div className="flex items-center gap-2">
                 {p.rugi ? (
-                  <TrendingDown size={16} className="text-rose-500" />
+                  <TrendingDown size={18} className="text-red-500" />
                 ) : (
-                  <TrendingUp size={16} className="text-emerald-600" />
+                  <TrendingUp size={18} className="text-emerald-600" />
                 )}
-                <p className="text-xs font-bold text-slate-600">
-                  Laba usaha {p.rugi && <span className="text-rose-600">(RUGI)</span>}
+                <p className="text-[11px] font-black uppercase tracking-wide text-slate-500">
+                  Laba usaha {p.rugi && <span className="text-red-600">(RUGI)</span>}
                 </p>
               </div>
               <p
-                className={`mt-1 text-3xl font-bold ${p.rugi ? "text-rose-600" : "text-emerald-700"}`}
+                className={`mt-1 text-3xl font-black ${p.rugi ? "text-red-600" : "text-emerald-700"}`}
               >
                 {rupiah(p.labaUsaha)}
               </p>
-              <p className="mt-1 text-[11px] leading-relaxed text-slate-500">
+              <p className="mt-2 text-[11px] leading-relaxed text-slate-500">
                 Omzet {rupiah(p.omzet)} dikurangi biaya usaha {rupiah(p.biayaUsaha)}. Ambilan
                 pribadi tidak dihitung di sini.
               </p>
             </div>
 
             <div
-              className={`rounded-2xl border-2 p-4 ${
+              className={`rounded-2xl border-2 p-6 ${
                 p.posisiKas < 0 ? "border-amber-300 bg-amber-50" : "border-sky-200 bg-sky-50"
               }`}
             >
               <div className="flex items-center gap-2">
                 {p.posisiKas < 0 ? (
-                  <ArrowDown size={16} className="text-amber-600" />
+                  <ArrowDown size={18} className="text-amber-600" />
                 ) : (
-                  <ArrowUp size={16} className="text-sky-600" />
+                  <ArrowUp size={18} className="text-sky-600" />
                 )}
-                <p className="text-xs font-bold text-slate-600">Uang riil (kas)</p>
+                <p className="text-[11px] font-black uppercase tracking-wide text-slate-500">
+                  Uang riil (kas)
+                </p>
               </div>
               <p
-                className={`mt-1 text-3xl font-bold ${
+                className={`mt-1 text-3xl font-black ${
                   p.posisiKas < 0 ? "text-amber-700" : "text-sky-700"
                 }`}
               >
                 {rupiah(p.posisiKas)}
               </p>
-              <p className="mt-1 text-[11px] leading-relaxed text-slate-500">
+              <p className="mt-2 text-[11px] leading-relaxed text-slate-500">
                 Uang masuk {rupiah(p.kasMasuk)} dikurangi semua yang keluar {rupiah(p.kasKeluar)},
                 termasuk ambilan pribadi.
               </p>
@@ -226,8 +238,8 @@ export default function LabaRugiPage() {
           </section>
 
           {/* ---------- Penjelasan selisih ---------- */}
-          <section className="mt-3 rounded-2xl border border-slate-200 bg-white p-4">
-            <h2 className="text-sm font-bold text-slate-700">Kenapa dua angkanya berbeda?</h2>
+          <section className="lina-panel rounded-2xl border p-6">
+            <h2 className="text-lg font-black text-slate-800">Kenapa dua angkanya berbeda?</h2>
             <p className="mt-2 text-xs leading-relaxed text-slate-600">
               {p.labaUsaha !== p.posisiKas ? (
                 <>
@@ -240,11 +252,11 @@ export default function LabaRugiPage() {
               )}
             </p>
 
-            <div className="mt-3 space-y-2">
-              <div className="flex items-start gap-3 rounded-xl bg-amber-50 p-3">
-                <span className="text-base">📄</span>
+            <div className="mt-4 space-y-2">
+              <div className="flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 p-4">
+                <span className="text-lg">📄</span>
                 <div className="flex-1">
-                  <p className="text-xs font-bold text-amber-800">
+                  <p className="text-xs font-black text-amber-800">
                     {p.kenaikanPiutang >= 0 ? "Masih di tangan toko" : "Tertagih dari nota lama"}{" "}
                     — {rupiah(Math.abs(p.kenaikanPiutang))}
                   </p>
@@ -256,10 +268,10 @@ export default function LabaRugiPage() {
                 </div>
               </div>
 
-              <div className="flex items-start gap-3 rounded-xl bg-slate-50 p-3">
-                <span className="text-base">👛</span>
+              <div className="flex items-start gap-3 rounded-xl border border-pink-100 bg-pink-50 p-4">
+                <span className="text-lg">👛</span>
                 <div className="flex-1">
-                  <p className="text-xs font-bold text-slate-700">
+                  <p className="text-xs font-black text-slate-700">
                     Ambilan pribadi — {rupiah(p.prive)}
                   </p>
                   <p className="mt-0.5 text-[11px] leading-relaxed text-slate-600">
@@ -271,7 +283,7 @@ export default function LabaRugiPage() {
               </div>
             </div>
 
-            <p className="mt-3 border-t border-slate-100 pt-2 text-[10px] text-slate-400">
+            <p className="mt-4 border-t border-pink-100 pt-3 font-mono text-[10px] text-slate-400">
               {rupiah(p.labaUsaha)} − {rupiah(p.kenaikanPiutang)} − {rupiah(p.prive)} ={" "}
               {rupiah(p.posisiKas)}
               {p.jembatanSeimbang ? " ✓" : " — angka tidak berimbang, laporkan sebagai bug"}
@@ -279,10 +291,10 @@ export default function LabaRugiPage() {
           </section>
 
           {/* ---------- Rincian biaya ---------- */}
-          <section className="mt-3 rounded-2xl border border-slate-200 bg-white p-4">
-            <h2 className="text-sm font-bold text-slate-700">Biaya usaha ke mana saja</h2>
+          <section className="lina-panel rounded-2xl border p-6">
+            <h2 className="text-lg font-black text-slate-800">Biaya usaha ke mana saja</h2>
             {p.biayaUsaha === 0 ? (
-              <p className="mt-3 rounded-xl bg-amber-50 p-3 text-xs leading-relaxed text-amber-700">
+              <p className="mt-3 rounded-xl border border-amber-200 bg-amber-50 p-4 text-xs leading-relaxed text-amber-700">
                 Belum ada biaya tercatat di periode ini. Selama belanja bahan, bensin, dan upah belum
                 dicatat, angka laba di atas <b>terlalu bagus untuk jadi kenyataan</b>.
               </p>
@@ -293,17 +305,17 @@ export default function LabaRugiPage() {
                   .map((baris) => (
                     <div key={baris.kategori}>
                       <div className="flex items-baseline justify-between text-xs">
-                        <span className="font-semibold text-slate-700">
+                        <span className="font-bold text-slate-700">
                           {INFO_KATEGORI[baris.kategori]?.emoji} {baris.kategori}
                         </span>
-                        <span className="font-bold text-slate-700">
+                        <span className="font-black text-slate-700">
                           {rupiah(baris.nominal)}{" "}
                           <span className="font-normal text-slate-400">({baris.porsi}%)</span>
                         </span>
                       </div>
-                      <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-slate-100">
+                      <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-pink-100">
                         <div
-                          className="h-full rounded-full bg-rose-400"
+                          className="h-full rounded-full bg-pink-500"
                           style={{ width: `${baris.porsi}%` }}
                         />
                       </div>
@@ -314,26 +326,26 @@ export default function LabaRugiPage() {
           </section>
 
           {/* ---------- Pembanding ---------- */}
-          <section className="mt-3 rounded-2xl border border-slate-200 bg-white p-4">
-            <h2 className="text-sm font-bold text-slate-700">
+          <section className="lina-panel rounded-2xl border p-6">
+            <h2 className="text-lg font-black text-slate-800">
               Dibanding periode sebelumnya ({data.pembanding.label})
             </h2>
-            <div className="mt-3 grid grid-cols-3 gap-3 text-center">
-              <div>
-                <p className="text-[10px] text-slate-500">Laba sekarang</p>
-                <p className="text-sm font-bold text-slate-800">{rupiah(p.labaUsaha)}</p>
+            <div className="mt-4 grid grid-cols-3 gap-3 text-center">
+              <div className="rounded-xl border border-pink-100 bg-pink-50 p-3">
+                <p className="text-[10px] font-bold text-slate-500">Laba sekarang</p>
+                <p className="mt-0.5 text-sm font-black text-slate-800">{rupiah(p.labaUsaha)}</p>
               </div>
-              <div>
-                <p className="text-[10px] text-slate-500">Laba sebelumnya</p>
-                <p className="text-sm font-bold text-slate-500">
+              <div className="rounded-xl border border-pink-100 bg-white p-3">
+                <p className="text-[10px] font-bold text-slate-500">Laba sebelumnya</p>
+                <p className="mt-0.5 text-sm font-black text-slate-500">
                   {rupiah(data.pembanding.labaUsaha)}
                 </p>
               </div>
-              <div>
-                <p className="text-[10px] text-slate-500">Selisih</p>
+              <div className="rounded-xl border border-pink-100 bg-white p-3">
+                <p className="text-[10px] font-bold text-slate-500">Selisih</p>
                 <p
-                  className={`text-sm font-bold ${
-                    data.selisihLaba >= 0 ? "text-emerald-600" : "text-rose-600"
+                  className={`mt-0.5 text-sm font-black ${
+                    data.selisihLaba >= 0 ? "text-emerald-600" : "text-red-600"
                   }`}
                 >
                   {data.selisihLaba >= 0 ? "+" : ""}
@@ -344,9 +356,9 @@ export default function LabaRugiPage() {
           </section>
 
           {/* ---------- Angka mentah ---------- */}
-          <section className="mt-3 rounded-2xl border border-slate-200 bg-white p-4">
-            <h2 className="mb-3 text-sm font-bold text-slate-700">Angka lengkap</h2>
-            <dl className="space-y-1.5 text-xs">
+          <section className="lina-panel rounded-2xl border p-6">
+            <h2 className="mb-4 text-lg font-black text-slate-800">Angka lengkap</h2>
+            <dl className="space-y-2 text-xs">
               {[
                 ["Omzet (semua nota periode ini)", p.omzet],
                 [`Jumlah nota`, p.jumlahTransaksi],
@@ -357,9 +369,9 @@ export default function LabaRugiPage() {
                 ["Ambilan pribadi", -p.prive],
                 ["Posisi kas", p.posisiKas],
               ].map(([label, nilai], index) => (
-                <div key={index} className="flex justify-between border-b border-slate-50 pb-1.5">
+                <div key={index} className="flex justify-between border-b border-pink-100 pb-2">
                   <dt className="text-slate-500">{label}</dt>
-                  <dd className="font-semibold text-slate-700">
+                  <dd className="font-black text-slate-700">
                     {label === "Jumlah nota" ? nilai : rupiah(Number(nilai))}
                   </dd>
                 </div>

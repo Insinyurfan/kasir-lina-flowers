@@ -275,10 +275,44 @@ export async function GET(request: NextRequest) {
       // Paling sedikit dulu — inilah jawaban "siapa yang belum dapat kerjaan".
       .sort((a, b) => a.sisaPcs - b.sisaPcs || a.jumlahTugas - b.jumlahTugas);
 
+    // ---- Blok 4: yang harus ditagih setorannya hari ini ---------------------
+    //
+    // Bibi menelepon pengrajin pagi-pagi agar segera menyetorkan pekerjaan.
+    // Papan tugas sudah menyimpan tenggat, tapi belum pernah merangkumnya jadi
+    // satu daftar yang bisa dibacakan sambil menelepon.
+    //
+    // Batasnya kalender WIB, bukan selisih 24 jam: pekerjaan bertenggat kemarin
+    // harus muncul begitu hari berganti pukul 00:00 WIB.
+    const perluDitagih = tugasAktif.filter((tugas) => tugas.hariKeTenggat <= 0);
+
+    const tagihSetoran = Array.from(
+      perluDitagih
+        .reduce((peta, tugas) => {
+          const isi = peta.get(tugas.pengrajinId) ?? {
+            pengrajinId: tugas.pengrajinId,
+            nama: tugas.namaPengrajin,
+            kelompok: kelompokPerPengrajin.get(tugas.pengrajinId) ?? null,
+            tugas: [] as typeof perluDitagih,
+          };
+          isi.tugas.push(tugas);
+          peta.set(tugas.pengrajinId, isi);
+          return peta;
+        }, new Map<number, { pengrajinId: number; nama: string; kelompok: string | null; tugas: typeof perluDitagih }>())
+        .values()
+    )
+      .map((grup) => ({
+        ...grup,
+        tugas: grup.tugas.sort((a, b) => a.hariKeTenggat - b.hariKeTenggat),
+        // Keterlambatan terparah menentukan urutan — yang paling merah dulu.
+        telatTerlama: Math.max(...grup.tugas.map((t) => -t.hariKeTenggat)),
+      }))
+      .sort((a, b) => b.telatTerlama - a.telatTerlama || a.nama.localeCompare(b.nama));
+
     return NextResponse.json({
       notaAktif,
       pekerjaanPerPengrajin,
       bebanKerja,
+      tagihSetoran,
       ringkasan: {
         barisBelumDibagi: belumDitugaskan.length,
         notaAktif: notaAktif.length,

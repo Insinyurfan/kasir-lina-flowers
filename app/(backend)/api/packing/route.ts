@@ -22,25 +22,68 @@ export async function GET(request: Request) {
             product: {
               select: { id: true, nama_produk: true, gambar: true, gambarPosX: true, gambarPosY: true },
             },
+            // Status setoran ikut ditarik di sini, BUKAN lewat permintaan
+            // terpisah: halaman ini dibuka di ponsel sambil mengangkat barang,
+            // dan permintaan kedua berarti jeda tepat di jam tersibuk.
+            penugasan: {
+              select: {
+                id: true,
+                jumlahDitugaskan: true,
+                pengrajin: { select: { id: true, nama: true } },
+                setoran: { select: { jumlah: true } },
+              },
+            },
           },
         },
       },
     });
 
     const data = transactions.map((trx) => {
-      const items = trx.items.map((item) => ({
-        id: item.id,
-        nama_produk: item.product?.nama_produk ?? "-",
-        variantName: item.variantName,
-        label: item.label,
-        jumlah: item.jumlah,
-        satuan: item.satuanHarga,
-        gambar: item.product?.gambar ?? null,
-        gambarPosX: item.product?.gambarPosX ?? 50,
-        gambarPosY: item.product?.gambarPosY ?? 50,
-        packed: item.packed,
-        packedAt: item.packedAt,
-      }));
+      const items = trx.items.map((item) => {
+        const pemegang = item.penugasan.map((tugas) => {
+          const disetor = tugas.setoran.reduce((total, s) => total + s.jumlah, 0);
+          return {
+            penugasanId: tugas.id,
+            nama: tugas.pengrajin.nama,
+            ditugaskan: tugas.jumlahDitugaskan,
+            disetor,
+            tuntas: disetor >= tugas.jumlahDitugaskan,
+          };
+        });
+
+        const totalDitugaskan = pemegang.reduce((t, p) => t + p.ditugaskan, 0);
+        const totalDisetor = pemegang.reduce((t, p) => t + p.disetor, 0);
+        const adaPenugasan = pemegang.length > 0;
+
+        return {
+          id: item.id,
+          nama_produk: item.product?.nama_produk ?? "-",
+          variantName: item.variantName,
+          label: item.label,
+          jumlah: item.jumlah,
+          satuan: item.satuanHarga,
+          gambar: item.product?.gambar ?? null,
+          gambarPosX: item.product?.gambarPosX ?? 50,
+          gambarPosY: item.product?.gambarPosY ?? 50,
+          packed: item.packed,
+          packedAt: item.packedAt,
+          adaPenugasan,
+          totalDitugaskan,
+          totalDisetor,
+          // Lengkap = seluruh yang ditugaskan sudah disetor. Baris tanpa
+          // penugasan TIDAK dianggap kurang — lihat catatan kesiapan di bawah.
+          setoranLengkap: adaPenugasan && totalDisetor >= totalDitugaskan,
+          pemegang,
+        };
+      });
+
+      // Kesiapan HANYA menilai baris yang punya penugasan. Kalau baris tanpa
+      // penugasan ikut dihitung belum siap, seluruh pesanan lama (dibuat
+      // sebelum Papan Tugas ada) akan selamanya tampak menggantung dan
+      // penandanya kehilangan arti sejak hari pertama.
+      const barisBertugas = items.filter((i) => i.adaPenugasan);
+      const barisMenungguSetoran = barisBertugas.filter((i) => !i.setoranLengkap).length;
+
       return {
         id: trx.id,
         trxNumber: trx.trxNumber,
@@ -49,6 +92,9 @@ export async function GET(request: Request) {
         status_pengiriman: trx.status_pengiriman,
         totalItems: items.length,
         packedItems: items.filter((i) => i.packed).length,
+        barisBertugas: barisBertugas.length,
+        barisMenungguSetoran,
+        siapDipacking: barisBertugas.length > 0 && barisMenungguSetoran === 0,
         items,
       };
     });

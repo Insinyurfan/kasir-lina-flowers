@@ -5,6 +5,7 @@ import {
   AlertTriangle,
   Check,
   ClipboardList,
+  Copy,
   Loader2,
   PackageCheck,
   UserPlus,
@@ -131,6 +132,13 @@ type DataPapan = {
     rincianSatuan: { satuan: string; jumlah: number }[];
     adaTerlambat: boolean;
     masihKosong: boolean;
+  }[];
+  tagihSetoran: {
+    pengrajinId: number;
+    nama: string;
+    kelompok: string | null;
+    telatTerlama: number;
+    tugas: BarisTugas[];
   }[];
   ringkasan: {
     barisBelumDibagi: number;
@@ -293,6 +301,31 @@ export default function PapanTugasPage() {
       toast.error(error instanceof Error ? error.message : "Gagal mencatat setoran.");
     } finally {
       setMenyimpan(false);
+    }
+  };
+
+  // Teks tagihan siap tempel ke WhatsApp, mengikuti pola susunTeksPenagihan()
+  // di lib/piutang.ts yang sudah dipakai halaman Piutang.
+  const salinTagihan = async (grup: DataPapan["tagihSetoran"][number]) => {
+    const baris = grup.tugas.map((t) => {
+      const telat = -t.hariKeTenggat;
+      const ket = telat > 0 ? ` (telat ${telat} hari)` : " (jatuh tempo hari ini)";
+      return `• ${t.namaProduk} ${formatQtySatuan(t.sisa, t.satuan)} — ${t.transaksi.nama_pembeli || "toko"}${ket}`;
+    });
+
+    const teks = [
+      `Halo ${grup.nama}, pekerjaan berikut ditunggu setorannya ya:`,
+      "",
+      ...baris,
+      "",
+      "Terima kasih 🙏",
+    ].join("\n");
+
+    try {
+      await navigator.clipboard.writeText(teks);
+      toast.success(`Teks tagihan ${grup.nama} sudah disalin.`);
+    } catch {
+      toast.error("Peramban menolak akses papan klip. Salin manual dari layar.");
     }
   };
 
@@ -590,6 +623,68 @@ export default function PapanTugasPage() {
               })}
             </div>
           )}
+        </section>
+      )}
+
+      {/* ---------- Tagih Setoran ----------
+          Daftar yang bisa dibacakan sambil menelepon pengrajin pagi-pagi.
+          Disembunyikan bila kosong supaya papan tidak penuh penanda kosong. */}
+      {!memuat && (data?.tagihSetoran.length ?? 0) > 0 && (
+        <section className="overflow-hidden rounded-2xl border-2 border-red-200 bg-red-50">
+          <div className="flex items-center gap-2 px-5 py-4">
+            <AlertTriangle size={20} className="text-red-600" />
+            <h2 className="text-lg font-black text-slate-800">
+              Tagih Setoran Hari Ini
+              <span className="ml-1 font-normal text-slate-500">
+                ({data?.tagihSetoran.length} pengrajin)
+              </span>
+            </h2>
+          </div>
+
+          <div className="grid gap-3 px-4 pb-4 xl:grid-cols-2">
+            {data?.tagihSetoran.map((grup) => (
+              <div key={grup.pengrajinId} className="rounded-xl border border-red-200 bg-white p-4">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-black text-slate-800">{grup.nama}</p>
+                    <p className="text-[10px] font-bold text-red-600">
+                      {grup.telatTerlama > 0
+                        ? `Terlama telat ${grup.telatTerlama} hari`
+                        : "Jatuh tempo hari ini"}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => salinTagihan(grup)}
+                    className="shrink-0 rounded-lg border border-red-200 bg-white p-2 text-red-600 hover:bg-red-50"
+                    title="Salin teks tagihan untuk WhatsApp"
+                    aria-label="Salin teks tagihan"
+                  >
+                    <Copy size={14} />
+                  </button>
+                </div>
+
+                <div className="mt-2 space-y-1 border-t border-red-100 pt-2">
+                  {grup.tugas.map((tugas) => (
+                    <div
+                      key={tugas.penugasanId}
+                      className="flex items-center justify-between gap-2 text-[11px]"
+                    >
+                      <span className="min-w-0 truncate text-slate-700">
+                        <b>{tugas.namaProduk}</b>
+                        <span className="text-slate-400">
+                          {" "}
+                          · {tugas.transaksi.nama_pembeli || "Tanpa nama"}
+                        </span>
+                      </span>
+                      <span className="shrink-0 font-black text-red-700">
+                        {formatQtySatuan(tugas.sisa, tugas.satuan)}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
         </section>
       )}
 

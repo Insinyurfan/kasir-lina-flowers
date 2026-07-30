@@ -6,12 +6,16 @@ import {
   ChevronDown,
   ImageOff,
   PackageCheck,
+  Printer,
   RefreshCw,
   Search,
   Truck,
+  UserRound,
 } from "lucide-react";
 import { getSavedUserSession } from "@/lib/userSession";
 import { formatQtySatuan } from "@/lib/satuan";
+import { cetakLabel, type BarisLabel } from "@/lib/labelPacking";
+import { toast } from "@/lib/toast";
 
 type PackingItem = {
   id: number;
@@ -25,6 +29,14 @@ type PackingItem = {
   gambarPosY?: number | null;
   packed: boolean;
   packedAt?: string | null;
+  // Status setoran dari Papan Tugas. `adaPenugasan: false` berarti barang ini
+  // dikerjakan tanpa dicatat (mis. pesanan sebelum Papan Tugas ada) — itu
+  // keadaan yang sah, bukan galat.
+  adaPenugasan: boolean;
+  totalDitugaskan: number;
+  totalDisetor: number;
+  setoranLengkap: boolean;
+  pemegang: { penugasanId: number; nama: string; ditugaskan: number; disetor: number; tuntas: boolean }[];
 };
 
 type PackingTransaction = {
@@ -35,6 +47,9 @@ type PackingTransaction = {
   status_pengiriman: string;
   totalItems: number;
   packedItems: number;
+  barisBertugas: number;
+  barisMenungguSetoran: number;
+  siapDipacking: boolean;
   items: PackingItem[];
 };
 
@@ -148,6 +163,35 @@ export default function PackingPage() {
 
   if (!user) return null;
 
+  // Cetak label bungkus — menggantikan kertas kecil yang selama ini ditulis
+  // tangan lalu ditempel di tiap plastik.
+  const cetak = (t: PackingTransaction, hanya?: PackingItem) => {
+    const baris: BarisLabel[] = (hanya ? [hanya] : t.items).map((item) => ({
+      namaProduk: item.nama_produk,
+      variantName: item.variantName,
+      label: item.label,
+      jumlah: item.jumlah,
+      satuan: item.satuan,
+    }));
+
+    const berhasil = cetakLabel({
+      namaToko: t.nama_pembeli || "Tanpa nama",
+      nomorNota: trxLabel(t),
+      tanggal: new Date(t.tanggal).toLocaleDateString("id-ID", {
+        day: "numeric",
+        month: "short",
+        timeZone: "Asia/Jakarta",
+      }),
+      baris,
+    });
+
+    if (!berhasil) {
+      toast.error("Peramban memblokir jendela cetak. Izinkan pop-up untuk situs ini.");
+      return;
+    }
+    toast.success(`${baris.length} label disiapkan untuk dicetak.`);
+  };
+
   return (
     <div className="w-full">
       <div className="mb-5 flex flex-wrap items-start justify-between gap-3">
@@ -210,11 +254,12 @@ export default function PackingPage() {
                 }`}
               >
                 {/* Header kartu */}
-                <button
-                  type="button"
-                  onClick={() => setExpanded((prev) => ({ ...prev, [t.id]: !open }))}
-                  className="flex w-full items-center gap-3 p-4 text-left"
-                >
+                <div className="flex w-full items-center gap-2 p-4">
+                  <button
+                    type="button"
+                    onClick={() => setExpanded((prev) => ({ ...prev, [t.id]: !open }))}
+                    className="flex min-w-0 flex-1 items-center gap-3 text-left"
+                  >
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
                       <span className="truncate text-base font-black text-slate-800">
@@ -226,6 +271,27 @@ export default function PackingPage() {
                       <span className="rounded-md bg-pink-50 px-1.5 py-0.5 text-[11px] font-bold text-pink-600">
                         {t.status_pengiriman}
                       </span>
+                    </div>
+
+                    {/* Kesiapan setoran. Sengaja menyebut DASAR penilaiannya,
+                        bukan sekadar lencana hijau: kalau seluruh barisnya
+                        tanpa penugasan, sistem sebenarnya tidak tahu apa-apa
+                        tentang nota ini. */}
+                    <div className="mt-1.5">
+                      {t.barisBertugas === 0 ? (
+                        <span className="text-[11px] font-bold text-slate-400">
+                          Penugasan pengrajin tidak tercatat untuk nota ini
+                        </span>
+                      ) : t.siapDipacking ? (
+                        <span className="text-[11px] font-bold text-emerald-600">
+                          Siap dipacking — {t.barisBertugas}/{t.barisBertugas} baris bertugas sudah
+                          disetor
+                        </span>
+                      ) : (
+                        <span className="text-[11px] font-bold text-amber-600">
+                          Menunggu setoran {t.barisMenungguSetoran} dari {t.barisBertugas} baris
+                        </span>
+                      )}
                     </div>
                     <div className="mt-2 flex items-center gap-2">
                       <div className="h-2 flex-1 overflow-hidden rounded-full bg-slate-100">
@@ -248,7 +314,17 @@ export default function PackingPage() {
                     size={20}
                     className={`flex-shrink-0 text-slate-400 transition-transform ${open ? "rotate-180" : ""}`}
                   />
-                </button>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => cetak(t)}
+                    className="flex flex-shrink-0 items-center gap-1.5 rounded-xl border border-pink-200 bg-white px-3 py-2 text-[11px] font-bold text-pink-600 hover:bg-pink-50"
+                    title="Cetak label untuk seluruh barang nota ini"
+                  >
+                    <Printer size={14} /> Label
+                  </button>
+                </div>
 
                 {/* Daftar item */}
                 {open && (
@@ -256,14 +332,17 @@ export default function PackingPage() {
                     {t.items.map((item) => {
                       const busy = busyItem === item.id;
                       return (
-                        <button
+                        <div
                           key={item.id}
+                          className={`flex w-full items-center gap-2 border-b border-slate-50 p-3 transition-colors last:border-b-0 ${
+                            item.packed ? "bg-emerald-50/60" : "hover:bg-pink-50/40"
+                          }`}
+                        >
+                        <button
                           type="button"
                           disabled={busy}
                           onClick={() => void toggleItem(t.id, item)}
-                          className={`flex w-full items-center gap-3 border-b border-slate-50 p-3 text-left transition-colors last:border-b-0 ${
-                            item.packed ? "bg-emerald-50/60" : "hover:bg-pink-50/40"
-                          }`}
+                          className="flex min-w-0 flex-1 items-center gap-3 text-left"
                         >
                           {/* Checkbox besar */}
                           <span
@@ -313,8 +392,53 @@ export default function PackingPage() {
                                 </span>
                               )}
                             </div>
+
+                            {/* Status setoran — satu baris kecil saja supaya
+                                daftar tidak membengkak di layar ponsel. */}
+                            {!item.adaPenugasan ? (
+                              <p className="mt-0.5 text-[10px] text-slate-400">
+                                Tanpa penugasan — tetap bisa dicentang
+                              </p>
+                            ) : (
+                              <p
+                                className={`mt-0.5 flex items-center gap-1 text-[10px] font-bold ${
+                                  item.setoranLengkap
+                                    ? "text-emerald-600"
+                                    : item.totalDisetor === 0
+                                      ? "text-amber-600"
+                                      : "text-slate-500"
+                                }`}
+                              >
+                                <UserRound size={11} className="flex-shrink-0" />
+                                <span className="truncate">
+                                  {item.totalDisetor === 0
+                                    ? `Belum disetor · ${item.pemegang.map((p) => p.nama).join(", ")}`
+                                    : item.pemegang
+                                        .map(
+                                          (p) =>
+                                            `${p.nama} ${formatQtySatuan(p.disetor, item.satuan)}${
+                                              p.tuntas
+                                                ? " ✓"
+                                                : ` dari ${formatQtySatuan(p.ditugaskan, item.satuan)}`
+                                            }`
+                                        )
+                                        .join(" · ")}
+                                </span>
+                              </p>
+                            )}
                           </div>
                         </button>
+
+                        <button
+                          type="button"
+                          onClick={() => cetak(t, item)}
+                          className="flex-shrink-0 rounded-lg p-2 text-slate-400 hover:bg-pink-50 hover:text-pink-600"
+                          title="Cetak ulang label baris ini"
+                          aria-label="Cetak ulang label"
+                        >
+                          <Printer size={14} />
+                        </button>
+                        </div>
                       );
                     })}
                   </div>

@@ -67,9 +67,47 @@ export async function GET(request: NextRequest) {
       }),
     ]);
 
-    // ---- Blok 1: baris yang belum (atau kurang) ditugaskan ------------------
-    const belumDitugaskan = barisPesanan
-      .map((baris) => ({
+    // ---- Blok 1: SELURUH baris pesanan aktif, dikelompokkan per nota --------
+    //
+    // Sengaja TIDAK menyaring yang sudah ditugaskan. Dulu baris hilang begitu
+    // dapat pengrajin, sehingga kartu sebuah nota makin lama makin kosong dan
+    // gambaran utuh pesanan itu justru lenyap — orang jadi tidak tahu lagi
+    // siapa yang mengerjakan apa tanpa pindah blok. Sekarang barisnya tetap
+    // ada, hanya berganti status dan menyebut pengrajinnya.
+    const barisDenganStatus = barisPesanan.map((baris) => {
+      const sisaBagi = sisaBelumDitugaskan(baris.jumlah, baris.penugasan);
+
+      const pemegang = baris.penugasan.map((tugas) => {
+        const disetor = jumlahkanSetoran(tugas.setoran);
+        return {
+          penugasanId: tugas.id,
+          pengrajinId: tugas.pengrajin.id,
+          namaPengrajin: tugas.pengrajin.nama,
+          jumlahDitugaskan: tugas.jumlahDitugaskan,
+          sudahDisetor: disetor,
+          sisa: Math.max(0, tugas.jumlahDitugaskan - disetor),
+          tuntas: disetor >= tugas.jumlahDitugaskan,
+          tenggat: tugas.tenggat,
+          terlambat: terlambat(tugas.tenggat, sekarang),
+        };
+      });
+
+      const semuaTuntas = pemegang.length > 0 && pemegang.every((p) => p.tuntas);
+
+      // "belum"    → belum ada yang memegang sama sekali
+      // "sebagian" → sudah ada yang memegang, tapi masih ada sisa untuk dibagi
+      // "dikerjakan" → seluruhnya sudah dibagi, sedang digarap
+      // "selesai"  → seluruhnya sudah dibagi DAN sudah disetor
+      const status: "belum" | "sebagian" | "dikerjakan" | "selesai" =
+        sisaBagi >= baris.jumlah
+          ? "belum"
+          : sisaBagi > 0
+            ? "sebagian"
+            : semuaTuntas
+              ? "selesai"
+              : "dikerjakan";
+
+      return {
         transactionItemId: baris.id,
         namaProduk: baris.product.nama_produk,
         productId: baris.product.id,
@@ -77,12 +115,45 @@ export async function GET(request: NextRequest) {
         label: baris.label,
         satuan: baris.satuanHarga,
         jumlahDipesan: baris.jumlah,
-        sisa: sisaBelumDitugaskan(baris.jumlah, baris.penugasan),
+        sisa: sisaBagi,
+        status,
+        packed: baris.packed,
+        pemegang,
         transaksi: baris.transaction,
+      };
+    });
+
+    const urutanStatus = { belum: 0, sebagian: 1, dikerjakan: 2, selesai: 3 } as const;
+
+    const notaAktif = Array.from(
+      barisDenganStatus
+        .reduce((peta, baris) => {
+          const isi = peta.get(baris.transaksi.id) ?? {
+            transaksi: baris.transaksi,
+            baris: [] as typeof barisDenganStatus,
+          };
+          isi.baris.push(baris);
+          peta.set(baris.transaksi.id, isi);
+          return peta;
+        }, new Map<number, { transaksi: (typeof barisDenganStatus)[number]["transaksi"]; baris: typeof barisDenganStatus }>())
+        .values()
+    )
+      .map((nota) => ({
+        ...nota,
+        // Yang belum dibagi naik ke atas supaya tetap menonjol sebagai
+        // jaring pengaman, meski barisnya kini bercampur dengan yang lain.
+        baris: nota.baris.sort(
+          (a, b) => urutanStatus[a.status] - urutanStatus[b.status]
+        ),
+        jumlahBelumDibagi: nota.baris.filter(
+          (b) => b.status === "belum" || b.status === "sebagian"
+        ).length,
+        jumlahSelesai: nota.baris.filter((b) => b.status === "selesai").length,
       }))
-      .filter((baris) => baris.sisa > 0)
       // Nota terlama lebih dulu — itu yang paling dekat hari kirimnya.
       .sort((a, b) => a.transaksi.tanggal.getTime() - b.transaksi.tanggal.getTime());
+
+    const belumDitugaskan = barisDenganStatus.filter((baris) => baris.sisa > 0);
 
     // ---- Blok 2: pekerjaan aktif per pengrajin ------------------------------
     type BarisTugas = {
@@ -193,11 +264,12 @@ export async function GET(request: NextRequest) {
       .sort((a, b) => a.sisaPcs - b.sisaPcs || a.jumlahTugas - b.jumlahTugas);
 
     return NextResponse.json({
-      belumDitugaskan,
+      notaAktif,
       pekerjaanPerPengrajin,
       bebanKerja,
       ringkasan: {
         barisBelumDibagi: belumDitugaskan.length,
+        notaAktif: notaAktif.length,
         tugasAktif: tugasAktif.length,
         tugasTerlambat: tugasAktif.filter((t) => t.terlambat).length,
         pengrajinKosong: bebanKerja.filter((p) => p.masihKosong).length,

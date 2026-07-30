@@ -45,6 +45,14 @@ type OrderItem = {
     nama_produk: string;
     gambar?: string | null;
   };
+  // Penugasan per baris — menggantikan `nama_pengrajin` teks bebas yang hanya
+  // menampung satu nama untuk seluruh nota.
+  penugasan?: {
+    id: number;
+    jumlahDitugaskan: number;
+    pengrajin: { id: number; nama: string };
+    setoran: { jumlah: number }[];
+  }[];
 };
 
 type ActiveOrder = {
@@ -299,6 +307,30 @@ export default function OrderStatusPage() {
                         {item.variantName && <span className="ml-1 text-amber-600">({item.variantName})</span>}
                       </p>
                       <p className="text-xs text-slate-500">Jumlah: {formatQtySatuan(item.jumlah, item.satuanHarga)}</p>
+                      {(item.penugasan?.length ?? 0) > 0 ? (
+                        <p className="mt-0.5 text-[11px] leading-tight text-slate-500">
+                          {item.penugasan!.map((tugas) => {
+                            const disetor = tugas.setoran.reduce((t, s) => t + s.jumlah, 0);
+                            const tuntas = disetor >= tugas.jumlahDitugaskan;
+                            return (
+                              <span key={tugas.id} className="mr-2 inline-block">
+                                <b className={tuntas ? "text-emerald-600" : "text-slate-700"}>
+                                  {tugas.pengrajin.nama}
+                                </b>
+                                <span className="text-slate-400">
+                                  {" "}
+                                  {disetor}/{tugas.jumlahDitugaskan}
+                                  {tuntas ? " ✓" : ""}
+                                </span>
+                              </span>
+                            );
+                          })}
+                        </p>
+                      ) : (
+                        <p className="mt-0.5 text-[11px] font-bold text-amber-600">
+                          Belum ditugaskan ke pengrajin
+                        </p>
+                      )}
                     </div>
                     <strong className="text-sm text-pink-600">
                       Rp {item.subtotal.toLocaleString("id-ID")}

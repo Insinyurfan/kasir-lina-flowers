@@ -40,7 +40,9 @@ import {
   ZoomIn,
   Wallet,
   HandCoins,
-  Scale
+  Scale,
+  ClipboardList as PapanTugasIcon,
+  Users as PengrajinIcon
 } from "lucide-react";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -967,7 +969,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 {!isGuest && <NavItem href="/pos" icon={<ShoppingCart />} label="Kasir (POS)" pathname={pathname} onClick={closeMobileMenu} />}
                 <NavItem href="/produk" icon={<Package />} label="Data Produk" pathname={pathname} onClick={closeMobileMenu} />
                 {!isGuest && <NavItem href="/status-pesanan" icon={<ClipboardCheck />} label="Status Pesanan" pathname={pathname} onClick={closeMobileMenu} />}
+                {!isGuest && <NavItem href="/papan-tugas" icon={<PapanTugasIcon />} label="Papan Tugas" pathname={pathname} onClick={closeMobileMenu} />}
                 {!isGuest && <NavItem href="/packing" icon={<PackageCheck />} label="Checklist Packing" pathname={pathname} onClick={closeMobileMenu} />}
+                {(user?.role === "Owner" || user?.role === "Admin") && <NavItem href="/pengrajin" icon={<PengrajinIcon />} label="Pengrajin" pathname={pathname} onClick={closeMobileMenu} />}
                 {!isGuest && <NavItem href="/pelanggan" icon={<Contact />} label="Pelanggan" pathname={pathname} onClick={closeMobileMenu} />}
                 {!isGuest && <NavItem href="/penjualan" icon={<ReceiptHistoryIcon />} label="Riwayat Penjualan" pathname={pathname} onClick={closeMobileMenu} />}
                 {!isGuest && <NavItem href="/unduh-nota" icon={<FileDown />} label="Unduh Nota" pathname={pathname} onClick={closeMobileMenu} />}

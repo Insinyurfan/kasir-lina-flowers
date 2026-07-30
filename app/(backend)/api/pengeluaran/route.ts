@@ -43,6 +43,19 @@ export async function GET(request: NextRequest) {
       orderBy: [{ tanggal: "desc" }, { id: "desc" }],
     });
 
+    // Baris yang lahir dari pencairan upah tidak boleh diubah dari halaman ini
+    // (lihat penjaga di [id]/route.ts). Tandai supaya antarmuka menyembunyikan
+    // tombol ubah/hapus alih-alih memunculkan galat setelah ditekan.
+    const dariPenarikan = await prisma.penarikan.findMany({
+      where: { expenseId: { in: pengeluaran.map((item) => item.id) } },
+      select: { expenseId: true, pengrajin: { select: { nama: true } } },
+    });
+    const petaUpah = new Map(
+      dariPenarikan
+        .filter((p) => p.expenseId !== null)
+        .map((p) => [p.expenseId as number, p.pengrajin.nama])
+    );
+
     const total = pengeluaran.reduce((jumlah, item) => jumlah + item.nominal, 0);
     const perKategori = Object.fromEntries(
       KATEGORI_PENGELUARAN.map((nama) => [
@@ -57,7 +70,10 @@ export async function GET(request: NextRequest) {
       rentang: { mulai: rentang.mulai, selesai: rentang.selesai },
       total,
       perKategori,
-      pengeluaran,
+      pengeluaran: pengeluaran.map((item) => ({
+        ...item,
+        dariPencairanUpah: petaUpah.get(item.id) ?? null,
+      })),
     });
   } catch (error) {
     console.error("Gagal memuat pengeluaran:", error);

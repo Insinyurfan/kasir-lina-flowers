@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { LayoutDashboard, Calendar, FileText, TrendingUp, Clock, Trophy, ChevronRight, HandCoins, Wallet, Scale } from "lucide-react";
+import { LayoutDashboard, Calendar, FileText, TrendingUp, Clock, Trophy, ChevronRight, HandCoins, Wallet, Scale, Users } from "lucide-react";
 import Link from "next/link";
 import { getSavedUserSession } from "@/lib/userSession";
 
@@ -31,6 +31,7 @@ export default function DashboardPage() {
   const [totalPiutang, setTotalPiutang] = useState<number | null>(null);
   const [pengeluaranBulanIni, setPengeluaranBulanIni] = useState<number | null>(null);
   const [labaBulanIni, setLabaBulanIni] = useState<number | null>(null);
+  const [upahTerutang, setUpahTerutang] = useState<number | null>(null);
   // Sapaan "Selamat datang" sekali setelah login berhasil (dari halaman login).
   const [welcome, setWelcome] = useState<string | null>(null);
   // Data finansial (Total Pendapatan) hanya ditampilkan untuk Owner.
@@ -96,6 +97,16 @@ export default function DashboardPage() {
         .then((res) => (res.ok ? res.json() : null))
         .then((data) => {
           if (data?.periode) setLabaBulanIni(data.periode.labaUsaha ?? 0);
+        })
+        .catch(() => {});
+
+      // Saldo upah yang sudah dikerjakan tapi belum dicairkan. Sengaja terpisah
+      // dari kartu laba: biaya baru diakui saat pencairan, jadi angka ini BELUM
+      // masuk Laba Rugi dan mudah terlupakan kalau tidak ditampilkan.
+      fetch("/api/upah", { cache: "no-store" })
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          if (data) setUpahTerutang(data.totalTerutang ?? 0);
         })
         .catch(() => {});
     }, 0);
@@ -249,7 +260,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Ringkasan keuangan bulan berjalan — tiap kartu membuka halaman rinciannya */}
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+      <div className={`grid grid-cols-1 gap-6 ${isOwner ? "md:grid-cols-4" : "md:grid-cols-2"}`}>
         <Link
           href="/piutang"
           className="lina-panel border rounded-2xl p-6 flex items-center gap-4 transition hover:border-amber-300"
@@ -302,6 +313,24 @@ export default function DashboardPage() {
                 {labaBulanIni === null ? "…" : `Rp ${labaBulanIni.toLocaleString("id-ID")}`}
               </h3>
               <p className="text-[10px] text-slate-400">Omzet dikurangi biaya usaha</p>
+            </div>
+          </Link>
+        )}
+
+        {isOwner && (
+          <Link
+            href="/pengrajin"
+            className="lina-panel border rounded-2xl p-6 flex items-center gap-4 transition hover:border-sky-300"
+          >
+            <div className="w-14 h-14 bg-sky-50 text-sky-500 rounded-2xl flex items-center justify-center">
+              <Users size={28} />
+            </div>
+            <div className="min-w-0">
+              <p className="text-sm font-medium text-slate-500">Upah Belum Dicairkan</p>
+              <h3 className="text-2xl font-bold">
+                {upahTerutang === null ? "…" : `Rp ${upahTerutang.toLocaleString("id-ID")}`}
+              </h3>
+              <p className="text-[10px] text-slate-400">Belum masuk laba — biaya diakui saat cair</p>
             </div>
           </Link>
         )}

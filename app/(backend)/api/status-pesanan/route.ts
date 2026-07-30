@@ -32,6 +32,17 @@ export async function GET(request: Request) {
             product: {
               select: { id: true, nama_produk: true, gambar: true, harga: true },
             },
+            // Penugasan per baris menggantikan `nama_pengrajin` teks bebas yang
+            // hanya bisa menyimpan SATU nama untuk seluruh nota — padahal tiap
+            // jenis produk bisa dikerjakan orang berbeda.
+            penugasan: {
+              select: {
+                id: true,
+                jumlahDitugaskan: true,
+                pengrajin: { select: { id: true, nama: true } },
+                setoran: { select: { jumlah: true } },
+              },
+            },
           },
         },
         orderRequest: {

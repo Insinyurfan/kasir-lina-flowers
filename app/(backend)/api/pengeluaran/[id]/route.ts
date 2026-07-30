@@ -14,6 +14,26 @@ export const dynamic = "force-dynamic";
 
 const rupiah = (nilai: number) => `Rp${nilai.toLocaleString("id-ID")}`;
 
+// Pengeluaran yang lahir dari pencairan upah TIDAK boleh disunting dari sini.
+// Mengubahnya akan membuat halaman Pengrajin dan Laba Rugi menampilkan angka
+// berbeda untuk kejadian yang sama, dan menghapusnya akan menyisakan saldo
+// pengrajin yang sudah terlanjur berkurang tanpa biaya yang menyertainya.
+const periksaTautanUpah = async (expenseId: number) => {
+  const penarikan = await prisma.penarikan.findUnique({
+    where: { expenseId },
+    include: { pengrajin: { select: { nama: true } } },
+  });
+
+  if (!penarikan) return null;
+
+  return NextResponse.json(
+    {
+      error: `Pengeluaran ini berasal dari pencairan upah ${penarikan.pengrajin.nama}, jadi tidak bisa diubah dari halaman Pengeluaran. Batalkan pencairannya di halaman Pengrajin bila memang salah.`,
+    },
+    { status: 400 }
+  );
+};
+
 // PATCH /api/pengeluaran/[id] — koreksi pengeluaran yang salah catat.
 export async function PATCH(
   request: NextRequest,
@@ -34,6 +54,9 @@ export async function PATCH(
     if (!sebelum) {
       return NextResponse.json({ error: "Pengeluaran tidak ditemukan." }, { status: 404 });
     }
+
+    const tertautUpah = await periksaTautanUpah(id);
+    if (tertautUpah) return tertautUpah;
 
     const body = await request.json();
     const data: {
@@ -141,6 +164,9 @@ export async function DELETE(
     if (!pengeluaran) {
       return NextResponse.json({ error: "Pengeluaran tidak ditemukan." }, { status: 404 });
     }
+
+    const tertautUpah = await periksaTautanUpah(id);
+    if (tertautUpah) return tertautUpah;
 
     await prisma.expense.delete({ where: { id } });
     if (pengeluaran.fotoUrl) {

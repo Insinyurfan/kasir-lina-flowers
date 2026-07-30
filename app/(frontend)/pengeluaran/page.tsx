@@ -34,6 +34,10 @@ type Pengeluaran = {
   metode: string;
   fotoUrl: string | null;
   pencatatNama: string | null;
+  // Terisi nama pengrajin bila baris ini lahir dari pencairan upah. Baris
+  // seperti itu tidak boleh diubah dari sini — pengubahannya lewat halaman
+  // Pengrajin, supaya saldo dan Laba Rugi tidak pernah berbeda.
+  dariPencairanUpah: string | null;
 };
 
 const rupiah = (nilai: number) => `Rp ${Math.round(nilai || 0).toLocaleString("id-ID")}`;
@@ -497,6 +501,11 @@ export default function PengeluaranPage() {
                         {baris.metode}
                         {baris.pencatatNama ? ` · ${baris.pencatatNama}` : ""}
                       </p>
+                      {baris.dariPencairanUpah && (
+                        <p className="mt-0.5 text-[10px] font-bold text-sky-600">
+                          Dari pencairan upah — ubah di halaman Pengrajin
+                        </p>
+                      )}
                     </div>
                     {baris.fotoUrl && (
                       <button onClick={() => setFotoDibuka(baris.fotoUrl)}>
@@ -510,22 +519,24 @@ export default function PengeluaranPage() {
                     )}
                     <div className="text-right">
                       <p className="text-sm font-black text-slate-800">{rupiah(baris.nominal)}</p>
-                      <div className="mt-1 flex justify-end gap-1">
-                        <button
-                          onClick={() => mulaiUbah(baris)}
-                          className="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-pink-50 hover:text-pink-600"
-                          aria-label="Ubah"
-                        >
-                          <Pencil size={13} />
-                        </button>
-                        <button
-                          onClick={() => hapus(baris)}
-                          className="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600"
-                          aria-label="Hapus"
-                        >
-                          <Trash2 size={13} />
-                        </button>
-                      </div>
+                      {!baris.dariPencairanUpah && (
+                        <div className="mt-1 flex justify-end gap-1">
+                          <button
+                            onClick={() => mulaiUbah(baris)}
+                            className="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-pink-50 hover:text-pink-600"
+                            aria-label="Ubah"
+                          >
+                            <Pencil size={13} />
+                          </button>
+                          <button
+                            onClick={() => hapus(baris)}
+                            className="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600"
+                            aria-label="Hapus"
+                          >
+                            <Trash2 size={13} />
+                          </button>
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}

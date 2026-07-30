@@ -35,6 +35,7 @@ model Product {
   cartItems         UserCartItem[]
   orderRequestItems OrderRequestItem[]
   variants          ProductVariant[]
+  tarifPengrajin    TarifPengrajin[]
 }
 
 model ProductVariant {
@@ -129,6 +130,152 @@ model TransactionItem {
   satuanHarga   String      @default("pcs")
   packed        Boolean     @default(false) // checklist packing: sudah masuk mobil?
   packedAt      DateTime? // waktu dicentang masuk mobil
+  // Penugasan ke pengrajin. SENGAJA per baris, bukan per transaksi: dalam satu
+  // nota, Bando Satin dan Bando Pompom bisa dikerjakan orang berbeda.
+  // `packed` dan penugasan adalah dua tahap terpisah — barang boleh sudah
+  // disetor pengrajin tapi belum masuk mobil, dan sebaliknya.
+  penugasan     Penugasan[]
+}
+
+// Kelompok pengrajin (mis. Ketua Mama Budi → Mama Uri, Mama Ari).
+// `ketuaId` merujuk Pengrajin, BUKAN nama teks bebas, karena ketua juga
+// mengerjakan barang dan memegang saldo upah limpahan anggotanya.
+model Kelompok {
+  id        Int         @id @default(autoincrement())
+  nama      String      @unique // dinormalisasi UPPERCASE
+  ketuaId   Int?        @unique
+  ketua     Pengrajin?  @relation("KetuaKelompok", fields: [ketuaId], references: [id], onDelete: SetNull)
+  anggota   Pengrajin[] @relation("AnggotaKelompok")
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+}
+
+model Pengrajin {
+  id         Int       @id @default(autoincrement())
+  nama       String    @unique // dinormalisasi UPPERCASE
+  kelompokId Int?
+  kelompok   Kelompok? @relation("AnggotaKelompok", fields: [kelompokId], references: [id], onDelete: SetNull)
+  ketuaDari  Kelompok? @relation("KetuaKelompok")
+
+  // Tarif cadangan: dipakai bila produk yang disetor belum punya baris
+  // TarifPengrajin. Tanpa ini, satu produk baru membuat setoran GAGAL dicatat
+  // tepat di pagi tersibuk. Boleh null — kalau null dan tarif produk juga
+  // kosong, setoran ditolak dengan pesan yang menyebut pengrajin & produknya.
+  tarifCadangan Int?
+  satuanTarif   String @default("gross")
+
+  // "SENDIRI" = upah masuk saldo dirinya. "KETUA" = diteruskan ke ketua
+  // kelompoknya, yang lalu membagi sendiri. Ketua kelompok WAJIB "SENDIRI"
+  // supaya tidak ada rantai penerusan berputar.
+  penerimaUpah String  @default("SENDIRI")
+  aktif        Boolean @default(true)
+
+  tarif         TarifPengrajin[]
+  penugasan     Penugasan[]
+  setoranKerja  Setoran[]        @relation("PekerjaSetoran")
+  setoranTerima Setoran[]        @relation("PenerimaSetoran")
+  penarikan     Penarikan[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([aktif])
+  @@index([kelompokId])
+}
+
+// Tarif upah per pasangan pengrajin × produk. Bando Pompom yang lebih rumit
+// dibayar lebih tinggi daripada Bando Satin, dan besarannya beda antar orang.
+model TarifPengrajin {
+  id          Int       @id @default(autoincrement())
+  pengrajinId Int
+  pengrajin   Pengrajin @relation(fields: [pengrajinId], references: [id], onDelete: Cascade)
+  productId   Int
+  product     Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  tarif       Int
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([pengrajinId, productId])
+  @@index([pengrajinId])
+}
+
+model Penugasan {
+  id                Int             @id @default(autoincrement())
+  transactionItemId Int
+  transactionItem   TransactionItem @relation(fields: [transactionItemId], references: [id], onDelete: Cascade)
+  pengrajinId       Int
+  pengrajin         Pengrajin       @relation(fields: [pengrajinId], references: [id], onDelete: Restrict)
+
+  // Satu baris pesanan boleh dibagi ke beberapa pengrajin, jadi jumlahnya
+  // disimpan per penugasan. Total seluruh penugasan pada satu baris divalidasi
+  // di server agar tidak melebihi `TransactionItem.jumlah`.
+  jumlahDitugaskan Int
+  tenggat          DateTime // tanggal janji selesai; bawaan 3 hari dari penugasan
+  catatan          String?
+  pembuatId        Int?
+  pembuatNama      String?
+
+  setoran Setoran[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([transactionItemId])
+  @@index([pengrajinId])
+  @@index([tenggat])
+}
+
+// Setoran barang jadi. SATU kejadian ini menggerakkan dua hal: mengurangi sisa
+// penugasan di papan tugas, dan menambah saldo upah penerima.
+model Setoran {
+  id          Int       @id @default(autoincrement())
+  penugasanId Int
+  penugasan   Penugasan @relation(fields: [penugasanId], references: [id], onDelete: Restrict)
+
+  // Dua pihak dicatat terpisah: `pengrajinId` yang MENGERJAKAN (riwayat kerja
+  // tetap menempel padanya), `penerimaId` yang SALDONYA bertambah.
+  pengrajinId Int
+  pengrajin   Pengrajin @relation("PekerjaSetoran", fields: [pengrajinId], references: [id], onDelete: Restrict)
+  penerimaId  Int
+  penerima    Pengrajin @relation("PenerimaSetoran", fields: [penerimaId], references: [id], onDelete: Restrict)
+
+  tanggal DateTime @default(now())
+  jumlah  Int
+
+  // Snapshot tarif saat setoran dicatat — kenaikan tarif kelak TIDAK boleh
+  // mengubah nilai setoran yang mungkin sudah dibayar.
+  tarifSnapshot      Int
+  pakaiTarifCadangan Boolean @default(false)
+  nilai              Int // jumlah × tarifSnapshot
+
+  catatan      String?
+  pencatatId   Int?
+  pencatatNama String?
+  createdAt    DateTime @default(now())
+
+  @@index([pengrajinId])
+  @@index([penerimaId])
+  @@index([tanggal])
+}
+
+// Pencairan upah. Biaya diakui di sini, BUKAN saat setoran — konsisten dengan
+// basis kas pada change pengeluaran-piutang-laba. `expenseId` menautkannya ke
+// Expense berkategori "Upah Pengrajin" agar masuk laporan Laba Rugi.
+model Penarikan {
+  id          Int       @id @default(autoincrement())
+  pengrajinId Int // penerima saldo yang menarik
+  pengrajin   Pengrajin @relation(fields: [pengrajinId], references: [id], onDelete: Restrict)
+  tanggal     DateTime  @default(now())
+  nominal     Int
+  expenseId   Int?      @unique
+
+  catatan      String?
+  pencatatId   Int?
+  pencatatNama String?
+  createdAt    DateTime @default(now())
+
+  @@index([pengrajinId])
+  @@index([tanggal])
 }
 
 model StoreSetting {

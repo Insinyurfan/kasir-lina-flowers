@@ -49,6 +49,36 @@ export type Expense = $Result.DefaultSelection<Prisma.$ExpensePayload>
  */
 export type TransactionItem = $Result.DefaultSelection<Prisma.$TransactionItemPayload>
 /**
+ * Model Kelompok
+ * 
+ */
+export type Kelompok = $Result.DefaultSelection<Prisma.$KelompokPayload>
+/**
+ * Model Pengrajin
+ * 
+ */
+export type Pengrajin = $Result.DefaultSelection<Prisma.$PengrajinPayload>
+/**
+ * Model TarifPengrajin
+ * 
+ */
+export type TarifPengrajin = $Result.DefaultSelection<Prisma.$TarifPengrajinPayload>
+/**
+ * Model Penugasan
+ * 
+ */
+export type Penugasan = $Result.DefaultSelection<Prisma.$PenugasanPayload>
+/**
+ * Model Setoran
+ * 
+ */
+export type Setoran = $Result.DefaultSelection<Prisma.$SetoranPayload>
+/**
+ * Model Penarikan
+ * 
+ */
+export type Penarikan = $Result.DefaultSelection<Prisma.$PenarikanPayload>
+/**
  * Model StoreSetting
  * 
  */
@@ -291,6 +321,66 @@ export class PrismaClient<
     * ```
     */
   get transactionItem(): Prisma.TransactionItemDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.kelompok`: Exposes CRUD operations for the **Kelompok** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Kelompoks
+    * const kelompoks = await prisma.kelompok.findMany()
+    * ```
+    */
+  get kelompok(): Prisma.KelompokDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.pengrajin`: Exposes CRUD operations for the **Pengrajin** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Pengrajins
+    * const pengrajins = await prisma.pengrajin.findMany()
+    * ```
+    */
+  get pengrajin(): Prisma.PengrajinDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.tarifPengrajin`: Exposes CRUD operations for the **TarifPengrajin** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more TarifPengrajins
+    * const tarifPengrajins = await prisma.tarifPengrajin.findMany()
+    * ```
+    */
+  get tarifPengrajin(): Prisma.TarifPengrajinDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.penugasan`: Exposes CRUD operations for the **Penugasan** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Penugasans
+    * const penugasans = await prisma.penugasan.findMany()
+    * ```
+    */
+  get penugasan(): Prisma.PenugasanDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.setoran`: Exposes CRUD operations for the **Setoran** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Setorans
+    * const setorans = await prisma.setoran.findMany()
+    * ```
+    */
+  get setoran(): Prisma.SetoranDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.penarikan`: Exposes CRUD operations for the **Penarikan** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Penarikans
+    * const penarikans = await prisma.penarikan.findMany()
+    * ```
+    */
+  get penarikan(): Prisma.PenarikanDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.storeSetting`: Exposes CRUD operations for the **StoreSetting** model.
@@ -849,6 +939,12 @@ export namespace Prisma {
     Payment: 'Payment',
     Expense: 'Expense',
     TransactionItem: 'TransactionItem',
+    Kelompok: 'Kelompok',
+    Pengrajin: 'Pengrajin',
+    TarifPengrajin: 'TarifPengrajin',
+    Penugasan: 'Penugasan',
+    Setoran: 'Setoran',
+    Penarikan: 'Penarikan',
     StoreSetting: 'StoreSetting',
     CustomerPrice: 'CustomerPrice',
     Customer: 'Customer',
@@ -878,7 +974,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "product" | "productVariant" | "transaction" | "payment" | "expense" | "transactionItem" | "storeSetting" | "customerPrice" | "customer" | "customerCode" | "notification" | "activityLog" | "userCart" | "userCartItem" | "orderRequest" | "orderStatusHistory" | "orderRequestItem"
+      modelProps: "user" | "product" | "productVariant" | "transaction" | "payment" | "expense" | "transactionItem" | "kelompok" | "pengrajin" | "tarifPengrajin" | "penugasan" | "setoran" | "penarikan" | "storeSetting" | "customerPrice" | "customer" | "customerCode" | "notification" | "activityLog" | "userCart" | "userCartItem" | "orderRequest" | "orderStatusHistory" | "orderRequestItem"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1397,6 +1493,450 @@ export namespace Prisma {
           count: {
             args: Prisma.TransactionItemCountArgs<ExtArgs>
             result: $Utils.Optional<TransactionItemCountAggregateOutputType> | number
+          }
+        }
+      }
+      Kelompok: {
+        payload: Prisma.$KelompokPayload<ExtArgs>
+        fields: Prisma.KelompokFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.KelompokFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KelompokPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.KelompokFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KelompokPayload>
+          }
+          findFirst: {
+            args: Prisma.KelompokFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KelompokPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.KelompokFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KelompokPayload>
+          }
+          findMany: {
+            args: Prisma.KelompokFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KelompokPayload>[]
+          }
+          create: {
+            args: Prisma.KelompokCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KelompokPayload>
+          }
+          createMany: {
+            args: Prisma.KelompokCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.KelompokCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KelompokPayload>[]
+          }
+          delete: {
+            args: Prisma.KelompokDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KelompokPayload>
+          }
+          update: {
+            args: Prisma.KelompokUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KelompokPayload>
+          }
+          deleteMany: {
+            args: Prisma.KelompokDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.KelompokUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.KelompokUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KelompokPayload>[]
+          }
+          upsert: {
+            args: Prisma.KelompokUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KelompokPayload>
+          }
+          aggregate: {
+            args: Prisma.KelompokAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateKelompok>
+          }
+          groupBy: {
+            args: Prisma.KelompokGroupByArgs<ExtArgs>
+            result: $Utils.Optional<KelompokGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.KelompokCountArgs<ExtArgs>
+            result: $Utils.Optional<KelompokCountAggregateOutputType> | number
+          }
+        }
+      }
+      Pengrajin: {
+        payload: Prisma.$PengrajinPayload<ExtArgs>
+        fields: Prisma.PengrajinFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.PengrajinFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PengrajinPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.PengrajinFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PengrajinPayload>
+          }
+          findFirst: {
+            args: Prisma.PengrajinFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PengrajinPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.PengrajinFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PengrajinPayload>
+          }
+          findMany: {
+            args: Prisma.PengrajinFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PengrajinPayload>[]
+          }
+          create: {
+            args: Prisma.PengrajinCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PengrajinPayload>
+          }
+          createMany: {
+            args: Prisma.PengrajinCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.PengrajinCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PengrajinPayload>[]
+          }
+          delete: {
+            args: Prisma.PengrajinDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PengrajinPayload>
+          }
+          update: {
+            args: Prisma.PengrajinUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PengrajinPayload>
+          }
+          deleteMany: {
+            args: Prisma.PengrajinDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.PengrajinUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.PengrajinUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PengrajinPayload>[]
+          }
+          upsert: {
+            args: Prisma.PengrajinUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PengrajinPayload>
+          }
+          aggregate: {
+            args: Prisma.PengrajinAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregatePengrajin>
+          }
+          groupBy: {
+            args: Prisma.PengrajinGroupByArgs<ExtArgs>
+            result: $Utils.Optional<PengrajinGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.PengrajinCountArgs<ExtArgs>
+            result: $Utils.Optional<PengrajinCountAggregateOutputType> | number
+          }
+        }
+      }
+      TarifPengrajin: {
+        payload: Prisma.$TarifPengrajinPayload<ExtArgs>
+        fields: Prisma.TarifPengrajinFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.TarifPengrajinFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TarifPengrajinPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.TarifPengrajinFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TarifPengrajinPayload>
+          }
+          findFirst: {
+            args: Prisma.TarifPengrajinFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TarifPengrajinPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.TarifPengrajinFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TarifPengrajinPayload>
+          }
+          findMany: {
+            args: Prisma.TarifPengrajinFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TarifPengrajinPayload>[]
+          }
+          create: {
+            args: Prisma.TarifPengrajinCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TarifPengrajinPayload>
+          }
+          createMany: {
+            args: Prisma.TarifPengrajinCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.TarifPengrajinCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TarifPengrajinPayload>[]
+          }
+          delete: {
+            args: Prisma.TarifPengrajinDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TarifPengrajinPayload>
+          }
+          update: {
+            args: Prisma.TarifPengrajinUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TarifPengrajinPayload>
+          }
+          deleteMany: {
+            args: Prisma.TarifPengrajinDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.TarifPengrajinUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.TarifPengrajinUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TarifPengrajinPayload>[]
+          }
+          upsert: {
+            args: Prisma.TarifPengrajinUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TarifPengrajinPayload>
+          }
+          aggregate: {
+            args: Prisma.TarifPengrajinAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateTarifPengrajin>
+          }
+          groupBy: {
+            args: Prisma.TarifPengrajinGroupByArgs<ExtArgs>
+            result: $Utils.Optional<TarifPengrajinGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.TarifPengrajinCountArgs<ExtArgs>
+            result: $Utils.Optional<TarifPengrajinCountAggregateOutputType> | number
+          }
+        }
+      }
+      Penugasan: {
+        payload: Prisma.$PenugasanPayload<ExtArgs>
+        fields: Prisma.PenugasanFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.PenugasanFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PenugasanPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.PenugasanFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PenugasanPayload>
+          }
+          findFirst: {
+            args: Prisma.PenugasanFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PenugasanPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.PenugasanFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PenugasanPayload>
+          }
+          findMany: {
+            args: Prisma.PenugasanFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PenugasanPayload>[]
+          }
+          create: {
+            args: Prisma.PenugasanCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PenugasanPayload>
+          }
+          createMany: {
+            args: Prisma.PenugasanCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.PenugasanCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PenugasanPayload>[]
+          }
+          delete: {
+            args: Prisma.PenugasanDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PenugasanPayload>
+          }
+          update: {
+            args: Prisma.PenugasanUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PenugasanPayload>
+          }
+          deleteMany: {
+            args: Prisma.PenugasanDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.PenugasanUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.PenugasanUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PenugasanPayload>[]
+          }
+          upsert: {
+            args: Prisma.PenugasanUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PenugasanPayload>
+          }
+          aggregate: {
+            args: Prisma.PenugasanAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregatePenugasan>
+          }
+          groupBy: {
+            args: Prisma.PenugasanGroupByArgs<ExtArgs>
+            result: $Utils.Optional<PenugasanGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.PenugasanCountArgs<ExtArgs>
+            result: $Utils.Optional<PenugasanCountAggregateOutputType> | number
+          }
+        }
+      }
+      Setoran: {
+        payload: Prisma.$SetoranPayload<ExtArgs>
+        fields: Prisma.SetoranFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.SetoranFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SetoranPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.SetoranFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SetoranPayload>
+          }
+          findFirst: {
+            args: Prisma.SetoranFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SetoranPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.SetoranFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SetoranPayload>
+          }
+          findMany: {
+            args: Prisma.SetoranFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SetoranPayload>[]
+          }
+          create: {
+            args: Prisma.SetoranCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SetoranPayload>
+          }
+          createMany: {
+            args: Prisma.SetoranCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.SetoranCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SetoranPayload>[]
+          }
+          delete: {
+            args: Prisma.SetoranDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SetoranPayload>
+          }
+          update: {
+            args: Prisma.SetoranUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SetoranPayload>
+          }
+          deleteMany: {
+            args: Prisma.SetoranDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.SetoranUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.SetoranUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SetoranPayload>[]
+          }
+          upsert: {
+            args: Prisma.SetoranUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SetoranPayload>
+          }
+          aggregate: {
+            args: Prisma.SetoranAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateSetoran>
+          }
+          groupBy: {
+            args: Prisma.SetoranGroupByArgs<ExtArgs>
+            result: $Utils.Optional<SetoranGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.SetoranCountArgs<ExtArgs>
+            result: $Utils.Optional<SetoranCountAggregateOutputType> | number
+          }
+        }
+      }
+      Penarikan: {
+        payload: Prisma.$PenarikanPayload<ExtArgs>
+        fields: Prisma.PenarikanFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.PenarikanFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PenarikanPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.PenarikanFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PenarikanPayload>
+          }
+          findFirst: {
+            args: Prisma.PenarikanFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PenarikanPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.PenarikanFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PenarikanPayload>
+          }
+          findMany: {
+            args: Prisma.PenarikanFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PenarikanPayload>[]
+          }
+          create: {
+            args: Prisma.PenarikanCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PenarikanPayload>
+          }
+          createMany: {
+            args: Prisma.PenarikanCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.PenarikanCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PenarikanPayload>[]
+          }
+          delete: {
+            args: Prisma.PenarikanDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PenarikanPayload>
+          }
+          update: {
+            args: Prisma.PenarikanUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PenarikanPayload>
+          }
+          deleteMany: {
+            args: Prisma.PenarikanDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.PenarikanUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.PenarikanUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PenarikanPayload>[]
+          }
+          upsert: {
+            args: Prisma.PenarikanUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PenarikanPayload>
+          }
+          aggregate: {
+            args: Prisma.PenarikanAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregatePenarikan>
+          }
+          groupBy: {
+            args: Prisma.PenarikanGroupByArgs<ExtArgs>
+            result: $Utils.Optional<PenarikanGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.PenarikanCountArgs<ExtArgs>
+            result: $Utils.Optional<PenarikanCountAggregateOutputType> | number
           }
         }
       }
@@ -2317,6 +2857,12 @@ export namespace Prisma {
     payment?: PaymentOmit
     expense?: ExpenseOmit
     transactionItem?: TransactionItemOmit
+    kelompok?: KelompokOmit
+    pengrajin?: PengrajinOmit
+    tarifPengrajin?: TarifPengrajinOmit
+    penugasan?: PenugasanOmit
+    setoran?: SetoranOmit
+    penarikan?: PenarikanOmit
     storeSetting?: StoreSettingOmit
     customerPrice?: CustomerPriceOmit
     customer?: CustomerOmit
@@ -2443,6 +2989,7 @@ export namespace Prisma {
     cartItems: number
     orderRequestItems: number
     variants: number
+    tarifPengrajin: number
   }
 
   export type ProductCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2450,6 +2997,7 @@ export namespace Prisma {
     cartItems?: boolean | ProductCountOutputTypeCountCartItemsArgs
     orderRequestItems?: boolean | ProductCountOutputTypeCountOrderRequestItemsArgs
     variants?: boolean | ProductCountOutputTypeCountVariantsArgs
+    tarifPengrajin?: boolean | ProductCountOutputTypeCountTarifPengrajinArgs
   }
 
   // Custom InputTypes
@@ -2489,6 +3037,13 @@ export namespace Prisma {
    */
   export type ProductCountOutputTypeCountVariantsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ProductVariantWhereInput
+  }
+
+  /**
+   * ProductCountOutputType without action
+   */
+  export type ProductCountOutputTypeCountTarifPengrajinArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TarifPengrajinWhereInput
   }
 
 
@@ -2538,6 +3093,166 @@ export namespace Prisma {
    */
   export type TransactionCountOutputTypeCountPaymentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: PaymentWhereInput
+  }
+
+
+  /**
+   * Count Type TransactionItemCountOutputType
+   */
+
+  export type TransactionItemCountOutputType = {
+    penugasan: number
+  }
+
+  export type TransactionItemCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    penugasan?: boolean | TransactionItemCountOutputTypeCountPenugasanArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * TransactionItemCountOutputType without action
+   */
+  export type TransactionItemCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TransactionItemCountOutputType
+     */
+    select?: TransactionItemCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * TransactionItemCountOutputType without action
+   */
+  export type TransactionItemCountOutputTypeCountPenugasanArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PenugasanWhereInput
+  }
+
+
+  /**
+   * Count Type KelompokCountOutputType
+   */
+
+  export type KelompokCountOutputType = {
+    anggota: number
+  }
+
+  export type KelompokCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    anggota?: boolean | KelompokCountOutputTypeCountAnggotaArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * KelompokCountOutputType without action
+   */
+  export type KelompokCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KelompokCountOutputType
+     */
+    select?: KelompokCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * KelompokCountOutputType without action
+   */
+  export type KelompokCountOutputTypeCountAnggotaArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PengrajinWhereInput
+  }
+
+
+  /**
+   * Count Type PengrajinCountOutputType
+   */
+
+  export type PengrajinCountOutputType = {
+    tarif: number
+    penugasan: number
+    setoranKerja: number
+    setoranTerima: number
+    penarikan: number
+  }
+
+  export type PengrajinCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    tarif?: boolean | PengrajinCountOutputTypeCountTarifArgs
+    penugasan?: boolean | PengrajinCountOutputTypeCountPenugasanArgs
+    setoranKerja?: boolean | PengrajinCountOutputTypeCountSetoranKerjaArgs
+    setoranTerima?: boolean | PengrajinCountOutputTypeCountSetoranTerimaArgs
+    penarikan?: boolean | PengrajinCountOutputTypeCountPenarikanArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * PengrajinCountOutputType without action
+   */
+  export type PengrajinCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PengrajinCountOutputType
+     */
+    select?: PengrajinCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * PengrajinCountOutputType without action
+   */
+  export type PengrajinCountOutputTypeCountTarifArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TarifPengrajinWhereInput
+  }
+
+  /**
+   * PengrajinCountOutputType without action
+   */
+  export type PengrajinCountOutputTypeCountPenugasanArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PenugasanWhereInput
+  }
+
+  /**
+   * PengrajinCountOutputType without action
+   */
+  export type PengrajinCountOutputTypeCountSetoranKerjaArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SetoranWhereInput
+  }
+
+  /**
+   * PengrajinCountOutputType without action
+   */
+  export type PengrajinCountOutputTypeCountSetoranTerimaArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SetoranWhereInput
+  }
+
+  /**
+   * PengrajinCountOutputType without action
+   */
+  export type PengrajinCountOutputTypeCountPenarikanArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PenarikanWhereInput
+  }
+
+
+  /**
+   * Count Type PenugasanCountOutputType
+   */
+
+  export type PenugasanCountOutputType = {
+    setoran: number
+  }
+
+  export type PenugasanCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    setoran?: boolean | PenugasanCountOutputTypeCountSetoranArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * PenugasanCountOutputType without action
+   */
+  export type PenugasanCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PenugasanCountOutputType
+     */
+    select?: PenugasanCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * PenugasanCountOutputType without action
+   */
+  export type PenugasanCountOutputTypeCountSetoranArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SetoranWhereInput
   }
 
 
@@ -4031,6 +4746,7 @@ export namespace Prisma {
     cartItems?: boolean | Product$cartItemsArgs<ExtArgs>
     orderRequestItems?: boolean | Product$orderRequestItemsArgs<ExtArgs>
     variants?: boolean | Product$variantsArgs<ExtArgs>
+    tarifPengrajin?: boolean | Product$tarifPengrajinArgs<ExtArgs>
     _count?: boolean | ProductCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["product"]>
 
@@ -4079,6 +4795,7 @@ export namespace Prisma {
     cartItems?: boolean | Product$cartItemsArgs<ExtArgs>
     orderRequestItems?: boolean | Product$orderRequestItemsArgs<ExtArgs>
     variants?: boolean | Product$variantsArgs<ExtArgs>
+    tarifPengrajin?: boolean | Product$tarifPengrajinArgs<ExtArgs>
     _count?: boolean | ProductCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ProductIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -4091,6 +4808,7 @@ export namespace Prisma {
       cartItems: Prisma.$UserCartItemPayload<ExtArgs>[]
       orderRequestItems: Prisma.$OrderRequestItemPayload<ExtArgs>[]
       variants: Prisma.$ProductVariantPayload<ExtArgs>[]
+      tarifPengrajin: Prisma.$TarifPengrajinPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -4501,6 +5219,7 @@ export namespace Prisma {
     cartItems<T extends Product$cartItemsArgs<ExtArgs> = {}>(args?: Subset<T, Product$cartItemsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserCartItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     orderRequestItems<T extends Product$orderRequestItemsArgs<ExtArgs> = {}>(args?: Subset<T, Product$orderRequestItemsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrderRequestItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     variants<T extends Product$variantsArgs<ExtArgs> = {}>(args?: Subset<T, Product$variantsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProductVariantPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    tarifPengrajin<T extends Product$tarifPengrajinArgs<ExtArgs> = {}>(args?: Subset<T, Product$tarifPengrajinArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TarifPengrajinPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5021,6 +5740,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ProductVariantScalarFieldEnum | ProductVariantScalarFieldEnum[]
+  }
+
+  /**
+   * Product.tarifPengrajin
+   */
+  export type Product$tarifPengrajinArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TarifPengrajin
+     */
+    select?: TarifPengrajinSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TarifPengrajin
+     */
+    omit?: TarifPengrajinOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TarifPengrajinInclude<ExtArgs> | null
+    where?: TarifPengrajinWhereInput
+    orderBy?: TarifPengrajinOrderByWithRelationInput | TarifPengrajinOrderByWithRelationInput[]
+    cursor?: TarifPengrajinWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TarifPengrajinScalarFieldEnum | TarifPengrajinScalarFieldEnum[]
   }
 
   /**
@@ -10045,6 +10788,8 @@ export namespace Prisma {
     packedAt?: boolean
     transaction?: boolean | TransactionDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
+    penugasan?: boolean | TransactionItem$penugasanArgs<ExtArgs>
+    _count?: boolean | TransactionItemCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["transactionItem"]>
 
   export type TransactionItemSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -10103,6 +10848,8 @@ export namespace Prisma {
   export type TransactionItemInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     transaction?: boolean | TransactionDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
+    penugasan?: boolean | TransactionItem$penugasanArgs<ExtArgs>
+    _count?: boolean | TransactionItemCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type TransactionItemIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     transaction?: boolean | TransactionDefaultArgs<ExtArgs>
@@ -10118,6 +10865,7 @@ export namespace Prisma {
     objects: {
       transaction: Prisma.$TransactionPayload<ExtArgs>
       product: Prisma.$ProductPayload<ExtArgs>
+      penugasan: Prisma.$PenugasanPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -10529,6 +11277,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     transaction<T extends TransactionDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TransactionDefaultArgs<ExtArgs>>): Prisma__TransactionClient<$Result.GetResult<Prisma.$TransactionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     product<T extends ProductDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProductDefaultArgs<ExtArgs>>): Prisma__ProductClient<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    penugasan<T extends TransactionItem$penugasanArgs<ExtArgs> = {}>(args?: Subset<T, TransactionItem$penugasanArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PenugasanPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -10967,6 +11716,30 @@ export namespace Prisma {
   }
 
   /**
+   * TransactionItem.penugasan
+   */
+  export type TransactionItem$penugasanArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Penugasan
+     */
+    select?: PenugasanSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Penugasan
+     */
+    omit?: PenugasanOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PenugasanInclude<ExtArgs> | null
+    where?: PenugasanWhereInput
+    orderBy?: PenugasanOrderByWithRelationInput | PenugasanOrderByWithRelationInput[]
+    cursor?: PenugasanWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: PenugasanScalarFieldEnum | PenugasanScalarFieldEnum[]
+  }
+
+  /**
    * TransactionItem without action
    */
   export type TransactionItemDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -10982,6 +11755,7223 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: TransactionItemInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Kelompok
+   */
+
+  export type AggregateKelompok = {
+    _count: KelompokCountAggregateOutputType | null
+    _avg: KelompokAvgAggregateOutputType | null
+    _sum: KelompokSumAggregateOutputType | null
+    _min: KelompokMinAggregateOutputType | null
+    _max: KelompokMaxAggregateOutputType | null
+  }
+
+  export type KelompokAvgAggregateOutputType = {
+    id: number | null
+    ketuaId: number | null
+  }
+
+  export type KelompokSumAggregateOutputType = {
+    id: number | null
+    ketuaId: number | null
+  }
+
+  export type KelompokMinAggregateOutputType = {
+    id: number | null
+    nama: string | null
+    ketuaId: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type KelompokMaxAggregateOutputType = {
+    id: number | null
+    nama: string | null
+    ketuaId: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type KelompokCountAggregateOutputType = {
+    id: number
+    nama: number
+    ketuaId: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type KelompokAvgAggregateInputType = {
+    id?: true
+    ketuaId?: true
+  }
+
+  export type KelompokSumAggregateInputType = {
+    id?: true
+    ketuaId?: true
+  }
+
+  export type KelompokMinAggregateInputType = {
+    id?: true
+    nama?: true
+    ketuaId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type KelompokMaxAggregateInputType = {
+    id?: true
+    nama?: true
+    ketuaId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type KelompokCountAggregateInputType = {
+    id?: true
+    nama?: true
+    ketuaId?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type KelompokAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Kelompok to aggregate.
+     */
+    where?: KelompokWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Kelompoks to fetch.
+     */
+    orderBy?: KelompokOrderByWithRelationInput | KelompokOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: KelompokWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Kelompoks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Kelompoks.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Kelompoks
+    **/
+    _count?: true | KelompokCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: KelompokAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: KelompokSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: KelompokMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: KelompokMaxAggregateInputType
+  }
+
+  export type GetKelompokAggregateType<T extends KelompokAggregateArgs> = {
+        [P in keyof T & keyof AggregateKelompok]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateKelompok[P]>
+      : GetScalarType<T[P], AggregateKelompok[P]>
+  }
+
+
+
+
+  export type KelompokGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: KelompokWhereInput
+    orderBy?: KelompokOrderByWithAggregationInput | KelompokOrderByWithAggregationInput[]
+    by: KelompokScalarFieldEnum[] | KelompokScalarFieldEnum
+    having?: KelompokScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: KelompokCountAggregateInputType | true
+    _avg?: KelompokAvgAggregateInputType
+    _sum?: KelompokSumAggregateInputType
+    _min?: KelompokMinAggregateInputType
+    _max?: KelompokMaxAggregateInputType
+  }
+
+  export type KelompokGroupByOutputType = {
+    id: number
+    nama: string
+    ketuaId: number | null
+    createdAt: Date
+    updatedAt: Date
+    _count: KelompokCountAggregateOutputType | null
+    _avg: KelompokAvgAggregateOutputType | null
+    _sum: KelompokSumAggregateOutputType | null
+    _min: KelompokMinAggregateOutputType | null
+    _max: KelompokMaxAggregateOutputType | null
+  }
+
+  type GetKelompokGroupByPayload<T extends KelompokGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<KelompokGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof KelompokGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], KelompokGroupByOutputType[P]>
+            : GetScalarType<T[P], KelompokGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type KelompokSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    nama?: boolean
+    ketuaId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    ketua?: boolean | Kelompok$ketuaArgs<ExtArgs>
+    anggota?: boolean | Kelompok$anggotaArgs<ExtArgs>
+    _count?: boolean | KelompokCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["kelompok"]>
+
+  export type KelompokSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    nama?: boolean
+    ketuaId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    ketua?: boolean | Kelompok$ketuaArgs<ExtArgs>
+  }, ExtArgs["result"]["kelompok"]>
+
+  export type KelompokSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    nama?: boolean
+    ketuaId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    ketua?: boolean | Kelompok$ketuaArgs<ExtArgs>
+  }, ExtArgs["result"]["kelompok"]>
+
+  export type KelompokSelectScalar = {
+    id?: boolean
+    nama?: boolean
+    ketuaId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type KelompokOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "nama" | "ketuaId" | "createdAt" | "updatedAt", ExtArgs["result"]["kelompok"]>
+  export type KelompokInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    ketua?: boolean | Kelompok$ketuaArgs<ExtArgs>
+    anggota?: boolean | Kelompok$anggotaArgs<ExtArgs>
+    _count?: boolean | KelompokCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type KelompokIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    ketua?: boolean | Kelompok$ketuaArgs<ExtArgs>
+  }
+  export type KelompokIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    ketua?: boolean | Kelompok$ketuaArgs<ExtArgs>
+  }
+
+  export type $KelompokPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Kelompok"
+    objects: {
+      ketua: Prisma.$PengrajinPayload<ExtArgs> | null
+      anggota: Prisma.$PengrajinPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      nama: string
+      ketuaId: number | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["kelompok"]>
+    composites: {}
+  }
+
+  type KelompokGetPayload<S extends boolean | null | undefined | KelompokDefaultArgs> = $Result.GetResult<Prisma.$KelompokPayload, S>
+
+  type KelompokCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<KelompokFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: KelompokCountAggregateInputType | true
+    }
+
+  export interface KelompokDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Kelompok'], meta: { name: 'Kelompok' } }
+    /**
+     * Find zero or one Kelompok that matches the filter.
+     * @param {KelompokFindUniqueArgs} args - Arguments to find a Kelompok
+     * @example
+     * // Get one Kelompok
+     * const kelompok = await prisma.kelompok.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends KelompokFindUniqueArgs>(args: SelectSubset<T, KelompokFindUniqueArgs<ExtArgs>>): Prisma__KelompokClient<$Result.GetResult<Prisma.$KelompokPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Kelompok that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {KelompokFindUniqueOrThrowArgs} args - Arguments to find a Kelompok
+     * @example
+     * // Get one Kelompok
+     * const kelompok = await prisma.kelompok.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends KelompokFindUniqueOrThrowArgs>(args: SelectSubset<T, KelompokFindUniqueOrThrowArgs<ExtArgs>>): Prisma__KelompokClient<$Result.GetResult<Prisma.$KelompokPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Kelompok that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KelompokFindFirstArgs} args - Arguments to find a Kelompok
+     * @example
+     * // Get one Kelompok
+     * const kelompok = await prisma.kelompok.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends KelompokFindFirstArgs>(args?: SelectSubset<T, KelompokFindFirstArgs<ExtArgs>>): Prisma__KelompokClient<$Result.GetResult<Prisma.$KelompokPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Kelompok that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KelompokFindFirstOrThrowArgs} args - Arguments to find a Kelompok
+     * @example
+     * // Get one Kelompok
+     * const kelompok = await prisma.kelompok.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends KelompokFindFirstOrThrowArgs>(args?: SelectSubset<T, KelompokFindFirstOrThrowArgs<ExtArgs>>): Prisma__KelompokClient<$Result.GetResult<Prisma.$KelompokPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Kelompoks that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KelompokFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Kelompoks
+     * const kelompoks = await prisma.kelompok.findMany()
+     * 
+     * // Get first 10 Kelompoks
+     * const kelompoks = await prisma.kelompok.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const kelompokWithIdOnly = await prisma.kelompok.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends KelompokFindManyArgs>(args?: SelectSubset<T, KelompokFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$KelompokPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Kelompok.
+     * @param {KelompokCreateArgs} args - Arguments to create a Kelompok.
+     * @example
+     * // Create one Kelompok
+     * const Kelompok = await prisma.kelompok.create({
+     *   data: {
+     *     // ... data to create a Kelompok
+     *   }
+     * })
+     * 
+     */
+    create<T extends KelompokCreateArgs>(args: SelectSubset<T, KelompokCreateArgs<ExtArgs>>): Prisma__KelompokClient<$Result.GetResult<Prisma.$KelompokPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Kelompoks.
+     * @param {KelompokCreateManyArgs} args - Arguments to create many Kelompoks.
+     * @example
+     * // Create many Kelompoks
+     * const kelompok = await prisma.kelompok.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends KelompokCreateManyArgs>(args?: SelectSubset<T, KelompokCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Kelompoks and returns the data saved in the database.
+     * @param {KelompokCreateManyAndReturnArgs} args - Arguments to create many Kelompoks.
+     * @example
+     * // Create many Kelompoks
+     * const kelompok = await prisma.kelompok.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Kelompoks and only return the `id`
+     * const kelompokWithIdOnly = await prisma.kelompok.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends KelompokCreateManyAndReturnArgs>(args?: SelectSubset<T, KelompokCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$KelompokPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Kelompok.
+     * @param {KelompokDeleteArgs} args - Arguments to delete one Kelompok.
+     * @example
+     * // Delete one Kelompok
+     * const Kelompok = await prisma.kelompok.delete({
+     *   where: {
+     *     // ... filter to delete one Kelompok
+     *   }
+     * })
+     * 
+     */
+    delete<T extends KelompokDeleteArgs>(args: SelectSubset<T, KelompokDeleteArgs<ExtArgs>>): Prisma__KelompokClient<$Result.GetResult<Prisma.$KelompokPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Kelompok.
+     * @param {KelompokUpdateArgs} args - Arguments to update one Kelompok.
+     * @example
+     * // Update one Kelompok
+     * const kelompok = await prisma.kelompok.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends KelompokUpdateArgs>(args: SelectSubset<T, KelompokUpdateArgs<ExtArgs>>): Prisma__KelompokClient<$Result.GetResult<Prisma.$KelompokPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Kelompoks.
+     * @param {KelompokDeleteManyArgs} args - Arguments to filter Kelompoks to delete.
+     * @example
+     * // Delete a few Kelompoks
+     * const { count } = await prisma.kelompok.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends KelompokDeleteManyArgs>(args?: SelectSubset<T, KelompokDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Kelompoks.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KelompokUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Kelompoks
+     * const kelompok = await prisma.kelompok.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends KelompokUpdateManyArgs>(args: SelectSubset<T, KelompokUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Kelompoks and returns the data updated in the database.
+     * @param {KelompokUpdateManyAndReturnArgs} args - Arguments to update many Kelompoks.
+     * @example
+     * // Update many Kelompoks
+     * const kelompok = await prisma.kelompok.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Kelompoks and only return the `id`
+     * const kelompokWithIdOnly = await prisma.kelompok.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends KelompokUpdateManyAndReturnArgs>(args: SelectSubset<T, KelompokUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$KelompokPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Kelompok.
+     * @param {KelompokUpsertArgs} args - Arguments to update or create a Kelompok.
+     * @example
+     * // Update or create a Kelompok
+     * const kelompok = await prisma.kelompok.upsert({
+     *   create: {
+     *     // ... data to create a Kelompok
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Kelompok we want to update
+     *   }
+     * })
+     */
+    upsert<T extends KelompokUpsertArgs>(args: SelectSubset<T, KelompokUpsertArgs<ExtArgs>>): Prisma__KelompokClient<$Result.GetResult<Prisma.$KelompokPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Kelompoks.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KelompokCountArgs} args - Arguments to filter Kelompoks to count.
+     * @example
+     * // Count the number of Kelompoks
+     * const count = await prisma.kelompok.count({
+     *   where: {
+     *     // ... the filter for the Kelompoks we want to count
+     *   }
+     * })
+    **/
+    count<T extends KelompokCountArgs>(
+      args?: Subset<T, KelompokCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], KelompokCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Kelompok.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KelompokAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends KelompokAggregateArgs>(args: Subset<T, KelompokAggregateArgs>): Prisma.PrismaPromise<GetKelompokAggregateType<T>>
+
+    /**
+     * Group by Kelompok.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KelompokGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends KelompokGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: KelompokGroupByArgs['orderBy'] }
+        : { orderBy?: KelompokGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, KelompokGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetKelompokGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Kelompok model
+   */
+  readonly fields: KelompokFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Kelompok.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__KelompokClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    ketua<T extends Kelompok$ketuaArgs<ExtArgs> = {}>(args?: Subset<T, Kelompok$ketuaArgs<ExtArgs>>): Prisma__PengrajinClient<$Result.GetResult<Prisma.$PengrajinPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    anggota<T extends Kelompok$anggotaArgs<ExtArgs> = {}>(args?: Subset<T, Kelompok$anggotaArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PengrajinPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Kelompok model
+   */
+  interface KelompokFieldRefs {
+    readonly id: FieldRef<"Kelompok", 'Int'>
+    readonly nama: FieldRef<"Kelompok", 'String'>
+    readonly ketuaId: FieldRef<"Kelompok", 'Int'>
+    readonly createdAt: FieldRef<"Kelompok", 'DateTime'>
+    readonly updatedAt: FieldRef<"Kelompok", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Kelompok findUnique
+   */
+  export type KelompokFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Kelompok
+     */
+    select?: KelompokSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Kelompok
+     */
+    omit?: KelompokOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KelompokInclude<ExtArgs> | null
+    /**
+     * Filter, which Kelompok to fetch.
+     */
+    where: KelompokWhereUniqueInput
+  }
+
+  /**
+   * Kelompok findUniqueOrThrow
+   */
+  export type KelompokFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Kelompok
+     */
+    select?: KelompokSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Kelompok
+     */
+    omit?: KelompokOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KelompokInclude<ExtArgs> | null
+    /**
+     * Filter, which Kelompok to fetch.
+     */
+    where: KelompokWhereUniqueInput
+  }
+
+  /**
+   * Kelompok findFirst
+   */
+  export type KelompokFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Kelompok
+     */
+    select?: KelompokSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Kelompok
+     */
+    omit?: KelompokOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KelompokInclude<ExtArgs> | null
+    /**
+     * Filter, which Kelompok to fetch.
+     */
+    where?: KelompokWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Kelompoks to fetch.
+     */
+    orderBy?: KelompokOrderByWithRelationInput | KelompokOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Kelompoks.
+     */
+    cursor?: KelompokWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Kelompoks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Kelompoks.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Kelompoks.
+     */
+    distinct?: KelompokScalarFieldEnum | KelompokScalarFieldEnum[]
+  }
+
+  /**
+   * Kelompok findFirstOrThrow
+   */
+  export type KelompokFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Kelompok
+     */
+    select?: KelompokSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Kelompok
+     */
+    omit?: KelompokOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KelompokInclude<ExtArgs> | null
+    /**
+     * Filter, which Kelompok to fetch.
+     */
+    where?: KelompokWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Kelompoks to fetch.
+     */
+    orderBy?: KelompokOrderByWithRelationInput | KelompokOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Kelompoks.
+     */
+    cursor?: KelompokWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Kelompoks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Kelompoks.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Kelompoks.
+     */
+    distinct?: KelompokScalarFieldEnum | KelompokScalarFieldEnum[]
+  }
+
+  /**
+   * Kelompok findMany
+   */
+  export type KelompokFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Kelompok
+     */
+    select?: KelompokSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Kelompok
+     */
+    omit?: KelompokOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KelompokInclude<ExtArgs> | null
+    /**
+     * Filter, which Kelompoks to fetch.
+     */
+    where?: KelompokWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Kelompoks to fetch.
+     */
+    orderBy?: KelompokOrderByWithRelationInput | KelompokOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Kelompoks.
+     */
+    cursor?: KelompokWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Kelompoks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Kelompoks.
+     */
+    skip?: number
+    distinct?: KelompokScalarFieldEnum | KelompokScalarFieldEnum[]
+  }
+
+  /**
+   * Kelompok create
+   */
+  export type KelompokCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Kelompok
+     */
+    select?: KelompokSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Kelompok
+     */
+    omit?: KelompokOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KelompokInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Kelompok.
+     */
+    data: XOR<KelompokCreateInput, KelompokUncheckedCreateInput>
+  }
+
+  /**
+   * Kelompok createMany
+   */
+  export type KelompokCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Kelompoks.
+     */
+    data: KelompokCreateManyInput | KelompokCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Kelompok createManyAndReturn
+   */
+  export type KelompokCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Kelompok
+     */
+    select?: KelompokSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Kelompok
+     */
+    omit?: KelompokOmit<ExtArgs> | null
+    /**
+     * The data used to create many Kelompoks.
+     */
+    data: KelompokCreateManyInput | KelompokCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KelompokIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Kelompok update
+   */
+  export type KelompokUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Kelompok
+     */
+    select?: KelompokSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Kelompok
+     */
+    omit?: KelompokOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KelompokInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Kelompok.
+     */
+    data: XOR<KelompokUpdateInput, KelompokUncheckedUpdateInput>
+    /**
+     * Choose, which Kelompok to update.
+     */
+    where: KelompokWhereUniqueInput
+  }
+
+  /**
+   * Kelompok updateMany
+   */
+  export type KelompokUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Kelompoks.
+     */
+    data: XOR<KelompokUpdateManyMutationInput, KelompokUncheckedUpdateManyInput>
+    /**
+     * Filter which Kelompoks to update
+     */
+    where?: KelompokWhereInput
+    /**
+     * Limit how many Kelompoks to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Kelompok updateManyAndReturn
+   */
+  export type KelompokUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Kelompok
+     */
+    select?: KelompokSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Kelompok
+     */
+    omit?: KelompokOmit<ExtArgs> | null
+    /**
+     * The data used to update Kelompoks.
+     */
+    data: XOR<KelompokUpdateManyMutationInput, KelompokUncheckedUpdateManyInput>
+    /**
+     * Filter which Kelompoks to update
+     */
+    where?: KelompokWhereInput
+    /**
+     * Limit how many Kelompoks to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KelompokIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Kelompok upsert
+   */
+  export type KelompokUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Kelompok
+     */
+    select?: KelompokSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Kelompok
+     */
+    omit?: KelompokOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KelompokInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Kelompok to update in case it exists.
+     */
+    where: KelompokWhereUniqueInput
+    /**
+     * In case the Kelompok found by the `where` argument doesn't exist, create a new Kelompok with this data.
+     */
+    create: XOR<KelompokCreateInput, KelompokUncheckedCreateInput>
+    /**
+     * In case the Kelompok was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<KelompokUpdateInput, KelompokUncheckedUpdateInput>
+  }
+
+  /**
+   * Kelompok delete
+   */
+  export type KelompokDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Kelompok
+     */
+    select?: KelompokSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Kelompok
+     */
+    omit?: KelompokOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KelompokInclude<ExtArgs> | null
+    /**
+     * Filter which Kelompok to delete.
+     */
+    where: KelompokWhereUniqueInput
+  }
+
+  /**
+   * Kelompok deleteMany
+   */
+  export type KelompokDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Kelompoks to delete
+     */
+    where?: KelompokWhereInput
+    /**
+     * Limit how many Kelompoks to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Kelompok.ketua
+   */
+  export type Kelompok$ketuaArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Pengrajin
+     */
+    select?: PengrajinSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Pengrajin
+     */
+    omit?: PengrajinOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PengrajinInclude<ExtArgs> | null
+    where?: PengrajinWhereInput
+  }
+
+  /**
+   * Kelompok.anggota
+   */
+  export type Kelompok$anggotaArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Pengrajin
+     */
+    select?: PengrajinSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Pengrajin
+     */
+    omit?: PengrajinOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PengrajinInclude<ExtArgs> | null
+    where?: PengrajinWhereInput
+    orderBy?: PengrajinOrderByWithRelationInput | PengrajinOrderByWithRelationInput[]
+    cursor?: PengrajinWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: PengrajinScalarFieldEnum | PengrajinScalarFieldEnum[]
+  }
+
+  /**
+   * Kelompok without action
+   */
+  export type KelompokDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Kelompok
+     */
+    select?: KelompokSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Kelompok
+     */
+    omit?: KelompokOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KelompokInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Pengrajin
+   */
+
+  export type AggregatePengrajin = {
+    _count: PengrajinCountAggregateOutputType | null
+    _avg: PengrajinAvgAggregateOutputType | null
+    _sum: PengrajinSumAggregateOutputType | null
+    _min: PengrajinMinAggregateOutputType | null
+    _max: PengrajinMaxAggregateOutputType | null
+  }
+
+  export type PengrajinAvgAggregateOutputType = {
+    id: number | null
+    kelompokId: number | null
+    tarifCadangan: number | null
+  }
+
+  export type PengrajinSumAggregateOutputType = {
+    id: number | null
+    kelompokId: number | null
+    tarifCadangan: number | null
+  }
+
+  export type PengrajinMinAggregateOutputType = {
+    id: number | null
+    nama: string | null
+    kelompokId: number | null
+    tarifCadangan: number | null
+    satuanTarif: string | null
+    penerimaUpah: string | null
+    aktif: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type PengrajinMaxAggregateOutputType = {
+    id: number | null
+    nama: string | null
+    kelompokId: number | null
+    tarifCadangan: number | null
+    satuanTarif: string | null
+    penerimaUpah: string | null
+    aktif: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type PengrajinCountAggregateOutputType = {
+    id: number
+    nama: number
+    kelompokId: number
+    tarifCadangan: number
+    satuanTarif: number
+    penerimaUpah: number
+    aktif: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type PengrajinAvgAggregateInputType = {
+    id?: true
+    kelompokId?: true
+    tarifCadangan?: true
+  }
+
+  export type PengrajinSumAggregateInputType = {
+    id?: true
+    kelompokId?: true
+    tarifCadangan?: true
+  }
+
+  export type PengrajinMinAggregateInputType = {
+    id?: true
+    nama?: true
+    kelompokId?: true
+    tarifCadangan?: true
+    satuanTarif?: true
+    penerimaUpah?: true
+    aktif?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type PengrajinMaxAggregateInputType = {
+    id?: true
+    nama?: true
+    kelompokId?: true
+    tarifCadangan?: true
+    satuanTarif?: true
+    penerimaUpah?: true
+    aktif?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type PengrajinCountAggregateInputType = {
+    id?: true
+    nama?: true
+    kelompokId?: true
+    tarifCadangan?: true
+    satuanTarif?: true
+    penerimaUpah?: true
+    aktif?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type PengrajinAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Pengrajin to aggregate.
+     */
+    where?: PengrajinWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Pengrajins to fetch.
+     */
+    orderBy?: PengrajinOrderByWithRelationInput | PengrajinOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: PengrajinWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Pengrajins from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Pengrajins.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Pengrajins
+    **/
+    _count?: true | PengrajinCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: PengrajinAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: PengrajinSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: PengrajinMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: PengrajinMaxAggregateInputType
+  }
+
+  export type GetPengrajinAggregateType<T extends PengrajinAggregateArgs> = {
+        [P in keyof T & keyof AggregatePengrajin]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregatePengrajin[P]>
+      : GetScalarType<T[P], AggregatePengrajin[P]>
+  }
+
+
+
+
+  export type PengrajinGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PengrajinWhereInput
+    orderBy?: PengrajinOrderByWithAggregationInput | PengrajinOrderByWithAggregationInput[]
+    by: PengrajinScalarFieldEnum[] | PengrajinScalarFieldEnum
+    having?: PengrajinScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: PengrajinCountAggregateInputType | true
+    _avg?: PengrajinAvgAggregateInputType
+    _sum?: PengrajinSumAggregateInputType
+    _min?: PengrajinMinAggregateInputType
+    _max?: PengrajinMaxAggregateInputType
+  }
+
+  export type PengrajinGroupByOutputType = {
+    id: number
+    nama: string
+    kelompokId: number | null
+    tarifCadangan: number | null
+    satuanTarif: string
+    penerimaUpah: string
+    aktif: boolean
+    createdAt: Date
+    updatedAt: Date
+    _count: PengrajinCountAggregateOutputType | null
+    _avg: PengrajinAvgAggregateOutputType | null
+    _sum: PengrajinSumAggregateOutputType | null
+    _min: PengrajinMinAggregateOutputType | null
+    _max: PengrajinMaxAggregateOutputType | null
+  }
+
+  type GetPengrajinGroupByPayload<T extends PengrajinGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<PengrajinGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof PengrajinGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], PengrajinGroupByOutputType[P]>
+            : GetScalarType<T[P], PengrajinGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type PengrajinSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    nama?: boolean
+    kelompokId?: boolean
+    tarifCadangan?: boolean
+    satuanTarif?: boolean
+    penerimaUpah?: boolean
+    aktif?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    kelompok?: boolean | Pengrajin$kelompokArgs<ExtArgs>
+    ketuaDari?: boolean | Pengrajin$ketuaDariArgs<ExtArgs>
+    tarif?: boolean | Pengrajin$tarifArgs<ExtArgs>
+    penugasan?: boolean | Pengrajin$penugasanArgs<ExtArgs>
+    setoranKerja?: boolean | Pengrajin$setoranKerjaArgs<ExtArgs>
+    setoranTerima?: boolean | Pengrajin$setoranTerimaArgs<ExtArgs>
+    penarikan?: boolean | Pengrajin$penarikanArgs<ExtArgs>
+    _count?: boolean | PengrajinCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["pengrajin"]>
+
+  export type PengrajinSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    nama?: boolean
+    kelompokId?: boolean
+    tarifCadangan?: boolean
+    satuanTarif?: boolean
+    penerimaUpah?: boolean
+    aktif?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    kelompok?: boolean | Pengrajin$kelompokArgs<ExtArgs>
+  }, ExtArgs["result"]["pengrajin"]>
+
+  export type PengrajinSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    nama?: boolean
+    kelompokId?: boolean
+    tarifCadangan?: boolean
+    satuanTarif?: boolean
+    penerimaUpah?: boolean
+    aktif?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    kelompok?: boolean | Pengrajin$kelompokArgs<ExtArgs>
+  }, ExtArgs["result"]["pengrajin"]>
+
+  export type PengrajinSelectScalar = {
+    id?: boolean
+    nama?: boolean
+    kelompokId?: boolean
+    tarifCadangan?: boolean
+    satuanTarif?: boolean
+    penerimaUpah?: boolean
+    aktif?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type PengrajinOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "nama" | "kelompokId" | "tarifCadangan" | "satuanTarif" | "penerimaUpah" | "aktif" | "createdAt" | "updatedAt", ExtArgs["result"]["pengrajin"]>
+  export type PengrajinInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    kelompok?: boolean | Pengrajin$kelompokArgs<ExtArgs>
+    ketuaDari?: boolean | Pengrajin$ketuaDariArgs<ExtArgs>
+    tarif?: boolean | Pengrajin$tarifArgs<ExtArgs>
+    penugasan?: boolean | Pengrajin$penugasanArgs<ExtArgs>
+    setoranKerja?: boolean | Pengrajin$setoranKerjaArgs<ExtArgs>
+    setoranTerima?: boolean | Pengrajin$setoranTerimaArgs<ExtArgs>
+    penarikan?: boolean | Pengrajin$penarikanArgs<ExtArgs>
+    _count?: boolean | PengrajinCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type PengrajinIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    kelompok?: boolean | Pengrajin$kelompokArgs<ExtArgs>
+  }
+  export type PengrajinIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    kelompok?: boolean | Pengrajin$kelompokArgs<ExtArgs>
+  }
+
+  export type $PengrajinPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Pengrajin"
+    objects: {
+      kelompok: Prisma.$KelompokPayload<ExtArgs> | null
+      ketuaDari: Prisma.$KelompokPayload<ExtArgs> | null
+      tarif: Prisma.$TarifPengrajinPayload<ExtArgs>[]
+      penugasan: Prisma.$PenugasanPayload<ExtArgs>[]
+      setoranKerja: Prisma.$SetoranPayload<ExtArgs>[]
+      setoranTerima: Prisma.$SetoranPayload<ExtArgs>[]
+      penarikan: Prisma.$PenarikanPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      nama: string
+      kelompokId: number | null
+      tarifCadangan: number | null
+      satuanTarif: string
+      penerimaUpah: string
+      aktif: boolean
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["pengrajin"]>
+    composites: {}
+  }
+
+  type PengrajinGetPayload<S extends boolean | null | undefined | PengrajinDefaultArgs> = $Result.GetResult<Prisma.$PengrajinPayload, S>
+
+  type PengrajinCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<PengrajinFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: PengrajinCountAggregateInputType | true
+    }
+
+  export interface PengrajinDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Pengrajin'], meta: { name: 'Pengrajin' } }
+    /**
+     * Find zero or one Pengrajin that matches the filter.
+     * @param {PengrajinFindUniqueArgs} args - Arguments to find a Pengrajin
+     * @example
+     * // Get one Pengrajin
+     * const pengrajin = await prisma.pengrajin.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends PengrajinFindUniqueArgs>(args: SelectSubset<T, PengrajinFindUniqueArgs<ExtArgs>>): Prisma__PengrajinClient<$Result.GetResult<Prisma.$PengrajinPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Pengrajin that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {PengrajinFindUniqueOrThrowArgs} args - Arguments to find a Pengrajin
+     * @example
+     * // Get one Pengrajin
+     * const pengrajin = await prisma.pengrajin.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends PengrajinFindUniqueOrThrowArgs>(args: SelectSubset<T, PengrajinFindUniqueOrThrowArgs<ExtArgs>>): Prisma__PengrajinClient<$Result.GetResult<Prisma.$PengrajinPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Pengrajin that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PengrajinFindFirstArgs} args - Arguments to find a Pengrajin
+     * @example
+     * // Get one Pengrajin
+     * const pengrajin = await prisma.pengrajin.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends PengrajinFindFirstArgs>(args?: SelectSubset<T, PengrajinFindFirstArgs<ExtArgs>>): Prisma__PengrajinClient<$Result.GetResult<Prisma.$PengrajinPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Pengrajin that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PengrajinFindFirstOrThrowArgs} args - Arguments to find a Pengrajin
+     * @example
+     * // Get one Pengrajin
+     * const pengrajin = await prisma.pengrajin.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends PengrajinFindFirstOrThrowArgs>(args?: SelectSubset<T, PengrajinFindFirstOrThrowArgs<ExtArgs>>): Prisma__PengrajinClient<$Result.GetResult<Prisma.$PengrajinPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Pengrajins that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PengrajinFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Pengrajins
+     * const pengrajins = await prisma.pengrajin.findMany()
+     * 
+     * // Get first 10 Pengrajins
+     * const pengrajins = await prisma.pengrajin.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const pengrajinWithIdOnly = await prisma.pengrajin.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends PengrajinFindManyArgs>(args?: SelectSubset<T, PengrajinFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PengrajinPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Pengrajin.
+     * @param {PengrajinCreateArgs} args - Arguments to create a Pengrajin.
+     * @example
+     * // Create one Pengrajin
+     * const Pengrajin = await prisma.pengrajin.create({
+     *   data: {
+     *     // ... data to create a Pengrajin
+     *   }
+     * })
+     * 
+     */
+    create<T extends PengrajinCreateArgs>(args: SelectSubset<T, PengrajinCreateArgs<ExtArgs>>): Prisma__PengrajinClient<$Result.GetResult<Prisma.$PengrajinPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Pengrajins.
+     * @param {PengrajinCreateManyArgs} args - Arguments to create many Pengrajins.
+     * @example
+     * // Create many Pengrajins
+     * const pengrajin = await prisma.pengrajin.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends PengrajinCreateManyArgs>(args?: SelectSubset<T, PengrajinCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Pengrajins and returns the data saved in the database.
+     * @param {PengrajinCreateManyAndReturnArgs} args - Arguments to create many Pengrajins.
+     * @example
+     * // Create many Pengrajins
+     * const pengrajin = await prisma.pengrajin.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Pengrajins and only return the `id`
+     * const pengrajinWithIdOnly = await prisma.pengrajin.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends PengrajinCreateManyAndReturnArgs>(args?: SelectSubset<T, PengrajinCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PengrajinPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Pengrajin.
+     * @param {PengrajinDeleteArgs} args - Arguments to delete one Pengrajin.
+     * @example
+     * // Delete one Pengrajin
+     * const Pengrajin = await prisma.pengrajin.delete({
+     *   where: {
+     *     // ... filter to delete one Pengrajin
+     *   }
+     * })
+     * 
+     */
+    delete<T extends PengrajinDeleteArgs>(args: SelectSubset<T, PengrajinDeleteArgs<ExtArgs>>): Prisma__PengrajinClient<$Result.GetResult<Prisma.$PengrajinPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Pengrajin.
+     * @param {PengrajinUpdateArgs} args - Arguments to update one Pengrajin.
+     * @example
+     * // Update one Pengrajin
+     * const pengrajin = await prisma.pengrajin.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends PengrajinUpdateArgs>(args: SelectSubset<T, PengrajinUpdateArgs<ExtArgs>>): Prisma__PengrajinClient<$Result.GetResult<Prisma.$PengrajinPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Pengrajins.
+     * @param {PengrajinDeleteManyArgs} args - Arguments to filter Pengrajins to delete.
+     * @example
+     * // Delete a few Pengrajins
+     * const { count } = await prisma.pengrajin.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends PengrajinDeleteManyArgs>(args?: SelectSubset<T, PengrajinDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Pengrajins.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PengrajinUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Pengrajins
+     * const pengrajin = await prisma.pengrajin.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends PengrajinUpdateManyArgs>(args: SelectSubset<T, PengrajinUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Pengrajins and returns the data updated in the database.
+     * @param {PengrajinUpdateManyAndReturnArgs} args - Arguments to update many Pengrajins.
+     * @example
+     * // Update many Pengrajins
+     * const pengrajin = await prisma.pengrajin.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Pengrajins and only return the `id`
+     * const pengrajinWithIdOnly = await prisma.pengrajin.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends PengrajinUpdateManyAndReturnArgs>(args: SelectSubset<T, PengrajinUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PengrajinPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Pengrajin.
+     * @param {PengrajinUpsertArgs} args - Arguments to update or create a Pengrajin.
+     * @example
+     * // Update or create a Pengrajin
+     * const pengrajin = await prisma.pengrajin.upsert({
+     *   create: {
+     *     // ... data to create a Pengrajin
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Pengrajin we want to update
+     *   }
+     * })
+     */
+    upsert<T extends PengrajinUpsertArgs>(args: SelectSubset<T, PengrajinUpsertArgs<ExtArgs>>): Prisma__PengrajinClient<$Result.GetResult<Prisma.$PengrajinPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Pengrajins.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PengrajinCountArgs} args - Arguments to filter Pengrajins to count.
+     * @example
+     * // Count the number of Pengrajins
+     * const count = await prisma.pengrajin.count({
+     *   where: {
+     *     // ... the filter for the Pengrajins we want to count
+     *   }
+     * })
+    **/
+    count<T extends PengrajinCountArgs>(
+      args?: Subset<T, PengrajinCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], PengrajinCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Pengrajin.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PengrajinAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends PengrajinAggregateArgs>(args: Subset<T, PengrajinAggregateArgs>): Prisma.PrismaPromise<GetPengrajinAggregateType<T>>
+
+    /**
+     * Group by Pengrajin.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PengrajinGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends PengrajinGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: PengrajinGroupByArgs['orderBy'] }
+        : { orderBy?: PengrajinGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, PengrajinGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetPengrajinGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Pengrajin model
+   */
+  readonly fields: PengrajinFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Pengrajin.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__PengrajinClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    kelompok<T extends Pengrajin$kelompokArgs<ExtArgs> = {}>(args?: Subset<T, Pengrajin$kelompokArgs<ExtArgs>>): Prisma__KelompokClient<$Result.GetResult<Prisma.$KelompokPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    ketuaDari<T extends Pengrajin$ketuaDariArgs<ExtArgs> = {}>(args?: Subset<T, Pengrajin$ketuaDariArgs<ExtArgs>>): Prisma__KelompokClient<$Result.GetResult<Prisma.$KelompokPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    tarif<T extends Pengrajin$tarifArgs<ExtArgs> = {}>(args?: Subset<T, Pengrajin$tarifArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TarifPengrajinPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    penugasan<T extends Pengrajin$penugasanArgs<ExtArgs> = {}>(args?: Subset<T, Pengrajin$penugasanArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PenugasanPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    setoranKerja<T extends Pengrajin$setoranKerjaArgs<ExtArgs> = {}>(args?: Subset<T, Pengrajin$setoranKerjaArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SetoranPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    setoranTerima<T extends Pengrajin$setoranTerimaArgs<ExtArgs> = {}>(args?: Subset<T, Pengrajin$setoranTerimaArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SetoranPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    penarikan<T extends Pengrajin$penarikanArgs<ExtArgs> = {}>(args?: Subset<T, Pengrajin$penarikanArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PenarikanPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Pengrajin model
+   */
+  interface PengrajinFieldRefs {
+    readonly id: FieldRef<"Pengrajin", 'Int'>
+    readonly nama: FieldRef<"Pengrajin", 'String'>
+    readonly kelompokId: FieldRef<"Pengrajin", 'Int'>
+    readonly tarifCadangan: FieldRef<"Pengrajin", 'Int'>
+    readonly satuanTarif: FieldRef<"Pengrajin", 'String'>
+    readonly penerimaUpah: FieldRef<"Pengrajin", 'String'>
+    readonly aktif: FieldRef<"Pengrajin", 'Boolean'>
+    readonly createdAt: FieldRef<"Pengrajin", 'DateTime'>
+    readonly updatedAt: FieldRef<"Pengrajin", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Pengrajin findUnique
+   */
+  export type PengrajinFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Pengrajin
+     */
+    select?: PengrajinSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Pengrajin
+     */
+    omit?: PengrajinOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PengrajinInclude<ExtArgs> | null
+    /**
+     * Filter, which Pengrajin to fetch.
+     */
+    where: PengrajinWhereUniqueInput
+  }
+
+  /**
+   * Pengrajin findUniqueOrThrow
+   */
+  export type PengrajinFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Pengrajin
+     */
+    select?: PengrajinSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Pengrajin
+     */
+    omit?: PengrajinOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PengrajinInclude<ExtArgs> | null
+    /**
+     * Filter, which Pengrajin to fetch.
+     */
+    where: PengrajinWhereUniqueInput
+  }
+
+  /**
+   * Pengrajin findFirst
+   */
+  export type PengrajinFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Pengrajin
+     */
+    select?: PengrajinSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Pengrajin
+     */
+    omit?: PengrajinOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PengrajinInclude<ExtArgs> | null
+    /**
+     * Filter, which Pengrajin to fetch.
+     */
+    where?: PengrajinWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Pengrajins to fetch.
+     */
+    orderBy?: PengrajinOrderByWithRelationInput | PengrajinOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Pengrajins.
+     */
+    cursor?: PengrajinWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Pengrajins from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Pengrajins.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Pengrajins.
+     */
+    distinct?: PengrajinScalarFieldEnum | PengrajinScalarFieldEnum[]
+  }
+
+  /**
+   * Pengrajin findFirstOrThrow
+   */
+  export type PengrajinFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Pengrajin
+     */
+    select?: PengrajinSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Pengrajin
+     */
+    omit?: PengrajinOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PengrajinInclude<ExtArgs> | null
+    /**
+     * Filter, which Pengrajin to fetch.
+     */
+    where?: PengrajinWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Pengrajins to fetch.
+     */
+    orderBy?: PengrajinOrderByWithRelationInput | PengrajinOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Pengrajins.
+     */
+    cursor?: PengrajinWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Pengrajins from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Pengrajins.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Pengrajins.
+     */
+    distinct?: PengrajinScalarFieldEnum | PengrajinScalarFieldEnum[]
+  }
+
+  /**
+   * Pengrajin findMany
+   */
+  export type PengrajinFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Pengrajin
+     */
+    select?: PengrajinSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Pengrajin
+     */
+    omit?: PengrajinOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PengrajinInclude<ExtArgs> | null
+    /**
+     * Filter, which Pengrajins to fetch.
+     */
+    where?: PengrajinWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Pengrajins to fetch.
+     */
+    orderBy?: PengrajinOrderByWithRelationInput | PengrajinOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Pengrajins.
+     */
+    cursor?: PengrajinWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Pengrajins from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Pengrajins.
+     */
+    skip?: number
+    distinct?: PengrajinScalarFieldEnum | PengrajinScalarFieldEnum[]
+  }
+
+  /**
+   * Pengrajin create
+   */
+  export type PengrajinCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Pengrajin
+     */
+    select?: PengrajinSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Pengrajin
+     */
+    omit?: PengrajinOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PengrajinInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Pengrajin.
+     */
+    data: XOR<PengrajinCreateInput, PengrajinUncheckedCreateInput>
+  }
+
+  /**
+   * Pengrajin createMany
+   */
+  export type PengrajinCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Pengrajins.
+     */
+    data: PengrajinCreateManyInput | PengrajinCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Pengrajin createManyAndReturn
+   */
+  export type PengrajinCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Pengrajin
+     */
+    select?: PengrajinSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Pengrajin
+     */
+    omit?: PengrajinOmit<ExtArgs> | null
+    /**
+     * The data used to create many Pengrajins.
+     */
+    data: PengrajinCreateManyInput | PengrajinCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PengrajinIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Pengrajin update
+   */
+  export type PengrajinUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Pengrajin
+     */
+    select?: PengrajinSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Pengrajin
+     */
+    omit?: PengrajinOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PengrajinInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Pengrajin.
+     */
+    data: XOR<PengrajinUpdateInput, PengrajinUncheckedUpdateInput>
+    /**
+     * Choose, which Pengrajin to update.
+     */
+    where: PengrajinWhereUniqueInput
+  }
+
+  /**
+   * Pengrajin updateMany
+   */
+  export type PengrajinUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Pengrajins.
+     */
+    data: XOR<PengrajinUpdateManyMutationInput, PengrajinUncheckedUpdateManyInput>
+    /**
+     * Filter which Pengrajins to update
+     */
+    where?: PengrajinWhereInput
+    /**
+     * Limit how many Pengrajins to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Pengrajin updateManyAndReturn
+   */
+  export type PengrajinUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Pengrajin
+     */
+    select?: PengrajinSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Pengrajin
+     */
+    omit?: PengrajinOmit<ExtArgs> | null
+    /**
+     * The data used to update Pengrajins.
+     */
+    data: XOR<PengrajinUpdateManyMutationInput, PengrajinUncheckedUpdateManyInput>
+    /**
+     * Filter which Pengrajins to update
+     */
+    where?: PengrajinWhereInput
+    /**
+     * Limit how many Pengrajins to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PengrajinIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Pengrajin upsert
+   */
+  export type PengrajinUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Pengrajin
+     */
+    select?: PengrajinSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Pengrajin
+     */
+    omit?: PengrajinOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PengrajinInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Pengrajin to update in case it exists.
+     */
+    where: PengrajinWhereUniqueInput
+    /**
+     * In case the Pengrajin found by the `where` argument doesn't exist, create a new Pengrajin with this data.
+     */
+    create: XOR<PengrajinCreateInput, PengrajinUncheckedCreateInput>
+    /**
+     * In case the Pengrajin was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<PengrajinUpdateInput, PengrajinUncheckedUpdateInput>
+  }
+
+  /**
+   * Pengrajin delete
+   */
+  export type PengrajinDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Pengrajin
+     */
+    select?: PengrajinSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Pengrajin
+     */
+    omit?: PengrajinOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PengrajinInclude<ExtArgs> | null
+    /**
+     * Filter which Pengrajin to delete.
+     */
+    where: PengrajinWhereUniqueInput
+  }
+
+  /**
+   * Pengrajin deleteMany
+   */
+  export type PengrajinDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Pengrajins to delete
+     */
+    where?: PengrajinWhereInput
+    /**
+     * Limit how many Pengrajins to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Pengrajin.kelompok
+   */
+  export type Pengrajin$kelompokArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Kelompok
+     */
+    select?: KelompokSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Kelompok
+     */
+    omit?: KelompokOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KelompokInclude<ExtArgs> | null
+    where?: KelompokWhereInput
+  }
+
+  /**
+   * Pengrajin.ketuaDari
+   */
+  export type Pengrajin$ketuaDariArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Kelompok
+     */
+    select?: KelompokSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Kelompok
+     */
+    omit?: KelompokOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KelompokInclude<ExtArgs> | null
+    where?: KelompokWhereInput
+  }
+
+  /**
+   * Pengrajin.tarif
+   */
+  export type Pengrajin$tarifArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TarifPengrajin
+     */
+    select?: TarifPengrajinSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TarifPengrajin
+     */
+    omit?: TarifPengrajinOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TarifPengrajinInclude<ExtArgs> | null
+    where?: TarifPengrajinWhereInput
+    orderBy?: TarifPengrajinOrderByWithRelationInput | TarifPengrajinOrderByWithRelationInput[]
+    cursor?: TarifPengrajinWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TarifPengrajinScalarFieldEnum | TarifPengrajinScalarFieldEnum[]
+  }
+
+  /**
+   * Pengrajin.penugasan
+   */
+  export type Pengrajin$penugasanArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Penugasan
+     */
+    select?: PenugasanSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Penugasan
+     */
+    omit?: PenugasanOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PenugasanInclude<ExtArgs> | null
+    where?: PenugasanWhereInput
+    orderBy?: PenugasanOrderByWithRelationInput | PenugasanOrderByWithRelationInput[]
+    cursor?: PenugasanWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: PenugasanScalarFieldEnum | PenugasanScalarFieldEnum[]
+  }
+
+  /**
+   * Pengrajin.setoranKerja
+   */
+  export type Pengrajin$setoranKerjaArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Setoran
+     */
+    select?: SetoranSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Setoran
+     */
+    omit?: SetoranOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SetoranInclude<ExtArgs> | null
+    where?: SetoranWhereInput
+    orderBy?: SetoranOrderByWithRelationInput | SetoranOrderByWithRelationInput[]
+    cursor?: SetoranWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: SetoranScalarFieldEnum | SetoranScalarFieldEnum[]
+  }
+
+  /**
+   * Pengrajin.setoranTerima
+   */
+  export type Pengrajin$setoranTerimaArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Setoran
+     */
+    select?: SetoranSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Setoran
+     */
+    omit?: SetoranOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SetoranInclude<ExtArgs> | null
+    where?: SetoranWhereInput
+    orderBy?: SetoranOrderByWithRelationInput | SetoranOrderByWithRelationInput[]
+    cursor?: SetoranWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: SetoranScalarFieldEnum | SetoranScalarFieldEnum[]
+  }
+
+  /**
+   * Pengrajin.penarikan
+   */
+  export type Pengrajin$penarikanArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Penarikan
+     */
+    select?: PenarikanSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Penarikan
+     */
+    omit?: PenarikanOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PenarikanInclude<ExtArgs> | null
+    where?: PenarikanWhereInput
+    orderBy?: PenarikanOrderByWithRelationInput | PenarikanOrderByWithRelationInput[]
+    cursor?: PenarikanWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: PenarikanScalarFieldEnum | PenarikanScalarFieldEnum[]
+  }
+
+  /**
+   * Pengrajin without action
+   */
+  export type PengrajinDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Pengrajin
+     */
+    select?: PengrajinSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Pengrajin
+     */
+    omit?: PengrajinOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PengrajinInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model TarifPengrajin
+   */
+
+  export type AggregateTarifPengrajin = {
+    _count: TarifPengrajinCountAggregateOutputType | null
+    _avg: TarifPengrajinAvgAggregateOutputType | null
+    _sum: TarifPengrajinSumAggregateOutputType | null
+    _min: TarifPengrajinMinAggregateOutputType | null
+    _max: TarifPengrajinMaxAggregateOutputType | null
+  }
+
+  export type TarifPengrajinAvgAggregateOutputType = {
+    id: number | null
+    pengrajinId: number | null
+    productId: number | null
+    tarif: number | null
+  }
+
+  export type TarifPengrajinSumAggregateOutputType = {
+    id: number | null
+    pengrajinId: number | null
+    productId: number | null
+    tarif: number | null
+  }
+
+  export type TarifPengrajinMinAggregateOutputType = {
+    id: number | null
+    pengrajinId: number | null
+    productId: number | null
+    tarif: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type TarifPengrajinMaxAggregateOutputType = {
+    id: number | null
+    pengrajinId: number | null
+    productId: number | null
+    tarif: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type TarifPengrajinCountAggregateOutputType = {
+    id: number
+    pengrajinId: number
+    productId: number
+    tarif: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type TarifPengrajinAvgAggregateInputType = {
+    id?: true
+    pengrajinId?: true
+    productId?: true
+    tarif?: true
+  }
+
+  export type TarifPengrajinSumAggregateInputType = {
+    id?: true
+    pengrajinId?: true
+    productId?: true
+    tarif?: true
+  }
+
+  export type TarifPengrajinMinAggregateInputType = {
+    id?: true
+    pengrajinId?: true
+    productId?: true
+    tarif?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type TarifPengrajinMaxAggregateInputType = {
+    id?: true
+    pengrajinId?: true
+    productId?: true
+    tarif?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type TarifPengrajinCountAggregateInputType = {
+    id?: true
+    pengrajinId?: true
+    productId?: true
+    tarif?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type TarifPengrajinAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which TarifPengrajin to aggregate.
+     */
+    where?: TarifPengrajinWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TarifPengrajins to fetch.
+     */
+    orderBy?: TarifPengrajinOrderByWithRelationInput | TarifPengrajinOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: TarifPengrajinWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TarifPengrajins from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TarifPengrajins.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned TarifPengrajins
+    **/
+    _count?: true | TarifPengrajinCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: TarifPengrajinAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: TarifPengrajinSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: TarifPengrajinMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: TarifPengrajinMaxAggregateInputType
+  }
+
+  export type GetTarifPengrajinAggregateType<T extends TarifPengrajinAggregateArgs> = {
+        [P in keyof T & keyof AggregateTarifPengrajin]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateTarifPengrajin[P]>
+      : GetScalarType<T[P], AggregateTarifPengrajin[P]>
+  }
+
+
+
+
+  export type TarifPengrajinGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TarifPengrajinWhereInput
+    orderBy?: TarifPengrajinOrderByWithAggregationInput | TarifPengrajinOrderByWithAggregationInput[]
+    by: TarifPengrajinScalarFieldEnum[] | TarifPengrajinScalarFieldEnum
+    having?: TarifPengrajinScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: TarifPengrajinCountAggregateInputType | true
+    _avg?: TarifPengrajinAvgAggregateInputType
+    _sum?: TarifPengrajinSumAggregateInputType
+    _min?: TarifPengrajinMinAggregateInputType
+    _max?: TarifPengrajinMaxAggregateInputType
+  }
+
+  export type TarifPengrajinGroupByOutputType = {
+    id: number
+    pengrajinId: number
+    productId: number
+    tarif: number
+    createdAt: Date
+    updatedAt: Date
+    _count: TarifPengrajinCountAggregateOutputType | null
+    _avg: TarifPengrajinAvgAggregateOutputType | null
+    _sum: TarifPengrajinSumAggregateOutputType | null
+    _min: TarifPengrajinMinAggregateOutputType | null
+    _max: TarifPengrajinMaxAggregateOutputType | null
+  }
+
+  type GetTarifPengrajinGroupByPayload<T extends TarifPengrajinGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<TarifPengrajinGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof TarifPengrajinGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], TarifPengrajinGroupByOutputType[P]>
+            : GetScalarType<T[P], TarifPengrajinGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type TarifPengrajinSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    pengrajinId?: boolean
+    productId?: boolean
+    tarif?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    pengrajin?: boolean | PengrajinDefaultArgs<ExtArgs>
+    product?: boolean | ProductDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["tarifPengrajin"]>
+
+  export type TarifPengrajinSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    pengrajinId?: boolean
+    productId?: boolean
+    tarif?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    pengrajin?: boolean | PengrajinDefaultArgs<ExtArgs>
+    product?: boolean | ProductDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["tarifPengrajin"]>
+
+  export type TarifPengrajinSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    pengrajinId?: boolean
+    productId?: boolean
+    tarif?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    pengrajin?: boolean | PengrajinDefaultArgs<ExtArgs>
+    product?: boolean | ProductDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["tarifPengrajin"]>
+
+  export type TarifPengrajinSelectScalar = {
+    id?: boolean
+    pengrajinId?: boolean
+    productId?: boolean
+    tarif?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type TarifPengrajinOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "pengrajinId" | "productId" | "tarif" | "createdAt" | "updatedAt", ExtArgs["result"]["tarifPengrajin"]>
+  export type TarifPengrajinInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    pengrajin?: boolean | PengrajinDefaultArgs<ExtArgs>
+    product?: boolean | ProductDefaultArgs<ExtArgs>
+  }
+  export type TarifPengrajinIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    pengrajin?: boolean | PengrajinDefaultArgs<ExtArgs>
+    product?: boolean | ProductDefaultArgs<ExtArgs>
+  }
+  export type TarifPengrajinIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    pengrajin?: boolean | PengrajinDefaultArgs<ExtArgs>
+    product?: boolean | ProductDefaultArgs<ExtArgs>
+  }
+
+  export type $TarifPengrajinPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "TarifPengrajin"
+    objects: {
+      pengrajin: Prisma.$PengrajinPayload<ExtArgs>
+      product: Prisma.$ProductPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      pengrajinId: number
+      productId: number
+      tarif: number
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["tarifPengrajin"]>
+    composites: {}
+  }
+
+  type TarifPengrajinGetPayload<S extends boolean | null | undefined | TarifPengrajinDefaultArgs> = $Result.GetResult<Prisma.$TarifPengrajinPayload, S>
+
+  type TarifPengrajinCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<TarifPengrajinFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: TarifPengrajinCountAggregateInputType | true
+    }
+
+  export interface TarifPengrajinDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['TarifPengrajin'], meta: { name: 'TarifPengrajin' } }
+    /**
+     * Find zero or one TarifPengrajin that matches the filter.
+     * @param {TarifPengrajinFindUniqueArgs} args - Arguments to find a TarifPengrajin
+     * @example
+     * // Get one TarifPengrajin
+     * const tarifPengrajin = await prisma.tarifPengrajin.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends TarifPengrajinFindUniqueArgs>(args: SelectSubset<T, TarifPengrajinFindUniqueArgs<ExtArgs>>): Prisma__TarifPengrajinClient<$Result.GetResult<Prisma.$TarifPengrajinPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one TarifPengrajin that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {TarifPengrajinFindUniqueOrThrowArgs} args - Arguments to find a TarifPengrajin
+     * @example
+     * // Get one TarifPengrajin
+     * const tarifPengrajin = await prisma.tarifPengrajin.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends TarifPengrajinFindUniqueOrThrowArgs>(args: SelectSubset<T, TarifPengrajinFindUniqueOrThrowArgs<ExtArgs>>): Prisma__TarifPengrajinClient<$Result.GetResult<Prisma.$TarifPengrajinPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first TarifPengrajin that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TarifPengrajinFindFirstArgs} args - Arguments to find a TarifPengrajin
+     * @example
+     * // Get one TarifPengrajin
+     * const tarifPengrajin = await prisma.tarifPengrajin.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends TarifPengrajinFindFirstArgs>(args?: SelectSubset<T, TarifPengrajinFindFirstArgs<ExtArgs>>): Prisma__TarifPengrajinClient<$Result.GetResult<Prisma.$TarifPengrajinPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first TarifPengrajin that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TarifPengrajinFindFirstOrThrowArgs} args - Arguments to find a TarifPengrajin
+     * @example
+     * // Get one TarifPengrajin
+     * const tarifPengrajin = await prisma.tarifPengrajin.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends TarifPengrajinFindFirstOrThrowArgs>(args?: SelectSubset<T, TarifPengrajinFindFirstOrThrowArgs<ExtArgs>>): Prisma__TarifPengrajinClient<$Result.GetResult<Prisma.$TarifPengrajinPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more TarifPengrajins that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TarifPengrajinFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all TarifPengrajins
+     * const tarifPengrajins = await prisma.tarifPengrajin.findMany()
+     * 
+     * // Get first 10 TarifPengrajins
+     * const tarifPengrajins = await prisma.tarifPengrajin.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const tarifPengrajinWithIdOnly = await prisma.tarifPengrajin.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends TarifPengrajinFindManyArgs>(args?: SelectSubset<T, TarifPengrajinFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TarifPengrajinPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a TarifPengrajin.
+     * @param {TarifPengrajinCreateArgs} args - Arguments to create a TarifPengrajin.
+     * @example
+     * // Create one TarifPengrajin
+     * const TarifPengrajin = await prisma.tarifPengrajin.create({
+     *   data: {
+     *     // ... data to create a TarifPengrajin
+     *   }
+     * })
+     * 
+     */
+    create<T extends TarifPengrajinCreateArgs>(args: SelectSubset<T, TarifPengrajinCreateArgs<ExtArgs>>): Prisma__TarifPengrajinClient<$Result.GetResult<Prisma.$TarifPengrajinPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many TarifPengrajins.
+     * @param {TarifPengrajinCreateManyArgs} args - Arguments to create many TarifPengrajins.
+     * @example
+     * // Create many TarifPengrajins
+     * const tarifPengrajin = await prisma.tarifPengrajin.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends TarifPengrajinCreateManyArgs>(args?: SelectSubset<T, TarifPengrajinCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many TarifPengrajins and returns the data saved in the database.
+     * @param {TarifPengrajinCreateManyAndReturnArgs} args - Arguments to create many TarifPengrajins.
+     * @example
+     * // Create many TarifPengrajins
+     * const tarifPengrajin = await prisma.tarifPengrajin.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many TarifPengrajins and only return the `id`
+     * const tarifPengrajinWithIdOnly = await prisma.tarifPengrajin.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends TarifPengrajinCreateManyAndReturnArgs>(args?: SelectSubset<T, TarifPengrajinCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TarifPengrajinPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a TarifPengrajin.
+     * @param {TarifPengrajinDeleteArgs} args - Arguments to delete one TarifPengrajin.
+     * @example
+     * // Delete one TarifPengrajin
+     * const TarifPengrajin = await prisma.tarifPengrajin.delete({
+     *   where: {
+     *     // ... filter to delete one TarifPengrajin
+     *   }
+     * })
+     * 
+     */
+    delete<T extends TarifPengrajinDeleteArgs>(args: SelectSubset<T, TarifPengrajinDeleteArgs<ExtArgs>>): Prisma__TarifPengrajinClient<$Result.GetResult<Prisma.$TarifPengrajinPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one TarifPengrajin.
+     * @param {TarifPengrajinUpdateArgs} args - Arguments to update one TarifPengrajin.
+     * @example
+     * // Update one TarifPengrajin
+     * const tarifPengrajin = await prisma.tarifPengrajin.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends TarifPengrajinUpdateArgs>(args: SelectSubset<T, TarifPengrajinUpdateArgs<ExtArgs>>): Prisma__TarifPengrajinClient<$Result.GetResult<Prisma.$TarifPengrajinPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more TarifPengrajins.
+     * @param {TarifPengrajinDeleteManyArgs} args - Arguments to filter TarifPengrajins to delete.
+     * @example
+     * // Delete a few TarifPengrajins
+     * const { count } = await prisma.tarifPengrajin.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends TarifPengrajinDeleteManyArgs>(args?: SelectSubset<T, TarifPengrajinDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more TarifPengrajins.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TarifPengrajinUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many TarifPengrajins
+     * const tarifPengrajin = await prisma.tarifPengrajin.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends TarifPengrajinUpdateManyArgs>(args: SelectSubset<T, TarifPengrajinUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more TarifPengrajins and returns the data updated in the database.
+     * @param {TarifPengrajinUpdateManyAndReturnArgs} args - Arguments to update many TarifPengrajins.
+     * @example
+     * // Update many TarifPengrajins
+     * const tarifPengrajin = await prisma.tarifPengrajin.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more TarifPengrajins and only return the `id`
+     * const tarifPengrajinWithIdOnly = await prisma.tarifPengrajin.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends TarifPengrajinUpdateManyAndReturnArgs>(args: SelectSubset<T, TarifPengrajinUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TarifPengrajinPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one TarifPengrajin.
+     * @param {TarifPengrajinUpsertArgs} args - Arguments to update or create a TarifPengrajin.
+     * @example
+     * // Update or create a TarifPengrajin
+     * const tarifPengrajin = await prisma.tarifPengrajin.upsert({
+     *   create: {
+     *     // ... data to create a TarifPengrajin
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the TarifPengrajin we want to update
+     *   }
+     * })
+     */
+    upsert<T extends TarifPengrajinUpsertArgs>(args: SelectSubset<T, TarifPengrajinUpsertArgs<ExtArgs>>): Prisma__TarifPengrajinClient<$Result.GetResult<Prisma.$TarifPengrajinPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of TarifPengrajins.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TarifPengrajinCountArgs} args - Arguments to filter TarifPengrajins to count.
+     * @example
+     * // Count the number of TarifPengrajins
+     * const count = await prisma.tarifPengrajin.count({
+     *   where: {
+     *     // ... the filter for the TarifPengrajins we want to count
+     *   }
+     * })
+    **/
+    count<T extends TarifPengrajinCountArgs>(
+      args?: Subset<T, TarifPengrajinCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], TarifPengrajinCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a TarifPengrajin.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TarifPengrajinAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends TarifPengrajinAggregateArgs>(args: Subset<T, TarifPengrajinAggregateArgs>): Prisma.PrismaPromise<GetTarifPengrajinAggregateType<T>>
+
+    /**
+     * Group by TarifPengrajin.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TarifPengrajinGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends TarifPengrajinGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: TarifPengrajinGroupByArgs['orderBy'] }
+        : { orderBy?: TarifPengrajinGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, TarifPengrajinGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetTarifPengrajinGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the TarifPengrajin model
+   */
+  readonly fields: TarifPengrajinFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for TarifPengrajin.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__TarifPengrajinClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    pengrajin<T extends PengrajinDefaultArgs<ExtArgs> = {}>(args?: Subset<T, PengrajinDefaultArgs<ExtArgs>>): Prisma__PengrajinClient<$Result.GetResult<Prisma.$PengrajinPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    product<T extends ProductDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProductDefaultArgs<ExtArgs>>): Prisma__ProductClient<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the TarifPengrajin model
+   */
+  interface TarifPengrajinFieldRefs {
+    readonly id: FieldRef<"TarifPengrajin", 'Int'>
+    readonly pengrajinId: FieldRef<"TarifPengrajin", 'Int'>
+    readonly productId: FieldRef<"TarifPengrajin", 'Int'>
+    readonly tarif: FieldRef<"TarifPengrajin", 'Int'>
+    readonly createdAt: FieldRef<"TarifPengrajin", 'DateTime'>
+    readonly updatedAt: FieldRef<"TarifPengrajin", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * TarifPengrajin findUnique
+   */
+  export type TarifPengrajinFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TarifPengrajin
+     */
+    select?: TarifPengrajinSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TarifPengrajin
+     */
+    omit?: TarifPengrajinOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TarifPengrajinInclude<ExtArgs> | null
+    /**
+     * Filter, which TarifPengrajin to fetch.
+     */
+    where: TarifPengrajinWhereUniqueInput
+  }
+
+  /**
+   * TarifPengrajin findUniqueOrThrow
+   */
+  export type TarifPengrajinFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TarifPengrajin
+     */
+    select?: TarifPengrajinSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TarifPengrajin
+     */
+    omit?: TarifPengrajinOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TarifPengrajinInclude<ExtArgs> | null
+    /**
+     * Filter, which TarifPengrajin to fetch.
+     */
+    where: TarifPengrajinWhereUniqueInput
+  }
+
+  /**
+   * TarifPengrajin findFirst
+   */
+  export type TarifPengrajinFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TarifPengrajin
+     */
+    select?: TarifPengrajinSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TarifPengrajin
+     */
+    omit?: TarifPengrajinOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TarifPengrajinInclude<ExtArgs> | null
+    /**
+     * Filter, which TarifPengrajin to fetch.
+     */
+    where?: TarifPengrajinWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TarifPengrajins to fetch.
+     */
+    orderBy?: TarifPengrajinOrderByWithRelationInput | TarifPengrajinOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for TarifPengrajins.
+     */
+    cursor?: TarifPengrajinWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TarifPengrajins from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TarifPengrajins.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TarifPengrajins.
+     */
+    distinct?: TarifPengrajinScalarFieldEnum | TarifPengrajinScalarFieldEnum[]
+  }
+
+  /**
+   * TarifPengrajin findFirstOrThrow
+   */
+  export type TarifPengrajinFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TarifPengrajin
+     */
+    select?: TarifPengrajinSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TarifPengrajin
+     */
+    omit?: TarifPengrajinOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TarifPengrajinInclude<ExtArgs> | null
+    /**
+     * Filter, which TarifPengrajin to fetch.
+     */
+    where?: TarifPengrajinWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TarifPengrajins to fetch.
+     */
+    orderBy?: TarifPengrajinOrderByWithRelationInput | TarifPengrajinOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for TarifPengrajins.
+     */
+    cursor?: TarifPengrajinWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TarifPengrajins from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TarifPengrajins.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TarifPengrajins.
+     */
+    distinct?: TarifPengrajinScalarFieldEnum | TarifPengrajinScalarFieldEnum[]
+  }
+
+  /**
+   * TarifPengrajin findMany
+   */
+  export type TarifPengrajinFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TarifPengrajin
+     */
+    select?: TarifPengrajinSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TarifPengrajin
+     */
+    omit?: TarifPengrajinOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TarifPengrajinInclude<ExtArgs> | null
+    /**
+     * Filter, which TarifPengrajins to fetch.
+     */
+    where?: TarifPengrajinWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TarifPengrajins to fetch.
+     */
+    orderBy?: TarifPengrajinOrderByWithRelationInput | TarifPengrajinOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing TarifPengrajins.
+     */
+    cursor?: TarifPengrajinWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TarifPengrajins from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TarifPengrajins.
+     */
+    skip?: number
+    distinct?: TarifPengrajinScalarFieldEnum | TarifPengrajinScalarFieldEnum[]
+  }
+
+  /**
+   * TarifPengrajin create
+   */
+  export type TarifPengrajinCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TarifPengrajin
+     */
+    select?: TarifPengrajinSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TarifPengrajin
+     */
+    omit?: TarifPengrajinOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TarifPengrajinInclude<ExtArgs> | null
+    /**
+     * The data needed to create a TarifPengrajin.
+     */
+    data: XOR<TarifPengrajinCreateInput, TarifPengrajinUncheckedCreateInput>
+  }
+
+  /**
+   * TarifPengrajin createMany
+   */
+  export type TarifPengrajinCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many TarifPengrajins.
+     */
+    data: TarifPengrajinCreateManyInput | TarifPengrajinCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * TarifPengrajin createManyAndReturn
+   */
+  export type TarifPengrajinCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TarifPengrajin
+     */
+    select?: TarifPengrajinSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the TarifPengrajin
+     */
+    omit?: TarifPengrajinOmit<ExtArgs> | null
+    /**
+     * The data used to create many TarifPengrajins.
+     */
+    data: TarifPengrajinCreateManyInput | TarifPengrajinCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TarifPengrajinIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * TarifPengrajin update
+   */
+  export type TarifPengrajinUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TarifPengrajin
+     */
+    select?: TarifPengrajinSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TarifPengrajin
+     */
+    omit?: TarifPengrajinOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TarifPengrajinInclude<ExtArgs> | null
+    /**
+     * The data needed to update a TarifPengrajin.
+     */
+    data: XOR<TarifPengrajinUpdateInput, TarifPengrajinUncheckedUpdateInput>
+    /**
+     * Choose, which TarifPengrajin to update.
+     */
+    where: TarifPengrajinWhereUniqueInput
+  }
+
+  /**
+   * TarifPengrajin updateMany
+   */
+  export type TarifPengrajinUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update TarifPengrajins.
+     */
+    data: XOR<TarifPengrajinUpdateManyMutationInput, TarifPengrajinUncheckedUpdateManyInput>
+    /**
+     * Filter which TarifPengrajins to update
+     */
+    where?: TarifPengrajinWhereInput
+    /**
+     * Limit how many TarifPengrajins to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * TarifPengrajin updateManyAndReturn
+   */
+  export type TarifPengrajinUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TarifPengrajin
+     */
+    select?: TarifPengrajinSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the TarifPengrajin
+     */
+    omit?: TarifPengrajinOmit<ExtArgs> | null
+    /**
+     * The data used to update TarifPengrajins.
+     */
+    data: XOR<TarifPengrajinUpdateManyMutationInput, TarifPengrajinUncheckedUpdateManyInput>
+    /**
+     * Filter which TarifPengrajins to update
+     */
+    where?: TarifPengrajinWhereInput
+    /**
+     * Limit how many TarifPengrajins to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TarifPengrajinIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * TarifPengrajin upsert
+   */
+  export type TarifPengrajinUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TarifPengrajin
+     */
+    select?: TarifPengrajinSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TarifPengrajin
+     */
+    omit?: TarifPengrajinOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TarifPengrajinInclude<ExtArgs> | null
+    /**
+     * The filter to search for the TarifPengrajin to update in case it exists.
+     */
+    where: TarifPengrajinWhereUniqueInput
+    /**
+     * In case the TarifPengrajin found by the `where` argument doesn't exist, create a new TarifPengrajin with this data.
+     */
+    create: XOR<TarifPengrajinCreateInput, TarifPengrajinUncheckedCreateInput>
+    /**
+     * In case the TarifPengrajin was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<TarifPengrajinUpdateInput, TarifPengrajinUncheckedUpdateInput>
+  }
+
+  /**
+   * TarifPengrajin delete
+   */
+  export type TarifPengrajinDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TarifPengrajin
+     */
+    select?: TarifPengrajinSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TarifPengrajin
+     */
+    omit?: TarifPengrajinOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TarifPengrajinInclude<ExtArgs> | null
+    /**
+     * Filter which TarifPengrajin to delete.
+     */
+    where: TarifPengrajinWhereUniqueInput
+  }
+
+  /**
+   * TarifPengrajin deleteMany
+   */
+  export type TarifPengrajinDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which TarifPengrajins to delete
+     */
+    where?: TarifPengrajinWhereInput
+    /**
+     * Limit how many TarifPengrajins to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * TarifPengrajin without action
+   */
+  export type TarifPengrajinDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TarifPengrajin
+     */
+    select?: TarifPengrajinSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TarifPengrajin
+     */
+    omit?: TarifPengrajinOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TarifPengrajinInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Penugasan
+   */
+
+  export type AggregatePenugasan = {
+    _count: PenugasanCountAggregateOutputType | null
+    _avg: PenugasanAvgAggregateOutputType | null
+    _sum: PenugasanSumAggregateOutputType | null
+    _min: PenugasanMinAggregateOutputType | null
+    _max: PenugasanMaxAggregateOutputType | null
+  }
+
+  export type PenugasanAvgAggregateOutputType = {
+    id: number | null
+    transactionItemId: number | null
+    pengrajinId: number | null
+    jumlahDitugaskan: number | null
+    pembuatId: number | null
+  }
+
+  export type PenugasanSumAggregateOutputType = {
+    id: number | null
+    transactionItemId: number | null
+    pengrajinId: number | null
+    jumlahDitugaskan: number | null
+    pembuatId: number | null
+  }
+
+  export type PenugasanMinAggregateOutputType = {
+    id: number | null
+    transactionItemId: number | null
+    pengrajinId: number | null
+    jumlahDitugaskan: number | null
+    tenggat: Date | null
+    catatan: string | null
+    pembuatId: number | null
+    pembuatNama: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type PenugasanMaxAggregateOutputType = {
+    id: number | null
+    transactionItemId: number | null
+    pengrajinId: number | null
+    jumlahDitugaskan: number | null
+    tenggat: Date | null
+    catatan: string | null
+    pembuatId: number | null
+    pembuatNama: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type PenugasanCountAggregateOutputType = {
+    id: number
+    transactionItemId: number
+    pengrajinId: number
+    jumlahDitugaskan: number
+    tenggat: number
+    catatan: number
+    pembuatId: number
+    pembuatNama: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type PenugasanAvgAggregateInputType = {
+    id?: true
+    transactionItemId?: true
+    pengrajinId?: true
+    jumlahDitugaskan?: true
+    pembuatId?: true
+  }
+
+  export type PenugasanSumAggregateInputType = {
+    id?: true
+    transactionItemId?: true
+    pengrajinId?: true
+    jumlahDitugaskan?: true
+    pembuatId?: true
+  }
+
+  export type PenugasanMinAggregateInputType = {
+    id?: true
+    transactionItemId?: true
+    pengrajinId?: true
+    jumlahDitugaskan?: true
+    tenggat?: true
+    catatan?: true
+    pembuatId?: true
+    pembuatNama?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type PenugasanMaxAggregateInputType = {
+    id?: true
+    transactionItemId?: true
+    pengrajinId?: true
+    jumlahDitugaskan?: true
+    tenggat?: true
+    catatan?: true
+    pembuatId?: true
+    pembuatNama?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type PenugasanCountAggregateInputType = {
+    id?: true
+    transactionItemId?: true
+    pengrajinId?: true
+    jumlahDitugaskan?: true
+    tenggat?: true
+    catatan?: true
+    pembuatId?: true
+    pembuatNama?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type PenugasanAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Penugasan to aggregate.
+     */
+    where?: PenugasanWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Penugasans to fetch.
+     */
+    orderBy?: PenugasanOrderByWithRelationInput | PenugasanOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: PenugasanWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Penugasans from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Penugasans.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Penugasans
+    **/
+    _count?: true | PenugasanCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: PenugasanAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: PenugasanSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: PenugasanMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: PenugasanMaxAggregateInputType
+  }
+
+  export type GetPenugasanAggregateType<T extends PenugasanAggregateArgs> = {
+        [P in keyof T & keyof AggregatePenugasan]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregatePenugasan[P]>
+      : GetScalarType<T[P], AggregatePenugasan[P]>
+  }
+
+
+
+
+  export type PenugasanGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PenugasanWhereInput
+    orderBy?: PenugasanOrderByWithAggregationInput | PenugasanOrderByWithAggregationInput[]
+    by: PenugasanScalarFieldEnum[] | PenugasanScalarFieldEnum
+    having?: PenugasanScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: PenugasanCountAggregateInputType | true
+    _avg?: PenugasanAvgAggregateInputType
+    _sum?: PenugasanSumAggregateInputType
+    _min?: PenugasanMinAggregateInputType
+    _max?: PenugasanMaxAggregateInputType
+  }
+
+  export type PenugasanGroupByOutputType = {
+    id: number
+    transactionItemId: number
+    pengrajinId: number
+    jumlahDitugaskan: number
+    tenggat: Date
+    catatan: string | null
+    pembuatId: number | null
+    pembuatNama: string | null
+    createdAt: Date
+    updatedAt: Date
+    _count: PenugasanCountAggregateOutputType | null
+    _avg: PenugasanAvgAggregateOutputType | null
+    _sum: PenugasanSumAggregateOutputType | null
+    _min: PenugasanMinAggregateOutputType | null
+    _max: PenugasanMaxAggregateOutputType | null
+  }
+
+  type GetPenugasanGroupByPayload<T extends PenugasanGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<PenugasanGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof PenugasanGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], PenugasanGroupByOutputType[P]>
+            : GetScalarType<T[P], PenugasanGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type PenugasanSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    transactionItemId?: boolean
+    pengrajinId?: boolean
+    jumlahDitugaskan?: boolean
+    tenggat?: boolean
+    catatan?: boolean
+    pembuatId?: boolean
+    pembuatNama?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    transactionItem?: boolean | TransactionItemDefaultArgs<ExtArgs>
+    pengrajin?: boolean | PengrajinDefaultArgs<ExtArgs>
+    setoran?: boolean | Penugasan$setoranArgs<ExtArgs>
+    _count?: boolean | PenugasanCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["penugasan"]>
+
+  export type PenugasanSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    transactionItemId?: boolean
+    pengrajinId?: boolean
+    jumlahDitugaskan?: boolean
+    tenggat?: boolean
+    catatan?: boolean
+    pembuatId?: boolean
+    pembuatNama?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    transactionItem?: boolean | TransactionItemDefaultArgs<ExtArgs>
+    pengrajin?: boolean | PengrajinDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["penugasan"]>
+
+  export type PenugasanSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    transactionItemId?: boolean
+    pengrajinId?: boolean
+    jumlahDitugaskan?: boolean
+    tenggat?: boolean
+    catatan?: boolean
+    pembuatId?: boolean
+    pembuatNama?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    transactionItem?: boolean | TransactionItemDefaultArgs<ExtArgs>
+    pengrajin?: boolean | PengrajinDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["penugasan"]>
+
+  export type PenugasanSelectScalar = {
+    id?: boolean
+    transactionItemId?: boolean
+    pengrajinId?: boolean
+    jumlahDitugaskan?: boolean
+    tenggat?: boolean
+    catatan?: boolean
+    pembuatId?: boolean
+    pembuatNama?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type PenugasanOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "transactionItemId" | "pengrajinId" | "jumlahDitugaskan" | "tenggat" | "catatan" | "pembuatId" | "pembuatNama" | "createdAt" | "updatedAt", ExtArgs["result"]["penugasan"]>
+  export type PenugasanInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    transactionItem?: boolean | TransactionItemDefaultArgs<ExtArgs>
+    pengrajin?: boolean | PengrajinDefaultArgs<ExtArgs>
+    setoran?: boolean | Penugasan$setoranArgs<ExtArgs>
+    _count?: boolean | PenugasanCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type PenugasanIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    transactionItem?: boolean | TransactionItemDefaultArgs<ExtArgs>
+    pengrajin?: boolean | PengrajinDefaultArgs<ExtArgs>
+  }
+  export type PenugasanIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    transactionItem?: boolean | TransactionItemDefaultArgs<ExtArgs>
+    pengrajin?: boolean | PengrajinDefaultArgs<ExtArgs>
+  }
+
+  export type $PenugasanPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Penugasan"
+    objects: {
+      transactionItem: Prisma.$TransactionItemPayload<ExtArgs>
+      pengrajin: Prisma.$PengrajinPayload<ExtArgs>
+      setoran: Prisma.$SetoranPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      transactionItemId: number
+      pengrajinId: number
+      jumlahDitugaskan: number
+      tenggat: Date
+      catatan: string | null
+      pembuatId: number | null
+      pembuatNama: string | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["penugasan"]>
+    composites: {}
+  }
+
+  type PenugasanGetPayload<S extends boolean | null | undefined | PenugasanDefaultArgs> = $Result.GetResult<Prisma.$PenugasanPayload, S>
+
+  type PenugasanCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<PenugasanFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: PenugasanCountAggregateInputType | true
+    }
+
+  export interface PenugasanDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Penugasan'], meta: { name: 'Penugasan' } }
+    /**
+     * Find zero or one Penugasan that matches the filter.
+     * @param {PenugasanFindUniqueArgs} args - Arguments to find a Penugasan
+     * @example
+     * // Get one Penugasan
+     * const penugasan = await prisma.penugasan.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends PenugasanFindUniqueArgs>(args: SelectSubset<T, PenugasanFindUniqueArgs<ExtArgs>>): Prisma__PenugasanClient<$Result.GetResult<Prisma.$PenugasanPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Penugasan that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {PenugasanFindUniqueOrThrowArgs} args - Arguments to find a Penugasan
+     * @example
+     * // Get one Penugasan
+     * const penugasan = await prisma.penugasan.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends PenugasanFindUniqueOrThrowArgs>(args: SelectSubset<T, PenugasanFindUniqueOrThrowArgs<ExtArgs>>): Prisma__PenugasanClient<$Result.GetResult<Prisma.$PenugasanPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Penugasan that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PenugasanFindFirstArgs} args - Arguments to find a Penugasan
+     * @example
+     * // Get one Penugasan
+     * const penugasan = await prisma.penugasan.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends PenugasanFindFirstArgs>(args?: SelectSubset<T, PenugasanFindFirstArgs<ExtArgs>>): Prisma__PenugasanClient<$Result.GetResult<Prisma.$PenugasanPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Penugasan that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PenugasanFindFirstOrThrowArgs} args - Arguments to find a Penugasan
+     * @example
+     * // Get one Penugasan
+     * const penugasan = await prisma.penugasan.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends PenugasanFindFirstOrThrowArgs>(args?: SelectSubset<T, PenugasanFindFirstOrThrowArgs<ExtArgs>>): Prisma__PenugasanClient<$Result.GetResult<Prisma.$PenugasanPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Penugasans that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PenugasanFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Penugasans
+     * const penugasans = await prisma.penugasan.findMany()
+     * 
+     * // Get first 10 Penugasans
+     * const penugasans = await prisma.penugasan.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const penugasanWithIdOnly = await prisma.penugasan.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends PenugasanFindManyArgs>(args?: SelectSubset<T, PenugasanFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PenugasanPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Penugasan.
+     * @param {PenugasanCreateArgs} args - Arguments to create a Penugasan.
+     * @example
+     * // Create one Penugasan
+     * const Penugasan = await prisma.penugasan.create({
+     *   data: {
+     *     // ... data to create a Penugasan
+     *   }
+     * })
+     * 
+     */
+    create<T extends PenugasanCreateArgs>(args: SelectSubset<T, PenugasanCreateArgs<ExtArgs>>): Prisma__PenugasanClient<$Result.GetResult<Prisma.$PenugasanPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Penugasans.
+     * @param {PenugasanCreateManyArgs} args - Arguments to create many Penugasans.
+     * @example
+     * // Create many Penugasans
+     * const penugasan = await prisma.penugasan.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends PenugasanCreateManyArgs>(args?: SelectSubset<T, PenugasanCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Penugasans and returns the data saved in the database.
+     * @param {PenugasanCreateManyAndReturnArgs} args - Arguments to create many Penugasans.
+     * @example
+     * // Create many Penugasans
+     * const penugasan = await prisma.penugasan.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Penugasans and only return the `id`
+     * const penugasanWithIdOnly = await prisma.penugasan.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends PenugasanCreateManyAndReturnArgs>(args?: SelectSubset<T, PenugasanCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PenugasanPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Penugasan.
+     * @param {PenugasanDeleteArgs} args - Arguments to delete one Penugasan.
+     * @example
+     * // Delete one Penugasan
+     * const Penugasan = await prisma.penugasan.delete({
+     *   where: {
+     *     // ... filter to delete one Penugasan
+     *   }
+     * })
+     * 
+     */
+    delete<T extends PenugasanDeleteArgs>(args: SelectSubset<T, PenugasanDeleteArgs<ExtArgs>>): Prisma__PenugasanClient<$Result.GetResult<Prisma.$PenugasanPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Penugasan.
+     * @param {PenugasanUpdateArgs} args - Arguments to update one Penugasan.
+     * @example
+     * // Update one Penugasan
+     * const penugasan = await prisma.penugasan.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends PenugasanUpdateArgs>(args: SelectSubset<T, PenugasanUpdateArgs<ExtArgs>>): Prisma__PenugasanClient<$Result.GetResult<Prisma.$PenugasanPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Penugasans.
+     * @param {PenugasanDeleteManyArgs} args - Arguments to filter Penugasans to delete.
+     * @example
+     * // Delete a few Penugasans
+     * const { count } = await prisma.penugasan.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends PenugasanDeleteManyArgs>(args?: SelectSubset<T, PenugasanDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Penugasans.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PenugasanUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Penugasans
+     * const penugasan = await prisma.penugasan.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends PenugasanUpdateManyArgs>(args: SelectSubset<T, PenugasanUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Penugasans and returns the data updated in the database.
+     * @param {PenugasanUpdateManyAndReturnArgs} args - Arguments to update many Penugasans.
+     * @example
+     * // Update many Penugasans
+     * const penugasan = await prisma.penugasan.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Penugasans and only return the `id`
+     * const penugasanWithIdOnly = await prisma.penugasan.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends PenugasanUpdateManyAndReturnArgs>(args: SelectSubset<T, PenugasanUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PenugasanPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Penugasan.
+     * @param {PenugasanUpsertArgs} args - Arguments to update or create a Penugasan.
+     * @example
+     * // Update or create a Penugasan
+     * const penugasan = await prisma.penugasan.upsert({
+     *   create: {
+     *     // ... data to create a Penugasan
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Penugasan we want to update
+     *   }
+     * })
+     */
+    upsert<T extends PenugasanUpsertArgs>(args: SelectSubset<T, PenugasanUpsertArgs<ExtArgs>>): Prisma__PenugasanClient<$Result.GetResult<Prisma.$PenugasanPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Penugasans.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PenugasanCountArgs} args - Arguments to filter Penugasans to count.
+     * @example
+     * // Count the number of Penugasans
+     * const count = await prisma.penugasan.count({
+     *   where: {
+     *     // ... the filter for the Penugasans we want to count
+     *   }
+     * })
+    **/
+    count<T extends PenugasanCountArgs>(
+      args?: Subset<T, PenugasanCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], PenugasanCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Penugasan.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PenugasanAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends PenugasanAggregateArgs>(args: Subset<T, PenugasanAggregateArgs>): Prisma.PrismaPromise<GetPenugasanAggregateType<T>>
+
+    /**
+     * Group by Penugasan.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PenugasanGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends PenugasanGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: PenugasanGroupByArgs['orderBy'] }
+        : { orderBy?: PenugasanGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, PenugasanGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetPenugasanGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Penugasan model
+   */
+  readonly fields: PenugasanFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Penugasan.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__PenugasanClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    transactionItem<T extends TransactionItemDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TransactionItemDefaultArgs<ExtArgs>>): Prisma__TransactionItemClient<$Result.GetResult<Prisma.$TransactionItemPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    pengrajin<T extends PengrajinDefaultArgs<ExtArgs> = {}>(args?: Subset<T, PengrajinDefaultArgs<ExtArgs>>): Prisma__PengrajinClient<$Result.GetResult<Prisma.$PengrajinPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    setoran<T extends Penugasan$setoranArgs<ExtArgs> = {}>(args?: Subset<T, Penugasan$setoranArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SetoranPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Penugasan model
+   */
+  interface PenugasanFieldRefs {
+    readonly id: FieldRef<"Penugasan", 'Int'>
+    readonly transactionItemId: FieldRef<"Penugasan", 'Int'>
+    readonly pengrajinId: FieldRef<"Penugasan", 'Int'>
+    readonly jumlahDitugaskan: FieldRef<"Penugasan", 'Int'>
+    readonly tenggat: FieldRef<"Penugasan", 'DateTime'>
+    readonly catatan: FieldRef<"Penugasan", 'String'>
+    readonly pembuatId: FieldRef<"Penugasan", 'Int'>
+    readonly pembuatNama: FieldRef<"Penugasan", 'String'>
+    readonly createdAt: FieldRef<"Penugasan", 'DateTime'>
+    readonly updatedAt: FieldRef<"Penugasan", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Penugasan findUnique
+   */
+  export type PenugasanFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Penugasan
+     */
+    select?: PenugasanSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Penugasan
+     */
+    omit?: PenugasanOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PenugasanInclude<ExtArgs> | null
+    /**
+     * Filter, which Penugasan to fetch.
+     */
+    where: PenugasanWhereUniqueInput
+  }
+
+  /**
+   * Penugasan findUniqueOrThrow
+   */
+  export type PenugasanFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Penugasan
+     */
+    select?: PenugasanSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Penugasan
+     */
+    omit?: PenugasanOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PenugasanInclude<ExtArgs> | null
+    /**
+     * Filter, which Penugasan to fetch.
+     */
+    where: PenugasanWhereUniqueInput
+  }
+
+  /**
+   * Penugasan findFirst
+   */
+  export type PenugasanFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Penugasan
+     */
+    select?: PenugasanSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Penugasan
+     */
+    omit?: PenugasanOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PenugasanInclude<ExtArgs> | null
+    /**
+     * Filter, which Penugasan to fetch.
+     */
+    where?: PenugasanWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Penugasans to fetch.
+     */
+    orderBy?: PenugasanOrderByWithRelationInput | PenugasanOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Penugasans.
+     */
+    cursor?: PenugasanWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Penugasans from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Penugasans.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Penugasans.
+     */
+    distinct?: PenugasanScalarFieldEnum | PenugasanScalarFieldEnum[]
+  }
+
+  /**
+   * Penugasan findFirstOrThrow
+   */
+  export type PenugasanFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Penugasan
+     */
+    select?: PenugasanSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Penugasan
+     */
+    omit?: PenugasanOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PenugasanInclude<ExtArgs> | null
+    /**
+     * Filter, which Penugasan to fetch.
+     */
+    where?: PenugasanWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Penugasans to fetch.
+     */
+    orderBy?: PenugasanOrderByWithRelationInput | PenugasanOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Penugasans.
+     */
+    cursor?: PenugasanWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Penugasans from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Penugasans.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Penugasans.
+     */
+    distinct?: PenugasanScalarFieldEnum | PenugasanScalarFieldEnum[]
+  }
+
+  /**
+   * Penugasan findMany
+   */
+  export type PenugasanFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Penugasan
+     */
+    select?: PenugasanSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Penugasan
+     */
+    omit?: PenugasanOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PenugasanInclude<ExtArgs> | null
+    /**
+     * Filter, which Penugasans to fetch.
+     */
+    where?: PenugasanWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Penugasans to fetch.
+     */
+    orderBy?: PenugasanOrderByWithRelationInput | PenugasanOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Penugasans.
+     */
+    cursor?: PenugasanWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Penugasans from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Penugasans.
+     */
+    skip?: number
+    distinct?: PenugasanScalarFieldEnum | PenugasanScalarFieldEnum[]
+  }
+
+  /**
+   * Penugasan create
+   */
+  export type PenugasanCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Penugasan
+     */
+    select?: PenugasanSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Penugasan
+     */
+    omit?: PenugasanOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PenugasanInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Penugasan.
+     */
+    data: XOR<PenugasanCreateInput, PenugasanUncheckedCreateInput>
+  }
+
+  /**
+   * Penugasan createMany
+   */
+  export type PenugasanCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Penugasans.
+     */
+    data: PenugasanCreateManyInput | PenugasanCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Penugasan createManyAndReturn
+   */
+  export type PenugasanCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Penugasan
+     */
+    select?: PenugasanSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Penugasan
+     */
+    omit?: PenugasanOmit<ExtArgs> | null
+    /**
+     * The data used to create many Penugasans.
+     */
+    data: PenugasanCreateManyInput | PenugasanCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PenugasanIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Penugasan update
+   */
+  export type PenugasanUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Penugasan
+     */
+    select?: PenugasanSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Penugasan
+     */
+    omit?: PenugasanOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PenugasanInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Penugasan.
+     */
+    data: XOR<PenugasanUpdateInput, PenugasanUncheckedUpdateInput>
+    /**
+     * Choose, which Penugasan to update.
+     */
+    where: PenugasanWhereUniqueInput
+  }
+
+  /**
+   * Penugasan updateMany
+   */
+  export type PenugasanUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Penugasans.
+     */
+    data: XOR<PenugasanUpdateManyMutationInput, PenugasanUncheckedUpdateManyInput>
+    /**
+     * Filter which Penugasans to update
+     */
+    where?: PenugasanWhereInput
+    /**
+     * Limit how many Penugasans to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Penugasan updateManyAndReturn
+   */
+  export type PenugasanUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Penugasan
+     */
+    select?: PenugasanSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Penugasan
+     */
+    omit?: PenugasanOmit<ExtArgs> | null
+    /**
+     * The data used to update Penugasans.
+     */
+    data: XOR<PenugasanUpdateManyMutationInput, PenugasanUncheckedUpdateManyInput>
+    /**
+     * Filter which Penugasans to update
+     */
+    where?: PenugasanWhereInput
+    /**
+     * Limit how many Penugasans to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PenugasanIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Penugasan upsert
+   */
+  export type PenugasanUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Penugasan
+     */
+    select?: PenugasanSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Penugasan
+     */
+    omit?: PenugasanOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PenugasanInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Penugasan to update in case it exists.
+     */
+    where: PenugasanWhereUniqueInput
+    /**
+     * In case the Penugasan found by the `where` argument doesn't exist, create a new Penugasan with this data.
+     */
+    create: XOR<PenugasanCreateInput, PenugasanUncheckedCreateInput>
+    /**
+     * In case the Penugasan was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<PenugasanUpdateInput, PenugasanUncheckedUpdateInput>
+  }
+
+  /**
+   * Penugasan delete
+   */
+  export type PenugasanDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Penugasan
+     */
+    select?: PenugasanSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Penugasan
+     */
+    omit?: PenugasanOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PenugasanInclude<ExtArgs> | null
+    /**
+     * Filter which Penugasan to delete.
+     */
+    where: PenugasanWhereUniqueInput
+  }
+
+  /**
+   * Penugasan deleteMany
+   */
+  export type PenugasanDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Penugasans to delete
+     */
+    where?: PenugasanWhereInput
+    /**
+     * Limit how many Penugasans to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Penugasan.setoran
+   */
+  export type Penugasan$setoranArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Setoran
+     */
+    select?: SetoranSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Setoran
+     */
+    omit?: SetoranOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SetoranInclude<ExtArgs> | null
+    where?: SetoranWhereInput
+    orderBy?: SetoranOrderByWithRelationInput | SetoranOrderByWithRelationInput[]
+    cursor?: SetoranWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: SetoranScalarFieldEnum | SetoranScalarFieldEnum[]
+  }
+
+  /**
+   * Penugasan without action
+   */
+  export type PenugasanDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Penugasan
+     */
+    select?: PenugasanSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Penugasan
+     */
+    omit?: PenugasanOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PenugasanInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Setoran
+   */
+
+  export type AggregateSetoran = {
+    _count: SetoranCountAggregateOutputType | null
+    _avg: SetoranAvgAggregateOutputType | null
+    _sum: SetoranSumAggregateOutputType | null
+    _min: SetoranMinAggregateOutputType | null
+    _max: SetoranMaxAggregateOutputType | null
+  }
+
+  export type SetoranAvgAggregateOutputType = {
+    id: number | null
+    penugasanId: number | null
+    pengrajinId: number | null
+    penerimaId: number | null
+    jumlah: number | null
+    tarifSnapshot: number | null
+    nilai: number | null
+    pencatatId: number | null
+  }
+
+  export type SetoranSumAggregateOutputType = {
+    id: number | null
+    penugasanId: number | null
+    pengrajinId: number | null
+    penerimaId: number | null
+    jumlah: number | null
+    tarifSnapshot: number | null
+    nilai: number | null
+    pencatatId: number | null
+  }
+
+  export type SetoranMinAggregateOutputType = {
+    id: number | null
+    penugasanId: number | null
+    pengrajinId: number | null
+    penerimaId: number | null
+    tanggal: Date | null
+    jumlah: number | null
+    tarifSnapshot: number | null
+    pakaiTarifCadangan: boolean | null
+    nilai: number | null
+    catatan: string | null
+    pencatatId: number | null
+    pencatatNama: string | null
+    createdAt: Date | null
+  }
+
+  export type SetoranMaxAggregateOutputType = {
+    id: number | null
+    penugasanId: number | null
+    pengrajinId: number | null
+    penerimaId: number | null
+    tanggal: Date | null
+    jumlah: number | null
+    tarifSnapshot: number | null
+    pakaiTarifCadangan: boolean | null
+    nilai: number | null
+    catatan: string | null
+    pencatatId: number | null
+    pencatatNama: string | null
+    createdAt: Date | null
+  }
+
+  export type SetoranCountAggregateOutputType = {
+    id: number
+    penugasanId: number
+    pengrajinId: number
+    penerimaId: number
+    tanggal: number
+    jumlah: number
+    tarifSnapshot: number
+    pakaiTarifCadangan: number
+    nilai: number
+    catatan: number
+    pencatatId: number
+    pencatatNama: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type SetoranAvgAggregateInputType = {
+    id?: true
+    penugasanId?: true
+    pengrajinId?: true
+    penerimaId?: true
+    jumlah?: true
+    tarifSnapshot?: true
+    nilai?: true
+    pencatatId?: true
+  }
+
+  export type SetoranSumAggregateInputType = {
+    id?: true
+    penugasanId?: true
+    pengrajinId?: true
+    penerimaId?: true
+    jumlah?: true
+    tarifSnapshot?: true
+    nilai?: true
+    pencatatId?: true
+  }
+
+  export type SetoranMinAggregateInputType = {
+    id?: true
+    penugasanId?: true
+    pengrajinId?: true
+    penerimaId?: true
+    tanggal?: true
+    jumlah?: true
+    tarifSnapshot?: true
+    pakaiTarifCadangan?: true
+    nilai?: true
+    catatan?: true
+    pencatatId?: true
+    pencatatNama?: true
+    createdAt?: true
+  }
+
+  export type SetoranMaxAggregateInputType = {
+    id?: true
+    penugasanId?: true
+    pengrajinId?: true
+    penerimaId?: true
+    tanggal?: true
+    jumlah?: true
+    tarifSnapshot?: true
+    pakaiTarifCadangan?: true
+    nilai?: true
+    catatan?: true
+    pencatatId?: true
+    pencatatNama?: true
+    createdAt?: true
+  }
+
+  export type SetoranCountAggregateInputType = {
+    id?: true
+    penugasanId?: true
+    pengrajinId?: true
+    penerimaId?: true
+    tanggal?: true
+    jumlah?: true
+    tarifSnapshot?: true
+    pakaiTarifCadangan?: true
+    nilai?: true
+    catatan?: true
+    pencatatId?: true
+    pencatatNama?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type SetoranAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Setoran to aggregate.
+     */
+    where?: SetoranWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Setorans to fetch.
+     */
+    orderBy?: SetoranOrderByWithRelationInput | SetoranOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: SetoranWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Setorans from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Setorans.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Setorans
+    **/
+    _count?: true | SetoranCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: SetoranAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: SetoranSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: SetoranMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: SetoranMaxAggregateInputType
+  }
+
+  export type GetSetoranAggregateType<T extends SetoranAggregateArgs> = {
+        [P in keyof T & keyof AggregateSetoran]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateSetoran[P]>
+      : GetScalarType<T[P], AggregateSetoran[P]>
+  }
+
+
+
+
+  export type SetoranGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SetoranWhereInput
+    orderBy?: SetoranOrderByWithAggregationInput | SetoranOrderByWithAggregationInput[]
+    by: SetoranScalarFieldEnum[] | SetoranScalarFieldEnum
+    having?: SetoranScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: SetoranCountAggregateInputType | true
+    _avg?: SetoranAvgAggregateInputType
+    _sum?: SetoranSumAggregateInputType
+    _min?: SetoranMinAggregateInputType
+    _max?: SetoranMaxAggregateInputType
+  }
+
+  export type SetoranGroupByOutputType = {
+    id: number
+    penugasanId: number
+    pengrajinId: number
+    penerimaId: number
+    tanggal: Date
+    jumlah: number
+    tarifSnapshot: number
+    pakaiTarifCadangan: boolean
+    nilai: number
+    catatan: string | null
+    pencatatId: number | null
+    pencatatNama: string | null
+    createdAt: Date
+    _count: SetoranCountAggregateOutputType | null
+    _avg: SetoranAvgAggregateOutputType | null
+    _sum: SetoranSumAggregateOutputType | null
+    _min: SetoranMinAggregateOutputType | null
+    _max: SetoranMaxAggregateOutputType | null
+  }
+
+  type GetSetoranGroupByPayload<T extends SetoranGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<SetoranGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof SetoranGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], SetoranGroupByOutputType[P]>
+            : GetScalarType<T[P], SetoranGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type SetoranSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    penugasanId?: boolean
+    pengrajinId?: boolean
+    penerimaId?: boolean
+    tanggal?: boolean
+    jumlah?: boolean
+    tarifSnapshot?: boolean
+    pakaiTarifCadangan?: boolean
+    nilai?: boolean
+    catatan?: boolean
+    pencatatId?: boolean
+    pencatatNama?: boolean
+    createdAt?: boolean
+    penugasan?: boolean | PenugasanDefaultArgs<ExtArgs>
+    pengrajin?: boolean | PengrajinDefaultArgs<ExtArgs>
+    penerima?: boolean | PengrajinDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["setoran"]>
+
+  export type SetoranSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    penugasanId?: boolean
+    pengrajinId?: boolean
+    penerimaId?: boolean
+    tanggal?: boolean
+    jumlah?: boolean
+    tarifSnapshot?: boolean
+    pakaiTarifCadangan?: boolean
+    nilai?: boolean
+    catatan?: boolean
+    pencatatId?: boolean
+    pencatatNama?: boolean
+    createdAt?: boolean
+    penugasan?: boolean | PenugasanDefaultArgs<ExtArgs>
+    pengrajin?: boolean | PengrajinDefaultArgs<ExtArgs>
+    penerima?: boolean | PengrajinDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["setoran"]>
+
+  export type SetoranSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    penugasanId?: boolean
+    pengrajinId?: boolean
+    penerimaId?: boolean
+    tanggal?: boolean
+    jumlah?: boolean
+    tarifSnapshot?: boolean
+    pakaiTarifCadangan?: boolean
+    nilai?: boolean
+    catatan?: boolean
+    pencatatId?: boolean
+    pencatatNama?: boolean
+    createdAt?: boolean
+    penugasan?: boolean | PenugasanDefaultArgs<ExtArgs>
+    pengrajin?: boolean | PengrajinDefaultArgs<ExtArgs>
+    penerima?: boolean | PengrajinDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["setoran"]>
+
+  export type SetoranSelectScalar = {
+    id?: boolean
+    penugasanId?: boolean
+    pengrajinId?: boolean
+    penerimaId?: boolean
+    tanggal?: boolean
+    jumlah?: boolean
+    tarifSnapshot?: boolean
+    pakaiTarifCadangan?: boolean
+    nilai?: boolean
+    catatan?: boolean
+    pencatatId?: boolean
+    pencatatNama?: boolean
+    createdAt?: boolean
+  }
+
+  export type SetoranOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "penugasanId" | "pengrajinId" | "penerimaId" | "tanggal" | "jumlah" | "tarifSnapshot" | "pakaiTarifCadangan" | "nilai" | "catatan" | "pencatatId" | "pencatatNama" | "createdAt", ExtArgs["result"]["setoran"]>
+  export type SetoranInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    penugasan?: boolean | PenugasanDefaultArgs<ExtArgs>
+    pengrajin?: boolean | PengrajinDefaultArgs<ExtArgs>
+    penerima?: boolean | PengrajinDefaultArgs<ExtArgs>
+  }
+  export type SetoranIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    penugasan?: boolean | PenugasanDefaultArgs<ExtArgs>
+    pengrajin?: boolean | PengrajinDefaultArgs<ExtArgs>
+    penerima?: boolean | PengrajinDefaultArgs<ExtArgs>
+  }
+  export type SetoranIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    penugasan?: boolean | PenugasanDefaultArgs<ExtArgs>
+    pengrajin?: boolean | PengrajinDefaultArgs<ExtArgs>
+    penerima?: boolean | PengrajinDefaultArgs<ExtArgs>
+  }
+
+  export type $SetoranPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Setoran"
+    objects: {
+      penugasan: Prisma.$PenugasanPayload<ExtArgs>
+      pengrajin: Prisma.$PengrajinPayload<ExtArgs>
+      penerima: Prisma.$PengrajinPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      penugasanId: number
+      pengrajinId: number
+      penerimaId: number
+      tanggal: Date
+      jumlah: number
+      tarifSnapshot: number
+      pakaiTarifCadangan: boolean
+      nilai: number
+      catatan: string | null
+      pencatatId: number | null
+      pencatatNama: string | null
+      createdAt: Date
+    }, ExtArgs["result"]["setoran"]>
+    composites: {}
+  }
+
+  type SetoranGetPayload<S extends boolean | null | undefined | SetoranDefaultArgs> = $Result.GetResult<Prisma.$SetoranPayload, S>
+
+  type SetoranCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<SetoranFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: SetoranCountAggregateInputType | true
+    }
+
+  export interface SetoranDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Setoran'], meta: { name: 'Setoran' } }
+    /**
+     * Find zero or one Setoran that matches the filter.
+     * @param {SetoranFindUniqueArgs} args - Arguments to find a Setoran
+     * @example
+     * // Get one Setoran
+     * const setoran = await prisma.setoran.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends SetoranFindUniqueArgs>(args: SelectSubset<T, SetoranFindUniqueArgs<ExtArgs>>): Prisma__SetoranClient<$Result.GetResult<Prisma.$SetoranPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Setoran that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {SetoranFindUniqueOrThrowArgs} args - Arguments to find a Setoran
+     * @example
+     * // Get one Setoran
+     * const setoran = await prisma.setoran.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends SetoranFindUniqueOrThrowArgs>(args: SelectSubset<T, SetoranFindUniqueOrThrowArgs<ExtArgs>>): Prisma__SetoranClient<$Result.GetResult<Prisma.$SetoranPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Setoran that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SetoranFindFirstArgs} args - Arguments to find a Setoran
+     * @example
+     * // Get one Setoran
+     * const setoran = await prisma.setoran.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends SetoranFindFirstArgs>(args?: SelectSubset<T, SetoranFindFirstArgs<ExtArgs>>): Prisma__SetoranClient<$Result.GetResult<Prisma.$SetoranPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Setoran that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SetoranFindFirstOrThrowArgs} args - Arguments to find a Setoran
+     * @example
+     * // Get one Setoran
+     * const setoran = await prisma.setoran.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends SetoranFindFirstOrThrowArgs>(args?: SelectSubset<T, SetoranFindFirstOrThrowArgs<ExtArgs>>): Prisma__SetoranClient<$Result.GetResult<Prisma.$SetoranPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Setorans that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SetoranFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Setorans
+     * const setorans = await prisma.setoran.findMany()
+     * 
+     * // Get first 10 Setorans
+     * const setorans = await prisma.setoran.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const setoranWithIdOnly = await prisma.setoran.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends SetoranFindManyArgs>(args?: SelectSubset<T, SetoranFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SetoranPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Setoran.
+     * @param {SetoranCreateArgs} args - Arguments to create a Setoran.
+     * @example
+     * // Create one Setoran
+     * const Setoran = await prisma.setoran.create({
+     *   data: {
+     *     // ... data to create a Setoran
+     *   }
+     * })
+     * 
+     */
+    create<T extends SetoranCreateArgs>(args: SelectSubset<T, SetoranCreateArgs<ExtArgs>>): Prisma__SetoranClient<$Result.GetResult<Prisma.$SetoranPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Setorans.
+     * @param {SetoranCreateManyArgs} args - Arguments to create many Setorans.
+     * @example
+     * // Create many Setorans
+     * const setoran = await prisma.setoran.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends SetoranCreateManyArgs>(args?: SelectSubset<T, SetoranCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Setorans and returns the data saved in the database.
+     * @param {SetoranCreateManyAndReturnArgs} args - Arguments to create many Setorans.
+     * @example
+     * // Create many Setorans
+     * const setoran = await prisma.setoran.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Setorans and only return the `id`
+     * const setoranWithIdOnly = await prisma.setoran.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends SetoranCreateManyAndReturnArgs>(args?: SelectSubset<T, SetoranCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SetoranPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Setoran.
+     * @param {SetoranDeleteArgs} args - Arguments to delete one Setoran.
+     * @example
+     * // Delete one Setoran
+     * const Setoran = await prisma.setoran.delete({
+     *   where: {
+     *     // ... filter to delete one Setoran
+     *   }
+     * })
+     * 
+     */
+    delete<T extends SetoranDeleteArgs>(args: SelectSubset<T, SetoranDeleteArgs<ExtArgs>>): Prisma__SetoranClient<$Result.GetResult<Prisma.$SetoranPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Setoran.
+     * @param {SetoranUpdateArgs} args - Arguments to update one Setoran.
+     * @example
+     * // Update one Setoran
+     * const setoran = await prisma.setoran.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends SetoranUpdateArgs>(args: SelectSubset<T, SetoranUpdateArgs<ExtArgs>>): Prisma__SetoranClient<$Result.GetResult<Prisma.$SetoranPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Setorans.
+     * @param {SetoranDeleteManyArgs} args - Arguments to filter Setorans to delete.
+     * @example
+     * // Delete a few Setorans
+     * const { count } = await prisma.setoran.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends SetoranDeleteManyArgs>(args?: SelectSubset<T, SetoranDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Setorans.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SetoranUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Setorans
+     * const setoran = await prisma.setoran.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends SetoranUpdateManyArgs>(args: SelectSubset<T, SetoranUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Setorans and returns the data updated in the database.
+     * @param {SetoranUpdateManyAndReturnArgs} args - Arguments to update many Setorans.
+     * @example
+     * // Update many Setorans
+     * const setoran = await prisma.setoran.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Setorans and only return the `id`
+     * const setoranWithIdOnly = await prisma.setoran.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends SetoranUpdateManyAndReturnArgs>(args: SelectSubset<T, SetoranUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SetoranPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Setoran.
+     * @param {SetoranUpsertArgs} args - Arguments to update or create a Setoran.
+     * @example
+     * // Update or create a Setoran
+     * const setoran = await prisma.setoran.upsert({
+     *   create: {
+     *     // ... data to create a Setoran
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Setoran we want to update
+     *   }
+     * })
+     */
+    upsert<T extends SetoranUpsertArgs>(args: SelectSubset<T, SetoranUpsertArgs<ExtArgs>>): Prisma__SetoranClient<$Result.GetResult<Prisma.$SetoranPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Setorans.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SetoranCountArgs} args - Arguments to filter Setorans to count.
+     * @example
+     * // Count the number of Setorans
+     * const count = await prisma.setoran.count({
+     *   where: {
+     *     // ... the filter for the Setorans we want to count
+     *   }
+     * })
+    **/
+    count<T extends SetoranCountArgs>(
+      args?: Subset<T, SetoranCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], SetoranCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Setoran.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SetoranAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends SetoranAggregateArgs>(args: Subset<T, SetoranAggregateArgs>): Prisma.PrismaPromise<GetSetoranAggregateType<T>>
+
+    /**
+     * Group by Setoran.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SetoranGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends SetoranGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: SetoranGroupByArgs['orderBy'] }
+        : { orderBy?: SetoranGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, SetoranGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetSetoranGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Setoran model
+   */
+  readonly fields: SetoranFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Setoran.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__SetoranClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    penugasan<T extends PenugasanDefaultArgs<ExtArgs> = {}>(args?: Subset<T, PenugasanDefaultArgs<ExtArgs>>): Prisma__PenugasanClient<$Result.GetResult<Prisma.$PenugasanPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    pengrajin<T extends PengrajinDefaultArgs<ExtArgs> = {}>(args?: Subset<T, PengrajinDefaultArgs<ExtArgs>>): Prisma__PengrajinClient<$Result.GetResult<Prisma.$PengrajinPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    penerima<T extends PengrajinDefaultArgs<ExtArgs> = {}>(args?: Subset<T, PengrajinDefaultArgs<ExtArgs>>): Prisma__PengrajinClient<$Result.GetResult<Prisma.$PengrajinPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Setoran model
+   */
+  interface SetoranFieldRefs {
+    readonly id: FieldRef<"Setoran", 'Int'>
+    readonly penugasanId: FieldRef<"Setoran", 'Int'>
+    readonly pengrajinId: FieldRef<"Setoran", 'Int'>
+    readonly penerimaId: FieldRef<"Setoran", 'Int'>
+    readonly tanggal: FieldRef<"Setoran", 'DateTime'>
+    readonly jumlah: FieldRef<"Setoran", 'Int'>
+    readonly tarifSnapshot: FieldRef<"Setoran", 'Int'>
+    readonly pakaiTarifCadangan: FieldRef<"Setoran", 'Boolean'>
+    readonly nilai: FieldRef<"Setoran", 'Int'>
+    readonly catatan: FieldRef<"Setoran", 'String'>
+    readonly pencatatId: FieldRef<"Setoran", 'Int'>
+    readonly pencatatNama: FieldRef<"Setoran", 'String'>
+    readonly createdAt: FieldRef<"Setoran", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Setoran findUnique
+   */
+  export type SetoranFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Setoran
+     */
+    select?: SetoranSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Setoran
+     */
+    omit?: SetoranOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SetoranInclude<ExtArgs> | null
+    /**
+     * Filter, which Setoran to fetch.
+     */
+    where: SetoranWhereUniqueInput
+  }
+
+  /**
+   * Setoran findUniqueOrThrow
+   */
+  export type SetoranFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Setoran
+     */
+    select?: SetoranSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Setoran
+     */
+    omit?: SetoranOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SetoranInclude<ExtArgs> | null
+    /**
+     * Filter, which Setoran to fetch.
+     */
+    where: SetoranWhereUniqueInput
+  }
+
+  /**
+   * Setoran findFirst
+   */
+  export type SetoranFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Setoran
+     */
+    select?: SetoranSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Setoran
+     */
+    omit?: SetoranOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SetoranInclude<ExtArgs> | null
+    /**
+     * Filter, which Setoran to fetch.
+     */
+    where?: SetoranWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Setorans to fetch.
+     */
+    orderBy?: SetoranOrderByWithRelationInput | SetoranOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Setorans.
+     */
+    cursor?: SetoranWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Setorans from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Setorans.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Setorans.
+     */
+    distinct?: SetoranScalarFieldEnum | SetoranScalarFieldEnum[]
+  }
+
+  /**
+   * Setoran findFirstOrThrow
+   */
+  export type SetoranFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Setoran
+     */
+    select?: SetoranSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Setoran
+     */
+    omit?: SetoranOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SetoranInclude<ExtArgs> | null
+    /**
+     * Filter, which Setoran to fetch.
+     */
+    where?: SetoranWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Setorans to fetch.
+     */
+    orderBy?: SetoranOrderByWithRelationInput | SetoranOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Setorans.
+     */
+    cursor?: SetoranWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Setorans from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Setorans.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Setorans.
+     */
+    distinct?: SetoranScalarFieldEnum | SetoranScalarFieldEnum[]
+  }
+
+  /**
+   * Setoran findMany
+   */
+  export type SetoranFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Setoran
+     */
+    select?: SetoranSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Setoran
+     */
+    omit?: SetoranOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SetoranInclude<ExtArgs> | null
+    /**
+     * Filter, which Setorans to fetch.
+     */
+    where?: SetoranWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Setorans to fetch.
+     */
+    orderBy?: SetoranOrderByWithRelationInput | SetoranOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Setorans.
+     */
+    cursor?: SetoranWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Setorans from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Setorans.
+     */
+    skip?: number
+    distinct?: SetoranScalarFieldEnum | SetoranScalarFieldEnum[]
+  }
+
+  /**
+   * Setoran create
+   */
+  export type SetoranCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Setoran
+     */
+    select?: SetoranSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Setoran
+     */
+    omit?: SetoranOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SetoranInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Setoran.
+     */
+    data: XOR<SetoranCreateInput, SetoranUncheckedCreateInput>
+  }
+
+  /**
+   * Setoran createMany
+   */
+  export type SetoranCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Setorans.
+     */
+    data: SetoranCreateManyInput | SetoranCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Setoran createManyAndReturn
+   */
+  export type SetoranCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Setoran
+     */
+    select?: SetoranSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Setoran
+     */
+    omit?: SetoranOmit<ExtArgs> | null
+    /**
+     * The data used to create many Setorans.
+     */
+    data: SetoranCreateManyInput | SetoranCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SetoranIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Setoran update
+   */
+  export type SetoranUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Setoran
+     */
+    select?: SetoranSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Setoran
+     */
+    omit?: SetoranOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SetoranInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Setoran.
+     */
+    data: XOR<SetoranUpdateInput, SetoranUncheckedUpdateInput>
+    /**
+     * Choose, which Setoran to update.
+     */
+    where: SetoranWhereUniqueInput
+  }
+
+  /**
+   * Setoran updateMany
+   */
+  export type SetoranUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Setorans.
+     */
+    data: XOR<SetoranUpdateManyMutationInput, SetoranUncheckedUpdateManyInput>
+    /**
+     * Filter which Setorans to update
+     */
+    where?: SetoranWhereInput
+    /**
+     * Limit how many Setorans to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Setoran updateManyAndReturn
+   */
+  export type SetoranUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Setoran
+     */
+    select?: SetoranSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Setoran
+     */
+    omit?: SetoranOmit<ExtArgs> | null
+    /**
+     * The data used to update Setorans.
+     */
+    data: XOR<SetoranUpdateManyMutationInput, SetoranUncheckedUpdateManyInput>
+    /**
+     * Filter which Setorans to update
+     */
+    where?: SetoranWhereInput
+    /**
+     * Limit how many Setorans to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SetoranIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Setoran upsert
+   */
+  export type SetoranUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Setoran
+     */
+    select?: SetoranSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Setoran
+     */
+    omit?: SetoranOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SetoranInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Setoran to update in case it exists.
+     */
+    where: SetoranWhereUniqueInput
+    /**
+     * In case the Setoran found by the `where` argument doesn't exist, create a new Setoran with this data.
+     */
+    create: XOR<SetoranCreateInput, SetoranUncheckedCreateInput>
+    /**
+     * In case the Setoran was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<SetoranUpdateInput, SetoranUncheckedUpdateInput>
+  }
+
+  /**
+   * Setoran delete
+   */
+  export type SetoranDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Setoran
+     */
+    select?: SetoranSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Setoran
+     */
+    omit?: SetoranOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SetoranInclude<ExtArgs> | null
+    /**
+     * Filter which Setoran to delete.
+     */
+    where: SetoranWhereUniqueInput
+  }
+
+  /**
+   * Setoran deleteMany
+   */
+  export type SetoranDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Setorans to delete
+     */
+    where?: SetoranWhereInput
+    /**
+     * Limit how many Setorans to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Setoran without action
+   */
+  export type SetoranDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Setoran
+     */
+    select?: SetoranSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Setoran
+     */
+    omit?: SetoranOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SetoranInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Penarikan
+   */
+
+  export type AggregatePenarikan = {
+    _count: PenarikanCountAggregateOutputType | null
+    _avg: PenarikanAvgAggregateOutputType | null
+    _sum: PenarikanSumAggregateOutputType | null
+    _min: PenarikanMinAggregateOutputType | null
+    _max: PenarikanMaxAggregateOutputType | null
+  }
+
+  export type PenarikanAvgAggregateOutputType = {
+    id: number | null
+    pengrajinId: number | null
+    nominal: number | null
+    expenseId: number | null
+    pencatatId: number | null
+  }
+
+  export type PenarikanSumAggregateOutputType = {
+    id: number | null
+    pengrajinId: number | null
+    nominal: number | null
+    expenseId: number | null
+    pencatatId: number | null
+  }
+
+  export type PenarikanMinAggregateOutputType = {
+    id: number | null
+    pengrajinId: number | null
+    tanggal: Date | null
+    nominal: number | null
+    expenseId: number | null
+    catatan: string | null
+    pencatatId: number | null
+    pencatatNama: string | null
+    createdAt: Date | null
+  }
+
+  export type PenarikanMaxAggregateOutputType = {
+    id: number | null
+    pengrajinId: number | null
+    tanggal: Date | null
+    nominal: number | null
+    expenseId: number | null
+    catatan: string | null
+    pencatatId: number | null
+    pencatatNama: string | null
+    createdAt: Date | null
+  }
+
+  export type PenarikanCountAggregateOutputType = {
+    id: number
+    pengrajinId: number
+    tanggal: number
+    nominal: number
+    expenseId: number
+    catatan: number
+    pencatatId: number
+    pencatatNama: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type PenarikanAvgAggregateInputType = {
+    id?: true
+    pengrajinId?: true
+    nominal?: true
+    expenseId?: true
+    pencatatId?: true
+  }
+
+  export type PenarikanSumAggregateInputType = {
+    id?: true
+    pengrajinId?: true
+    nominal?: true
+    expenseId?: true
+    pencatatId?: true
+  }
+
+  export type PenarikanMinAggregateInputType = {
+    id?: true
+    pengrajinId?: true
+    tanggal?: true
+    nominal?: true
+    expenseId?: true
+    catatan?: true
+    pencatatId?: true
+    pencatatNama?: true
+    createdAt?: true
+  }
+
+  export type PenarikanMaxAggregateInputType = {
+    id?: true
+    pengrajinId?: true
+    tanggal?: true
+    nominal?: true
+    expenseId?: true
+    catatan?: true
+    pencatatId?: true
+    pencatatNama?: true
+    createdAt?: true
+  }
+
+  export type PenarikanCountAggregateInputType = {
+    id?: true
+    pengrajinId?: true
+    tanggal?: true
+    nominal?: true
+    expenseId?: true
+    catatan?: true
+    pencatatId?: true
+    pencatatNama?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type PenarikanAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Penarikan to aggregate.
+     */
+    where?: PenarikanWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Penarikans to fetch.
+     */
+    orderBy?: PenarikanOrderByWithRelationInput | PenarikanOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: PenarikanWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Penarikans from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Penarikans.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Penarikans
+    **/
+    _count?: true | PenarikanCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: PenarikanAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: PenarikanSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: PenarikanMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: PenarikanMaxAggregateInputType
+  }
+
+  export type GetPenarikanAggregateType<T extends PenarikanAggregateArgs> = {
+        [P in keyof T & keyof AggregatePenarikan]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregatePenarikan[P]>
+      : GetScalarType<T[P], AggregatePenarikan[P]>
+  }
+
+
+
+
+  export type PenarikanGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PenarikanWhereInput
+    orderBy?: PenarikanOrderByWithAggregationInput | PenarikanOrderByWithAggregationInput[]
+    by: PenarikanScalarFieldEnum[] | PenarikanScalarFieldEnum
+    having?: PenarikanScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: PenarikanCountAggregateInputType | true
+    _avg?: PenarikanAvgAggregateInputType
+    _sum?: PenarikanSumAggregateInputType
+    _min?: PenarikanMinAggregateInputType
+    _max?: PenarikanMaxAggregateInputType
+  }
+
+  export type PenarikanGroupByOutputType = {
+    id: number
+    pengrajinId: number
+    tanggal: Date
+    nominal: number
+    expenseId: number | null
+    catatan: string | null
+    pencatatId: number | null
+    pencatatNama: string | null
+    createdAt: Date
+    _count: PenarikanCountAggregateOutputType | null
+    _avg: PenarikanAvgAggregateOutputType | null
+    _sum: PenarikanSumAggregateOutputType | null
+    _min: PenarikanMinAggregateOutputType | null
+    _max: PenarikanMaxAggregateOutputType | null
+  }
+
+  type GetPenarikanGroupByPayload<T extends PenarikanGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<PenarikanGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof PenarikanGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], PenarikanGroupByOutputType[P]>
+            : GetScalarType<T[P], PenarikanGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type PenarikanSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    pengrajinId?: boolean
+    tanggal?: boolean
+    nominal?: boolean
+    expenseId?: boolean
+    catatan?: boolean
+    pencatatId?: boolean
+    pencatatNama?: boolean
+    createdAt?: boolean
+    pengrajin?: boolean | PengrajinDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["penarikan"]>
+
+  export type PenarikanSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    pengrajinId?: boolean
+    tanggal?: boolean
+    nominal?: boolean
+    expenseId?: boolean
+    catatan?: boolean
+    pencatatId?: boolean
+    pencatatNama?: boolean
+    createdAt?: boolean
+    pengrajin?: boolean | PengrajinDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["penarikan"]>
+
+  export type PenarikanSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    pengrajinId?: boolean
+    tanggal?: boolean
+    nominal?: boolean
+    expenseId?: boolean
+    catatan?: boolean
+    pencatatId?: boolean
+    pencatatNama?: boolean
+    createdAt?: boolean
+    pengrajin?: boolean | PengrajinDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["penarikan"]>
+
+  export type PenarikanSelectScalar = {
+    id?: boolean
+    pengrajinId?: boolean
+    tanggal?: boolean
+    nominal?: boolean
+    expenseId?: boolean
+    catatan?: boolean
+    pencatatId?: boolean
+    pencatatNama?: boolean
+    createdAt?: boolean
+  }
+
+  export type PenarikanOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "pengrajinId" | "tanggal" | "nominal" | "expenseId" | "catatan" | "pencatatId" | "pencatatNama" | "createdAt", ExtArgs["result"]["penarikan"]>
+  export type PenarikanInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    pengrajin?: boolean | PengrajinDefaultArgs<ExtArgs>
+  }
+  export type PenarikanIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    pengrajin?: boolean | PengrajinDefaultArgs<ExtArgs>
+  }
+  export type PenarikanIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    pengrajin?: boolean | PengrajinDefaultArgs<ExtArgs>
+  }
+
+  export type $PenarikanPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Penarikan"
+    objects: {
+      pengrajin: Prisma.$PengrajinPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      pengrajinId: number
+      tanggal: Date
+      nominal: number
+      expenseId: number | null
+      catatan: string | null
+      pencatatId: number | null
+      pencatatNama: string | null
+      createdAt: Date
+    }, ExtArgs["result"]["penarikan"]>
+    composites: {}
+  }
+
+  type PenarikanGetPayload<S extends boolean | null | undefined | PenarikanDefaultArgs> = $Result.GetResult<Prisma.$PenarikanPayload, S>
+
+  type PenarikanCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<PenarikanFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: PenarikanCountAggregateInputType | true
+    }
+
+  export interface PenarikanDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Penarikan'], meta: { name: 'Penarikan' } }
+    /**
+     * Find zero or one Penarikan that matches the filter.
+     * @param {PenarikanFindUniqueArgs} args - Arguments to find a Penarikan
+     * @example
+     * // Get one Penarikan
+     * const penarikan = await prisma.penarikan.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends PenarikanFindUniqueArgs>(args: SelectSubset<T, PenarikanFindUniqueArgs<ExtArgs>>): Prisma__PenarikanClient<$Result.GetResult<Prisma.$PenarikanPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Penarikan that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {PenarikanFindUniqueOrThrowArgs} args - Arguments to find a Penarikan
+     * @example
+     * // Get one Penarikan
+     * const penarikan = await prisma.penarikan.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends PenarikanFindUniqueOrThrowArgs>(args: SelectSubset<T, PenarikanFindUniqueOrThrowArgs<ExtArgs>>): Prisma__PenarikanClient<$Result.GetResult<Prisma.$PenarikanPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Penarikan that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PenarikanFindFirstArgs} args - Arguments to find a Penarikan
+     * @example
+     * // Get one Penarikan
+     * const penarikan = await prisma.penarikan.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends PenarikanFindFirstArgs>(args?: SelectSubset<T, PenarikanFindFirstArgs<ExtArgs>>): Prisma__PenarikanClient<$Result.GetResult<Prisma.$PenarikanPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Penarikan that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PenarikanFindFirstOrThrowArgs} args - Arguments to find a Penarikan
+     * @example
+     * // Get one Penarikan
+     * const penarikan = await prisma.penarikan.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends PenarikanFindFirstOrThrowArgs>(args?: SelectSubset<T, PenarikanFindFirstOrThrowArgs<ExtArgs>>): Prisma__PenarikanClient<$Result.GetResult<Prisma.$PenarikanPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Penarikans that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PenarikanFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Penarikans
+     * const penarikans = await prisma.penarikan.findMany()
+     * 
+     * // Get first 10 Penarikans
+     * const penarikans = await prisma.penarikan.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const penarikanWithIdOnly = await prisma.penarikan.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends PenarikanFindManyArgs>(args?: SelectSubset<T, PenarikanFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PenarikanPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Penarikan.
+     * @param {PenarikanCreateArgs} args - Arguments to create a Penarikan.
+     * @example
+     * // Create one Penarikan
+     * const Penarikan = await prisma.penarikan.create({
+     *   data: {
+     *     // ... data to create a Penarikan
+     *   }
+     * })
+     * 
+     */
+    create<T extends PenarikanCreateArgs>(args: SelectSubset<T, PenarikanCreateArgs<ExtArgs>>): Prisma__PenarikanClient<$Result.GetResult<Prisma.$PenarikanPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Penarikans.
+     * @param {PenarikanCreateManyArgs} args - Arguments to create many Penarikans.
+     * @example
+     * // Create many Penarikans
+     * const penarikan = await prisma.penarikan.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends PenarikanCreateManyArgs>(args?: SelectSubset<T, PenarikanCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Penarikans and returns the data saved in the database.
+     * @param {PenarikanCreateManyAndReturnArgs} args - Arguments to create many Penarikans.
+     * @example
+     * // Create many Penarikans
+     * const penarikan = await prisma.penarikan.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Penarikans and only return the `id`
+     * const penarikanWithIdOnly = await prisma.penarikan.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends PenarikanCreateManyAndReturnArgs>(args?: SelectSubset<T, PenarikanCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PenarikanPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Penarikan.
+     * @param {PenarikanDeleteArgs} args - Arguments to delete one Penarikan.
+     * @example
+     * // Delete one Penarikan
+     * const Penarikan = await prisma.penarikan.delete({
+     *   where: {
+     *     // ... filter to delete one Penarikan
+     *   }
+     * })
+     * 
+     */
+    delete<T extends PenarikanDeleteArgs>(args: SelectSubset<T, PenarikanDeleteArgs<ExtArgs>>): Prisma__PenarikanClient<$Result.GetResult<Prisma.$PenarikanPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Penarikan.
+     * @param {PenarikanUpdateArgs} args - Arguments to update one Penarikan.
+     * @example
+     * // Update one Penarikan
+     * const penarikan = await prisma.penarikan.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends PenarikanUpdateArgs>(args: SelectSubset<T, PenarikanUpdateArgs<ExtArgs>>): Prisma__PenarikanClient<$Result.GetResult<Prisma.$PenarikanPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Penarikans.
+     * @param {PenarikanDeleteManyArgs} args - Arguments to filter Penarikans to delete.
+     * @example
+     * // Delete a few Penarikans
+     * const { count } = await prisma.penarikan.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends PenarikanDeleteManyArgs>(args?: SelectSubset<T, PenarikanDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Penarikans.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PenarikanUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Penarikans
+     * const penarikan = await prisma.penarikan.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends PenarikanUpdateManyArgs>(args: SelectSubset<T, PenarikanUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Penarikans and returns the data updated in the database.
+     * @param {PenarikanUpdateManyAndReturnArgs} args - Arguments to update many Penarikans.
+     * @example
+     * // Update many Penarikans
+     * const penarikan = await prisma.penarikan.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Penarikans and only return the `id`
+     * const penarikanWithIdOnly = await prisma.penarikan.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends PenarikanUpdateManyAndReturnArgs>(args: SelectSubset<T, PenarikanUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PenarikanPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Penarikan.
+     * @param {PenarikanUpsertArgs} args - Arguments to update or create a Penarikan.
+     * @example
+     * // Update or create a Penarikan
+     * const penarikan = await prisma.penarikan.upsert({
+     *   create: {
+     *     // ... data to create a Penarikan
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Penarikan we want to update
+     *   }
+     * })
+     */
+    upsert<T extends PenarikanUpsertArgs>(args: SelectSubset<T, PenarikanUpsertArgs<ExtArgs>>): Prisma__PenarikanClient<$Result.GetResult<Prisma.$PenarikanPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Penarikans.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PenarikanCountArgs} args - Arguments to filter Penarikans to count.
+     * @example
+     * // Count the number of Penarikans
+     * const count = await prisma.penarikan.count({
+     *   where: {
+     *     // ... the filter for the Penarikans we want to count
+     *   }
+     * })
+    **/
+    count<T extends PenarikanCountArgs>(
+      args?: Subset<T, PenarikanCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], PenarikanCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Penarikan.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PenarikanAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends PenarikanAggregateArgs>(args: Subset<T, PenarikanAggregateArgs>): Prisma.PrismaPromise<GetPenarikanAggregateType<T>>
+
+    /**
+     * Group by Penarikan.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PenarikanGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends PenarikanGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: PenarikanGroupByArgs['orderBy'] }
+        : { orderBy?: PenarikanGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, PenarikanGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetPenarikanGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Penarikan model
+   */
+  readonly fields: PenarikanFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Penarikan.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__PenarikanClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    pengrajin<T extends PengrajinDefaultArgs<ExtArgs> = {}>(args?: Subset<T, PengrajinDefaultArgs<ExtArgs>>): Prisma__PengrajinClient<$Result.GetResult<Prisma.$PengrajinPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Penarikan model
+   */
+  interface PenarikanFieldRefs {
+    readonly id: FieldRef<"Penarikan", 'Int'>
+    readonly pengrajinId: FieldRef<"Penarikan", 'Int'>
+    readonly tanggal: FieldRef<"Penarikan", 'DateTime'>
+    readonly nominal: FieldRef<"Penarikan", 'Int'>
+    readonly expenseId: FieldRef<"Penarikan", 'Int'>
+    readonly catatan: FieldRef<"Penarikan", 'String'>
+    readonly pencatatId: FieldRef<"Penarikan", 'Int'>
+    readonly pencatatNama: FieldRef<"Penarikan", 'String'>
+    readonly createdAt: FieldRef<"Penarikan", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Penarikan findUnique
+   */
+  export type PenarikanFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Penarikan
+     */
+    select?: PenarikanSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Penarikan
+     */
+    omit?: PenarikanOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PenarikanInclude<ExtArgs> | null
+    /**
+     * Filter, which Penarikan to fetch.
+     */
+    where: PenarikanWhereUniqueInput
+  }
+
+  /**
+   * Penarikan findUniqueOrThrow
+   */
+  export type PenarikanFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Penarikan
+     */
+    select?: PenarikanSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Penarikan
+     */
+    omit?: PenarikanOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PenarikanInclude<ExtArgs> | null
+    /**
+     * Filter, which Penarikan to fetch.
+     */
+    where: PenarikanWhereUniqueInput
+  }
+
+  /**
+   * Penarikan findFirst
+   */
+  export type PenarikanFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Penarikan
+     */
+    select?: PenarikanSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Penarikan
+     */
+    omit?: PenarikanOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PenarikanInclude<ExtArgs> | null
+    /**
+     * Filter, which Penarikan to fetch.
+     */
+    where?: PenarikanWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Penarikans to fetch.
+     */
+    orderBy?: PenarikanOrderByWithRelationInput | PenarikanOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Penarikans.
+     */
+    cursor?: PenarikanWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Penarikans from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Penarikans.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Penarikans.
+     */
+    distinct?: PenarikanScalarFieldEnum | PenarikanScalarFieldEnum[]
+  }
+
+  /**
+   * Penarikan findFirstOrThrow
+   */
+  export type PenarikanFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Penarikan
+     */
+    select?: PenarikanSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Penarikan
+     */
+    omit?: PenarikanOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PenarikanInclude<ExtArgs> | null
+    /**
+     * Filter, which Penarikan to fetch.
+     */
+    where?: PenarikanWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Penarikans to fetch.
+     */
+    orderBy?: PenarikanOrderByWithRelationInput | PenarikanOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Penarikans.
+     */
+    cursor?: PenarikanWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Penarikans from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Penarikans.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Penarikans.
+     */
+    distinct?: PenarikanScalarFieldEnum | PenarikanScalarFieldEnum[]
+  }
+
+  /**
+   * Penarikan findMany
+   */
+  export type PenarikanFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Penarikan
+     */
+    select?: PenarikanSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Penarikan
+     */
+    omit?: PenarikanOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PenarikanInclude<ExtArgs> | null
+    /**
+     * Filter, which Penarikans to fetch.
+     */
+    where?: PenarikanWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Penarikans to fetch.
+     */
+    orderBy?: PenarikanOrderByWithRelationInput | PenarikanOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Penarikans.
+     */
+    cursor?: PenarikanWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Penarikans from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Penarikans.
+     */
+    skip?: number
+    distinct?: PenarikanScalarFieldEnum | PenarikanScalarFieldEnum[]
+  }
+
+  /**
+   * Penarikan create
+   */
+  export type PenarikanCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Penarikan
+     */
+    select?: PenarikanSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Penarikan
+     */
+    omit?: PenarikanOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PenarikanInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Penarikan.
+     */
+    data: XOR<PenarikanCreateInput, PenarikanUncheckedCreateInput>
+  }
+
+  /**
+   * Penarikan createMany
+   */
+  export type PenarikanCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Penarikans.
+     */
+    data: PenarikanCreateManyInput | PenarikanCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Penarikan createManyAndReturn
+   */
+  export type PenarikanCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Penarikan
+     */
+    select?: PenarikanSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Penarikan
+     */
+    omit?: PenarikanOmit<ExtArgs> | null
+    /**
+     * The data used to create many Penarikans.
+     */
+    data: PenarikanCreateManyInput | PenarikanCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PenarikanIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Penarikan update
+   */
+  export type PenarikanUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Penarikan
+     */
+    select?: PenarikanSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Penarikan
+     */
+    omit?: PenarikanOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PenarikanInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Penarikan.
+     */
+    data: XOR<PenarikanUpdateInput, PenarikanUncheckedUpdateInput>
+    /**
+     * Choose, which Penarikan to update.
+     */
+    where: PenarikanWhereUniqueInput
+  }
+
+  /**
+   * Penarikan updateMany
+   */
+  export type PenarikanUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Penarikans.
+     */
+    data: XOR<PenarikanUpdateManyMutationInput, PenarikanUncheckedUpdateManyInput>
+    /**
+     * Filter which Penarikans to update
+     */
+    where?: PenarikanWhereInput
+    /**
+     * Limit how many Penarikans to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Penarikan updateManyAndReturn
+   */
+  export type PenarikanUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Penarikan
+     */
+    select?: PenarikanSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Penarikan
+     */
+    omit?: PenarikanOmit<ExtArgs> | null
+    /**
+     * The data used to update Penarikans.
+     */
+    data: XOR<PenarikanUpdateManyMutationInput, PenarikanUncheckedUpdateManyInput>
+    /**
+     * Filter which Penarikans to update
+     */
+    where?: PenarikanWhereInput
+    /**
+     * Limit how many Penarikans to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PenarikanIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Penarikan upsert
+   */
+  export type PenarikanUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Penarikan
+     */
+    select?: PenarikanSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Penarikan
+     */
+    omit?: PenarikanOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PenarikanInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Penarikan to update in case it exists.
+     */
+    where: PenarikanWhereUniqueInput
+    /**
+     * In case the Penarikan found by the `where` argument doesn't exist, create a new Penarikan with this data.
+     */
+    create: XOR<PenarikanCreateInput, PenarikanUncheckedCreateInput>
+    /**
+     * In case the Penarikan was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<PenarikanUpdateInput, PenarikanUncheckedUpdateInput>
+  }
+
+  /**
+   * Penarikan delete
+   */
+  export type PenarikanDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Penarikan
+     */
+    select?: PenarikanSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Penarikan
+     */
+    omit?: PenarikanOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PenarikanInclude<ExtArgs> | null
+    /**
+     * Filter which Penarikan to delete.
+     */
+    where: PenarikanWhereUniqueInput
+  }
+
+  /**
+   * Penarikan deleteMany
+   */
+  export type PenarikanDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Penarikans to delete
+     */
+    where?: PenarikanWhereInput
+    /**
+     * Limit how many Penarikans to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Penarikan without action
+   */
+  export type PenarikanDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Penarikan
+     */
+    select?: PenarikanSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Penarikan
+     */
+    omit?: PenarikanOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PenarikanInclude<ExtArgs> | null
   }
 
 
@@ -23585,6 +31575,94 @@ export namespace Prisma {
   export type TransactionItemScalarFieldEnum = (typeof TransactionItemScalarFieldEnum)[keyof typeof TransactionItemScalarFieldEnum]
 
 
+  export const KelompokScalarFieldEnum: {
+    id: 'id',
+    nama: 'nama',
+    ketuaId: 'ketuaId',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type KelompokScalarFieldEnum = (typeof KelompokScalarFieldEnum)[keyof typeof KelompokScalarFieldEnum]
+
+
+  export const PengrajinScalarFieldEnum: {
+    id: 'id',
+    nama: 'nama',
+    kelompokId: 'kelompokId',
+    tarifCadangan: 'tarifCadangan',
+    satuanTarif: 'satuanTarif',
+    penerimaUpah: 'penerimaUpah',
+    aktif: 'aktif',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type PengrajinScalarFieldEnum = (typeof PengrajinScalarFieldEnum)[keyof typeof PengrajinScalarFieldEnum]
+
+
+  export const TarifPengrajinScalarFieldEnum: {
+    id: 'id',
+    pengrajinId: 'pengrajinId',
+    productId: 'productId',
+    tarif: 'tarif',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type TarifPengrajinScalarFieldEnum = (typeof TarifPengrajinScalarFieldEnum)[keyof typeof TarifPengrajinScalarFieldEnum]
+
+
+  export const PenugasanScalarFieldEnum: {
+    id: 'id',
+    transactionItemId: 'transactionItemId',
+    pengrajinId: 'pengrajinId',
+    jumlahDitugaskan: 'jumlahDitugaskan',
+    tenggat: 'tenggat',
+    catatan: 'catatan',
+    pembuatId: 'pembuatId',
+    pembuatNama: 'pembuatNama',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type PenugasanScalarFieldEnum = (typeof PenugasanScalarFieldEnum)[keyof typeof PenugasanScalarFieldEnum]
+
+
+  export const SetoranScalarFieldEnum: {
+    id: 'id',
+    penugasanId: 'penugasanId',
+    pengrajinId: 'pengrajinId',
+    penerimaId: 'penerimaId',
+    tanggal: 'tanggal',
+    jumlah: 'jumlah',
+    tarifSnapshot: 'tarifSnapshot',
+    pakaiTarifCadangan: 'pakaiTarifCadangan',
+    nilai: 'nilai',
+    catatan: 'catatan',
+    pencatatId: 'pencatatId',
+    pencatatNama: 'pencatatNama',
+    createdAt: 'createdAt'
+  };
+
+  export type SetoranScalarFieldEnum = (typeof SetoranScalarFieldEnum)[keyof typeof SetoranScalarFieldEnum]
+
+
+  export const PenarikanScalarFieldEnum: {
+    id: 'id',
+    pengrajinId: 'pengrajinId',
+    tanggal: 'tanggal',
+    nominal: 'nominal',
+    expenseId: 'expenseId',
+    catatan: 'catatan',
+    pencatatId: 'pencatatId',
+    pencatatNama: 'pencatatNama',
+    createdAt: 'createdAt'
+  };
+
+  export type PenarikanScalarFieldEnum = (typeof PenarikanScalarFieldEnum)[keyof typeof PenarikanScalarFieldEnum]
+
+
   export const StoreSettingScalarFieldEnum: {
     id: 'id',
     brand: 'brand',
@@ -23941,6 +32019,7 @@ export namespace Prisma {
     cartItems?: UserCartItemListRelationFilter
     orderRequestItems?: OrderRequestItemListRelationFilter
     variants?: ProductVariantListRelationFilter
+    tarifPengrajin?: TarifPengrajinListRelationFilter
   }
 
   export type ProductOrderByWithRelationInput = {
@@ -23958,6 +32037,7 @@ export namespace Prisma {
     cartItems?: UserCartItemOrderByRelationAggregateInput
     orderRequestItems?: OrderRequestItemOrderByRelationAggregateInput
     variants?: ProductVariantOrderByRelationAggregateInput
+    tarifPengrajin?: TarifPengrajinOrderByRelationAggregateInput
   }
 
   export type ProductWhereUniqueInput = Prisma.AtLeast<{
@@ -23978,6 +32058,7 @@ export namespace Prisma {
     cartItems?: UserCartItemListRelationFilter
     orderRequestItems?: OrderRequestItemListRelationFilter
     variants?: ProductVariantListRelationFilter
+    tarifPengrajin?: TarifPengrajinListRelationFilter
   }, "id" | "barcode">
 
   export type ProductOrderByWithAggregationInput = {
@@ -24361,6 +32442,7 @@ export namespace Prisma {
     packedAt?: DateTimeNullableFilter<"TransactionItem"> | Date | string | null
     transaction?: XOR<TransactionScalarRelationFilter, TransactionWhereInput>
     product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
+    penugasan?: PenugasanListRelationFilter
   }
 
   export type TransactionItemOrderByWithRelationInput = {
@@ -24379,6 +32461,7 @@ export namespace Prisma {
     packedAt?: SortOrderInput | SortOrder
     transaction?: TransactionOrderByWithRelationInput
     product?: ProductOrderByWithRelationInput
+    penugasan?: PenugasanOrderByRelationAggregateInput
   }
 
   export type TransactionItemWhereUniqueInput = Prisma.AtLeast<{
@@ -24400,6 +32483,7 @@ export namespace Prisma {
     packedAt?: DateTimeNullableFilter<"TransactionItem"> | Date | string | null
     transaction?: XOR<TransactionScalarRelationFilter, TransactionWhereInput>
     product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
+    penugasan?: PenugasanListRelationFilter
   }, "id">
 
   export type TransactionItemOrderByWithAggregationInput = {
@@ -24440,6 +32524,495 @@ export namespace Prisma {
     satuanHarga?: StringWithAggregatesFilter<"TransactionItem"> | string
     packed?: BoolWithAggregatesFilter<"TransactionItem"> | boolean
     packedAt?: DateTimeNullableWithAggregatesFilter<"TransactionItem"> | Date | string | null
+  }
+
+  export type KelompokWhereInput = {
+    AND?: KelompokWhereInput | KelompokWhereInput[]
+    OR?: KelompokWhereInput[]
+    NOT?: KelompokWhereInput | KelompokWhereInput[]
+    id?: IntFilter<"Kelompok"> | number
+    nama?: StringFilter<"Kelompok"> | string
+    ketuaId?: IntNullableFilter<"Kelompok"> | number | null
+    createdAt?: DateTimeFilter<"Kelompok"> | Date | string
+    updatedAt?: DateTimeFilter<"Kelompok"> | Date | string
+    ketua?: XOR<PengrajinNullableScalarRelationFilter, PengrajinWhereInput> | null
+    anggota?: PengrajinListRelationFilter
+  }
+
+  export type KelompokOrderByWithRelationInput = {
+    id?: SortOrder
+    nama?: SortOrder
+    ketuaId?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    ketua?: PengrajinOrderByWithRelationInput
+    anggota?: PengrajinOrderByRelationAggregateInput
+  }
+
+  export type KelompokWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    nama?: string
+    ketuaId?: number
+    AND?: KelompokWhereInput | KelompokWhereInput[]
+    OR?: KelompokWhereInput[]
+    NOT?: KelompokWhereInput | KelompokWhereInput[]
+    createdAt?: DateTimeFilter<"Kelompok"> | Date | string
+    updatedAt?: DateTimeFilter<"Kelompok"> | Date | string
+    ketua?: XOR<PengrajinNullableScalarRelationFilter, PengrajinWhereInput> | null
+    anggota?: PengrajinListRelationFilter
+  }, "id" | "nama" | "ketuaId">
+
+  export type KelompokOrderByWithAggregationInput = {
+    id?: SortOrder
+    nama?: SortOrder
+    ketuaId?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: KelompokCountOrderByAggregateInput
+    _avg?: KelompokAvgOrderByAggregateInput
+    _max?: KelompokMaxOrderByAggregateInput
+    _min?: KelompokMinOrderByAggregateInput
+    _sum?: KelompokSumOrderByAggregateInput
+  }
+
+  export type KelompokScalarWhereWithAggregatesInput = {
+    AND?: KelompokScalarWhereWithAggregatesInput | KelompokScalarWhereWithAggregatesInput[]
+    OR?: KelompokScalarWhereWithAggregatesInput[]
+    NOT?: KelompokScalarWhereWithAggregatesInput | KelompokScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"Kelompok"> | number
+    nama?: StringWithAggregatesFilter<"Kelompok"> | string
+    ketuaId?: IntNullableWithAggregatesFilter<"Kelompok"> | number | null
+    createdAt?: DateTimeWithAggregatesFilter<"Kelompok"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Kelompok"> | Date | string
+  }
+
+  export type PengrajinWhereInput = {
+    AND?: PengrajinWhereInput | PengrajinWhereInput[]
+    OR?: PengrajinWhereInput[]
+    NOT?: PengrajinWhereInput | PengrajinWhereInput[]
+    id?: IntFilter<"Pengrajin"> | number
+    nama?: StringFilter<"Pengrajin"> | string
+    kelompokId?: IntNullableFilter<"Pengrajin"> | number | null
+    tarifCadangan?: IntNullableFilter<"Pengrajin"> | number | null
+    satuanTarif?: StringFilter<"Pengrajin"> | string
+    penerimaUpah?: StringFilter<"Pengrajin"> | string
+    aktif?: BoolFilter<"Pengrajin"> | boolean
+    createdAt?: DateTimeFilter<"Pengrajin"> | Date | string
+    updatedAt?: DateTimeFilter<"Pengrajin"> | Date | string
+    kelompok?: XOR<KelompokNullableScalarRelationFilter, KelompokWhereInput> | null
+    ketuaDari?: XOR<KelompokNullableScalarRelationFilter, KelompokWhereInput> | null
+    tarif?: TarifPengrajinListRelationFilter
+    penugasan?: PenugasanListRelationFilter
+    setoranKerja?: SetoranListRelationFilter
+    setoranTerima?: SetoranListRelationFilter
+    penarikan?: PenarikanListRelationFilter
+  }
+
+  export type PengrajinOrderByWithRelationInput = {
+    id?: SortOrder
+    nama?: SortOrder
+    kelompokId?: SortOrderInput | SortOrder
+    tarifCadangan?: SortOrderInput | SortOrder
+    satuanTarif?: SortOrder
+    penerimaUpah?: SortOrder
+    aktif?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    kelompok?: KelompokOrderByWithRelationInput
+    ketuaDari?: KelompokOrderByWithRelationInput
+    tarif?: TarifPengrajinOrderByRelationAggregateInput
+    penugasan?: PenugasanOrderByRelationAggregateInput
+    setoranKerja?: SetoranOrderByRelationAggregateInput
+    setoranTerima?: SetoranOrderByRelationAggregateInput
+    penarikan?: PenarikanOrderByRelationAggregateInput
+  }
+
+  export type PengrajinWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    nama?: string
+    AND?: PengrajinWhereInput | PengrajinWhereInput[]
+    OR?: PengrajinWhereInput[]
+    NOT?: PengrajinWhereInput | PengrajinWhereInput[]
+    kelompokId?: IntNullableFilter<"Pengrajin"> | number | null
+    tarifCadangan?: IntNullableFilter<"Pengrajin"> | number | null
+    satuanTarif?: StringFilter<"Pengrajin"> | string
+    penerimaUpah?: StringFilter<"Pengrajin"> | string
+    aktif?: BoolFilter<"Pengrajin"> | boolean
+    createdAt?: DateTimeFilter<"Pengrajin"> | Date | string
+    updatedAt?: DateTimeFilter<"Pengrajin"> | Date | string
+    kelompok?: XOR<KelompokNullableScalarRelationFilter, KelompokWhereInput> | null
+    ketuaDari?: XOR<KelompokNullableScalarRelationFilter, KelompokWhereInput> | null
+    tarif?: TarifPengrajinListRelationFilter
+    penugasan?: PenugasanListRelationFilter
+    setoranKerja?: SetoranListRelationFilter
+    setoranTerima?: SetoranListRelationFilter
+    penarikan?: PenarikanListRelationFilter
+  }, "id" | "nama">
+
+  export type PengrajinOrderByWithAggregationInput = {
+    id?: SortOrder
+    nama?: SortOrder
+    kelompokId?: SortOrderInput | SortOrder
+    tarifCadangan?: SortOrderInput | SortOrder
+    satuanTarif?: SortOrder
+    penerimaUpah?: SortOrder
+    aktif?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: PengrajinCountOrderByAggregateInput
+    _avg?: PengrajinAvgOrderByAggregateInput
+    _max?: PengrajinMaxOrderByAggregateInput
+    _min?: PengrajinMinOrderByAggregateInput
+    _sum?: PengrajinSumOrderByAggregateInput
+  }
+
+  export type PengrajinScalarWhereWithAggregatesInput = {
+    AND?: PengrajinScalarWhereWithAggregatesInput | PengrajinScalarWhereWithAggregatesInput[]
+    OR?: PengrajinScalarWhereWithAggregatesInput[]
+    NOT?: PengrajinScalarWhereWithAggregatesInput | PengrajinScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"Pengrajin"> | number
+    nama?: StringWithAggregatesFilter<"Pengrajin"> | string
+    kelompokId?: IntNullableWithAggregatesFilter<"Pengrajin"> | number | null
+    tarifCadangan?: IntNullableWithAggregatesFilter<"Pengrajin"> | number | null
+    satuanTarif?: StringWithAggregatesFilter<"Pengrajin"> | string
+    penerimaUpah?: StringWithAggregatesFilter<"Pengrajin"> | string
+    aktif?: BoolWithAggregatesFilter<"Pengrajin"> | boolean
+    createdAt?: DateTimeWithAggregatesFilter<"Pengrajin"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Pengrajin"> | Date | string
+  }
+
+  export type TarifPengrajinWhereInput = {
+    AND?: TarifPengrajinWhereInput | TarifPengrajinWhereInput[]
+    OR?: TarifPengrajinWhereInput[]
+    NOT?: TarifPengrajinWhereInput | TarifPengrajinWhereInput[]
+    id?: IntFilter<"TarifPengrajin"> | number
+    pengrajinId?: IntFilter<"TarifPengrajin"> | number
+    productId?: IntFilter<"TarifPengrajin"> | number
+    tarif?: IntFilter<"TarifPengrajin"> | number
+    createdAt?: DateTimeFilter<"TarifPengrajin"> | Date | string
+    updatedAt?: DateTimeFilter<"TarifPengrajin"> | Date | string
+    pengrajin?: XOR<PengrajinScalarRelationFilter, PengrajinWhereInput>
+    product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
+  }
+
+  export type TarifPengrajinOrderByWithRelationInput = {
+    id?: SortOrder
+    pengrajinId?: SortOrder
+    productId?: SortOrder
+    tarif?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    pengrajin?: PengrajinOrderByWithRelationInput
+    product?: ProductOrderByWithRelationInput
+  }
+
+  export type TarifPengrajinWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    pengrajinId_productId?: TarifPengrajinPengrajinIdProductIdCompoundUniqueInput
+    AND?: TarifPengrajinWhereInput | TarifPengrajinWhereInput[]
+    OR?: TarifPengrajinWhereInput[]
+    NOT?: TarifPengrajinWhereInput | TarifPengrajinWhereInput[]
+    pengrajinId?: IntFilter<"TarifPengrajin"> | number
+    productId?: IntFilter<"TarifPengrajin"> | number
+    tarif?: IntFilter<"TarifPengrajin"> | number
+    createdAt?: DateTimeFilter<"TarifPengrajin"> | Date | string
+    updatedAt?: DateTimeFilter<"TarifPengrajin"> | Date | string
+    pengrajin?: XOR<PengrajinScalarRelationFilter, PengrajinWhereInput>
+    product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
+  }, "id" | "pengrajinId_productId">
+
+  export type TarifPengrajinOrderByWithAggregationInput = {
+    id?: SortOrder
+    pengrajinId?: SortOrder
+    productId?: SortOrder
+    tarif?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: TarifPengrajinCountOrderByAggregateInput
+    _avg?: TarifPengrajinAvgOrderByAggregateInput
+    _max?: TarifPengrajinMaxOrderByAggregateInput
+    _min?: TarifPengrajinMinOrderByAggregateInput
+    _sum?: TarifPengrajinSumOrderByAggregateInput
+  }
+
+  export type TarifPengrajinScalarWhereWithAggregatesInput = {
+    AND?: TarifPengrajinScalarWhereWithAggregatesInput | TarifPengrajinScalarWhereWithAggregatesInput[]
+    OR?: TarifPengrajinScalarWhereWithAggregatesInput[]
+    NOT?: TarifPengrajinScalarWhereWithAggregatesInput | TarifPengrajinScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"TarifPengrajin"> | number
+    pengrajinId?: IntWithAggregatesFilter<"TarifPengrajin"> | number
+    productId?: IntWithAggregatesFilter<"TarifPengrajin"> | number
+    tarif?: IntWithAggregatesFilter<"TarifPengrajin"> | number
+    createdAt?: DateTimeWithAggregatesFilter<"TarifPengrajin"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"TarifPengrajin"> | Date | string
+  }
+
+  export type PenugasanWhereInput = {
+    AND?: PenugasanWhereInput | PenugasanWhereInput[]
+    OR?: PenugasanWhereInput[]
+    NOT?: PenugasanWhereInput | PenugasanWhereInput[]
+    id?: IntFilter<"Penugasan"> | number
+    transactionItemId?: IntFilter<"Penugasan"> | number
+    pengrajinId?: IntFilter<"Penugasan"> | number
+    jumlahDitugaskan?: IntFilter<"Penugasan"> | number
+    tenggat?: DateTimeFilter<"Penugasan"> | Date | string
+    catatan?: StringNullableFilter<"Penugasan"> | string | null
+    pembuatId?: IntNullableFilter<"Penugasan"> | number | null
+    pembuatNama?: StringNullableFilter<"Penugasan"> | string | null
+    createdAt?: DateTimeFilter<"Penugasan"> | Date | string
+    updatedAt?: DateTimeFilter<"Penugasan"> | Date | string
+    transactionItem?: XOR<TransactionItemScalarRelationFilter, TransactionItemWhereInput>
+    pengrajin?: XOR<PengrajinScalarRelationFilter, PengrajinWhereInput>
+    setoran?: SetoranListRelationFilter
+  }
+
+  export type PenugasanOrderByWithRelationInput = {
+    id?: SortOrder
+    transactionItemId?: SortOrder
+    pengrajinId?: SortOrder
+    jumlahDitugaskan?: SortOrder
+    tenggat?: SortOrder
+    catatan?: SortOrderInput | SortOrder
+    pembuatId?: SortOrderInput | SortOrder
+    pembuatNama?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    transactionItem?: TransactionItemOrderByWithRelationInput
+    pengrajin?: PengrajinOrderByWithRelationInput
+    setoran?: SetoranOrderByRelationAggregateInput
+  }
+
+  export type PenugasanWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    AND?: PenugasanWhereInput | PenugasanWhereInput[]
+    OR?: PenugasanWhereInput[]
+    NOT?: PenugasanWhereInput | PenugasanWhereInput[]
+    transactionItemId?: IntFilter<"Penugasan"> | number
+    pengrajinId?: IntFilter<"Penugasan"> | number
+    jumlahDitugaskan?: IntFilter<"Penugasan"> | number
+    tenggat?: DateTimeFilter<"Penugasan"> | Date | string
+    catatan?: StringNullableFilter<"Penugasan"> | string | null
+    pembuatId?: IntNullableFilter<"Penugasan"> | number | null
+    pembuatNama?: StringNullableFilter<"Penugasan"> | string | null
+    createdAt?: DateTimeFilter<"Penugasan"> | Date | string
+    updatedAt?: DateTimeFilter<"Penugasan"> | Date | string
+    transactionItem?: XOR<TransactionItemScalarRelationFilter, TransactionItemWhereInput>
+    pengrajin?: XOR<PengrajinScalarRelationFilter, PengrajinWhereInput>
+    setoran?: SetoranListRelationFilter
+  }, "id">
+
+  export type PenugasanOrderByWithAggregationInput = {
+    id?: SortOrder
+    transactionItemId?: SortOrder
+    pengrajinId?: SortOrder
+    jumlahDitugaskan?: SortOrder
+    tenggat?: SortOrder
+    catatan?: SortOrderInput | SortOrder
+    pembuatId?: SortOrderInput | SortOrder
+    pembuatNama?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: PenugasanCountOrderByAggregateInput
+    _avg?: PenugasanAvgOrderByAggregateInput
+    _max?: PenugasanMaxOrderByAggregateInput
+    _min?: PenugasanMinOrderByAggregateInput
+    _sum?: PenugasanSumOrderByAggregateInput
+  }
+
+  export type PenugasanScalarWhereWithAggregatesInput = {
+    AND?: PenugasanScalarWhereWithAggregatesInput | PenugasanScalarWhereWithAggregatesInput[]
+    OR?: PenugasanScalarWhereWithAggregatesInput[]
+    NOT?: PenugasanScalarWhereWithAggregatesInput | PenugasanScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"Penugasan"> | number
+    transactionItemId?: IntWithAggregatesFilter<"Penugasan"> | number
+    pengrajinId?: IntWithAggregatesFilter<"Penugasan"> | number
+    jumlahDitugaskan?: IntWithAggregatesFilter<"Penugasan"> | number
+    tenggat?: DateTimeWithAggregatesFilter<"Penugasan"> | Date | string
+    catatan?: StringNullableWithAggregatesFilter<"Penugasan"> | string | null
+    pembuatId?: IntNullableWithAggregatesFilter<"Penugasan"> | number | null
+    pembuatNama?: StringNullableWithAggregatesFilter<"Penugasan"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"Penugasan"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Penugasan"> | Date | string
+  }
+
+  export type SetoranWhereInput = {
+    AND?: SetoranWhereInput | SetoranWhereInput[]
+    OR?: SetoranWhereInput[]
+    NOT?: SetoranWhereInput | SetoranWhereInput[]
+    id?: IntFilter<"Setoran"> | number
+    penugasanId?: IntFilter<"Setoran"> | number
+    pengrajinId?: IntFilter<"Setoran"> | number
+    penerimaId?: IntFilter<"Setoran"> | number
+    tanggal?: DateTimeFilter<"Setoran"> | Date | string
+    jumlah?: IntFilter<"Setoran"> | number
+    tarifSnapshot?: IntFilter<"Setoran"> | number
+    pakaiTarifCadangan?: BoolFilter<"Setoran"> | boolean
+    nilai?: IntFilter<"Setoran"> | number
+    catatan?: StringNullableFilter<"Setoran"> | string | null
+    pencatatId?: IntNullableFilter<"Setoran"> | number | null
+    pencatatNama?: StringNullableFilter<"Setoran"> | string | null
+    createdAt?: DateTimeFilter<"Setoran"> | Date | string
+    penugasan?: XOR<PenugasanScalarRelationFilter, PenugasanWhereInput>
+    pengrajin?: XOR<PengrajinScalarRelationFilter, PengrajinWhereInput>
+    penerima?: XOR<PengrajinScalarRelationFilter, PengrajinWhereInput>
+  }
+
+  export type SetoranOrderByWithRelationInput = {
+    id?: SortOrder
+    penugasanId?: SortOrder
+    pengrajinId?: SortOrder
+    penerimaId?: SortOrder
+    tanggal?: SortOrder
+    jumlah?: SortOrder
+    tarifSnapshot?: SortOrder
+    pakaiTarifCadangan?: SortOrder
+    nilai?: SortOrder
+    catatan?: SortOrderInput | SortOrder
+    pencatatId?: SortOrderInput | SortOrder
+    pencatatNama?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    penugasan?: PenugasanOrderByWithRelationInput
+    pengrajin?: PengrajinOrderByWithRelationInput
+    penerima?: PengrajinOrderByWithRelationInput
+  }
+
+  export type SetoranWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    AND?: SetoranWhereInput | SetoranWhereInput[]
+    OR?: SetoranWhereInput[]
+    NOT?: SetoranWhereInput | SetoranWhereInput[]
+    penugasanId?: IntFilter<"Setoran"> | number
+    pengrajinId?: IntFilter<"Setoran"> | number
+    penerimaId?: IntFilter<"Setoran"> | number
+    tanggal?: DateTimeFilter<"Setoran"> | Date | string
+    jumlah?: IntFilter<"Setoran"> | number
+    tarifSnapshot?: IntFilter<"Setoran"> | number
+    pakaiTarifCadangan?: BoolFilter<"Setoran"> | boolean
+    nilai?: IntFilter<"Setoran"> | number
+    catatan?: StringNullableFilter<"Setoran"> | string | null
+    pencatatId?: IntNullableFilter<"Setoran"> | number | null
+    pencatatNama?: StringNullableFilter<"Setoran"> | string | null
+    createdAt?: DateTimeFilter<"Setoran"> | Date | string
+    penugasan?: XOR<PenugasanScalarRelationFilter, PenugasanWhereInput>
+    pengrajin?: XOR<PengrajinScalarRelationFilter, PengrajinWhereInput>
+    penerima?: XOR<PengrajinScalarRelationFilter, PengrajinWhereInput>
+  }, "id">
+
+  export type SetoranOrderByWithAggregationInput = {
+    id?: SortOrder
+    penugasanId?: SortOrder
+    pengrajinId?: SortOrder
+    penerimaId?: SortOrder
+    tanggal?: SortOrder
+    jumlah?: SortOrder
+    tarifSnapshot?: SortOrder
+    pakaiTarifCadangan?: SortOrder
+    nilai?: SortOrder
+    catatan?: SortOrderInput | SortOrder
+    pencatatId?: SortOrderInput | SortOrder
+    pencatatNama?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    _count?: SetoranCountOrderByAggregateInput
+    _avg?: SetoranAvgOrderByAggregateInput
+    _max?: SetoranMaxOrderByAggregateInput
+    _min?: SetoranMinOrderByAggregateInput
+    _sum?: SetoranSumOrderByAggregateInput
+  }
+
+  export type SetoranScalarWhereWithAggregatesInput = {
+    AND?: SetoranScalarWhereWithAggregatesInput | SetoranScalarWhereWithAggregatesInput[]
+    OR?: SetoranScalarWhereWithAggregatesInput[]
+    NOT?: SetoranScalarWhereWithAggregatesInput | SetoranScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"Setoran"> | number
+    penugasanId?: IntWithAggregatesFilter<"Setoran"> | number
+    pengrajinId?: IntWithAggregatesFilter<"Setoran"> | number
+    penerimaId?: IntWithAggregatesFilter<"Setoran"> | number
+    tanggal?: DateTimeWithAggregatesFilter<"Setoran"> | Date | string
+    jumlah?: IntWithAggregatesFilter<"Setoran"> | number
+    tarifSnapshot?: IntWithAggregatesFilter<"Setoran"> | number
+    pakaiTarifCadangan?: BoolWithAggregatesFilter<"Setoran"> | boolean
+    nilai?: IntWithAggregatesFilter<"Setoran"> | number
+    catatan?: StringNullableWithAggregatesFilter<"Setoran"> | string | null
+    pencatatId?: IntNullableWithAggregatesFilter<"Setoran"> | number | null
+    pencatatNama?: StringNullableWithAggregatesFilter<"Setoran"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"Setoran"> | Date | string
+  }
+
+  export type PenarikanWhereInput = {
+    AND?: PenarikanWhereInput | PenarikanWhereInput[]
+    OR?: PenarikanWhereInput[]
+    NOT?: PenarikanWhereInput | PenarikanWhereInput[]
+    id?: IntFilter<"Penarikan"> | number
+    pengrajinId?: IntFilter<"Penarikan"> | number
+    tanggal?: DateTimeFilter<"Penarikan"> | Date | string
+    nominal?: IntFilter<"Penarikan"> | number
+    expenseId?: IntNullableFilter<"Penarikan"> | number | null
+    catatan?: StringNullableFilter<"Penarikan"> | string | null
+    pencatatId?: IntNullableFilter<"Penarikan"> | number | null
+    pencatatNama?: StringNullableFilter<"Penarikan"> | string | null
+    createdAt?: DateTimeFilter<"Penarikan"> | Date | string
+    pengrajin?: XOR<PengrajinScalarRelationFilter, PengrajinWhereInput>
+  }
+
+  export type PenarikanOrderByWithRelationInput = {
+    id?: SortOrder
+    pengrajinId?: SortOrder
+    tanggal?: SortOrder
+    nominal?: SortOrder
+    expenseId?: SortOrderInput | SortOrder
+    catatan?: SortOrderInput | SortOrder
+    pencatatId?: SortOrderInput | SortOrder
+    pencatatNama?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    pengrajin?: PengrajinOrderByWithRelationInput
+  }
+
+  export type PenarikanWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    expenseId?: number
+    AND?: PenarikanWhereInput | PenarikanWhereInput[]
+    OR?: PenarikanWhereInput[]
+    NOT?: PenarikanWhereInput | PenarikanWhereInput[]
+    pengrajinId?: IntFilter<"Penarikan"> | number
+    tanggal?: DateTimeFilter<"Penarikan"> | Date | string
+    nominal?: IntFilter<"Penarikan"> | number
+    catatan?: StringNullableFilter<"Penarikan"> | string | null
+    pencatatId?: IntNullableFilter<"Penarikan"> | number | null
+    pencatatNama?: StringNullableFilter<"Penarikan"> | string | null
+    createdAt?: DateTimeFilter<"Penarikan"> | Date | string
+    pengrajin?: XOR<PengrajinScalarRelationFilter, PengrajinWhereInput>
+  }, "id" | "expenseId">
+
+  export type PenarikanOrderByWithAggregationInput = {
+    id?: SortOrder
+    pengrajinId?: SortOrder
+    tanggal?: SortOrder
+    nominal?: SortOrder
+    expenseId?: SortOrderInput | SortOrder
+    catatan?: SortOrderInput | SortOrder
+    pencatatId?: SortOrderInput | SortOrder
+    pencatatNama?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    _count?: PenarikanCountOrderByAggregateInput
+    _avg?: PenarikanAvgOrderByAggregateInput
+    _max?: PenarikanMaxOrderByAggregateInput
+    _min?: PenarikanMinOrderByAggregateInput
+    _sum?: PenarikanSumOrderByAggregateInput
+  }
+
+  export type PenarikanScalarWhereWithAggregatesInput = {
+    AND?: PenarikanScalarWhereWithAggregatesInput | PenarikanScalarWhereWithAggregatesInput[]
+    OR?: PenarikanScalarWhereWithAggregatesInput[]
+    NOT?: PenarikanScalarWhereWithAggregatesInput | PenarikanScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"Penarikan"> | number
+    pengrajinId?: IntWithAggregatesFilter<"Penarikan"> | number
+    tanggal?: DateTimeWithAggregatesFilter<"Penarikan"> | Date | string
+    nominal?: IntWithAggregatesFilter<"Penarikan"> | number
+    expenseId?: IntNullableWithAggregatesFilter<"Penarikan"> | number | null
+    catatan?: StringNullableWithAggregatesFilter<"Penarikan"> | string | null
+    pencatatId?: IntNullableWithAggregatesFilter<"Penarikan"> | number | null
+    pencatatNama?: StringNullableWithAggregatesFilter<"Penarikan"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"Penarikan"> | Date | string
   }
 
   export type StoreSettingWhereInput = {
@@ -25304,6 +33877,7 @@ export namespace Prisma {
     cartItems?: UserCartItemCreateNestedManyWithoutProductInput
     orderRequestItems?: OrderRequestItemCreateNestedManyWithoutProductInput
     variants?: ProductVariantCreateNestedManyWithoutProductInput
+    tarifPengrajin?: TarifPengrajinCreateNestedManyWithoutProductInput
   }
 
   export type ProductUncheckedCreateInput = {
@@ -25321,6 +33895,7 @@ export namespace Prisma {
     cartItems?: UserCartItemUncheckedCreateNestedManyWithoutProductInput
     orderRequestItems?: OrderRequestItemUncheckedCreateNestedManyWithoutProductInput
     variants?: ProductVariantUncheckedCreateNestedManyWithoutProductInput
+    tarifPengrajin?: TarifPengrajinUncheckedCreateNestedManyWithoutProductInput
   }
 
   export type ProductUpdateInput = {
@@ -25337,6 +33912,7 @@ export namespace Prisma {
     cartItems?: UserCartItemUpdateManyWithoutProductNestedInput
     orderRequestItems?: OrderRequestItemUpdateManyWithoutProductNestedInput
     variants?: ProductVariantUpdateManyWithoutProductNestedInput
+    tarifPengrajin?: TarifPengrajinUpdateManyWithoutProductNestedInput
   }
 
   export type ProductUncheckedUpdateInput = {
@@ -25354,6 +33930,7 @@ export namespace Prisma {
     cartItems?: UserCartItemUncheckedUpdateManyWithoutProductNestedInput
     orderRequestItems?: OrderRequestItemUncheckedUpdateManyWithoutProductNestedInput
     variants?: ProductVariantUncheckedUpdateManyWithoutProductNestedInput
+    tarifPengrajin?: TarifPengrajinUncheckedUpdateManyWithoutProductNestedInput
   }
 
   export type ProductCreateManyInput = {
@@ -25758,6 +34335,7 @@ export namespace Prisma {
     packedAt?: Date | string | null
     transaction: TransactionCreateNestedOneWithoutItemsInput
     product: ProductCreateNestedOneWithoutTransactionItemsInput
+    penugasan?: PenugasanCreateNestedManyWithoutTransactionItemInput
   }
 
   export type TransactionItemUncheckedCreateInput = {
@@ -25774,6 +34352,7 @@ export namespace Prisma {
     satuanHarga?: string
     packed?: boolean
     packedAt?: Date | string | null
+    penugasan?: PenugasanUncheckedCreateNestedManyWithoutTransactionItemInput
   }
 
   export type TransactionItemUpdateInput = {
@@ -25789,6 +34368,7 @@ export namespace Prisma {
     packedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     transaction?: TransactionUpdateOneRequiredWithoutItemsNestedInput
     product?: ProductUpdateOneRequiredWithoutTransactionItemsNestedInput
+    penugasan?: PenugasanUpdateManyWithoutTransactionItemNestedInput
   }
 
   export type TransactionItemUncheckedUpdateInput = {
@@ -25805,6 +34385,7 @@ export namespace Prisma {
     satuanHarga?: StringFieldUpdateOperationsInput | string
     packed?: BoolFieldUpdateOperationsInput | boolean
     packedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    penugasan?: PenugasanUncheckedUpdateManyWithoutTransactionItemNestedInput
   }
 
   export type TransactionItemCreateManyInput = {
@@ -25850,6 +34431,500 @@ export namespace Prisma {
     satuanHarga?: StringFieldUpdateOperationsInput | string
     packed?: BoolFieldUpdateOperationsInput | boolean
     packedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type KelompokCreateInput = {
+    nama: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    ketua?: PengrajinCreateNestedOneWithoutKetuaDariInput
+    anggota?: PengrajinCreateNestedManyWithoutKelompokInput
+  }
+
+  export type KelompokUncheckedCreateInput = {
+    id?: number
+    nama: string
+    ketuaId?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    anggota?: PengrajinUncheckedCreateNestedManyWithoutKelompokInput
+  }
+
+  export type KelompokUpdateInput = {
+    nama?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    ketua?: PengrajinUpdateOneWithoutKetuaDariNestedInput
+    anggota?: PengrajinUpdateManyWithoutKelompokNestedInput
+  }
+
+  export type KelompokUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    nama?: StringFieldUpdateOperationsInput | string
+    ketuaId?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    anggota?: PengrajinUncheckedUpdateManyWithoutKelompokNestedInput
+  }
+
+  export type KelompokCreateManyInput = {
+    id?: number
+    nama: string
+    ketuaId?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type KelompokUpdateManyMutationInput = {
+    nama?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type KelompokUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    nama?: StringFieldUpdateOperationsInput | string
+    ketuaId?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PengrajinCreateInput = {
+    nama: string
+    tarifCadangan?: number | null
+    satuanTarif?: string
+    penerimaUpah?: string
+    aktif?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    kelompok?: KelompokCreateNestedOneWithoutAnggotaInput
+    ketuaDari?: KelompokCreateNestedOneWithoutKetuaInput
+    tarif?: TarifPengrajinCreateNestedManyWithoutPengrajinInput
+    penugasan?: PenugasanCreateNestedManyWithoutPengrajinInput
+    setoranKerja?: SetoranCreateNestedManyWithoutPengrajinInput
+    setoranTerima?: SetoranCreateNestedManyWithoutPenerimaInput
+    penarikan?: PenarikanCreateNestedManyWithoutPengrajinInput
+  }
+
+  export type PengrajinUncheckedCreateInput = {
+    id?: number
+    nama: string
+    kelompokId?: number | null
+    tarifCadangan?: number | null
+    satuanTarif?: string
+    penerimaUpah?: string
+    aktif?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    ketuaDari?: KelompokUncheckedCreateNestedOneWithoutKetuaInput
+    tarif?: TarifPengrajinUncheckedCreateNestedManyWithoutPengrajinInput
+    penugasan?: PenugasanUncheckedCreateNestedManyWithoutPengrajinInput
+    setoranKerja?: SetoranUncheckedCreateNestedManyWithoutPengrajinInput
+    setoranTerima?: SetoranUncheckedCreateNestedManyWithoutPenerimaInput
+    penarikan?: PenarikanUncheckedCreateNestedManyWithoutPengrajinInput
+  }
+
+  export type PengrajinUpdateInput = {
+    nama?: StringFieldUpdateOperationsInput | string
+    tarifCadangan?: NullableIntFieldUpdateOperationsInput | number | null
+    satuanTarif?: StringFieldUpdateOperationsInput | string
+    penerimaUpah?: StringFieldUpdateOperationsInput | string
+    aktif?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    kelompok?: KelompokUpdateOneWithoutAnggotaNestedInput
+    ketuaDari?: KelompokUpdateOneWithoutKetuaNestedInput
+    tarif?: TarifPengrajinUpdateManyWithoutPengrajinNestedInput
+    penugasan?: PenugasanUpdateManyWithoutPengrajinNestedInput
+    setoranKerja?: SetoranUpdateManyWithoutPengrajinNestedInput
+    setoranTerima?: SetoranUpdateManyWithoutPenerimaNestedInput
+    penarikan?: PenarikanUpdateManyWithoutPengrajinNestedInput
+  }
+
+  export type PengrajinUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    nama?: StringFieldUpdateOperationsInput | string
+    kelompokId?: NullableIntFieldUpdateOperationsInput | number | null
+    tarifCadangan?: NullableIntFieldUpdateOperationsInput | number | null
+    satuanTarif?: StringFieldUpdateOperationsInput | string
+    penerimaUpah?: StringFieldUpdateOperationsInput | string
+    aktif?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    ketuaDari?: KelompokUncheckedUpdateOneWithoutKetuaNestedInput
+    tarif?: TarifPengrajinUncheckedUpdateManyWithoutPengrajinNestedInput
+    penugasan?: PenugasanUncheckedUpdateManyWithoutPengrajinNestedInput
+    setoranKerja?: SetoranUncheckedUpdateManyWithoutPengrajinNestedInput
+    setoranTerima?: SetoranUncheckedUpdateManyWithoutPenerimaNestedInput
+    penarikan?: PenarikanUncheckedUpdateManyWithoutPengrajinNestedInput
+  }
+
+  export type PengrajinCreateManyInput = {
+    id?: number
+    nama: string
+    kelompokId?: number | null
+    tarifCadangan?: number | null
+    satuanTarif?: string
+    penerimaUpah?: string
+    aktif?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PengrajinUpdateManyMutationInput = {
+    nama?: StringFieldUpdateOperationsInput | string
+    tarifCadangan?: NullableIntFieldUpdateOperationsInput | number | null
+    satuanTarif?: StringFieldUpdateOperationsInput | string
+    penerimaUpah?: StringFieldUpdateOperationsInput | string
+    aktif?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PengrajinUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    nama?: StringFieldUpdateOperationsInput | string
+    kelompokId?: NullableIntFieldUpdateOperationsInput | number | null
+    tarifCadangan?: NullableIntFieldUpdateOperationsInput | number | null
+    satuanTarif?: StringFieldUpdateOperationsInput | string
+    penerimaUpah?: StringFieldUpdateOperationsInput | string
+    aktif?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TarifPengrajinCreateInput = {
+    tarif: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    pengrajin: PengrajinCreateNestedOneWithoutTarifInput
+    product: ProductCreateNestedOneWithoutTarifPengrajinInput
+  }
+
+  export type TarifPengrajinUncheckedCreateInput = {
+    id?: number
+    pengrajinId: number
+    productId: number
+    tarif: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TarifPengrajinUpdateInput = {
+    tarif?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    pengrajin?: PengrajinUpdateOneRequiredWithoutTarifNestedInput
+    product?: ProductUpdateOneRequiredWithoutTarifPengrajinNestedInput
+  }
+
+  export type TarifPengrajinUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    pengrajinId?: IntFieldUpdateOperationsInput | number
+    productId?: IntFieldUpdateOperationsInput | number
+    tarif?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TarifPengrajinCreateManyInput = {
+    id?: number
+    pengrajinId: number
+    productId: number
+    tarif: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TarifPengrajinUpdateManyMutationInput = {
+    tarif?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TarifPengrajinUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    pengrajinId?: IntFieldUpdateOperationsInput | number
+    productId?: IntFieldUpdateOperationsInput | number
+    tarif?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PenugasanCreateInput = {
+    jumlahDitugaskan: number
+    tenggat: Date | string
+    catatan?: string | null
+    pembuatId?: number | null
+    pembuatNama?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    transactionItem: TransactionItemCreateNestedOneWithoutPenugasanInput
+    pengrajin: PengrajinCreateNestedOneWithoutPenugasanInput
+    setoran?: SetoranCreateNestedManyWithoutPenugasanInput
+  }
+
+  export type PenugasanUncheckedCreateInput = {
+    id?: number
+    transactionItemId: number
+    pengrajinId: number
+    jumlahDitugaskan: number
+    tenggat: Date | string
+    catatan?: string | null
+    pembuatId?: number | null
+    pembuatNama?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    setoran?: SetoranUncheckedCreateNestedManyWithoutPenugasanInput
+  }
+
+  export type PenugasanUpdateInput = {
+    jumlahDitugaskan?: IntFieldUpdateOperationsInput | number
+    tenggat?: DateTimeFieldUpdateOperationsInput | Date | string
+    catatan?: NullableStringFieldUpdateOperationsInput | string | null
+    pembuatId?: NullableIntFieldUpdateOperationsInput | number | null
+    pembuatNama?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    transactionItem?: TransactionItemUpdateOneRequiredWithoutPenugasanNestedInput
+    pengrajin?: PengrajinUpdateOneRequiredWithoutPenugasanNestedInput
+    setoran?: SetoranUpdateManyWithoutPenugasanNestedInput
+  }
+
+  export type PenugasanUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    transactionItemId?: IntFieldUpdateOperationsInput | number
+    pengrajinId?: IntFieldUpdateOperationsInput | number
+    jumlahDitugaskan?: IntFieldUpdateOperationsInput | number
+    tenggat?: DateTimeFieldUpdateOperationsInput | Date | string
+    catatan?: NullableStringFieldUpdateOperationsInput | string | null
+    pembuatId?: NullableIntFieldUpdateOperationsInput | number | null
+    pembuatNama?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    setoran?: SetoranUncheckedUpdateManyWithoutPenugasanNestedInput
+  }
+
+  export type PenugasanCreateManyInput = {
+    id?: number
+    transactionItemId: number
+    pengrajinId: number
+    jumlahDitugaskan: number
+    tenggat: Date | string
+    catatan?: string | null
+    pembuatId?: number | null
+    pembuatNama?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PenugasanUpdateManyMutationInput = {
+    jumlahDitugaskan?: IntFieldUpdateOperationsInput | number
+    tenggat?: DateTimeFieldUpdateOperationsInput | Date | string
+    catatan?: NullableStringFieldUpdateOperationsInput | string | null
+    pembuatId?: NullableIntFieldUpdateOperationsInput | number | null
+    pembuatNama?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PenugasanUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    transactionItemId?: IntFieldUpdateOperationsInput | number
+    pengrajinId?: IntFieldUpdateOperationsInput | number
+    jumlahDitugaskan?: IntFieldUpdateOperationsInput | number
+    tenggat?: DateTimeFieldUpdateOperationsInput | Date | string
+    catatan?: NullableStringFieldUpdateOperationsInput | string | null
+    pembuatId?: NullableIntFieldUpdateOperationsInput | number | null
+    pembuatNama?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SetoranCreateInput = {
+    tanggal?: Date | string
+    jumlah: number
+    tarifSnapshot: number
+    pakaiTarifCadangan?: boolean
+    nilai: number
+    catatan?: string | null
+    pencatatId?: number | null
+    pencatatNama?: string | null
+    createdAt?: Date | string
+    penugasan: PenugasanCreateNestedOneWithoutSetoranInput
+    pengrajin: PengrajinCreateNestedOneWithoutSetoranKerjaInput
+    penerima: PengrajinCreateNestedOneWithoutSetoranTerimaInput
+  }
+
+  export type SetoranUncheckedCreateInput = {
+    id?: number
+    penugasanId: number
+    pengrajinId: number
+    penerimaId: number
+    tanggal?: Date | string
+    jumlah: number
+    tarifSnapshot: number
+    pakaiTarifCadangan?: boolean
+    nilai: number
+    catatan?: string | null
+    pencatatId?: number | null
+    pencatatNama?: string | null
+    createdAt?: Date | string
+  }
+
+  export type SetoranUpdateInput = {
+    tanggal?: DateTimeFieldUpdateOperationsInput | Date | string
+    jumlah?: IntFieldUpdateOperationsInput | number
+    tarifSnapshot?: IntFieldUpdateOperationsInput | number
+    pakaiTarifCadangan?: BoolFieldUpdateOperationsInput | boolean
+    nilai?: IntFieldUpdateOperationsInput | number
+    catatan?: NullableStringFieldUpdateOperationsInput | string | null
+    pencatatId?: NullableIntFieldUpdateOperationsInput | number | null
+    pencatatNama?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    penugasan?: PenugasanUpdateOneRequiredWithoutSetoranNestedInput
+    pengrajin?: PengrajinUpdateOneRequiredWithoutSetoranKerjaNestedInput
+    penerima?: PengrajinUpdateOneRequiredWithoutSetoranTerimaNestedInput
+  }
+
+  export type SetoranUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    penugasanId?: IntFieldUpdateOperationsInput | number
+    pengrajinId?: IntFieldUpdateOperationsInput | number
+    penerimaId?: IntFieldUpdateOperationsInput | number
+    tanggal?: DateTimeFieldUpdateOperationsInput | Date | string
+    jumlah?: IntFieldUpdateOperationsInput | number
+    tarifSnapshot?: IntFieldUpdateOperationsInput | number
+    pakaiTarifCadangan?: BoolFieldUpdateOperationsInput | boolean
+    nilai?: IntFieldUpdateOperationsInput | number
+    catatan?: NullableStringFieldUpdateOperationsInput | string | null
+    pencatatId?: NullableIntFieldUpdateOperationsInput | number | null
+    pencatatNama?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SetoranCreateManyInput = {
+    id?: number
+    penugasanId: number
+    pengrajinId: number
+    penerimaId: number
+    tanggal?: Date | string
+    jumlah: number
+    tarifSnapshot: number
+    pakaiTarifCadangan?: boolean
+    nilai: number
+    catatan?: string | null
+    pencatatId?: number | null
+    pencatatNama?: string | null
+    createdAt?: Date | string
+  }
+
+  export type SetoranUpdateManyMutationInput = {
+    tanggal?: DateTimeFieldUpdateOperationsInput | Date | string
+    jumlah?: IntFieldUpdateOperationsInput | number
+    tarifSnapshot?: IntFieldUpdateOperationsInput | number
+    pakaiTarifCadangan?: BoolFieldUpdateOperationsInput | boolean
+    nilai?: IntFieldUpdateOperationsInput | number
+    catatan?: NullableStringFieldUpdateOperationsInput | string | null
+    pencatatId?: NullableIntFieldUpdateOperationsInput | number | null
+    pencatatNama?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SetoranUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    penugasanId?: IntFieldUpdateOperationsInput | number
+    pengrajinId?: IntFieldUpdateOperationsInput | number
+    penerimaId?: IntFieldUpdateOperationsInput | number
+    tanggal?: DateTimeFieldUpdateOperationsInput | Date | string
+    jumlah?: IntFieldUpdateOperationsInput | number
+    tarifSnapshot?: IntFieldUpdateOperationsInput | number
+    pakaiTarifCadangan?: BoolFieldUpdateOperationsInput | boolean
+    nilai?: IntFieldUpdateOperationsInput | number
+    catatan?: NullableStringFieldUpdateOperationsInput | string | null
+    pencatatId?: NullableIntFieldUpdateOperationsInput | number | null
+    pencatatNama?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PenarikanCreateInput = {
+    tanggal?: Date | string
+    nominal: number
+    expenseId?: number | null
+    catatan?: string | null
+    pencatatId?: number | null
+    pencatatNama?: string | null
+    createdAt?: Date | string
+    pengrajin: PengrajinCreateNestedOneWithoutPenarikanInput
+  }
+
+  export type PenarikanUncheckedCreateInput = {
+    id?: number
+    pengrajinId: number
+    tanggal?: Date | string
+    nominal: number
+    expenseId?: number | null
+    catatan?: string | null
+    pencatatId?: number | null
+    pencatatNama?: string | null
+    createdAt?: Date | string
+  }
+
+  export type PenarikanUpdateInput = {
+    tanggal?: DateTimeFieldUpdateOperationsInput | Date | string
+    nominal?: IntFieldUpdateOperationsInput | number
+    expenseId?: NullableIntFieldUpdateOperationsInput | number | null
+    catatan?: NullableStringFieldUpdateOperationsInput | string | null
+    pencatatId?: NullableIntFieldUpdateOperationsInput | number | null
+    pencatatNama?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    pengrajin?: PengrajinUpdateOneRequiredWithoutPenarikanNestedInput
+  }
+
+  export type PenarikanUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    pengrajinId?: IntFieldUpdateOperationsInput | number
+    tanggal?: DateTimeFieldUpdateOperationsInput | Date | string
+    nominal?: IntFieldUpdateOperationsInput | number
+    expenseId?: NullableIntFieldUpdateOperationsInput | number | null
+    catatan?: NullableStringFieldUpdateOperationsInput | string | null
+    pencatatId?: NullableIntFieldUpdateOperationsInput | number | null
+    pencatatNama?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PenarikanCreateManyInput = {
+    id?: number
+    pengrajinId: number
+    tanggal?: Date | string
+    nominal: number
+    expenseId?: number | null
+    catatan?: string | null
+    pencatatId?: number | null
+    pencatatNama?: string | null
+    createdAt?: Date | string
+  }
+
+  export type PenarikanUpdateManyMutationInput = {
+    tanggal?: DateTimeFieldUpdateOperationsInput | Date | string
+    nominal?: IntFieldUpdateOperationsInput | number
+    expenseId?: NullableIntFieldUpdateOperationsInput | number | null
+    catatan?: NullableStringFieldUpdateOperationsInput | string | null
+    pencatatId?: NullableIntFieldUpdateOperationsInput | number | null
+    pencatatNama?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PenarikanUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    pengrajinId?: IntFieldUpdateOperationsInput | number
+    tanggal?: DateTimeFieldUpdateOperationsInput | Date | string
+    nominal?: IntFieldUpdateOperationsInput | number
+    expenseId?: NullableIntFieldUpdateOperationsInput | number | null
+    catatan?: NullableStringFieldUpdateOperationsInput | string | null
+    pencatatId?: NullableIntFieldUpdateOperationsInput | number | null
+    pencatatNama?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type StoreSettingCreateInput = {
@@ -26824,6 +35899,12 @@ export namespace Prisma {
     none?: ProductVariantWhereInput
   }
 
+  export type TarifPengrajinListRelationFilter = {
+    every?: TarifPengrajinWhereInput
+    some?: TarifPengrajinWhereInput
+    none?: TarifPengrajinWhereInput
+  }
+
   export type TransactionItemOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -26837,6 +35918,10 @@ export namespace Prisma {
   }
 
   export type ProductVariantOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type TarifPengrajinOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -27215,6 +36300,16 @@ export namespace Prisma {
     not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
   }
 
+  export type PenugasanListRelationFilter = {
+    every?: PenugasanWhereInput
+    some?: PenugasanWhereInput
+    none?: PenugasanWhereInput
+  }
+
+  export type PenugasanOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type TransactionItemCountOrderByAggregateInput = {
     id?: SortOrder
     transactionId?: SortOrder
@@ -27297,6 +36392,366 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedDateTimeNullableFilter<$PrismaModel>
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
+  export type PengrajinNullableScalarRelationFilter = {
+    is?: PengrajinWhereInput | null
+    isNot?: PengrajinWhereInput | null
+  }
+
+  export type PengrajinListRelationFilter = {
+    every?: PengrajinWhereInput
+    some?: PengrajinWhereInput
+    none?: PengrajinWhereInput
+  }
+
+  export type PengrajinOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type KelompokCountOrderByAggregateInput = {
+    id?: SortOrder
+    nama?: SortOrder
+    ketuaId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type KelompokAvgOrderByAggregateInput = {
+    id?: SortOrder
+    ketuaId?: SortOrder
+  }
+
+  export type KelompokMaxOrderByAggregateInput = {
+    id?: SortOrder
+    nama?: SortOrder
+    ketuaId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type KelompokMinOrderByAggregateInput = {
+    id?: SortOrder
+    nama?: SortOrder
+    ketuaId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type KelompokSumOrderByAggregateInput = {
+    id?: SortOrder
+    ketuaId?: SortOrder
+  }
+
+  export type KelompokNullableScalarRelationFilter = {
+    is?: KelompokWhereInput | null
+    isNot?: KelompokWhereInput | null
+  }
+
+  export type SetoranListRelationFilter = {
+    every?: SetoranWhereInput
+    some?: SetoranWhereInput
+    none?: SetoranWhereInput
+  }
+
+  export type PenarikanListRelationFilter = {
+    every?: PenarikanWhereInput
+    some?: PenarikanWhereInput
+    none?: PenarikanWhereInput
+  }
+
+  export type SetoranOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type PenarikanOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type PengrajinCountOrderByAggregateInput = {
+    id?: SortOrder
+    nama?: SortOrder
+    kelompokId?: SortOrder
+    tarifCadangan?: SortOrder
+    satuanTarif?: SortOrder
+    penerimaUpah?: SortOrder
+    aktif?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type PengrajinAvgOrderByAggregateInput = {
+    id?: SortOrder
+    kelompokId?: SortOrder
+    tarifCadangan?: SortOrder
+  }
+
+  export type PengrajinMaxOrderByAggregateInput = {
+    id?: SortOrder
+    nama?: SortOrder
+    kelompokId?: SortOrder
+    tarifCadangan?: SortOrder
+    satuanTarif?: SortOrder
+    penerimaUpah?: SortOrder
+    aktif?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type PengrajinMinOrderByAggregateInput = {
+    id?: SortOrder
+    nama?: SortOrder
+    kelompokId?: SortOrder
+    tarifCadangan?: SortOrder
+    satuanTarif?: SortOrder
+    penerimaUpah?: SortOrder
+    aktif?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type PengrajinSumOrderByAggregateInput = {
+    id?: SortOrder
+    kelompokId?: SortOrder
+    tarifCadangan?: SortOrder
+  }
+
+  export type PengrajinScalarRelationFilter = {
+    is?: PengrajinWhereInput
+    isNot?: PengrajinWhereInput
+  }
+
+  export type TarifPengrajinPengrajinIdProductIdCompoundUniqueInput = {
+    pengrajinId: number
+    productId: number
+  }
+
+  export type TarifPengrajinCountOrderByAggregateInput = {
+    id?: SortOrder
+    pengrajinId?: SortOrder
+    productId?: SortOrder
+    tarif?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type TarifPengrajinAvgOrderByAggregateInput = {
+    id?: SortOrder
+    pengrajinId?: SortOrder
+    productId?: SortOrder
+    tarif?: SortOrder
+  }
+
+  export type TarifPengrajinMaxOrderByAggregateInput = {
+    id?: SortOrder
+    pengrajinId?: SortOrder
+    productId?: SortOrder
+    tarif?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type TarifPengrajinMinOrderByAggregateInput = {
+    id?: SortOrder
+    pengrajinId?: SortOrder
+    productId?: SortOrder
+    tarif?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type TarifPengrajinSumOrderByAggregateInput = {
+    id?: SortOrder
+    pengrajinId?: SortOrder
+    productId?: SortOrder
+    tarif?: SortOrder
+  }
+
+  export type TransactionItemScalarRelationFilter = {
+    is?: TransactionItemWhereInput
+    isNot?: TransactionItemWhereInput
+  }
+
+  export type PenugasanCountOrderByAggregateInput = {
+    id?: SortOrder
+    transactionItemId?: SortOrder
+    pengrajinId?: SortOrder
+    jumlahDitugaskan?: SortOrder
+    tenggat?: SortOrder
+    catatan?: SortOrder
+    pembuatId?: SortOrder
+    pembuatNama?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type PenugasanAvgOrderByAggregateInput = {
+    id?: SortOrder
+    transactionItemId?: SortOrder
+    pengrajinId?: SortOrder
+    jumlahDitugaskan?: SortOrder
+    pembuatId?: SortOrder
+  }
+
+  export type PenugasanMaxOrderByAggregateInput = {
+    id?: SortOrder
+    transactionItemId?: SortOrder
+    pengrajinId?: SortOrder
+    jumlahDitugaskan?: SortOrder
+    tenggat?: SortOrder
+    catatan?: SortOrder
+    pembuatId?: SortOrder
+    pembuatNama?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type PenugasanMinOrderByAggregateInput = {
+    id?: SortOrder
+    transactionItemId?: SortOrder
+    pengrajinId?: SortOrder
+    jumlahDitugaskan?: SortOrder
+    tenggat?: SortOrder
+    catatan?: SortOrder
+    pembuatId?: SortOrder
+    pembuatNama?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type PenugasanSumOrderByAggregateInput = {
+    id?: SortOrder
+    transactionItemId?: SortOrder
+    pengrajinId?: SortOrder
+    jumlahDitugaskan?: SortOrder
+    pembuatId?: SortOrder
+  }
+
+  export type PenugasanScalarRelationFilter = {
+    is?: PenugasanWhereInput
+    isNot?: PenugasanWhereInput
+  }
+
+  export type SetoranCountOrderByAggregateInput = {
+    id?: SortOrder
+    penugasanId?: SortOrder
+    pengrajinId?: SortOrder
+    penerimaId?: SortOrder
+    tanggal?: SortOrder
+    jumlah?: SortOrder
+    tarifSnapshot?: SortOrder
+    pakaiTarifCadangan?: SortOrder
+    nilai?: SortOrder
+    catatan?: SortOrder
+    pencatatId?: SortOrder
+    pencatatNama?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type SetoranAvgOrderByAggregateInput = {
+    id?: SortOrder
+    penugasanId?: SortOrder
+    pengrajinId?: SortOrder
+    penerimaId?: SortOrder
+    jumlah?: SortOrder
+    tarifSnapshot?: SortOrder
+    nilai?: SortOrder
+    pencatatId?: SortOrder
+  }
+
+  export type SetoranMaxOrderByAggregateInput = {
+    id?: SortOrder
+    penugasanId?: SortOrder
+    pengrajinId?: SortOrder
+    penerimaId?: SortOrder
+    tanggal?: SortOrder
+    jumlah?: SortOrder
+    tarifSnapshot?: SortOrder
+    pakaiTarifCadangan?: SortOrder
+    nilai?: SortOrder
+    catatan?: SortOrder
+    pencatatId?: SortOrder
+    pencatatNama?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type SetoranMinOrderByAggregateInput = {
+    id?: SortOrder
+    penugasanId?: SortOrder
+    pengrajinId?: SortOrder
+    penerimaId?: SortOrder
+    tanggal?: SortOrder
+    jumlah?: SortOrder
+    tarifSnapshot?: SortOrder
+    pakaiTarifCadangan?: SortOrder
+    nilai?: SortOrder
+    catatan?: SortOrder
+    pencatatId?: SortOrder
+    pencatatNama?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type SetoranSumOrderByAggregateInput = {
+    id?: SortOrder
+    penugasanId?: SortOrder
+    pengrajinId?: SortOrder
+    penerimaId?: SortOrder
+    jumlah?: SortOrder
+    tarifSnapshot?: SortOrder
+    nilai?: SortOrder
+    pencatatId?: SortOrder
+  }
+
+  export type PenarikanCountOrderByAggregateInput = {
+    id?: SortOrder
+    pengrajinId?: SortOrder
+    tanggal?: SortOrder
+    nominal?: SortOrder
+    expenseId?: SortOrder
+    catatan?: SortOrder
+    pencatatId?: SortOrder
+    pencatatNama?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type PenarikanAvgOrderByAggregateInput = {
+    id?: SortOrder
+    pengrajinId?: SortOrder
+    nominal?: SortOrder
+    expenseId?: SortOrder
+    pencatatId?: SortOrder
+  }
+
+  export type PenarikanMaxOrderByAggregateInput = {
+    id?: SortOrder
+    pengrajinId?: SortOrder
+    tanggal?: SortOrder
+    nominal?: SortOrder
+    expenseId?: SortOrder
+    catatan?: SortOrder
+    pencatatId?: SortOrder
+    pencatatNama?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type PenarikanMinOrderByAggregateInput = {
+    id?: SortOrder
+    pengrajinId?: SortOrder
+    tanggal?: SortOrder
+    nominal?: SortOrder
+    expenseId?: SortOrder
+    catatan?: SortOrder
+    pencatatId?: SortOrder
+    pencatatNama?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type PenarikanSumOrderByAggregateInput = {
+    id?: SortOrder
+    pengrajinId?: SortOrder
+    nominal?: SortOrder
+    expenseId?: SortOrder
+    pencatatId?: SortOrder
   }
 
   export type StoreSettingCountOrderByAggregateInput = {
@@ -27979,6 +37434,13 @@ export namespace Prisma {
     connect?: ProductVariantWhereUniqueInput | ProductVariantWhereUniqueInput[]
   }
 
+  export type TarifPengrajinCreateNestedManyWithoutProductInput = {
+    create?: XOR<TarifPengrajinCreateWithoutProductInput, TarifPengrajinUncheckedCreateWithoutProductInput> | TarifPengrajinCreateWithoutProductInput[] | TarifPengrajinUncheckedCreateWithoutProductInput[]
+    connectOrCreate?: TarifPengrajinCreateOrConnectWithoutProductInput | TarifPengrajinCreateOrConnectWithoutProductInput[]
+    createMany?: TarifPengrajinCreateManyProductInputEnvelope
+    connect?: TarifPengrajinWhereUniqueInput | TarifPengrajinWhereUniqueInput[]
+  }
+
   export type TransactionItemUncheckedCreateNestedManyWithoutProductInput = {
     create?: XOR<TransactionItemCreateWithoutProductInput, TransactionItemUncheckedCreateWithoutProductInput> | TransactionItemCreateWithoutProductInput[] | TransactionItemUncheckedCreateWithoutProductInput[]
     connectOrCreate?: TransactionItemCreateOrConnectWithoutProductInput | TransactionItemCreateOrConnectWithoutProductInput[]
@@ -28005,6 +37467,13 @@ export namespace Prisma {
     connectOrCreate?: ProductVariantCreateOrConnectWithoutProductInput | ProductVariantCreateOrConnectWithoutProductInput[]
     createMany?: ProductVariantCreateManyProductInputEnvelope
     connect?: ProductVariantWhereUniqueInput | ProductVariantWhereUniqueInput[]
+  }
+
+  export type TarifPengrajinUncheckedCreateNestedManyWithoutProductInput = {
+    create?: XOR<TarifPengrajinCreateWithoutProductInput, TarifPengrajinUncheckedCreateWithoutProductInput> | TarifPengrajinCreateWithoutProductInput[] | TarifPengrajinUncheckedCreateWithoutProductInput[]
+    connectOrCreate?: TarifPengrajinCreateOrConnectWithoutProductInput | TarifPengrajinCreateOrConnectWithoutProductInput[]
+    createMany?: TarifPengrajinCreateManyProductInputEnvelope
+    connect?: TarifPengrajinWhereUniqueInput | TarifPengrajinWhereUniqueInput[]
   }
 
   export type BoolFieldUpdateOperationsInput = {
@@ -28067,6 +37536,20 @@ export namespace Prisma {
     deleteMany?: ProductVariantScalarWhereInput | ProductVariantScalarWhereInput[]
   }
 
+  export type TarifPengrajinUpdateManyWithoutProductNestedInput = {
+    create?: XOR<TarifPengrajinCreateWithoutProductInput, TarifPengrajinUncheckedCreateWithoutProductInput> | TarifPengrajinCreateWithoutProductInput[] | TarifPengrajinUncheckedCreateWithoutProductInput[]
+    connectOrCreate?: TarifPengrajinCreateOrConnectWithoutProductInput | TarifPengrajinCreateOrConnectWithoutProductInput[]
+    upsert?: TarifPengrajinUpsertWithWhereUniqueWithoutProductInput | TarifPengrajinUpsertWithWhereUniqueWithoutProductInput[]
+    createMany?: TarifPengrajinCreateManyProductInputEnvelope
+    set?: TarifPengrajinWhereUniqueInput | TarifPengrajinWhereUniqueInput[]
+    disconnect?: TarifPengrajinWhereUniqueInput | TarifPengrajinWhereUniqueInput[]
+    delete?: TarifPengrajinWhereUniqueInput | TarifPengrajinWhereUniqueInput[]
+    connect?: TarifPengrajinWhereUniqueInput | TarifPengrajinWhereUniqueInput[]
+    update?: TarifPengrajinUpdateWithWhereUniqueWithoutProductInput | TarifPengrajinUpdateWithWhereUniqueWithoutProductInput[]
+    updateMany?: TarifPengrajinUpdateManyWithWhereWithoutProductInput | TarifPengrajinUpdateManyWithWhereWithoutProductInput[]
+    deleteMany?: TarifPengrajinScalarWhereInput | TarifPengrajinScalarWhereInput[]
+  }
+
   export type TransactionItemUncheckedUpdateManyWithoutProductNestedInput = {
     create?: XOR<TransactionItemCreateWithoutProductInput, TransactionItemUncheckedCreateWithoutProductInput> | TransactionItemCreateWithoutProductInput[] | TransactionItemUncheckedCreateWithoutProductInput[]
     connectOrCreate?: TransactionItemCreateOrConnectWithoutProductInput | TransactionItemCreateOrConnectWithoutProductInput[]
@@ -28121,6 +37604,20 @@ export namespace Prisma {
     update?: ProductVariantUpdateWithWhereUniqueWithoutProductInput | ProductVariantUpdateWithWhereUniqueWithoutProductInput[]
     updateMany?: ProductVariantUpdateManyWithWhereWithoutProductInput | ProductVariantUpdateManyWithWhereWithoutProductInput[]
     deleteMany?: ProductVariantScalarWhereInput | ProductVariantScalarWhereInput[]
+  }
+
+  export type TarifPengrajinUncheckedUpdateManyWithoutProductNestedInput = {
+    create?: XOR<TarifPengrajinCreateWithoutProductInput, TarifPengrajinUncheckedCreateWithoutProductInput> | TarifPengrajinCreateWithoutProductInput[] | TarifPengrajinUncheckedCreateWithoutProductInput[]
+    connectOrCreate?: TarifPengrajinCreateOrConnectWithoutProductInput | TarifPengrajinCreateOrConnectWithoutProductInput[]
+    upsert?: TarifPengrajinUpsertWithWhereUniqueWithoutProductInput | TarifPengrajinUpsertWithWhereUniqueWithoutProductInput[]
+    createMany?: TarifPengrajinCreateManyProductInputEnvelope
+    set?: TarifPengrajinWhereUniqueInput | TarifPengrajinWhereUniqueInput[]
+    disconnect?: TarifPengrajinWhereUniqueInput | TarifPengrajinWhereUniqueInput[]
+    delete?: TarifPengrajinWhereUniqueInput | TarifPengrajinWhereUniqueInput[]
+    connect?: TarifPengrajinWhereUniqueInput | TarifPengrajinWhereUniqueInput[]
+    update?: TarifPengrajinUpdateWithWhereUniqueWithoutProductInput | TarifPengrajinUpdateWithWhereUniqueWithoutProductInput[]
+    updateMany?: TarifPengrajinUpdateManyWithWhereWithoutProductInput | TarifPengrajinUpdateManyWithWhereWithoutProductInput[]
+    deleteMany?: TarifPengrajinScalarWhereInput | TarifPengrajinScalarWhereInput[]
   }
 
   export type ProductCreateNestedOneWithoutVariantsInput = {
@@ -28349,6 +37846,20 @@ export namespace Prisma {
     connect?: ProductWhereUniqueInput
   }
 
+  export type PenugasanCreateNestedManyWithoutTransactionItemInput = {
+    create?: XOR<PenugasanCreateWithoutTransactionItemInput, PenugasanUncheckedCreateWithoutTransactionItemInput> | PenugasanCreateWithoutTransactionItemInput[] | PenugasanUncheckedCreateWithoutTransactionItemInput[]
+    connectOrCreate?: PenugasanCreateOrConnectWithoutTransactionItemInput | PenugasanCreateOrConnectWithoutTransactionItemInput[]
+    createMany?: PenugasanCreateManyTransactionItemInputEnvelope
+    connect?: PenugasanWhereUniqueInput | PenugasanWhereUniqueInput[]
+  }
+
+  export type PenugasanUncheckedCreateNestedManyWithoutTransactionItemInput = {
+    create?: XOR<PenugasanCreateWithoutTransactionItemInput, PenugasanUncheckedCreateWithoutTransactionItemInput> | PenugasanCreateWithoutTransactionItemInput[] | PenugasanUncheckedCreateWithoutTransactionItemInput[]
+    connectOrCreate?: PenugasanCreateOrConnectWithoutTransactionItemInput | PenugasanCreateOrConnectWithoutTransactionItemInput[]
+    createMany?: PenugasanCreateManyTransactionItemInputEnvelope
+    connect?: PenugasanWhereUniqueInput | PenugasanWhereUniqueInput[]
+  }
+
   export type NullableDateTimeFieldUpdateOperationsInput = {
     set?: Date | string | null
   }
@@ -28367,6 +37878,504 @@ export namespace Prisma {
     upsert?: ProductUpsertWithoutTransactionItemsInput
     connect?: ProductWhereUniqueInput
     update?: XOR<XOR<ProductUpdateToOneWithWhereWithoutTransactionItemsInput, ProductUpdateWithoutTransactionItemsInput>, ProductUncheckedUpdateWithoutTransactionItemsInput>
+  }
+
+  export type PenugasanUpdateManyWithoutTransactionItemNestedInput = {
+    create?: XOR<PenugasanCreateWithoutTransactionItemInput, PenugasanUncheckedCreateWithoutTransactionItemInput> | PenugasanCreateWithoutTransactionItemInput[] | PenugasanUncheckedCreateWithoutTransactionItemInput[]
+    connectOrCreate?: PenugasanCreateOrConnectWithoutTransactionItemInput | PenugasanCreateOrConnectWithoutTransactionItemInput[]
+    upsert?: PenugasanUpsertWithWhereUniqueWithoutTransactionItemInput | PenugasanUpsertWithWhereUniqueWithoutTransactionItemInput[]
+    createMany?: PenugasanCreateManyTransactionItemInputEnvelope
+    set?: PenugasanWhereUniqueInput | PenugasanWhereUniqueInput[]
+    disconnect?: PenugasanWhereUniqueInput | PenugasanWhereUniqueInput[]
+    delete?: PenugasanWhereUniqueInput | PenugasanWhereUniqueInput[]
+    connect?: PenugasanWhereUniqueInput | PenugasanWhereUniqueInput[]
+    update?: PenugasanUpdateWithWhereUniqueWithoutTransactionItemInput | PenugasanUpdateWithWhereUniqueWithoutTransactionItemInput[]
+    updateMany?: PenugasanUpdateManyWithWhereWithoutTransactionItemInput | PenugasanUpdateManyWithWhereWithoutTransactionItemInput[]
+    deleteMany?: PenugasanScalarWhereInput | PenugasanScalarWhereInput[]
+  }
+
+  export type PenugasanUncheckedUpdateManyWithoutTransactionItemNestedInput = {
+    create?: XOR<PenugasanCreateWithoutTransactionItemInput, PenugasanUncheckedCreateWithoutTransactionItemInput> | PenugasanCreateWithoutTransactionItemInput[] | PenugasanUncheckedCreateWithoutTransactionItemInput[]
+    connectOrCreate?: PenugasanCreateOrConnectWithoutTransactionItemInput | PenugasanCreateOrConnectWithoutTransactionItemInput[]
+    upsert?: PenugasanUpsertWithWhereUniqueWithoutTransactionItemInput | PenugasanUpsertWithWhereUniqueWithoutTransactionItemInput[]
+    createMany?: PenugasanCreateManyTransactionItemInputEnvelope
+    set?: PenugasanWhereUniqueInput | PenugasanWhereUniqueInput[]
+    disconnect?: PenugasanWhereUniqueInput | PenugasanWhereUniqueInput[]
+    delete?: PenugasanWhereUniqueInput | PenugasanWhereUniqueInput[]
+    connect?: PenugasanWhereUniqueInput | PenugasanWhereUniqueInput[]
+    update?: PenugasanUpdateWithWhereUniqueWithoutTransactionItemInput | PenugasanUpdateWithWhereUniqueWithoutTransactionItemInput[]
+    updateMany?: PenugasanUpdateManyWithWhereWithoutTransactionItemInput | PenugasanUpdateManyWithWhereWithoutTransactionItemInput[]
+    deleteMany?: PenugasanScalarWhereInput | PenugasanScalarWhereInput[]
+  }
+
+  export type PengrajinCreateNestedOneWithoutKetuaDariInput = {
+    create?: XOR<PengrajinCreateWithoutKetuaDariInput, PengrajinUncheckedCreateWithoutKetuaDariInput>
+    connectOrCreate?: PengrajinCreateOrConnectWithoutKetuaDariInput
+    connect?: PengrajinWhereUniqueInput
+  }
+
+  export type PengrajinCreateNestedManyWithoutKelompokInput = {
+    create?: XOR<PengrajinCreateWithoutKelompokInput, PengrajinUncheckedCreateWithoutKelompokInput> | PengrajinCreateWithoutKelompokInput[] | PengrajinUncheckedCreateWithoutKelompokInput[]
+    connectOrCreate?: PengrajinCreateOrConnectWithoutKelompokInput | PengrajinCreateOrConnectWithoutKelompokInput[]
+    createMany?: PengrajinCreateManyKelompokInputEnvelope
+    connect?: PengrajinWhereUniqueInput | PengrajinWhereUniqueInput[]
+  }
+
+  export type PengrajinUncheckedCreateNestedManyWithoutKelompokInput = {
+    create?: XOR<PengrajinCreateWithoutKelompokInput, PengrajinUncheckedCreateWithoutKelompokInput> | PengrajinCreateWithoutKelompokInput[] | PengrajinUncheckedCreateWithoutKelompokInput[]
+    connectOrCreate?: PengrajinCreateOrConnectWithoutKelompokInput | PengrajinCreateOrConnectWithoutKelompokInput[]
+    createMany?: PengrajinCreateManyKelompokInputEnvelope
+    connect?: PengrajinWhereUniqueInput | PengrajinWhereUniqueInput[]
+  }
+
+  export type PengrajinUpdateOneWithoutKetuaDariNestedInput = {
+    create?: XOR<PengrajinCreateWithoutKetuaDariInput, PengrajinUncheckedCreateWithoutKetuaDariInput>
+    connectOrCreate?: PengrajinCreateOrConnectWithoutKetuaDariInput
+    upsert?: PengrajinUpsertWithoutKetuaDariInput
+    disconnect?: PengrajinWhereInput | boolean
+    delete?: PengrajinWhereInput | boolean
+    connect?: PengrajinWhereUniqueInput
+    update?: XOR<XOR<PengrajinUpdateToOneWithWhereWithoutKetuaDariInput, PengrajinUpdateWithoutKetuaDariInput>, PengrajinUncheckedUpdateWithoutKetuaDariInput>
+  }
+
+  export type PengrajinUpdateManyWithoutKelompokNestedInput = {
+    create?: XOR<PengrajinCreateWithoutKelompokInput, PengrajinUncheckedCreateWithoutKelompokInput> | PengrajinCreateWithoutKelompokInput[] | PengrajinUncheckedCreateWithoutKelompokInput[]
+    connectOrCreate?: PengrajinCreateOrConnectWithoutKelompokInput | PengrajinCreateOrConnectWithoutKelompokInput[]
+    upsert?: PengrajinUpsertWithWhereUniqueWithoutKelompokInput | PengrajinUpsertWithWhereUniqueWithoutKelompokInput[]
+    createMany?: PengrajinCreateManyKelompokInputEnvelope
+    set?: PengrajinWhereUniqueInput | PengrajinWhereUniqueInput[]
+    disconnect?: PengrajinWhereUniqueInput | PengrajinWhereUniqueInput[]
+    delete?: PengrajinWhereUniqueInput | PengrajinWhereUniqueInput[]
+    connect?: PengrajinWhereUniqueInput | PengrajinWhereUniqueInput[]
+    update?: PengrajinUpdateWithWhereUniqueWithoutKelompokInput | PengrajinUpdateWithWhereUniqueWithoutKelompokInput[]
+    updateMany?: PengrajinUpdateManyWithWhereWithoutKelompokInput | PengrajinUpdateManyWithWhereWithoutKelompokInput[]
+    deleteMany?: PengrajinScalarWhereInput | PengrajinScalarWhereInput[]
+  }
+
+  export type PengrajinUncheckedUpdateManyWithoutKelompokNestedInput = {
+    create?: XOR<PengrajinCreateWithoutKelompokInput, PengrajinUncheckedCreateWithoutKelompokInput> | PengrajinCreateWithoutKelompokInput[] | PengrajinUncheckedCreateWithoutKelompokInput[]
+    connectOrCreate?: PengrajinCreateOrConnectWithoutKelompokInput | PengrajinCreateOrConnectWithoutKelompokInput[]
+    upsert?: PengrajinUpsertWithWhereUniqueWithoutKelompokInput | PengrajinUpsertWithWhereUniqueWithoutKelompokInput[]
+    createMany?: PengrajinCreateManyKelompokInputEnvelope
+    set?: PengrajinWhereUniqueInput | PengrajinWhereUniqueInput[]
+    disconnect?: PengrajinWhereUniqueInput | PengrajinWhereUniqueInput[]
+    delete?: PengrajinWhereUniqueInput | PengrajinWhereUniqueInput[]
+    connect?: PengrajinWhereUniqueInput | PengrajinWhereUniqueInput[]
+    update?: PengrajinUpdateWithWhereUniqueWithoutKelompokInput | PengrajinUpdateWithWhereUniqueWithoutKelompokInput[]
+    updateMany?: PengrajinUpdateManyWithWhereWithoutKelompokInput | PengrajinUpdateManyWithWhereWithoutKelompokInput[]
+    deleteMany?: PengrajinScalarWhereInput | PengrajinScalarWhereInput[]
+  }
+
+  export type KelompokCreateNestedOneWithoutAnggotaInput = {
+    create?: XOR<KelompokCreateWithoutAnggotaInput, KelompokUncheckedCreateWithoutAnggotaInput>
+    connectOrCreate?: KelompokCreateOrConnectWithoutAnggotaInput
+    connect?: KelompokWhereUniqueInput
+  }
+
+  export type KelompokCreateNestedOneWithoutKetuaInput = {
+    create?: XOR<KelompokCreateWithoutKetuaInput, KelompokUncheckedCreateWithoutKetuaInput>
+    connectOrCreate?: KelompokCreateOrConnectWithoutKetuaInput
+    connect?: KelompokWhereUniqueInput
+  }
+
+  export type TarifPengrajinCreateNestedManyWithoutPengrajinInput = {
+    create?: XOR<TarifPengrajinCreateWithoutPengrajinInput, TarifPengrajinUncheckedCreateWithoutPengrajinInput> | TarifPengrajinCreateWithoutPengrajinInput[] | TarifPengrajinUncheckedCreateWithoutPengrajinInput[]
+    connectOrCreate?: TarifPengrajinCreateOrConnectWithoutPengrajinInput | TarifPengrajinCreateOrConnectWithoutPengrajinInput[]
+    createMany?: TarifPengrajinCreateManyPengrajinInputEnvelope
+    connect?: TarifPengrajinWhereUniqueInput | TarifPengrajinWhereUniqueInput[]
+  }
+
+  export type PenugasanCreateNestedManyWithoutPengrajinInput = {
+    create?: XOR<PenugasanCreateWithoutPengrajinInput, PenugasanUncheckedCreateWithoutPengrajinInput> | PenugasanCreateWithoutPengrajinInput[] | PenugasanUncheckedCreateWithoutPengrajinInput[]
+    connectOrCreate?: PenugasanCreateOrConnectWithoutPengrajinInput | PenugasanCreateOrConnectWithoutPengrajinInput[]
+    createMany?: PenugasanCreateManyPengrajinInputEnvelope
+    connect?: PenugasanWhereUniqueInput | PenugasanWhereUniqueInput[]
+  }
+
+  export type SetoranCreateNestedManyWithoutPengrajinInput = {
+    create?: XOR<SetoranCreateWithoutPengrajinInput, SetoranUncheckedCreateWithoutPengrajinInput> | SetoranCreateWithoutPengrajinInput[] | SetoranUncheckedCreateWithoutPengrajinInput[]
+    connectOrCreate?: SetoranCreateOrConnectWithoutPengrajinInput | SetoranCreateOrConnectWithoutPengrajinInput[]
+    createMany?: SetoranCreateManyPengrajinInputEnvelope
+    connect?: SetoranWhereUniqueInput | SetoranWhereUniqueInput[]
+  }
+
+  export type SetoranCreateNestedManyWithoutPenerimaInput = {
+    create?: XOR<SetoranCreateWithoutPenerimaInput, SetoranUncheckedCreateWithoutPenerimaInput> | SetoranCreateWithoutPenerimaInput[] | SetoranUncheckedCreateWithoutPenerimaInput[]
+    connectOrCreate?: SetoranCreateOrConnectWithoutPenerimaInput | SetoranCreateOrConnectWithoutPenerimaInput[]
+    createMany?: SetoranCreateManyPenerimaInputEnvelope
+    connect?: SetoranWhereUniqueInput | SetoranWhereUniqueInput[]
+  }
+
+  export type PenarikanCreateNestedManyWithoutPengrajinInput = {
+    create?: XOR<PenarikanCreateWithoutPengrajinInput, PenarikanUncheckedCreateWithoutPengrajinInput> | PenarikanCreateWithoutPengrajinInput[] | PenarikanUncheckedCreateWithoutPengrajinInput[]
+    connectOrCreate?: PenarikanCreateOrConnectWithoutPengrajinInput | PenarikanCreateOrConnectWithoutPengrajinInput[]
+    createMany?: PenarikanCreateManyPengrajinInputEnvelope
+    connect?: PenarikanWhereUniqueInput | PenarikanWhereUniqueInput[]
+  }
+
+  export type KelompokUncheckedCreateNestedOneWithoutKetuaInput = {
+    create?: XOR<KelompokCreateWithoutKetuaInput, KelompokUncheckedCreateWithoutKetuaInput>
+    connectOrCreate?: KelompokCreateOrConnectWithoutKetuaInput
+    connect?: KelompokWhereUniqueInput
+  }
+
+  export type TarifPengrajinUncheckedCreateNestedManyWithoutPengrajinInput = {
+    create?: XOR<TarifPengrajinCreateWithoutPengrajinInput, TarifPengrajinUncheckedCreateWithoutPengrajinInput> | TarifPengrajinCreateWithoutPengrajinInput[] | TarifPengrajinUncheckedCreateWithoutPengrajinInput[]
+    connectOrCreate?: TarifPengrajinCreateOrConnectWithoutPengrajinInput | TarifPengrajinCreateOrConnectWithoutPengrajinInput[]
+    createMany?: TarifPengrajinCreateManyPengrajinInputEnvelope
+    connect?: TarifPengrajinWhereUniqueInput | TarifPengrajinWhereUniqueInput[]
+  }
+
+  export type PenugasanUncheckedCreateNestedManyWithoutPengrajinInput = {
+    create?: XOR<PenugasanCreateWithoutPengrajinInput, PenugasanUncheckedCreateWithoutPengrajinInput> | PenugasanCreateWithoutPengrajinInput[] | PenugasanUncheckedCreateWithoutPengrajinInput[]
+    connectOrCreate?: PenugasanCreateOrConnectWithoutPengrajinInput | PenugasanCreateOrConnectWithoutPengrajinInput[]
+    createMany?: PenugasanCreateManyPengrajinInputEnvelope
+    connect?: PenugasanWhereUniqueInput | PenugasanWhereUniqueInput[]
+  }
+
+  export type SetoranUncheckedCreateNestedManyWithoutPengrajinInput = {
+    create?: XOR<SetoranCreateWithoutPengrajinInput, SetoranUncheckedCreateWithoutPengrajinInput> | SetoranCreateWithoutPengrajinInput[] | SetoranUncheckedCreateWithoutPengrajinInput[]
+    connectOrCreate?: SetoranCreateOrConnectWithoutPengrajinInput | SetoranCreateOrConnectWithoutPengrajinInput[]
+    createMany?: SetoranCreateManyPengrajinInputEnvelope
+    connect?: SetoranWhereUniqueInput | SetoranWhereUniqueInput[]
+  }
+
+  export type SetoranUncheckedCreateNestedManyWithoutPenerimaInput = {
+    create?: XOR<SetoranCreateWithoutPenerimaInput, SetoranUncheckedCreateWithoutPenerimaInput> | SetoranCreateWithoutPenerimaInput[] | SetoranUncheckedCreateWithoutPenerimaInput[]
+    connectOrCreate?: SetoranCreateOrConnectWithoutPenerimaInput | SetoranCreateOrConnectWithoutPenerimaInput[]
+    createMany?: SetoranCreateManyPenerimaInputEnvelope
+    connect?: SetoranWhereUniqueInput | SetoranWhereUniqueInput[]
+  }
+
+  export type PenarikanUncheckedCreateNestedManyWithoutPengrajinInput = {
+    create?: XOR<PenarikanCreateWithoutPengrajinInput, PenarikanUncheckedCreateWithoutPengrajinInput> | PenarikanCreateWithoutPengrajinInput[] | PenarikanUncheckedCreateWithoutPengrajinInput[]
+    connectOrCreate?: PenarikanCreateOrConnectWithoutPengrajinInput | PenarikanCreateOrConnectWithoutPengrajinInput[]
+    createMany?: PenarikanCreateManyPengrajinInputEnvelope
+    connect?: PenarikanWhereUniqueInput | PenarikanWhereUniqueInput[]
+  }
+
+  export type KelompokUpdateOneWithoutAnggotaNestedInput = {
+    create?: XOR<KelompokCreateWithoutAnggotaInput, KelompokUncheckedCreateWithoutAnggotaInput>
+    connectOrCreate?: KelompokCreateOrConnectWithoutAnggotaInput
+    upsert?: KelompokUpsertWithoutAnggotaInput
+    disconnect?: KelompokWhereInput | boolean
+    delete?: KelompokWhereInput | boolean
+    connect?: KelompokWhereUniqueInput
+    update?: XOR<XOR<KelompokUpdateToOneWithWhereWithoutAnggotaInput, KelompokUpdateWithoutAnggotaInput>, KelompokUncheckedUpdateWithoutAnggotaInput>
+  }
+
+  export type KelompokUpdateOneWithoutKetuaNestedInput = {
+    create?: XOR<KelompokCreateWithoutKetuaInput, KelompokUncheckedCreateWithoutKetuaInput>
+    connectOrCreate?: KelompokCreateOrConnectWithoutKetuaInput
+    upsert?: KelompokUpsertWithoutKetuaInput
+    disconnect?: KelompokWhereInput | boolean
+    delete?: KelompokWhereInput | boolean
+    connect?: KelompokWhereUniqueInput
+    update?: XOR<XOR<KelompokUpdateToOneWithWhereWithoutKetuaInput, KelompokUpdateWithoutKetuaInput>, KelompokUncheckedUpdateWithoutKetuaInput>
+  }
+
+  export type TarifPengrajinUpdateManyWithoutPengrajinNestedInput = {
+    create?: XOR<TarifPengrajinCreateWithoutPengrajinInput, TarifPengrajinUncheckedCreateWithoutPengrajinInput> | TarifPengrajinCreateWithoutPengrajinInput[] | TarifPengrajinUncheckedCreateWithoutPengrajinInput[]
+    connectOrCreate?: TarifPengrajinCreateOrConnectWithoutPengrajinInput | TarifPengrajinCreateOrConnectWithoutPengrajinInput[]
+    upsert?: TarifPengrajinUpsertWithWhereUniqueWithoutPengrajinInput | TarifPengrajinUpsertWithWhereUniqueWithoutPengrajinInput[]
+    createMany?: TarifPengrajinCreateManyPengrajinInputEnvelope
+    set?: TarifPengrajinWhereUniqueInput | TarifPengrajinWhereUniqueInput[]
+    disconnect?: TarifPengrajinWhereUniqueInput | TarifPengrajinWhereUniqueInput[]
+    delete?: TarifPengrajinWhereUniqueInput | TarifPengrajinWhereUniqueInput[]
+    connect?: TarifPengrajinWhereUniqueInput | TarifPengrajinWhereUniqueInput[]
+    update?: TarifPengrajinUpdateWithWhereUniqueWithoutPengrajinInput | TarifPengrajinUpdateWithWhereUniqueWithoutPengrajinInput[]
+    updateMany?: TarifPengrajinUpdateManyWithWhereWithoutPengrajinInput | TarifPengrajinUpdateManyWithWhereWithoutPengrajinInput[]
+    deleteMany?: TarifPengrajinScalarWhereInput | TarifPengrajinScalarWhereInput[]
+  }
+
+  export type PenugasanUpdateManyWithoutPengrajinNestedInput = {
+    create?: XOR<PenugasanCreateWithoutPengrajinInput, PenugasanUncheckedCreateWithoutPengrajinInput> | PenugasanCreateWithoutPengrajinInput[] | PenugasanUncheckedCreateWithoutPengrajinInput[]
+    connectOrCreate?: PenugasanCreateOrConnectWithoutPengrajinInput | PenugasanCreateOrConnectWithoutPengrajinInput[]
+    upsert?: PenugasanUpsertWithWhereUniqueWithoutPengrajinInput | PenugasanUpsertWithWhereUniqueWithoutPengrajinInput[]
+    createMany?: PenugasanCreateManyPengrajinInputEnvelope
+    set?: PenugasanWhereUniqueInput | PenugasanWhereUniqueInput[]
+    disconnect?: PenugasanWhereUniqueInput | PenugasanWhereUniqueInput[]
+    delete?: PenugasanWhereUniqueInput | PenugasanWhereUniqueInput[]
+    connect?: PenugasanWhereUniqueInput | PenugasanWhereUniqueInput[]
+    update?: PenugasanUpdateWithWhereUniqueWithoutPengrajinInput | PenugasanUpdateWithWhereUniqueWithoutPengrajinInput[]
+    updateMany?: PenugasanUpdateManyWithWhereWithoutPengrajinInput | PenugasanUpdateManyWithWhereWithoutPengrajinInput[]
+    deleteMany?: PenugasanScalarWhereInput | PenugasanScalarWhereInput[]
+  }
+
+  export type SetoranUpdateManyWithoutPengrajinNestedInput = {
+    create?: XOR<SetoranCreateWithoutPengrajinInput, SetoranUncheckedCreateWithoutPengrajinInput> | SetoranCreateWithoutPengrajinInput[] | SetoranUncheckedCreateWithoutPengrajinInput[]
+    connectOrCreate?: SetoranCreateOrConnectWithoutPengrajinInput | SetoranCreateOrConnectWithoutPengrajinInput[]
+    upsert?: SetoranUpsertWithWhereUniqueWithoutPengrajinInput | SetoranUpsertWithWhereUniqueWithoutPengrajinInput[]
+    createMany?: SetoranCreateManyPengrajinInputEnvelope
+    set?: SetoranWhereUniqueInput | SetoranWhereUniqueInput[]
+    disconnect?: SetoranWhereUniqueInput | SetoranWhereUniqueInput[]
+    delete?: SetoranWhereUniqueInput | SetoranWhereUniqueInput[]
+    connect?: SetoranWhereUniqueInput | SetoranWhereUniqueInput[]
+    update?: SetoranUpdateWithWhereUniqueWithoutPengrajinInput | SetoranUpdateWithWhereUniqueWithoutPengrajinInput[]
+    updateMany?: SetoranUpdateManyWithWhereWithoutPengrajinInput | SetoranUpdateManyWithWhereWithoutPengrajinInput[]
+    deleteMany?: SetoranScalarWhereInput | SetoranScalarWhereInput[]
+  }
+
+  export type SetoranUpdateManyWithoutPenerimaNestedInput = {
+    create?: XOR<SetoranCreateWithoutPenerimaInput, SetoranUncheckedCreateWithoutPenerimaInput> | SetoranCreateWithoutPenerimaInput[] | SetoranUncheckedCreateWithoutPenerimaInput[]
+    connectOrCreate?: SetoranCreateOrConnectWithoutPenerimaInput | SetoranCreateOrConnectWithoutPenerimaInput[]
+    upsert?: SetoranUpsertWithWhereUniqueWithoutPenerimaInput | SetoranUpsertWithWhereUniqueWithoutPenerimaInput[]
+    createMany?: SetoranCreateManyPenerimaInputEnvelope
+    set?: SetoranWhereUniqueInput | SetoranWhereUniqueInput[]
+    disconnect?: SetoranWhereUniqueInput | SetoranWhereUniqueInput[]
+    delete?: SetoranWhereUniqueInput | SetoranWhereUniqueInput[]
+    connect?: SetoranWhereUniqueInput | SetoranWhereUniqueInput[]
+    update?: SetoranUpdateWithWhereUniqueWithoutPenerimaInput | SetoranUpdateWithWhereUniqueWithoutPenerimaInput[]
+    updateMany?: SetoranUpdateManyWithWhereWithoutPenerimaInput | SetoranUpdateManyWithWhereWithoutPenerimaInput[]
+    deleteMany?: SetoranScalarWhereInput | SetoranScalarWhereInput[]
+  }
+
+  export type PenarikanUpdateManyWithoutPengrajinNestedInput = {
+    create?: XOR<PenarikanCreateWithoutPengrajinInput, PenarikanUncheckedCreateWithoutPengrajinInput> | PenarikanCreateWithoutPengrajinInput[] | PenarikanUncheckedCreateWithoutPengrajinInput[]
+    connectOrCreate?: PenarikanCreateOrConnectWithoutPengrajinInput | PenarikanCreateOrConnectWithoutPengrajinInput[]
+    upsert?: PenarikanUpsertWithWhereUniqueWithoutPengrajinInput | PenarikanUpsertWithWhereUniqueWithoutPengrajinInput[]
+    createMany?: PenarikanCreateManyPengrajinInputEnvelope
+    set?: PenarikanWhereUniqueInput | PenarikanWhereUniqueInput[]
+    disconnect?: PenarikanWhereUniqueInput | PenarikanWhereUniqueInput[]
+    delete?: PenarikanWhereUniqueInput | PenarikanWhereUniqueInput[]
+    connect?: PenarikanWhereUniqueInput | PenarikanWhereUniqueInput[]
+    update?: PenarikanUpdateWithWhereUniqueWithoutPengrajinInput | PenarikanUpdateWithWhereUniqueWithoutPengrajinInput[]
+    updateMany?: PenarikanUpdateManyWithWhereWithoutPengrajinInput | PenarikanUpdateManyWithWhereWithoutPengrajinInput[]
+    deleteMany?: PenarikanScalarWhereInput | PenarikanScalarWhereInput[]
+  }
+
+  export type KelompokUncheckedUpdateOneWithoutKetuaNestedInput = {
+    create?: XOR<KelompokCreateWithoutKetuaInput, KelompokUncheckedCreateWithoutKetuaInput>
+    connectOrCreate?: KelompokCreateOrConnectWithoutKetuaInput
+    upsert?: KelompokUpsertWithoutKetuaInput
+    disconnect?: KelompokWhereInput | boolean
+    delete?: KelompokWhereInput | boolean
+    connect?: KelompokWhereUniqueInput
+    update?: XOR<XOR<KelompokUpdateToOneWithWhereWithoutKetuaInput, KelompokUpdateWithoutKetuaInput>, KelompokUncheckedUpdateWithoutKetuaInput>
+  }
+
+  export type TarifPengrajinUncheckedUpdateManyWithoutPengrajinNestedInput = {
+    create?: XOR<TarifPengrajinCreateWithoutPengrajinInput, TarifPengrajinUncheckedCreateWithoutPengrajinInput> | TarifPengrajinCreateWithoutPengrajinInput[] | TarifPengrajinUncheckedCreateWithoutPengrajinInput[]
+    connectOrCreate?: TarifPengrajinCreateOrConnectWithoutPengrajinInput | TarifPengrajinCreateOrConnectWithoutPengrajinInput[]
+    upsert?: TarifPengrajinUpsertWithWhereUniqueWithoutPengrajinInput | TarifPengrajinUpsertWithWhereUniqueWithoutPengrajinInput[]
+    createMany?: TarifPengrajinCreateManyPengrajinInputEnvelope
+    set?: TarifPengrajinWhereUniqueInput | TarifPengrajinWhereUniqueInput[]
+    disconnect?: TarifPengrajinWhereUniqueInput | TarifPengrajinWhereUniqueInput[]
+    delete?: TarifPengrajinWhereUniqueInput | TarifPengrajinWhereUniqueInput[]
+    connect?: TarifPengrajinWhereUniqueInput | TarifPengrajinWhereUniqueInput[]
+    update?: TarifPengrajinUpdateWithWhereUniqueWithoutPengrajinInput | TarifPengrajinUpdateWithWhereUniqueWithoutPengrajinInput[]
+    updateMany?: TarifPengrajinUpdateManyWithWhereWithoutPengrajinInput | TarifPengrajinUpdateManyWithWhereWithoutPengrajinInput[]
+    deleteMany?: TarifPengrajinScalarWhereInput | TarifPengrajinScalarWhereInput[]
+  }
+
+  export type PenugasanUncheckedUpdateManyWithoutPengrajinNestedInput = {
+    create?: XOR<PenugasanCreateWithoutPengrajinInput, PenugasanUncheckedCreateWithoutPengrajinInput> | PenugasanCreateWithoutPengrajinInput[] | PenugasanUncheckedCreateWithoutPengrajinInput[]
+    connectOrCreate?: PenugasanCreateOrConnectWithoutPengrajinInput | PenugasanCreateOrConnectWithoutPengrajinInput[]
+    upsert?: PenugasanUpsertWithWhereUniqueWithoutPengrajinInput | PenugasanUpsertWithWhereUniqueWithoutPengrajinInput[]
+    createMany?: PenugasanCreateManyPengrajinInputEnvelope
+    set?: PenugasanWhereUniqueInput | PenugasanWhereUniqueInput[]
+    disconnect?: PenugasanWhereUniqueInput | PenugasanWhereUniqueInput[]
+    delete?: PenugasanWhereUniqueInput | PenugasanWhereUniqueInput[]
+    connect?: PenugasanWhereUniqueInput | PenugasanWhereUniqueInput[]
+    update?: PenugasanUpdateWithWhereUniqueWithoutPengrajinInput | PenugasanUpdateWithWhereUniqueWithoutPengrajinInput[]
+    updateMany?: PenugasanUpdateManyWithWhereWithoutPengrajinInput | PenugasanUpdateManyWithWhereWithoutPengrajinInput[]
+    deleteMany?: PenugasanScalarWhereInput | PenugasanScalarWhereInput[]
+  }
+
+  export type SetoranUncheckedUpdateManyWithoutPengrajinNestedInput = {
+    create?: XOR<SetoranCreateWithoutPengrajinInput, SetoranUncheckedCreateWithoutPengrajinInput> | SetoranCreateWithoutPengrajinInput[] | SetoranUncheckedCreateWithoutPengrajinInput[]
+    connectOrCreate?: SetoranCreateOrConnectWithoutPengrajinInput | SetoranCreateOrConnectWithoutPengrajinInput[]
+    upsert?: SetoranUpsertWithWhereUniqueWithoutPengrajinInput | SetoranUpsertWithWhereUniqueWithoutPengrajinInput[]
+    createMany?: SetoranCreateManyPengrajinInputEnvelope
+    set?: SetoranWhereUniqueInput | SetoranWhereUniqueInput[]
+    disconnect?: SetoranWhereUniqueInput | SetoranWhereUniqueInput[]
+    delete?: SetoranWhereUniqueInput | SetoranWhereUniqueInput[]
+    connect?: SetoranWhereUniqueInput | SetoranWhereUniqueInput[]
+    update?: SetoranUpdateWithWhereUniqueWithoutPengrajinInput | SetoranUpdateWithWhereUniqueWithoutPengrajinInput[]
+    updateMany?: SetoranUpdateManyWithWhereWithoutPengrajinInput | SetoranUpdateManyWithWhereWithoutPengrajinInput[]
+    deleteMany?: SetoranScalarWhereInput | SetoranScalarWhereInput[]
+  }
+
+  export type SetoranUncheckedUpdateManyWithoutPenerimaNestedInput = {
+    create?: XOR<SetoranCreateWithoutPenerimaInput, SetoranUncheckedCreateWithoutPenerimaInput> | SetoranCreateWithoutPenerimaInput[] | SetoranUncheckedCreateWithoutPenerimaInput[]
+    connectOrCreate?: SetoranCreateOrConnectWithoutPenerimaInput | SetoranCreateOrConnectWithoutPenerimaInput[]
+    upsert?: SetoranUpsertWithWhereUniqueWithoutPenerimaInput | SetoranUpsertWithWhereUniqueWithoutPenerimaInput[]
+    createMany?: SetoranCreateManyPenerimaInputEnvelope
+    set?: SetoranWhereUniqueInput | SetoranWhereUniqueInput[]
+    disconnect?: SetoranWhereUniqueInput | SetoranWhereUniqueInput[]
+    delete?: SetoranWhereUniqueInput | SetoranWhereUniqueInput[]
+    connect?: SetoranWhereUniqueInput | SetoranWhereUniqueInput[]
+    update?: SetoranUpdateWithWhereUniqueWithoutPenerimaInput | SetoranUpdateWithWhereUniqueWithoutPenerimaInput[]
+    updateMany?: SetoranUpdateManyWithWhereWithoutPenerimaInput | SetoranUpdateManyWithWhereWithoutPenerimaInput[]
+    deleteMany?: SetoranScalarWhereInput | SetoranScalarWhereInput[]
+  }
+
+  export type PenarikanUncheckedUpdateManyWithoutPengrajinNestedInput = {
+    create?: XOR<PenarikanCreateWithoutPengrajinInput, PenarikanUncheckedCreateWithoutPengrajinInput> | PenarikanCreateWithoutPengrajinInput[] | PenarikanUncheckedCreateWithoutPengrajinInput[]
+    connectOrCreate?: PenarikanCreateOrConnectWithoutPengrajinInput | PenarikanCreateOrConnectWithoutPengrajinInput[]
+    upsert?: PenarikanUpsertWithWhereUniqueWithoutPengrajinInput | PenarikanUpsertWithWhereUniqueWithoutPengrajinInput[]
+    createMany?: PenarikanCreateManyPengrajinInputEnvelope
+    set?: PenarikanWhereUniqueInput | PenarikanWhereUniqueInput[]
+    disconnect?: PenarikanWhereUniqueInput | PenarikanWhereUniqueInput[]
+    delete?: PenarikanWhereUniqueInput | PenarikanWhereUniqueInput[]
+    connect?: PenarikanWhereUniqueInput | PenarikanWhereUniqueInput[]
+    update?: PenarikanUpdateWithWhereUniqueWithoutPengrajinInput | PenarikanUpdateWithWhereUniqueWithoutPengrajinInput[]
+    updateMany?: PenarikanUpdateManyWithWhereWithoutPengrajinInput | PenarikanUpdateManyWithWhereWithoutPengrajinInput[]
+    deleteMany?: PenarikanScalarWhereInput | PenarikanScalarWhereInput[]
+  }
+
+  export type PengrajinCreateNestedOneWithoutTarifInput = {
+    create?: XOR<PengrajinCreateWithoutTarifInput, PengrajinUncheckedCreateWithoutTarifInput>
+    connectOrCreate?: PengrajinCreateOrConnectWithoutTarifInput
+    connect?: PengrajinWhereUniqueInput
+  }
+
+  export type ProductCreateNestedOneWithoutTarifPengrajinInput = {
+    create?: XOR<ProductCreateWithoutTarifPengrajinInput, ProductUncheckedCreateWithoutTarifPengrajinInput>
+    connectOrCreate?: ProductCreateOrConnectWithoutTarifPengrajinInput
+    connect?: ProductWhereUniqueInput
+  }
+
+  export type PengrajinUpdateOneRequiredWithoutTarifNestedInput = {
+    create?: XOR<PengrajinCreateWithoutTarifInput, PengrajinUncheckedCreateWithoutTarifInput>
+    connectOrCreate?: PengrajinCreateOrConnectWithoutTarifInput
+    upsert?: PengrajinUpsertWithoutTarifInput
+    connect?: PengrajinWhereUniqueInput
+    update?: XOR<XOR<PengrajinUpdateToOneWithWhereWithoutTarifInput, PengrajinUpdateWithoutTarifInput>, PengrajinUncheckedUpdateWithoutTarifInput>
+  }
+
+  export type ProductUpdateOneRequiredWithoutTarifPengrajinNestedInput = {
+    create?: XOR<ProductCreateWithoutTarifPengrajinInput, ProductUncheckedCreateWithoutTarifPengrajinInput>
+    connectOrCreate?: ProductCreateOrConnectWithoutTarifPengrajinInput
+    upsert?: ProductUpsertWithoutTarifPengrajinInput
+    connect?: ProductWhereUniqueInput
+    update?: XOR<XOR<ProductUpdateToOneWithWhereWithoutTarifPengrajinInput, ProductUpdateWithoutTarifPengrajinInput>, ProductUncheckedUpdateWithoutTarifPengrajinInput>
+  }
+
+  export type TransactionItemCreateNestedOneWithoutPenugasanInput = {
+    create?: XOR<TransactionItemCreateWithoutPenugasanInput, TransactionItemUncheckedCreateWithoutPenugasanInput>
+    connectOrCreate?: TransactionItemCreateOrConnectWithoutPenugasanInput
+    connect?: TransactionItemWhereUniqueInput
+  }
+
+  export type PengrajinCreateNestedOneWithoutPenugasanInput = {
+    create?: XOR<PengrajinCreateWithoutPenugasanInput, PengrajinUncheckedCreateWithoutPenugasanInput>
+    connectOrCreate?: PengrajinCreateOrConnectWithoutPenugasanInput
+    connect?: PengrajinWhereUniqueInput
+  }
+
+  export type SetoranCreateNestedManyWithoutPenugasanInput = {
+    create?: XOR<SetoranCreateWithoutPenugasanInput, SetoranUncheckedCreateWithoutPenugasanInput> | SetoranCreateWithoutPenugasanInput[] | SetoranUncheckedCreateWithoutPenugasanInput[]
+    connectOrCreate?: SetoranCreateOrConnectWithoutPenugasanInput | SetoranCreateOrConnectWithoutPenugasanInput[]
+    createMany?: SetoranCreateManyPenugasanInputEnvelope
+    connect?: SetoranWhereUniqueInput | SetoranWhereUniqueInput[]
+  }
+
+  export type SetoranUncheckedCreateNestedManyWithoutPenugasanInput = {
+    create?: XOR<SetoranCreateWithoutPenugasanInput, SetoranUncheckedCreateWithoutPenugasanInput> | SetoranCreateWithoutPenugasanInput[] | SetoranUncheckedCreateWithoutPenugasanInput[]
+    connectOrCreate?: SetoranCreateOrConnectWithoutPenugasanInput | SetoranCreateOrConnectWithoutPenugasanInput[]
+    createMany?: SetoranCreateManyPenugasanInputEnvelope
+    connect?: SetoranWhereUniqueInput | SetoranWhereUniqueInput[]
+  }
+
+  export type TransactionItemUpdateOneRequiredWithoutPenugasanNestedInput = {
+    create?: XOR<TransactionItemCreateWithoutPenugasanInput, TransactionItemUncheckedCreateWithoutPenugasanInput>
+    connectOrCreate?: TransactionItemCreateOrConnectWithoutPenugasanInput
+    upsert?: TransactionItemUpsertWithoutPenugasanInput
+    connect?: TransactionItemWhereUniqueInput
+    update?: XOR<XOR<TransactionItemUpdateToOneWithWhereWithoutPenugasanInput, TransactionItemUpdateWithoutPenugasanInput>, TransactionItemUncheckedUpdateWithoutPenugasanInput>
+  }
+
+  export type PengrajinUpdateOneRequiredWithoutPenugasanNestedInput = {
+    create?: XOR<PengrajinCreateWithoutPenugasanInput, PengrajinUncheckedCreateWithoutPenugasanInput>
+    connectOrCreate?: PengrajinCreateOrConnectWithoutPenugasanInput
+    upsert?: PengrajinUpsertWithoutPenugasanInput
+    connect?: PengrajinWhereUniqueInput
+    update?: XOR<XOR<PengrajinUpdateToOneWithWhereWithoutPenugasanInput, PengrajinUpdateWithoutPenugasanInput>, PengrajinUncheckedUpdateWithoutPenugasanInput>
+  }
+
+  export type SetoranUpdateManyWithoutPenugasanNestedInput = {
+    create?: XOR<SetoranCreateWithoutPenugasanInput, SetoranUncheckedCreateWithoutPenugasanInput> | SetoranCreateWithoutPenugasanInput[] | SetoranUncheckedCreateWithoutPenugasanInput[]
+    connectOrCreate?: SetoranCreateOrConnectWithoutPenugasanInput | SetoranCreateOrConnectWithoutPenugasanInput[]
+    upsert?: SetoranUpsertWithWhereUniqueWithoutPenugasanInput | SetoranUpsertWithWhereUniqueWithoutPenugasanInput[]
+    createMany?: SetoranCreateManyPenugasanInputEnvelope
+    set?: SetoranWhereUniqueInput | SetoranWhereUniqueInput[]
+    disconnect?: SetoranWhereUniqueInput | SetoranWhereUniqueInput[]
+    delete?: SetoranWhereUniqueInput | SetoranWhereUniqueInput[]
+    connect?: SetoranWhereUniqueInput | SetoranWhereUniqueInput[]
+    update?: SetoranUpdateWithWhereUniqueWithoutPenugasanInput | SetoranUpdateWithWhereUniqueWithoutPenugasanInput[]
+    updateMany?: SetoranUpdateManyWithWhereWithoutPenugasanInput | SetoranUpdateManyWithWhereWithoutPenugasanInput[]
+    deleteMany?: SetoranScalarWhereInput | SetoranScalarWhereInput[]
+  }
+
+  export type SetoranUncheckedUpdateManyWithoutPenugasanNestedInput = {
+    create?: XOR<SetoranCreateWithoutPenugasanInput, SetoranUncheckedCreateWithoutPenugasanInput> | SetoranCreateWithoutPenugasanInput[] | SetoranUncheckedCreateWithoutPenugasanInput[]
+    connectOrCreate?: SetoranCreateOrConnectWithoutPenugasanInput | SetoranCreateOrConnectWithoutPenugasanInput[]
+    upsert?: SetoranUpsertWithWhereUniqueWithoutPenugasanInput | SetoranUpsertWithWhereUniqueWithoutPenugasanInput[]
+    createMany?: SetoranCreateManyPenugasanInputEnvelope
+    set?: SetoranWhereUniqueInput | SetoranWhereUniqueInput[]
+    disconnect?: SetoranWhereUniqueInput | SetoranWhereUniqueInput[]
+    delete?: SetoranWhereUniqueInput | SetoranWhereUniqueInput[]
+    connect?: SetoranWhereUniqueInput | SetoranWhereUniqueInput[]
+    update?: SetoranUpdateWithWhereUniqueWithoutPenugasanInput | SetoranUpdateWithWhereUniqueWithoutPenugasanInput[]
+    updateMany?: SetoranUpdateManyWithWhereWithoutPenugasanInput | SetoranUpdateManyWithWhereWithoutPenugasanInput[]
+    deleteMany?: SetoranScalarWhereInput | SetoranScalarWhereInput[]
+  }
+
+  export type PenugasanCreateNestedOneWithoutSetoranInput = {
+    create?: XOR<PenugasanCreateWithoutSetoranInput, PenugasanUncheckedCreateWithoutSetoranInput>
+    connectOrCreate?: PenugasanCreateOrConnectWithoutSetoranInput
+    connect?: PenugasanWhereUniqueInput
+  }
+
+  export type PengrajinCreateNestedOneWithoutSetoranKerjaInput = {
+    create?: XOR<PengrajinCreateWithoutSetoranKerjaInput, PengrajinUncheckedCreateWithoutSetoranKerjaInput>
+    connectOrCreate?: PengrajinCreateOrConnectWithoutSetoranKerjaInput
+    connect?: PengrajinWhereUniqueInput
+  }
+
+  export type PengrajinCreateNestedOneWithoutSetoranTerimaInput = {
+    create?: XOR<PengrajinCreateWithoutSetoranTerimaInput, PengrajinUncheckedCreateWithoutSetoranTerimaInput>
+    connectOrCreate?: PengrajinCreateOrConnectWithoutSetoranTerimaInput
+    connect?: PengrajinWhereUniqueInput
+  }
+
+  export type PenugasanUpdateOneRequiredWithoutSetoranNestedInput = {
+    create?: XOR<PenugasanCreateWithoutSetoranInput, PenugasanUncheckedCreateWithoutSetoranInput>
+    connectOrCreate?: PenugasanCreateOrConnectWithoutSetoranInput
+    upsert?: PenugasanUpsertWithoutSetoranInput
+    connect?: PenugasanWhereUniqueInput
+    update?: XOR<XOR<PenugasanUpdateToOneWithWhereWithoutSetoranInput, PenugasanUpdateWithoutSetoranInput>, PenugasanUncheckedUpdateWithoutSetoranInput>
+  }
+
+  export type PengrajinUpdateOneRequiredWithoutSetoranKerjaNestedInput = {
+    create?: XOR<PengrajinCreateWithoutSetoranKerjaInput, PengrajinUncheckedCreateWithoutSetoranKerjaInput>
+    connectOrCreate?: PengrajinCreateOrConnectWithoutSetoranKerjaInput
+    upsert?: PengrajinUpsertWithoutSetoranKerjaInput
+    connect?: PengrajinWhereUniqueInput
+    update?: XOR<XOR<PengrajinUpdateToOneWithWhereWithoutSetoranKerjaInput, PengrajinUpdateWithoutSetoranKerjaInput>, PengrajinUncheckedUpdateWithoutSetoranKerjaInput>
+  }
+
+  export type PengrajinUpdateOneRequiredWithoutSetoranTerimaNestedInput = {
+    create?: XOR<PengrajinCreateWithoutSetoranTerimaInput, PengrajinUncheckedCreateWithoutSetoranTerimaInput>
+    connectOrCreate?: PengrajinCreateOrConnectWithoutSetoranTerimaInput
+    upsert?: PengrajinUpsertWithoutSetoranTerimaInput
+    connect?: PengrajinWhereUniqueInput
+    update?: XOR<XOR<PengrajinUpdateToOneWithWhereWithoutSetoranTerimaInput, PengrajinUpdateWithoutSetoranTerimaInput>, PengrajinUncheckedUpdateWithoutSetoranTerimaInput>
+  }
+
+  export type PengrajinCreateNestedOneWithoutPenarikanInput = {
+    create?: XOR<PengrajinCreateWithoutPenarikanInput, PengrajinUncheckedCreateWithoutPenarikanInput>
+    connectOrCreate?: PengrajinCreateOrConnectWithoutPenarikanInput
+    connect?: PengrajinWhereUniqueInput
+  }
+
+  export type PengrajinUpdateOneRequiredWithoutPenarikanNestedInput = {
+    create?: XOR<PengrajinCreateWithoutPenarikanInput, PengrajinUncheckedCreateWithoutPenarikanInput>
+    connectOrCreate?: PengrajinCreateOrConnectWithoutPenarikanInput
+    upsert?: PengrajinUpsertWithoutPenarikanInput
+    connect?: PengrajinWhereUniqueInput
+    update?: XOR<XOR<PengrajinUpdateToOneWithWhereWithoutPenarikanInput, PengrajinUpdateWithoutPenarikanInput>, PengrajinUncheckedUpdateWithoutPenarikanInput>
   }
 
   export type CustomerCreateNestedOneWithoutPricesInput = {
@@ -29008,6 +39017,7 @@ export namespace Prisma {
     packed?: boolean
     packedAt?: Date | string | null
     transaction: TransactionCreateNestedOneWithoutItemsInput
+    penugasan?: PenugasanCreateNestedManyWithoutTransactionItemInput
   }
 
   export type TransactionItemUncheckedCreateWithoutProductInput = {
@@ -29023,6 +39033,7 @@ export namespace Prisma {
     satuanHarga?: string
     packed?: boolean
     packedAt?: Date | string | null
+    penugasan?: PenugasanUncheckedCreateNestedManyWithoutTransactionItemInput
   }
 
   export type TransactionItemCreateOrConnectWithoutProductInput = {
@@ -29119,6 +39130,31 @@ export namespace Prisma {
 
   export type ProductVariantCreateManyProductInputEnvelope = {
     data: ProductVariantCreateManyProductInput | ProductVariantCreateManyProductInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type TarifPengrajinCreateWithoutProductInput = {
+    tarif: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    pengrajin: PengrajinCreateNestedOneWithoutTarifInput
+  }
+
+  export type TarifPengrajinUncheckedCreateWithoutProductInput = {
+    id?: number
+    pengrajinId: number
+    tarif: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TarifPengrajinCreateOrConnectWithoutProductInput = {
+    where: TarifPengrajinWhereUniqueInput
+    create: XOR<TarifPengrajinCreateWithoutProductInput, TarifPengrajinUncheckedCreateWithoutProductInput>
+  }
+
+  export type TarifPengrajinCreateManyProductInputEnvelope = {
+    data: TarifPengrajinCreateManyProductInput | TarifPengrajinCreateManyProductInput[]
     skipDuplicates?: boolean
   }
 
@@ -29247,6 +39283,34 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"ProductVariant"> | Date | string
   }
 
+  export type TarifPengrajinUpsertWithWhereUniqueWithoutProductInput = {
+    where: TarifPengrajinWhereUniqueInput
+    update: XOR<TarifPengrajinUpdateWithoutProductInput, TarifPengrajinUncheckedUpdateWithoutProductInput>
+    create: XOR<TarifPengrajinCreateWithoutProductInput, TarifPengrajinUncheckedCreateWithoutProductInput>
+  }
+
+  export type TarifPengrajinUpdateWithWhereUniqueWithoutProductInput = {
+    where: TarifPengrajinWhereUniqueInput
+    data: XOR<TarifPengrajinUpdateWithoutProductInput, TarifPengrajinUncheckedUpdateWithoutProductInput>
+  }
+
+  export type TarifPengrajinUpdateManyWithWhereWithoutProductInput = {
+    where: TarifPengrajinScalarWhereInput
+    data: XOR<TarifPengrajinUpdateManyMutationInput, TarifPengrajinUncheckedUpdateManyWithoutProductInput>
+  }
+
+  export type TarifPengrajinScalarWhereInput = {
+    AND?: TarifPengrajinScalarWhereInput | TarifPengrajinScalarWhereInput[]
+    OR?: TarifPengrajinScalarWhereInput[]
+    NOT?: TarifPengrajinScalarWhereInput | TarifPengrajinScalarWhereInput[]
+    id?: IntFilter<"TarifPengrajin"> | number
+    pengrajinId?: IntFilter<"TarifPengrajin"> | number
+    productId?: IntFilter<"TarifPengrajin"> | number
+    tarif?: IntFilter<"TarifPengrajin"> | number
+    createdAt?: DateTimeFilter<"TarifPengrajin"> | Date | string
+    updatedAt?: DateTimeFilter<"TarifPengrajin"> | Date | string
+  }
+
   export type ProductCreateWithoutVariantsInput = {
     nama_produk: string
     harga: number
@@ -29260,6 +39324,7 @@ export namespace Prisma {
     TransactionItems?: TransactionItemCreateNestedManyWithoutProductInput
     cartItems?: UserCartItemCreateNestedManyWithoutProductInput
     orderRequestItems?: OrderRequestItemCreateNestedManyWithoutProductInput
+    tarifPengrajin?: TarifPengrajinCreateNestedManyWithoutProductInput
   }
 
   export type ProductUncheckedCreateWithoutVariantsInput = {
@@ -29276,6 +39341,7 @@ export namespace Prisma {
     TransactionItems?: TransactionItemUncheckedCreateNestedManyWithoutProductInput
     cartItems?: UserCartItemUncheckedCreateNestedManyWithoutProductInput
     orderRequestItems?: OrderRequestItemUncheckedCreateNestedManyWithoutProductInput
+    tarifPengrajin?: TarifPengrajinUncheckedCreateNestedManyWithoutProductInput
   }
 
   export type ProductCreateOrConnectWithoutVariantsInput = {
@@ -29307,6 +39373,7 @@ export namespace Prisma {
     TransactionItems?: TransactionItemUpdateManyWithoutProductNestedInput
     cartItems?: UserCartItemUpdateManyWithoutProductNestedInput
     orderRequestItems?: OrderRequestItemUpdateManyWithoutProductNestedInput
+    tarifPengrajin?: TarifPengrajinUpdateManyWithoutProductNestedInput
   }
 
   export type ProductUncheckedUpdateWithoutVariantsInput = {
@@ -29323,6 +39390,7 @@ export namespace Prisma {
     TransactionItems?: TransactionItemUncheckedUpdateManyWithoutProductNestedInput
     cartItems?: UserCartItemUncheckedUpdateManyWithoutProductNestedInput
     orderRequestItems?: OrderRequestItemUncheckedUpdateManyWithoutProductNestedInput
+    tarifPengrajin?: TarifPengrajinUncheckedUpdateManyWithoutProductNestedInput
   }
 
   export type CustomerCreateWithoutTransactionsInput = {
@@ -29361,6 +39429,7 @@ export namespace Prisma {
     packed?: boolean
     packedAt?: Date | string | null
     product: ProductCreateNestedOneWithoutTransactionItemsInput
+    penugasan?: PenugasanCreateNestedManyWithoutTransactionItemInput
   }
 
   export type TransactionItemUncheckedCreateWithoutTransactionInput = {
@@ -29376,6 +39445,7 @@ export namespace Prisma {
     satuanHarga?: string
     packed?: boolean
     packedAt?: Date | string | null
+    penugasan?: PenugasanUncheckedCreateNestedManyWithoutTransactionItemInput
   }
 
   export type TransactionItemCreateOrConnectWithoutTransactionInput = {
@@ -29764,6 +39834,7 @@ export namespace Prisma {
     cartItems?: UserCartItemCreateNestedManyWithoutProductInput
     orderRequestItems?: OrderRequestItemCreateNestedManyWithoutProductInput
     variants?: ProductVariantCreateNestedManyWithoutProductInput
+    tarifPengrajin?: TarifPengrajinCreateNestedManyWithoutProductInput
   }
 
   export type ProductUncheckedCreateWithoutTransactionItemsInput = {
@@ -29780,11 +39851,47 @@ export namespace Prisma {
     cartItems?: UserCartItemUncheckedCreateNestedManyWithoutProductInput
     orderRequestItems?: OrderRequestItemUncheckedCreateNestedManyWithoutProductInput
     variants?: ProductVariantUncheckedCreateNestedManyWithoutProductInput
+    tarifPengrajin?: TarifPengrajinUncheckedCreateNestedManyWithoutProductInput
   }
 
   export type ProductCreateOrConnectWithoutTransactionItemsInput = {
     where: ProductWhereUniqueInput
     create: XOR<ProductCreateWithoutTransactionItemsInput, ProductUncheckedCreateWithoutTransactionItemsInput>
+  }
+
+  export type PenugasanCreateWithoutTransactionItemInput = {
+    jumlahDitugaskan: number
+    tenggat: Date | string
+    catatan?: string | null
+    pembuatId?: number | null
+    pembuatNama?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    pengrajin: PengrajinCreateNestedOneWithoutPenugasanInput
+    setoran?: SetoranCreateNestedManyWithoutPenugasanInput
+  }
+
+  export type PenugasanUncheckedCreateWithoutTransactionItemInput = {
+    id?: number
+    pengrajinId: number
+    jumlahDitugaskan: number
+    tenggat: Date | string
+    catatan?: string | null
+    pembuatId?: number | null
+    pembuatNama?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    setoran?: SetoranUncheckedCreateNestedManyWithoutPenugasanInput
+  }
+
+  export type PenugasanCreateOrConnectWithoutTransactionItemInput = {
+    where: PenugasanWhereUniqueInput
+    create: XOR<PenugasanCreateWithoutTransactionItemInput, PenugasanUncheckedCreateWithoutTransactionItemInput>
+  }
+
+  export type PenugasanCreateManyTransactionItemInputEnvelope = {
+    data: PenugasanCreateManyTransactionItemInput | PenugasanCreateManyTransactionItemInput[]
+    skipDuplicates?: boolean
   }
 
   export type TransactionUpsertWithoutItemsInput = {
@@ -29855,6 +39962,7 @@ export namespace Prisma {
     cartItems?: UserCartItemUpdateManyWithoutProductNestedInput
     orderRequestItems?: OrderRequestItemUpdateManyWithoutProductNestedInput
     variants?: ProductVariantUpdateManyWithoutProductNestedInput
+    tarifPengrajin?: TarifPengrajinUpdateManyWithoutProductNestedInput
   }
 
   export type ProductUncheckedUpdateWithoutTransactionItemsInput = {
@@ -29871,6 +39979,1261 @@ export namespace Prisma {
     cartItems?: UserCartItemUncheckedUpdateManyWithoutProductNestedInput
     orderRequestItems?: OrderRequestItemUncheckedUpdateManyWithoutProductNestedInput
     variants?: ProductVariantUncheckedUpdateManyWithoutProductNestedInput
+    tarifPengrajin?: TarifPengrajinUncheckedUpdateManyWithoutProductNestedInput
+  }
+
+  export type PenugasanUpsertWithWhereUniqueWithoutTransactionItemInput = {
+    where: PenugasanWhereUniqueInput
+    update: XOR<PenugasanUpdateWithoutTransactionItemInput, PenugasanUncheckedUpdateWithoutTransactionItemInput>
+    create: XOR<PenugasanCreateWithoutTransactionItemInput, PenugasanUncheckedCreateWithoutTransactionItemInput>
+  }
+
+  export type PenugasanUpdateWithWhereUniqueWithoutTransactionItemInput = {
+    where: PenugasanWhereUniqueInput
+    data: XOR<PenugasanUpdateWithoutTransactionItemInput, PenugasanUncheckedUpdateWithoutTransactionItemInput>
+  }
+
+  export type PenugasanUpdateManyWithWhereWithoutTransactionItemInput = {
+    where: PenugasanScalarWhereInput
+    data: XOR<PenugasanUpdateManyMutationInput, PenugasanUncheckedUpdateManyWithoutTransactionItemInput>
+  }
+
+  export type PenugasanScalarWhereInput = {
+    AND?: PenugasanScalarWhereInput | PenugasanScalarWhereInput[]
+    OR?: PenugasanScalarWhereInput[]
+    NOT?: PenugasanScalarWhereInput | PenugasanScalarWhereInput[]
+    id?: IntFilter<"Penugasan"> | number
+    transactionItemId?: IntFilter<"Penugasan"> | number
+    pengrajinId?: IntFilter<"Penugasan"> | number
+    jumlahDitugaskan?: IntFilter<"Penugasan"> | number
+    tenggat?: DateTimeFilter<"Penugasan"> | Date | string
+    catatan?: StringNullableFilter<"Penugasan"> | string | null
+    pembuatId?: IntNullableFilter<"Penugasan"> | number | null
+    pembuatNama?: StringNullableFilter<"Penugasan"> | string | null
+    createdAt?: DateTimeFilter<"Penugasan"> | Date | string
+    updatedAt?: DateTimeFilter<"Penugasan"> | Date | string
+  }
+
+  export type PengrajinCreateWithoutKetuaDariInput = {
+    nama: string
+    tarifCadangan?: number | null
+    satuanTarif?: string
+    penerimaUpah?: string
+    aktif?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    kelompok?: KelompokCreateNestedOneWithoutAnggotaInput
+    tarif?: TarifPengrajinCreateNestedManyWithoutPengrajinInput
+    penugasan?: PenugasanCreateNestedManyWithoutPengrajinInput
+    setoranKerja?: SetoranCreateNestedManyWithoutPengrajinInput
+    setoranTerima?: SetoranCreateNestedManyWithoutPenerimaInput
+    penarikan?: PenarikanCreateNestedManyWithoutPengrajinInput
+  }
+
+  export type PengrajinUncheckedCreateWithoutKetuaDariInput = {
+    id?: number
+    nama: string
+    kelompokId?: number | null
+    tarifCadangan?: number | null
+    satuanTarif?: string
+    penerimaUpah?: string
+    aktif?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    tarif?: TarifPengrajinUncheckedCreateNestedManyWithoutPengrajinInput
+    penugasan?: PenugasanUncheckedCreateNestedManyWithoutPengrajinInput
+    setoranKerja?: SetoranUncheckedCreateNestedManyWithoutPengrajinInput
+    setoranTerima?: SetoranUncheckedCreateNestedManyWithoutPenerimaInput
+    penarikan?: PenarikanUncheckedCreateNestedManyWithoutPengrajinInput
+  }
+
+  export type PengrajinCreateOrConnectWithoutKetuaDariInput = {
+    where: PengrajinWhereUniqueInput
+    create: XOR<PengrajinCreateWithoutKetuaDariInput, PengrajinUncheckedCreateWithoutKetuaDariInput>
+  }
+
+  export type PengrajinCreateWithoutKelompokInput = {
+    nama: string
+    tarifCadangan?: number | null
+    satuanTarif?: string
+    penerimaUpah?: string
+    aktif?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    ketuaDari?: KelompokCreateNestedOneWithoutKetuaInput
+    tarif?: TarifPengrajinCreateNestedManyWithoutPengrajinInput
+    penugasan?: PenugasanCreateNestedManyWithoutPengrajinInput
+    setoranKerja?: SetoranCreateNestedManyWithoutPengrajinInput
+    setoranTerima?: SetoranCreateNestedManyWithoutPenerimaInput
+    penarikan?: PenarikanCreateNestedManyWithoutPengrajinInput
+  }
+
+  export type PengrajinUncheckedCreateWithoutKelompokInput = {
+    id?: number
+    nama: string
+    tarifCadangan?: number | null
+    satuanTarif?: string
+    penerimaUpah?: string
+    aktif?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    ketuaDari?: KelompokUncheckedCreateNestedOneWithoutKetuaInput
+    tarif?: TarifPengrajinUncheckedCreateNestedManyWithoutPengrajinInput
+    penugasan?: PenugasanUncheckedCreateNestedManyWithoutPengrajinInput
+    setoranKerja?: SetoranUncheckedCreateNestedManyWithoutPengrajinInput
+    setoranTerima?: SetoranUncheckedCreateNestedManyWithoutPenerimaInput
+    penarikan?: PenarikanUncheckedCreateNestedManyWithoutPengrajinInput
+  }
+
+  export type PengrajinCreateOrConnectWithoutKelompokInput = {
+    where: PengrajinWhereUniqueInput
+    create: XOR<PengrajinCreateWithoutKelompokInput, PengrajinUncheckedCreateWithoutKelompokInput>
+  }
+
+  export type PengrajinCreateManyKelompokInputEnvelope = {
+    data: PengrajinCreateManyKelompokInput | PengrajinCreateManyKelompokInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type PengrajinUpsertWithoutKetuaDariInput = {
+    update: XOR<PengrajinUpdateWithoutKetuaDariInput, PengrajinUncheckedUpdateWithoutKetuaDariInput>
+    create: XOR<PengrajinCreateWithoutKetuaDariInput, PengrajinUncheckedCreateWithoutKetuaDariInput>
+    where?: PengrajinWhereInput
+  }
+
+  export type PengrajinUpdateToOneWithWhereWithoutKetuaDariInput = {
+    where?: PengrajinWhereInput
+    data: XOR<PengrajinUpdateWithoutKetuaDariInput, PengrajinUncheckedUpdateWithoutKetuaDariInput>
+  }
+
+  export type PengrajinUpdateWithoutKetuaDariInput = {
+    nama?: StringFieldUpdateOperationsInput | string
+    tarifCadangan?: NullableIntFieldUpdateOperationsInput | number | null
+    satuanTarif?: StringFieldUpdateOperationsInput | string
+    penerimaUpah?: StringFieldUpdateOperationsInput | string
+    aktif?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    kelompok?: KelompokUpdateOneWithoutAnggotaNestedInput
+    tarif?: TarifPengrajinUpdateManyWithoutPengrajinNestedInput
+    penugasan?: PenugasanUpdateManyWithoutPengrajinNestedInput
+    setoranKerja?: SetoranUpdateManyWithoutPengrajinNestedInput
+    setoranTerima?: SetoranUpdateManyWithoutPenerimaNestedInput
+    penarikan?: PenarikanUpdateManyWithoutPengrajinNestedInput
+  }
+
+  export type PengrajinUncheckedUpdateWithoutKetuaDariInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    nama?: StringFieldUpdateOperationsInput | string
+    kelompokId?: NullableIntFieldUpdateOperationsInput | number | null
+    tarifCadangan?: NullableIntFieldUpdateOperationsInput | number | null
+    satuanTarif?: StringFieldUpdateOperationsInput | string
+    penerimaUpah?: StringFieldUpdateOperationsInput | string
+    aktif?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tarif?: TarifPengrajinUncheckedUpdateManyWithoutPengrajinNestedInput
+    penugasan?: PenugasanUncheckedUpdateManyWithoutPengrajinNestedInput
+    setoranKerja?: SetoranUncheckedUpdateManyWithoutPengrajinNestedInput
+    setoranTerima?: SetoranUncheckedUpdateManyWithoutPenerimaNestedInput
+    penarikan?: PenarikanUncheckedUpdateManyWithoutPengrajinNestedInput
+  }
+
+  export type PengrajinUpsertWithWhereUniqueWithoutKelompokInput = {
+    where: PengrajinWhereUniqueInput
+    update: XOR<PengrajinUpdateWithoutKelompokInput, PengrajinUncheckedUpdateWithoutKelompokInput>
+    create: XOR<PengrajinCreateWithoutKelompokInput, PengrajinUncheckedCreateWithoutKelompokInput>
+  }
+
+  export type PengrajinUpdateWithWhereUniqueWithoutKelompokInput = {
+    where: PengrajinWhereUniqueInput
+    data: XOR<PengrajinUpdateWithoutKelompokInput, PengrajinUncheckedUpdateWithoutKelompokInput>
+  }
+
+  export type PengrajinUpdateManyWithWhereWithoutKelompokInput = {
+    where: PengrajinScalarWhereInput
+    data: XOR<PengrajinUpdateManyMutationInput, PengrajinUncheckedUpdateManyWithoutKelompokInput>
+  }
+
+  export type PengrajinScalarWhereInput = {
+    AND?: PengrajinScalarWhereInput | PengrajinScalarWhereInput[]
+    OR?: PengrajinScalarWhereInput[]
+    NOT?: PengrajinScalarWhereInput | PengrajinScalarWhereInput[]
+    id?: IntFilter<"Pengrajin"> | number
+    nama?: StringFilter<"Pengrajin"> | string
+    kelompokId?: IntNullableFilter<"Pengrajin"> | number | null
+    tarifCadangan?: IntNullableFilter<"Pengrajin"> | number | null
+    satuanTarif?: StringFilter<"Pengrajin"> | string
+    penerimaUpah?: StringFilter<"Pengrajin"> | string
+    aktif?: BoolFilter<"Pengrajin"> | boolean
+    createdAt?: DateTimeFilter<"Pengrajin"> | Date | string
+    updatedAt?: DateTimeFilter<"Pengrajin"> | Date | string
+  }
+
+  export type KelompokCreateWithoutAnggotaInput = {
+    nama: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    ketua?: PengrajinCreateNestedOneWithoutKetuaDariInput
+  }
+
+  export type KelompokUncheckedCreateWithoutAnggotaInput = {
+    id?: number
+    nama: string
+    ketuaId?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type KelompokCreateOrConnectWithoutAnggotaInput = {
+    where: KelompokWhereUniqueInput
+    create: XOR<KelompokCreateWithoutAnggotaInput, KelompokUncheckedCreateWithoutAnggotaInput>
+  }
+
+  export type KelompokCreateWithoutKetuaInput = {
+    nama: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    anggota?: PengrajinCreateNestedManyWithoutKelompokInput
+  }
+
+  export type KelompokUncheckedCreateWithoutKetuaInput = {
+    id?: number
+    nama: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    anggota?: PengrajinUncheckedCreateNestedManyWithoutKelompokInput
+  }
+
+  export type KelompokCreateOrConnectWithoutKetuaInput = {
+    where: KelompokWhereUniqueInput
+    create: XOR<KelompokCreateWithoutKetuaInput, KelompokUncheckedCreateWithoutKetuaInput>
+  }
+
+  export type TarifPengrajinCreateWithoutPengrajinInput = {
+    tarif: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    product: ProductCreateNestedOneWithoutTarifPengrajinInput
+  }
+
+  export type TarifPengrajinUncheckedCreateWithoutPengrajinInput = {
+    id?: number
+    productId: number
+    tarif: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TarifPengrajinCreateOrConnectWithoutPengrajinInput = {
+    where: TarifPengrajinWhereUniqueInput
+    create: XOR<TarifPengrajinCreateWithoutPengrajinInput, TarifPengrajinUncheckedCreateWithoutPengrajinInput>
+  }
+
+  export type TarifPengrajinCreateManyPengrajinInputEnvelope = {
+    data: TarifPengrajinCreateManyPengrajinInput | TarifPengrajinCreateManyPengrajinInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type PenugasanCreateWithoutPengrajinInput = {
+    jumlahDitugaskan: number
+    tenggat: Date | string
+    catatan?: string | null
+    pembuatId?: number | null
+    pembuatNama?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    transactionItem: TransactionItemCreateNestedOneWithoutPenugasanInput
+    setoran?: SetoranCreateNestedManyWithoutPenugasanInput
+  }
+
+  export type PenugasanUncheckedCreateWithoutPengrajinInput = {
+    id?: number
+    transactionItemId: number
+    jumlahDitugaskan: number
+    tenggat: Date | string
+    catatan?: string | null
+    pembuatId?: number | null
+    pembuatNama?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    setoran?: SetoranUncheckedCreateNestedManyWithoutPenugasanInput
+  }
+
+  export type PenugasanCreateOrConnectWithoutPengrajinInput = {
+    where: PenugasanWhereUniqueInput
+    create: XOR<PenugasanCreateWithoutPengrajinInput, PenugasanUncheckedCreateWithoutPengrajinInput>
+  }
+
+  export type PenugasanCreateManyPengrajinInputEnvelope = {
+    data: PenugasanCreateManyPengrajinInput | PenugasanCreateManyPengrajinInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type SetoranCreateWithoutPengrajinInput = {
+    tanggal?: Date | string
+    jumlah: number
+    tarifSnapshot: number
+    pakaiTarifCadangan?: boolean
+    nilai: number
+    catatan?: string | null
+    pencatatId?: number | null
+    pencatatNama?: string | null
+    createdAt?: Date | string
+    penugasan: PenugasanCreateNestedOneWithoutSetoranInput
+    penerima: PengrajinCreateNestedOneWithoutSetoranTerimaInput
+  }
+
+  export type SetoranUncheckedCreateWithoutPengrajinInput = {
+    id?: number
+    penugasanId: number
+    penerimaId: number
+    tanggal?: Date | string
+    jumlah: number
+    tarifSnapshot: number
+    pakaiTarifCadangan?: boolean
+    nilai: number
+    catatan?: string | null
+    pencatatId?: number | null
+    pencatatNama?: string | null
+    createdAt?: Date | string
+  }
+
+  export type SetoranCreateOrConnectWithoutPengrajinInput = {
+    where: SetoranWhereUniqueInput
+    create: XOR<SetoranCreateWithoutPengrajinInput, SetoranUncheckedCreateWithoutPengrajinInput>
+  }
+
+  export type SetoranCreateManyPengrajinInputEnvelope = {
+    data: SetoranCreateManyPengrajinInput | SetoranCreateManyPengrajinInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type SetoranCreateWithoutPenerimaInput = {
+    tanggal?: Date | string
+    jumlah: number
+    tarifSnapshot: number
+    pakaiTarifCadangan?: boolean
+    nilai: number
+    catatan?: string | null
+    pencatatId?: number | null
+    pencatatNama?: string | null
+    createdAt?: Date | string
+    penugasan: PenugasanCreateNestedOneWithoutSetoranInput
+    pengrajin: PengrajinCreateNestedOneWithoutSetoranKerjaInput
+  }
+
+  export type SetoranUncheckedCreateWithoutPenerimaInput = {
+    id?: number
+    penugasanId: number
+    pengrajinId: number
+    tanggal?: Date | string
+    jumlah: number
+    tarifSnapshot: number
+    pakaiTarifCadangan?: boolean
+    nilai: number
+    catatan?: string | null
+    pencatatId?: number | null
+    pencatatNama?: string | null
+    createdAt?: Date | string
+  }
+
+  export type SetoranCreateOrConnectWithoutPenerimaInput = {
+    where: SetoranWhereUniqueInput
+    create: XOR<SetoranCreateWithoutPenerimaInput, SetoranUncheckedCreateWithoutPenerimaInput>
+  }
+
+  export type SetoranCreateManyPenerimaInputEnvelope = {
+    data: SetoranCreateManyPenerimaInput | SetoranCreateManyPenerimaInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type PenarikanCreateWithoutPengrajinInput = {
+    tanggal?: Date | string
+    nominal: number
+    expenseId?: number | null
+    catatan?: string | null
+    pencatatId?: number | null
+    pencatatNama?: string | null
+    createdAt?: Date | string
+  }
+
+  export type PenarikanUncheckedCreateWithoutPengrajinInput = {
+    id?: number
+    tanggal?: Date | string
+    nominal: number
+    expenseId?: number | null
+    catatan?: string | null
+    pencatatId?: number | null
+    pencatatNama?: string | null
+    createdAt?: Date | string
+  }
+
+  export type PenarikanCreateOrConnectWithoutPengrajinInput = {
+    where: PenarikanWhereUniqueInput
+    create: XOR<PenarikanCreateWithoutPengrajinInput, PenarikanUncheckedCreateWithoutPengrajinInput>
+  }
+
+  export type PenarikanCreateManyPengrajinInputEnvelope = {
+    data: PenarikanCreateManyPengrajinInput | PenarikanCreateManyPengrajinInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type KelompokUpsertWithoutAnggotaInput = {
+    update: XOR<KelompokUpdateWithoutAnggotaInput, KelompokUncheckedUpdateWithoutAnggotaInput>
+    create: XOR<KelompokCreateWithoutAnggotaInput, KelompokUncheckedCreateWithoutAnggotaInput>
+    where?: KelompokWhereInput
+  }
+
+  export type KelompokUpdateToOneWithWhereWithoutAnggotaInput = {
+    where?: KelompokWhereInput
+    data: XOR<KelompokUpdateWithoutAnggotaInput, KelompokUncheckedUpdateWithoutAnggotaInput>
+  }
+
+  export type KelompokUpdateWithoutAnggotaInput = {
+    nama?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    ketua?: PengrajinUpdateOneWithoutKetuaDariNestedInput
+  }
+
+  export type KelompokUncheckedUpdateWithoutAnggotaInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    nama?: StringFieldUpdateOperationsInput | string
+    ketuaId?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type KelompokUpsertWithoutKetuaInput = {
+    update: XOR<KelompokUpdateWithoutKetuaInput, KelompokUncheckedUpdateWithoutKetuaInput>
+    create: XOR<KelompokCreateWithoutKetuaInput, KelompokUncheckedCreateWithoutKetuaInput>
+    where?: KelompokWhereInput
+  }
+
+  export type KelompokUpdateToOneWithWhereWithoutKetuaInput = {
+    where?: KelompokWhereInput
+    data: XOR<KelompokUpdateWithoutKetuaInput, KelompokUncheckedUpdateWithoutKetuaInput>
+  }
+
+  export type KelompokUpdateWithoutKetuaInput = {
+    nama?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    anggota?: PengrajinUpdateManyWithoutKelompokNestedInput
+  }
+
+  export type KelompokUncheckedUpdateWithoutKetuaInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    nama?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    anggota?: PengrajinUncheckedUpdateManyWithoutKelompokNestedInput
+  }
+
+  export type TarifPengrajinUpsertWithWhereUniqueWithoutPengrajinInput = {
+    where: TarifPengrajinWhereUniqueInput
+    update: XOR<TarifPengrajinUpdateWithoutPengrajinInput, TarifPengrajinUncheckedUpdateWithoutPengrajinInput>
+    create: XOR<TarifPengrajinCreateWithoutPengrajinInput, TarifPengrajinUncheckedCreateWithoutPengrajinInput>
+  }
+
+  export type TarifPengrajinUpdateWithWhereUniqueWithoutPengrajinInput = {
+    where: TarifPengrajinWhereUniqueInput
+    data: XOR<TarifPengrajinUpdateWithoutPengrajinInput, TarifPengrajinUncheckedUpdateWithoutPengrajinInput>
+  }
+
+  export type TarifPengrajinUpdateManyWithWhereWithoutPengrajinInput = {
+    where: TarifPengrajinScalarWhereInput
+    data: XOR<TarifPengrajinUpdateManyMutationInput, TarifPengrajinUncheckedUpdateManyWithoutPengrajinInput>
+  }
+
+  export type PenugasanUpsertWithWhereUniqueWithoutPengrajinInput = {
+    where: PenugasanWhereUniqueInput
+    update: XOR<PenugasanUpdateWithoutPengrajinInput, PenugasanUncheckedUpdateWithoutPengrajinInput>
+    create: XOR<PenugasanCreateWithoutPengrajinInput, PenugasanUncheckedCreateWithoutPengrajinInput>
+  }
+
+  export type PenugasanUpdateWithWhereUniqueWithoutPengrajinInput = {
+    where: PenugasanWhereUniqueInput
+    data: XOR<PenugasanUpdateWithoutPengrajinInput, PenugasanUncheckedUpdateWithoutPengrajinInput>
+  }
+
+  export type PenugasanUpdateManyWithWhereWithoutPengrajinInput = {
+    where: PenugasanScalarWhereInput
+    data: XOR<PenugasanUpdateManyMutationInput, PenugasanUncheckedUpdateManyWithoutPengrajinInput>
+  }
+
+  export type SetoranUpsertWithWhereUniqueWithoutPengrajinInput = {
+    where: SetoranWhereUniqueInput
+    update: XOR<SetoranUpdateWithoutPengrajinInput, SetoranUncheckedUpdateWithoutPengrajinInput>
+    create: XOR<SetoranCreateWithoutPengrajinInput, SetoranUncheckedCreateWithoutPengrajinInput>
+  }
+
+  export type SetoranUpdateWithWhereUniqueWithoutPengrajinInput = {
+    where: SetoranWhereUniqueInput
+    data: XOR<SetoranUpdateWithoutPengrajinInput, SetoranUncheckedUpdateWithoutPengrajinInput>
+  }
+
+  export type SetoranUpdateManyWithWhereWithoutPengrajinInput = {
+    where: SetoranScalarWhereInput
+    data: XOR<SetoranUpdateManyMutationInput, SetoranUncheckedUpdateManyWithoutPengrajinInput>
+  }
+
+  export type SetoranScalarWhereInput = {
+    AND?: SetoranScalarWhereInput | SetoranScalarWhereInput[]
+    OR?: SetoranScalarWhereInput[]
+    NOT?: SetoranScalarWhereInput | SetoranScalarWhereInput[]
+    id?: IntFilter<"Setoran"> | number
+    penugasanId?: IntFilter<"Setoran"> | number
+    pengrajinId?: IntFilter<"Setoran"> | number
+    penerimaId?: IntFilter<"Setoran"> | number
+    tanggal?: DateTimeFilter<"Setoran"> | Date | string
+    jumlah?: IntFilter<"Setoran"> | number
+    tarifSnapshot?: IntFilter<"Setoran"> | number
+    pakaiTarifCadangan?: BoolFilter<"Setoran"> | boolean
+    nilai?: IntFilter<"Setoran"> | number
+    catatan?: StringNullableFilter<"Setoran"> | string | null
+    pencatatId?: IntNullableFilter<"Setoran"> | number | null
+    pencatatNama?: StringNullableFilter<"Setoran"> | string | null
+    createdAt?: DateTimeFilter<"Setoran"> | Date | string
+  }
+
+  export type SetoranUpsertWithWhereUniqueWithoutPenerimaInput = {
+    where: SetoranWhereUniqueInput
+    update: XOR<SetoranUpdateWithoutPenerimaInput, SetoranUncheckedUpdateWithoutPenerimaInput>
+    create: XOR<SetoranCreateWithoutPenerimaInput, SetoranUncheckedCreateWithoutPenerimaInput>
+  }
+
+  export type SetoranUpdateWithWhereUniqueWithoutPenerimaInput = {
+    where: SetoranWhereUniqueInput
+    data: XOR<SetoranUpdateWithoutPenerimaInput, SetoranUncheckedUpdateWithoutPenerimaInput>
+  }
+
+  export type SetoranUpdateManyWithWhereWithoutPenerimaInput = {
+    where: SetoranScalarWhereInput
+    data: XOR<SetoranUpdateManyMutationInput, SetoranUncheckedUpdateManyWithoutPenerimaInput>
+  }
+
+  export type PenarikanUpsertWithWhereUniqueWithoutPengrajinInput = {
+    where: PenarikanWhereUniqueInput
+    update: XOR<PenarikanUpdateWithoutPengrajinInput, PenarikanUncheckedUpdateWithoutPengrajinInput>
+    create: XOR<PenarikanCreateWithoutPengrajinInput, PenarikanUncheckedCreateWithoutPengrajinInput>
+  }
+
+  export type PenarikanUpdateWithWhereUniqueWithoutPengrajinInput = {
+    where: PenarikanWhereUniqueInput
+    data: XOR<PenarikanUpdateWithoutPengrajinInput, PenarikanUncheckedUpdateWithoutPengrajinInput>
+  }
+
+  export type PenarikanUpdateManyWithWhereWithoutPengrajinInput = {
+    where: PenarikanScalarWhereInput
+    data: XOR<PenarikanUpdateManyMutationInput, PenarikanUncheckedUpdateManyWithoutPengrajinInput>
+  }
+
+  export type PenarikanScalarWhereInput = {
+    AND?: PenarikanScalarWhereInput | PenarikanScalarWhereInput[]
+    OR?: PenarikanScalarWhereInput[]
+    NOT?: PenarikanScalarWhereInput | PenarikanScalarWhereInput[]
+    id?: IntFilter<"Penarikan"> | number
+    pengrajinId?: IntFilter<"Penarikan"> | number
+    tanggal?: DateTimeFilter<"Penarikan"> | Date | string
+    nominal?: IntFilter<"Penarikan"> | number
+    expenseId?: IntNullableFilter<"Penarikan"> | number | null
+    catatan?: StringNullableFilter<"Penarikan"> | string | null
+    pencatatId?: IntNullableFilter<"Penarikan"> | number | null
+    pencatatNama?: StringNullableFilter<"Penarikan"> | string | null
+    createdAt?: DateTimeFilter<"Penarikan"> | Date | string
+  }
+
+  export type PengrajinCreateWithoutTarifInput = {
+    nama: string
+    tarifCadangan?: number | null
+    satuanTarif?: string
+    penerimaUpah?: string
+    aktif?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    kelompok?: KelompokCreateNestedOneWithoutAnggotaInput
+    ketuaDari?: KelompokCreateNestedOneWithoutKetuaInput
+    penugasan?: PenugasanCreateNestedManyWithoutPengrajinInput
+    setoranKerja?: SetoranCreateNestedManyWithoutPengrajinInput
+    setoranTerima?: SetoranCreateNestedManyWithoutPenerimaInput
+    penarikan?: PenarikanCreateNestedManyWithoutPengrajinInput
+  }
+
+  export type PengrajinUncheckedCreateWithoutTarifInput = {
+    id?: number
+    nama: string
+    kelompokId?: number | null
+    tarifCadangan?: number | null
+    satuanTarif?: string
+    penerimaUpah?: string
+    aktif?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    ketuaDari?: KelompokUncheckedCreateNestedOneWithoutKetuaInput
+    penugasan?: PenugasanUncheckedCreateNestedManyWithoutPengrajinInput
+    setoranKerja?: SetoranUncheckedCreateNestedManyWithoutPengrajinInput
+    setoranTerima?: SetoranUncheckedCreateNestedManyWithoutPenerimaInput
+    penarikan?: PenarikanUncheckedCreateNestedManyWithoutPengrajinInput
+  }
+
+  export type PengrajinCreateOrConnectWithoutTarifInput = {
+    where: PengrajinWhereUniqueInput
+    create: XOR<PengrajinCreateWithoutTarifInput, PengrajinUncheckedCreateWithoutTarifInput>
+  }
+
+  export type ProductCreateWithoutTarifPengrajinInput = {
+    nama_produk: string
+    harga: number
+    satuanHarga?: string
+    stok: number
+    barcode?: string | null
+    gambar?: string | null
+    gambarPosX?: number
+    gambarPosY?: number
+    isArchived?: boolean
+    TransactionItems?: TransactionItemCreateNestedManyWithoutProductInput
+    cartItems?: UserCartItemCreateNestedManyWithoutProductInput
+    orderRequestItems?: OrderRequestItemCreateNestedManyWithoutProductInput
+    variants?: ProductVariantCreateNestedManyWithoutProductInput
+  }
+
+  export type ProductUncheckedCreateWithoutTarifPengrajinInput = {
+    id?: number
+    nama_produk: string
+    harga: number
+    satuanHarga?: string
+    stok: number
+    barcode?: string | null
+    gambar?: string | null
+    gambarPosX?: number
+    gambarPosY?: number
+    isArchived?: boolean
+    TransactionItems?: TransactionItemUncheckedCreateNestedManyWithoutProductInput
+    cartItems?: UserCartItemUncheckedCreateNestedManyWithoutProductInput
+    orderRequestItems?: OrderRequestItemUncheckedCreateNestedManyWithoutProductInput
+    variants?: ProductVariantUncheckedCreateNestedManyWithoutProductInput
+  }
+
+  export type ProductCreateOrConnectWithoutTarifPengrajinInput = {
+    where: ProductWhereUniqueInput
+    create: XOR<ProductCreateWithoutTarifPengrajinInput, ProductUncheckedCreateWithoutTarifPengrajinInput>
+  }
+
+  export type PengrajinUpsertWithoutTarifInput = {
+    update: XOR<PengrajinUpdateWithoutTarifInput, PengrajinUncheckedUpdateWithoutTarifInput>
+    create: XOR<PengrajinCreateWithoutTarifInput, PengrajinUncheckedCreateWithoutTarifInput>
+    where?: PengrajinWhereInput
+  }
+
+  export type PengrajinUpdateToOneWithWhereWithoutTarifInput = {
+    where?: PengrajinWhereInput
+    data: XOR<PengrajinUpdateWithoutTarifInput, PengrajinUncheckedUpdateWithoutTarifInput>
+  }
+
+  export type PengrajinUpdateWithoutTarifInput = {
+    nama?: StringFieldUpdateOperationsInput | string
+    tarifCadangan?: NullableIntFieldUpdateOperationsInput | number | null
+    satuanTarif?: StringFieldUpdateOperationsInput | string
+    penerimaUpah?: StringFieldUpdateOperationsInput | string
+    aktif?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    kelompok?: KelompokUpdateOneWithoutAnggotaNestedInput
+    ketuaDari?: KelompokUpdateOneWithoutKetuaNestedInput
+    penugasan?: PenugasanUpdateManyWithoutPengrajinNestedInput
+    setoranKerja?: SetoranUpdateManyWithoutPengrajinNestedInput
+    setoranTerima?: SetoranUpdateManyWithoutPenerimaNestedInput
+    penarikan?: PenarikanUpdateManyWithoutPengrajinNestedInput
+  }
+
+  export type PengrajinUncheckedUpdateWithoutTarifInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    nama?: StringFieldUpdateOperationsInput | string
+    kelompokId?: NullableIntFieldUpdateOperationsInput | number | null
+    tarifCadangan?: NullableIntFieldUpdateOperationsInput | number | null
+    satuanTarif?: StringFieldUpdateOperationsInput | string
+    penerimaUpah?: StringFieldUpdateOperationsInput | string
+    aktif?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    ketuaDari?: KelompokUncheckedUpdateOneWithoutKetuaNestedInput
+    penugasan?: PenugasanUncheckedUpdateManyWithoutPengrajinNestedInput
+    setoranKerja?: SetoranUncheckedUpdateManyWithoutPengrajinNestedInput
+    setoranTerima?: SetoranUncheckedUpdateManyWithoutPenerimaNestedInput
+    penarikan?: PenarikanUncheckedUpdateManyWithoutPengrajinNestedInput
+  }
+
+  export type ProductUpsertWithoutTarifPengrajinInput = {
+    update: XOR<ProductUpdateWithoutTarifPengrajinInput, ProductUncheckedUpdateWithoutTarifPengrajinInput>
+    create: XOR<ProductCreateWithoutTarifPengrajinInput, ProductUncheckedCreateWithoutTarifPengrajinInput>
+    where?: ProductWhereInput
+  }
+
+  export type ProductUpdateToOneWithWhereWithoutTarifPengrajinInput = {
+    where?: ProductWhereInput
+    data: XOR<ProductUpdateWithoutTarifPengrajinInput, ProductUncheckedUpdateWithoutTarifPengrajinInput>
+  }
+
+  export type ProductUpdateWithoutTarifPengrajinInput = {
+    nama_produk?: StringFieldUpdateOperationsInput | string
+    harga?: IntFieldUpdateOperationsInput | number
+    satuanHarga?: StringFieldUpdateOperationsInput | string
+    stok?: IntFieldUpdateOperationsInput | number
+    barcode?: NullableStringFieldUpdateOperationsInput | string | null
+    gambar?: NullableStringFieldUpdateOperationsInput | string | null
+    gambarPosX?: IntFieldUpdateOperationsInput | number
+    gambarPosY?: IntFieldUpdateOperationsInput | number
+    isArchived?: BoolFieldUpdateOperationsInput | boolean
+    TransactionItems?: TransactionItemUpdateManyWithoutProductNestedInput
+    cartItems?: UserCartItemUpdateManyWithoutProductNestedInput
+    orderRequestItems?: OrderRequestItemUpdateManyWithoutProductNestedInput
+    variants?: ProductVariantUpdateManyWithoutProductNestedInput
+  }
+
+  export type ProductUncheckedUpdateWithoutTarifPengrajinInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    nama_produk?: StringFieldUpdateOperationsInput | string
+    harga?: IntFieldUpdateOperationsInput | number
+    satuanHarga?: StringFieldUpdateOperationsInput | string
+    stok?: IntFieldUpdateOperationsInput | number
+    barcode?: NullableStringFieldUpdateOperationsInput | string | null
+    gambar?: NullableStringFieldUpdateOperationsInput | string | null
+    gambarPosX?: IntFieldUpdateOperationsInput | number
+    gambarPosY?: IntFieldUpdateOperationsInput | number
+    isArchived?: BoolFieldUpdateOperationsInput | boolean
+    TransactionItems?: TransactionItemUncheckedUpdateManyWithoutProductNestedInput
+    cartItems?: UserCartItemUncheckedUpdateManyWithoutProductNestedInput
+    orderRequestItems?: OrderRequestItemUncheckedUpdateManyWithoutProductNestedInput
+    variants?: ProductVariantUncheckedUpdateManyWithoutProductNestedInput
+  }
+
+  export type TransactionItemCreateWithoutPenugasanInput = {
+    variantId?: number | null
+    variantName?: string | null
+    label?: string | null
+    basePrice?: number
+    priceModifier?: number | null
+    jumlah: number
+    subtotal: number
+    satuanHarga?: string
+    packed?: boolean
+    packedAt?: Date | string | null
+    transaction: TransactionCreateNestedOneWithoutItemsInput
+    product: ProductCreateNestedOneWithoutTransactionItemsInput
+  }
+
+  export type TransactionItemUncheckedCreateWithoutPenugasanInput = {
+    id?: number
+    transactionId: number
+    productId: number
+    variantId?: number | null
+    variantName?: string | null
+    label?: string | null
+    basePrice?: number
+    priceModifier?: number | null
+    jumlah: number
+    subtotal: number
+    satuanHarga?: string
+    packed?: boolean
+    packedAt?: Date | string | null
+  }
+
+  export type TransactionItemCreateOrConnectWithoutPenugasanInput = {
+    where: TransactionItemWhereUniqueInput
+    create: XOR<TransactionItemCreateWithoutPenugasanInput, TransactionItemUncheckedCreateWithoutPenugasanInput>
+  }
+
+  export type PengrajinCreateWithoutPenugasanInput = {
+    nama: string
+    tarifCadangan?: number | null
+    satuanTarif?: string
+    penerimaUpah?: string
+    aktif?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    kelompok?: KelompokCreateNestedOneWithoutAnggotaInput
+    ketuaDari?: KelompokCreateNestedOneWithoutKetuaInput
+    tarif?: TarifPengrajinCreateNestedManyWithoutPengrajinInput
+    setoranKerja?: SetoranCreateNestedManyWithoutPengrajinInput
+    setoranTerima?: SetoranCreateNestedManyWithoutPenerimaInput
+    penarikan?: PenarikanCreateNestedManyWithoutPengrajinInput
+  }
+
+  export type PengrajinUncheckedCreateWithoutPenugasanInput = {
+    id?: number
+    nama: string
+    kelompokId?: number | null
+    tarifCadangan?: number | null
+    satuanTarif?: string
+    penerimaUpah?: string
+    aktif?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    ketuaDari?: KelompokUncheckedCreateNestedOneWithoutKetuaInput
+    tarif?: TarifPengrajinUncheckedCreateNestedManyWithoutPengrajinInput
+    setoranKerja?: SetoranUncheckedCreateNestedManyWithoutPengrajinInput
+    setoranTerima?: SetoranUncheckedCreateNestedManyWithoutPenerimaInput
+    penarikan?: PenarikanUncheckedCreateNestedManyWithoutPengrajinInput
+  }
+
+  export type PengrajinCreateOrConnectWithoutPenugasanInput = {
+    where: PengrajinWhereUniqueInput
+    create: XOR<PengrajinCreateWithoutPenugasanInput, PengrajinUncheckedCreateWithoutPenugasanInput>
+  }
+
+  export type SetoranCreateWithoutPenugasanInput = {
+    tanggal?: Date | string
+    jumlah: number
+    tarifSnapshot: number
+    pakaiTarifCadangan?: boolean
+    nilai: number
+    catatan?: string | null
+    pencatatId?: number | null
+    pencatatNama?: string | null
+    createdAt?: Date | string
+    pengrajin: PengrajinCreateNestedOneWithoutSetoranKerjaInput
+    penerima: PengrajinCreateNestedOneWithoutSetoranTerimaInput
+  }
+
+  export type SetoranUncheckedCreateWithoutPenugasanInput = {
+    id?: number
+    pengrajinId: number
+    penerimaId: number
+    tanggal?: Date | string
+    jumlah: number
+    tarifSnapshot: number
+    pakaiTarifCadangan?: boolean
+    nilai: number
+    catatan?: string | null
+    pencatatId?: number | null
+    pencatatNama?: string | null
+    createdAt?: Date | string
+  }
+
+  export type SetoranCreateOrConnectWithoutPenugasanInput = {
+    where: SetoranWhereUniqueInput
+    create: XOR<SetoranCreateWithoutPenugasanInput, SetoranUncheckedCreateWithoutPenugasanInput>
+  }
+
+  export type SetoranCreateManyPenugasanInputEnvelope = {
+    data: SetoranCreateManyPenugasanInput | SetoranCreateManyPenugasanInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type TransactionItemUpsertWithoutPenugasanInput = {
+    update: XOR<TransactionItemUpdateWithoutPenugasanInput, TransactionItemUncheckedUpdateWithoutPenugasanInput>
+    create: XOR<TransactionItemCreateWithoutPenugasanInput, TransactionItemUncheckedCreateWithoutPenugasanInput>
+    where?: TransactionItemWhereInput
+  }
+
+  export type TransactionItemUpdateToOneWithWhereWithoutPenugasanInput = {
+    where?: TransactionItemWhereInput
+    data: XOR<TransactionItemUpdateWithoutPenugasanInput, TransactionItemUncheckedUpdateWithoutPenugasanInput>
+  }
+
+  export type TransactionItemUpdateWithoutPenugasanInput = {
+    variantId?: NullableIntFieldUpdateOperationsInput | number | null
+    variantName?: NullableStringFieldUpdateOperationsInput | string | null
+    label?: NullableStringFieldUpdateOperationsInput | string | null
+    basePrice?: IntFieldUpdateOperationsInput | number
+    priceModifier?: NullableIntFieldUpdateOperationsInput | number | null
+    jumlah?: IntFieldUpdateOperationsInput | number
+    subtotal?: IntFieldUpdateOperationsInput | number
+    satuanHarga?: StringFieldUpdateOperationsInput | string
+    packed?: BoolFieldUpdateOperationsInput | boolean
+    packedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    transaction?: TransactionUpdateOneRequiredWithoutItemsNestedInput
+    product?: ProductUpdateOneRequiredWithoutTransactionItemsNestedInput
+  }
+
+  export type TransactionItemUncheckedUpdateWithoutPenugasanInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    transactionId?: IntFieldUpdateOperationsInput | number
+    productId?: IntFieldUpdateOperationsInput | number
+    variantId?: NullableIntFieldUpdateOperationsInput | number | null
+    variantName?: NullableStringFieldUpdateOperationsInput | string | null
+    label?: NullableStringFieldUpdateOperationsInput | string | null
+    basePrice?: IntFieldUpdateOperationsInput | number
+    priceModifier?: NullableIntFieldUpdateOperationsInput | number | null
+    jumlah?: IntFieldUpdateOperationsInput | number
+    subtotal?: IntFieldUpdateOperationsInput | number
+    satuanHarga?: StringFieldUpdateOperationsInput | string
+    packed?: BoolFieldUpdateOperationsInput | boolean
+    packedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type PengrajinUpsertWithoutPenugasanInput = {
+    update: XOR<PengrajinUpdateWithoutPenugasanInput, PengrajinUncheckedUpdateWithoutPenugasanInput>
+    create: XOR<PengrajinCreateWithoutPenugasanInput, PengrajinUncheckedCreateWithoutPenugasanInput>
+    where?: PengrajinWhereInput
+  }
+
+  export type PengrajinUpdateToOneWithWhereWithoutPenugasanInput = {
+    where?: PengrajinWhereInput
+    data: XOR<PengrajinUpdateWithoutPenugasanInput, PengrajinUncheckedUpdateWithoutPenugasanInput>
+  }
+
+  export type PengrajinUpdateWithoutPenugasanInput = {
+    nama?: StringFieldUpdateOperationsInput | string
+    tarifCadangan?: NullableIntFieldUpdateOperationsInput | number | null
+    satuanTarif?: StringFieldUpdateOperationsInput | string
+    penerimaUpah?: StringFieldUpdateOperationsInput | string
+    aktif?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    kelompok?: KelompokUpdateOneWithoutAnggotaNestedInput
+    ketuaDari?: KelompokUpdateOneWithoutKetuaNestedInput
+    tarif?: TarifPengrajinUpdateManyWithoutPengrajinNestedInput
+    setoranKerja?: SetoranUpdateManyWithoutPengrajinNestedInput
+    setoranTerima?: SetoranUpdateManyWithoutPenerimaNestedInput
+    penarikan?: PenarikanUpdateManyWithoutPengrajinNestedInput
+  }
+
+  export type PengrajinUncheckedUpdateWithoutPenugasanInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    nama?: StringFieldUpdateOperationsInput | string
+    kelompokId?: NullableIntFieldUpdateOperationsInput | number | null
+    tarifCadangan?: NullableIntFieldUpdateOperationsInput | number | null
+    satuanTarif?: StringFieldUpdateOperationsInput | string
+    penerimaUpah?: StringFieldUpdateOperationsInput | string
+    aktif?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    ketuaDari?: KelompokUncheckedUpdateOneWithoutKetuaNestedInput
+    tarif?: TarifPengrajinUncheckedUpdateManyWithoutPengrajinNestedInput
+    setoranKerja?: SetoranUncheckedUpdateManyWithoutPengrajinNestedInput
+    setoranTerima?: SetoranUncheckedUpdateManyWithoutPenerimaNestedInput
+    penarikan?: PenarikanUncheckedUpdateManyWithoutPengrajinNestedInput
+  }
+
+  export type SetoranUpsertWithWhereUniqueWithoutPenugasanInput = {
+    where: SetoranWhereUniqueInput
+    update: XOR<SetoranUpdateWithoutPenugasanInput, SetoranUncheckedUpdateWithoutPenugasanInput>
+    create: XOR<SetoranCreateWithoutPenugasanInput, SetoranUncheckedCreateWithoutPenugasanInput>
+  }
+
+  export type SetoranUpdateWithWhereUniqueWithoutPenugasanInput = {
+    where: SetoranWhereUniqueInput
+    data: XOR<SetoranUpdateWithoutPenugasanInput, SetoranUncheckedUpdateWithoutPenugasanInput>
+  }
+
+  export type SetoranUpdateManyWithWhereWithoutPenugasanInput = {
+    where: SetoranScalarWhereInput
+    data: XOR<SetoranUpdateManyMutationInput, SetoranUncheckedUpdateManyWithoutPenugasanInput>
+  }
+
+  export type PenugasanCreateWithoutSetoranInput = {
+    jumlahDitugaskan: number
+    tenggat: Date | string
+    catatan?: string | null
+    pembuatId?: number | null
+    pembuatNama?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    transactionItem: TransactionItemCreateNestedOneWithoutPenugasanInput
+    pengrajin: PengrajinCreateNestedOneWithoutPenugasanInput
+  }
+
+  export type PenugasanUncheckedCreateWithoutSetoranInput = {
+    id?: number
+    transactionItemId: number
+    pengrajinId: number
+    jumlahDitugaskan: number
+    tenggat: Date | string
+    catatan?: string | null
+    pembuatId?: number | null
+    pembuatNama?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PenugasanCreateOrConnectWithoutSetoranInput = {
+    where: PenugasanWhereUniqueInput
+    create: XOR<PenugasanCreateWithoutSetoranInput, PenugasanUncheckedCreateWithoutSetoranInput>
+  }
+
+  export type PengrajinCreateWithoutSetoranKerjaInput = {
+    nama: string
+    tarifCadangan?: number | null
+    satuanTarif?: string
+    penerimaUpah?: string
+    aktif?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    kelompok?: KelompokCreateNestedOneWithoutAnggotaInput
+    ketuaDari?: KelompokCreateNestedOneWithoutKetuaInput
+    tarif?: TarifPengrajinCreateNestedManyWithoutPengrajinInput
+    penugasan?: PenugasanCreateNestedManyWithoutPengrajinInput
+    setoranTerima?: SetoranCreateNestedManyWithoutPenerimaInput
+    penarikan?: PenarikanCreateNestedManyWithoutPengrajinInput
+  }
+
+  export type PengrajinUncheckedCreateWithoutSetoranKerjaInput = {
+    id?: number
+    nama: string
+    kelompokId?: number | null
+    tarifCadangan?: number | null
+    satuanTarif?: string
+    penerimaUpah?: string
+    aktif?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    ketuaDari?: KelompokUncheckedCreateNestedOneWithoutKetuaInput
+    tarif?: TarifPengrajinUncheckedCreateNestedManyWithoutPengrajinInput
+    penugasan?: PenugasanUncheckedCreateNestedManyWithoutPengrajinInput
+    setoranTerima?: SetoranUncheckedCreateNestedManyWithoutPenerimaInput
+    penarikan?: PenarikanUncheckedCreateNestedManyWithoutPengrajinInput
+  }
+
+  export type PengrajinCreateOrConnectWithoutSetoranKerjaInput = {
+    where: PengrajinWhereUniqueInput
+    create: XOR<PengrajinCreateWithoutSetoranKerjaInput, PengrajinUncheckedCreateWithoutSetoranKerjaInput>
+  }
+
+  export type PengrajinCreateWithoutSetoranTerimaInput = {
+    nama: string
+    tarifCadangan?: number | null
+    satuanTarif?: string
+    penerimaUpah?: string
+    aktif?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    kelompok?: KelompokCreateNestedOneWithoutAnggotaInput
+    ketuaDari?: KelompokCreateNestedOneWithoutKetuaInput
+    tarif?: TarifPengrajinCreateNestedManyWithoutPengrajinInput
+    penugasan?: PenugasanCreateNestedManyWithoutPengrajinInput
+    setoranKerja?: SetoranCreateNestedManyWithoutPengrajinInput
+    penarikan?: PenarikanCreateNestedManyWithoutPengrajinInput
+  }
+
+  export type PengrajinUncheckedCreateWithoutSetoranTerimaInput = {
+    id?: number
+    nama: string
+    kelompokId?: number | null
+    tarifCadangan?: number | null
+    satuanTarif?: string
+    penerimaUpah?: string
+    aktif?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    ketuaDari?: KelompokUncheckedCreateNestedOneWithoutKetuaInput
+    tarif?: TarifPengrajinUncheckedCreateNestedManyWithoutPengrajinInput
+    penugasan?: PenugasanUncheckedCreateNestedManyWithoutPengrajinInput
+    setoranKerja?: SetoranUncheckedCreateNestedManyWithoutPengrajinInput
+    penarikan?: PenarikanUncheckedCreateNestedManyWithoutPengrajinInput
+  }
+
+  export type PengrajinCreateOrConnectWithoutSetoranTerimaInput = {
+    where: PengrajinWhereUniqueInput
+    create: XOR<PengrajinCreateWithoutSetoranTerimaInput, PengrajinUncheckedCreateWithoutSetoranTerimaInput>
+  }
+
+  export type PenugasanUpsertWithoutSetoranInput = {
+    update: XOR<PenugasanUpdateWithoutSetoranInput, PenugasanUncheckedUpdateWithoutSetoranInput>
+    create: XOR<PenugasanCreateWithoutSetoranInput, PenugasanUncheckedCreateWithoutSetoranInput>
+    where?: PenugasanWhereInput
+  }
+
+  export type PenugasanUpdateToOneWithWhereWithoutSetoranInput = {
+    where?: PenugasanWhereInput
+    data: XOR<PenugasanUpdateWithoutSetoranInput, PenugasanUncheckedUpdateWithoutSetoranInput>
+  }
+
+  export type PenugasanUpdateWithoutSetoranInput = {
+    jumlahDitugaskan?: IntFieldUpdateOperationsInput | number
+    tenggat?: DateTimeFieldUpdateOperationsInput | Date | string
+    catatan?: NullableStringFieldUpdateOperationsInput | string | null
+    pembuatId?: NullableIntFieldUpdateOperationsInput | number | null
+    pembuatNama?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    transactionItem?: TransactionItemUpdateOneRequiredWithoutPenugasanNestedInput
+    pengrajin?: PengrajinUpdateOneRequiredWithoutPenugasanNestedInput
+  }
+
+  export type PenugasanUncheckedUpdateWithoutSetoranInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    transactionItemId?: IntFieldUpdateOperationsInput | number
+    pengrajinId?: IntFieldUpdateOperationsInput | number
+    jumlahDitugaskan?: IntFieldUpdateOperationsInput | number
+    tenggat?: DateTimeFieldUpdateOperationsInput | Date | string
+    catatan?: NullableStringFieldUpdateOperationsInput | string | null
+    pembuatId?: NullableIntFieldUpdateOperationsInput | number | null
+    pembuatNama?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PengrajinUpsertWithoutSetoranKerjaInput = {
+    update: XOR<PengrajinUpdateWithoutSetoranKerjaInput, PengrajinUncheckedUpdateWithoutSetoranKerjaInput>
+    create: XOR<PengrajinCreateWithoutSetoranKerjaInput, PengrajinUncheckedCreateWithoutSetoranKerjaInput>
+    where?: PengrajinWhereInput
+  }
+
+  export type PengrajinUpdateToOneWithWhereWithoutSetoranKerjaInput = {
+    where?: PengrajinWhereInput
+    data: XOR<PengrajinUpdateWithoutSetoranKerjaInput, PengrajinUncheckedUpdateWithoutSetoranKerjaInput>
+  }
+
+  export type PengrajinUpdateWithoutSetoranKerjaInput = {
+    nama?: StringFieldUpdateOperationsInput | string
+    tarifCadangan?: NullableIntFieldUpdateOperationsInput | number | null
+    satuanTarif?: StringFieldUpdateOperationsInput | string
+    penerimaUpah?: StringFieldUpdateOperationsInput | string
+    aktif?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    kelompok?: KelompokUpdateOneWithoutAnggotaNestedInput
+    ketuaDari?: KelompokUpdateOneWithoutKetuaNestedInput
+    tarif?: TarifPengrajinUpdateManyWithoutPengrajinNestedInput
+    penugasan?: PenugasanUpdateManyWithoutPengrajinNestedInput
+    setoranTerima?: SetoranUpdateManyWithoutPenerimaNestedInput
+    penarikan?: PenarikanUpdateManyWithoutPengrajinNestedInput
+  }
+
+  export type PengrajinUncheckedUpdateWithoutSetoranKerjaInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    nama?: StringFieldUpdateOperationsInput | string
+    kelompokId?: NullableIntFieldUpdateOperationsInput | number | null
+    tarifCadangan?: NullableIntFieldUpdateOperationsInput | number | null
+    satuanTarif?: StringFieldUpdateOperationsInput | string
+    penerimaUpah?: StringFieldUpdateOperationsInput | string
+    aktif?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    ketuaDari?: KelompokUncheckedUpdateOneWithoutKetuaNestedInput
+    tarif?: TarifPengrajinUncheckedUpdateManyWithoutPengrajinNestedInput
+    penugasan?: PenugasanUncheckedUpdateManyWithoutPengrajinNestedInput
+    setoranTerima?: SetoranUncheckedUpdateManyWithoutPenerimaNestedInput
+    penarikan?: PenarikanUncheckedUpdateManyWithoutPengrajinNestedInput
+  }
+
+  export type PengrajinUpsertWithoutSetoranTerimaInput = {
+    update: XOR<PengrajinUpdateWithoutSetoranTerimaInput, PengrajinUncheckedUpdateWithoutSetoranTerimaInput>
+    create: XOR<PengrajinCreateWithoutSetoranTerimaInput, PengrajinUncheckedCreateWithoutSetoranTerimaInput>
+    where?: PengrajinWhereInput
+  }
+
+  export type PengrajinUpdateToOneWithWhereWithoutSetoranTerimaInput = {
+    where?: PengrajinWhereInput
+    data: XOR<PengrajinUpdateWithoutSetoranTerimaInput, PengrajinUncheckedUpdateWithoutSetoranTerimaInput>
+  }
+
+  export type PengrajinUpdateWithoutSetoranTerimaInput = {
+    nama?: StringFieldUpdateOperationsInput | string
+    tarifCadangan?: NullableIntFieldUpdateOperationsInput | number | null
+    satuanTarif?: StringFieldUpdateOperationsInput | string
+    penerimaUpah?: StringFieldUpdateOperationsInput | string
+    aktif?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    kelompok?: KelompokUpdateOneWithoutAnggotaNestedInput
+    ketuaDari?: KelompokUpdateOneWithoutKetuaNestedInput
+    tarif?: TarifPengrajinUpdateManyWithoutPengrajinNestedInput
+    penugasan?: PenugasanUpdateManyWithoutPengrajinNestedInput
+    setoranKerja?: SetoranUpdateManyWithoutPengrajinNestedInput
+    penarikan?: PenarikanUpdateManyWithoutPengrajinNestedInput
+  }
+
+  export type PengrajinUncheckedUpdateWithoutSetoranTerimaInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    nama?: StringFieldUpdateOperationsInput | string
+    kelompokId?: NullableIntFieldUpdateOperationsInput | number | null
+    tarifCadangan?: NullableIntFieldUpdateOperationsInput | number | null
+    satuanTarif?: StringFieldUpdateOperationsInput | string
+    penerimaUpah?: StringFieldUpdateOperationsInput | string
+    aktif?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    ketuaDari?: KelompokUncheckedUpdateOneWithoutKetuaNestedInput
+    tarif?: TarifPengrajinUncheckedUpdateManyWithoutPengrajinNestedInput
+    penugasan?: PenugasanUncheckedUpdateManyWithoutPengrajinNestedInput
+    setoranKerja?: SetoranUncheckedUpdateManyWithoutPengrajinNestedInput
+    penarikan?: PenarikanUncheckedUpdateManyWithoutPengrajinNestedInput
+  }
+
+  export type PengrajinCreateWithoutPenarikanInput = {
+    nama: string
+    tarifCadangan?: number | null
+    satuanTarif?: string
+    penerimaUpah?: string
+    aktif?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    kelompok?: KelompokCreateNestedOneWithoutAnggotaInput
+    ketuaDari?: KelompokCreateNestedOneWithoutKetuaInput
+    tarif?: TarifPengrajinCreateNestedManyWithoutPengrajinInput
+    penugasan?: PenugasanCreateNestedManyWithoutPengrajinInput
+    setoranKerja?: SetoranCreateNestedManyWithoutPengrajinInput
+    setoranTerima?: SetoranCreateNestedManyWithoutPenerimaInput
+  }
+
+  export type PengrajinUncheckedCreateWithoutPenarikanInput = {
+    id?: number
+    nama: string
+    kelompokId?: number | null
+    tarifCadangan?: number | null
+    satuanTarif?: string
+    penerimaUpah?: string
+    aktif?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    ketuaDari?: KelompokUncheckedCreateNestedOneWithoutKetuaInput
+    tarif?: TarifPengrajinUncheckedCreateNestedManyWithoutPengrajinInput
+    penugasan?: PenugasanUncheckedCreateNestedManyWithoutPengrajinInput
+    setoranKerja?: SetoranUncheckedCreateNestedManyWithoutPengrajinInput
+    setoranTerima?: SetoranUncheckedCreateNestedManyWithoutPenerimaInput
+  }
+
+  export type PengrajinCreateOrConnectWithoutPenarikanInput = {
+    where: PengrajinWhereUniqueInput
+    create: XOR<PengrajinCreateWithoutPenarikanInput, PengrajinUncheckedCreateWithoutPenarikanInput>
+  }
+
+  export type PengrajinUpsertWithoutPenarikanInput = {
+    update: XOR<PengrajinUpdateWithoutPenarikanInput, PengrajinUncheckedUpdateWithoutPenarikanInput>
+    create: XOR<PengrajinCreateWithoutPenarikanInput, PengrajinUncheckedCreateWithoutPenarikanInput>
+    where?: PengrajinWhereInput
+  }
+
+  export type PengrajinUpdateToOneWithWhereWithoutPenarikanInput = {
+    where?: PengrajinWhereInput
+    data: XOR<PengrajinUpdateWithoutPenarikanInput, PengrajinUncheckedUpdateWithoutPenarikanInput>
+  }
+
+  export type PengrajinUpdateWithoutPenarikanInput = {
+    nama?: StringFieldUpdateOperationsInput | string
+    tarifCadangan?: NullableIntFieldUpdateOperationsInput | number | null
+    satuanTarif?: StringFieldUpdateOperationsInput | string
+    penerimaUpah?: StringFieldUpdateOperationsInput | string
+    aktif?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    kelompok?: KelompokUpdateOneWithoutAnggotaNestedInput
+    ketuaDari?: KelompokUpdateOneWithoutKetuaNestedInput
+    tarif?: TarifPengrajinUpdateManyWithoutPengrajinNestedInput
+    penugasan?: PenugasanUpdateManyWithoutPengrajinNestedInput
+    setoranKerja?: SetoranUpdateManyWithoutPengrajinNestedInput
+    setoranTerima?: SetoranUpdateManyWithoutPenerimaNestedInput
+  }
+
+  export type PengrajinUncheckedUpdateWithoutPenarikanInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    nama?: StringFieldUpdateOperationsInput | string
+    kelompokId?: NullableIntFieldUpdateOperationsInput | number | null
+    tarifCadangan?: NullableIntFieldUpdateOperationsInput | number | null
+    satuanTarif?: StringFieldUpdateOperationsInput | string
+    penerimaUpah?: StringFieldUpdateOperationsInput | string
+    aktif?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    ketuaDari?: KelompokUncheckedUpdateOneWithoutKetuaNestedInput
+    tarif?: TarifPengrajinUncheckedUpdateManyWithoutPengrajinNestedInput
+    penugasan?: PenugasanUncheckedUpdateManyWithoutPengrajinNestedInput
+    setoranKerja?: SetoranUncheckedUpdateManyWithoutPengrajinNestedInput
+    setoranTerima?: SetoranUncheckedUpdateManyWithoutPenerimaNestedInput
   }
 
   export type CustomerCreateWithoutPricesInput = {
@@ -30282,6 +41645,7 @@ export namespace Prisma {
     TransactionItems?: TransactionItemCreateNestedManyWithoutProductInput
     orderRequestItems?: OrderRequestItemCreateNestedManyWithoutProductInput
     variants?: ProductVariantCreateNestedManyWithoutProductInput
+    tarifPengrajin?: TarifPengrajinCreateNestedManyWithoutProductInput
   }
 
   export type ProductUncheckedCreateWithoutCartItemsInput = {
@@ -30298,6 +41662,7 @@ export namespace Prisma {
     TransactionItems?: TransactionItemUncheckedCreateNestedManyWithoutProductInput
     orderRequestItems?: OrderRequestItemUncheckedCreateNestedManyWithoutProductInput
     variants?: ProductVariantUncheckedCreateNestedManyWithoutProductInput
+    tarifPengrajin?: TarifPengrajinUncheckedCreateNestedManyWithoutProductInput
   }
 
   export type ProductCreateOrConnectWithoutCartItemsInput = {
@@ -30361,6 +41726,7 @@ export namespace Prisma {
     TransactionItems?: TransactionItemUpdateManyWithoutProductNestedInput
     orderRequestItems?: OrderRequestItemUpdateManyWithoutProductNestedInput
     variants?: ProductVariantUpdateManyWithoutProductNestedInput
+    tarifPengrajin?: TarifPengrajinUpdateManyWithoutProductNestedInput
   }
 
   export type ProductUncheckedUpdateWithoutCartItemsInput = {
@@ -30377,6 +41743,7 @@ export namespace Prisma {
     TransactionItems?: TransactionItemUncheckedUpdateManyWithoutProductNestedInput
     orderRequestItems?: OrderRequestItemUncheckedUpdateManyWithoutProductNestedInput
     variants?: ProductVariantUncheckedUpdateManyWithoutProductNestedInput
+    tarifPengrajin?: TarifPengrajinUncheckedUpdateManyWithoutProductNestedInput
   }
 
   export type TransactionCreateWithoutOrderRequestInput = {
@@ -30669,6 +42036,7 @@ export namespace Prisma {
     TransactionItems?: TransactionItemCreateNestedManyWithoutProductInput
     cartItems?: UserCartItemCreateNestedManyWithoutProductInput
     variants?: ProductVariantCreateNestedManyWithoutProductInput
+    tarifPengrajin?: TarifPengrajinCreateNestedManyWithoutProductInput
   }
 
   export type ProductUncheckedCreateWithoutOrderRequestItemsInput = {
@@ -30685,6 +42053,7 @@ export namespace Prisma {
     TransactionItems?: TransactionItemUncheckedCreateNestedManyWithoutProductInput
     cartItems?: UserCartItemUncheckedCreateNestedManyWithoutProductInput
     variants?: ProductVariantUncheckedCreateNestedManyWithoutProductInput
+    tarifPengrajin?: TarifPengrajinUncheckedCreateNestedManyWithoutProductInput
   }
 
   export type ProductCreateOrConnectWithoutOrderRequestItemsInput = {
@@ -30754,6 +42123,7 @@ export namespace Prisma {
     TransactionItems?: TransactionItemUpdateManyWithoutProductNestedInput
     cartItems?: UserCartItemUpdateManyWithoutProductNestedInput
     variants?: ProductVariantUpdateManyWithoutProductNestedInput
+    tarifPengrajin?: TarifPengrajinUpdateManyWithoutProductNestedInput
   }
 
   export type ProductUncheckedUpdateWithoutOrderRequestItemsInput = {
@@ -30770,6 +42140,7 @@ export namespace Prisma {
     TransactionItems?: TransactionItemUncheckedUpdateManyWithoutProductNestedInput
     cartItems?: UserCartItemUncheckedUpdateManyWithoutProductNestedInput
     variants?: ProductVariantUncheckedUpdateManyWithoutProductNestedInput
+    tarifPengrajin?: TarifPengrajinUncheckedUpdateManyWithoutProductNestedInput
   }
 
   export type UserCartCreateManyUserInput = {
@@ -30858,6 +42229,14 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
+  export type TarifPengrajinCreateManyProductInput = {
+    id?: number
+    pengrajinId: number
+    tarif: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type TransactionItemUpdateWithoutProductInput = {
     variantId?: NullableIntFieldUpdateOperationsInput | number | null
     variantName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -30870,6 +42249,7 @@ export namespace Prisma {
     packed?: BoolFieldUpdateOperationsInput | boolean
     packedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     transaction?: TransactionUpdateOneRequiredWithoutItemsNestedInput
+    penugasan?: PenugasanUpdateManyWithoutTransactionItemNestedInput
   }
 
   export type TransactionItemUncheckedUpdateWithoutProductInput = {
@@ -30885,6 +42265,7 @@ export namespace Prisma {
     satuanHarga?: StringFieldUpdateOperationsInput | string
     packed?: BoolFieldUpdateOperationsInput | boolean
     packedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    penugasan?: PenugasanUncheckedUpdateManyWithoutTransactionItemNestedInput
   }
 
   export type TransactionItemUncheckedUpdateManyWithoutProductInput = {
@@ -30989,6 +42370,29 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type TarifPengrajinUpdateWithoutProductInput = {
+    tarif?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    pengrajin?: PengrajinUpdateOneRequiredWithoutTarifNestedInput
+  }
+
+  export type TarifPengrajinUncheckedUpdateWithoutProductInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    pengrajinId?: IntFieldUpdateOperationsInput | number
+    tarif?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TarifPengrajinUncheckedUpdateManyWithoutProductInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    pengrajinId?: IntFieldUpdateOperationsInput | number
+    tarif?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type TransactionItemCreateManyTransactionInput = {
     id?: number
     productId: number
@@ -31039,6 +42443,7 @@ export namespace Prisma {
     packed?: BoolFieldUpdateOperationsInput | boolean
     packedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     product?: ProductUpdateOneRequiredWithoutTransactionItemsNestedInput
+    penugasan?: PenugasanUpdateManyWithoutTransactionItemNestedInput
   }
 
   export type TransactionItemUncheckedUpdateWithoutTransactionInput = {
@@ -31054,6 +42459,7 @@ export namespace Prisma {
     satuanHarga?: StringFieldUpdateOperationsInput | string
     packed?: BoolFieldUpdateOperationsInput | boolean
     packedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    penugasan?: PenugasanUncheckedUpdateManyWithoutTransactionItemNestedInput
   }
 
   export type TransactionItemUncheckedUpdateManyWithoutTransactionInput = {
@@ -31132,6 +42538,410 @@ export namespace Prisma {
     tanggal?: DateTimeFieldUpdateOperationsInput | Date | string
     nominal?: IntFieldUpdateOperationsInput | number
     metode?: StringFieldUpdateOperationsInput | string
+    catatan?: NullableStringFieldUpdateOperationsInput | string | null
+    pencatatId?: NullableIntFieldUpdateOperationsInput | number | null
+    pencatatNama?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PenugasanCreateManyTransactionItemInput = {
+    id?: number
+    pengrajinId: number
+    jumlahDitugaskan: number
+    tenggat: Date | string
+    catatan?: string | null
+    pembuatId?: number | null
+    pembuatNama?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PenugasanUpdateWithoutTransactionItemInput = {
+    jumlahDitugaskan?: IntFieldUpdateOperationsInput | number
+    tenggat?: DateTimeFieldUpdateOperationsInput | Date | string
+    catatan?: NullableStringFieldUpdateOperationsInput | string | null
+    pembuatId?: NullableIntFieldUpdateOperationsInput | number | null
+    pembuatNama?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    pengrajin?: PengrajinUpdateOneRequiredWithoutPenugasanNestedInput
+    setoran?: SetoranUpdateManyWithoutPenugasanNestedInput
+  }
+
+  export type PenugasanUncheckedUpdateWithoutTransactionItemInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    pengrajinId?: IntFieldUpdateOperationsInput | number
+    jumlahDitugaskan?: IntFieldUpdateOperationsInput | number
+    tenggat?: DateTimeFieldUpdateOperationsInput | Date | string
+    catatan?: NullableStringFieldUpdateOperationsInput | string | null
+    pembuatId?: NullableIntFieldUpdateOperationsInput | number | null
+    pembuatNama?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    setoran?: SetoranUncheckedUpdateManyWithoutPenugasanNestedInput
+  }
+
+  export type PenugasanUncheckedUpdateManyWithoutTransactionItemInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    pengrajinId?: IntFieldUpdateOperationsInput | number
+    jumlahDitugaskan?: IntFieldUpdateOperationsInput | number
+    tenggat?: DateTimeFieldUpdateOperationsInput | Date | string
+    catatan?: NullableStringFieldUpdateOperationsInput | string | null
+    pembuatId?: NullableIntFieldUpdateOperationsInput | number | null
+    pembuatNama?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PengrajinCreateManyKelompokInput = {
+    id?: number
+    nama: string
+    tarifCadangan?: number | null
+    satuanTarif?: string
+    penerimaUpah?: string
+    aktif?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PengrajinUpdateWithoutKelompokInput = {
+    nama?: StringFieldUpdateOperationsInput | string
+    tarifCadangan?: NullableIntFieldUpdateOperationsInput | number | null
+    satuanTarif?: StringFieldUpdateOperationsInput | string
+    penerimaUpah?: StringFieldUpdateOperationsInput | string
+    aktif?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    ketuaDari?: KelompokUpdateOneWithoutKetuaNestedInput
+    tarif?: TarifPengrajinUpdateManyWithoutPengrajinNestedInput
+    penugasan?: PenugasanUpdateManyWithoutPengrajinNestedInput
+    setoranKerja?: SetoranUpdateManyWithoutPengrajinNestedInput
+    setoranTerima?: SetoranUpdateManyWithoutPenerimaNestedInput
+    penarikan?: PenarikanUpdateManyWithoutPengrajinNestedInput
+  }
+
+  export type PengrajinUncheckedUpdateWithoutKelompokInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    nama?: StringFieldUpdateOperationsInput | string
+    tarifCadangan?: NullableIntFieldUpdateOperationsInput | number | null
+    satuanTarif?: StringFieldUpdateOperationsInput | string
+    penerimaUpah?: StringFieldUpdateOperationsInput | string
+    aktif?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    ketuaDari?: KelompokUncheckedUpdateOneWithoutKetuaNestedInput
+    tarif?: TarifPengrajinUncheckedUpdateManyWithoutPengrajinNestedInput
+    penugasan?: PenugasanUncheckedUpdateManyWithoutPengrajinNestedInput
+    setoranKerja?: SetoranUncheckedUpdateManyWithoutPengrajinNestedInput
+    setoranTerima?: SetoranUncheckedUpdateManyWithoutPenerimaNestedInput
+    penarikan?: PenarikanUncheckedUpdateManyWithoutPengrajinNestedInput
+  }
+
+  export type PengrajinUncheckedUpdateManyWithoutKelompokInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    nama?: StringFieldUpdateOperationsInput | string
+    tarifCadangan?: NullableIntFieldUpdateOperationsInput | number | null
+    satuanTarif?: StringFieldUpdateOperationsInput | string
+    penerimaUpah?: StringFieldUpdateOperationsInput | string
+    aktif?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TarifPengrajinCreateManyPengrajinInput = {
+    id?: number
+    productId: number
+    tarif: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PenugasanCreateManyPengrajinInput = {
+    id?: number
+    transactionItemId: number
+    jumlahDitugaskan: number
+    tenggat: Date | string
+    catatan?: string | null
+    pembuatId?: number | null
+    pembuatNama?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type SetoranCreateManyPengrajinInput = {
+    id?: number
+    penugasanId: number
+    penerimaId: number
+    tanggal?: Date | string
+    jumlah: number
+    tarifSnapshot: number
+    pakaiTarifCadangan?: boolean
+    nilai: number
+    catatan?: string | null
+    pencatatId?: number | null
+    pencatatNama?: string | null
+    createdAt?: Date | string
+  }
+
+  export type SetoranCreateManyPenerimaInput = {
+    id?: number
+    penugasanId: number
+    pengrajinId: number
+    tanggal?: Date | string
+    jumlah: number
+    tarifSnapshot: number
+    pakaiTarifCadangan?: boolean
+    nilai: number
+    catatan?: string | null
+    pencatatId?: number | null
+    pencatatNama?: string | null
+    createdAt?: Date | string
+  }
+
+  export type PenarikanCreateManyPengrajinInput = {
+    id?: number
+    tanggal?: Date | string
+    nominal: number
+    expenseId?: number | null
+    catatan?: string | null
+    pencatatId?: number | null
+    pencatatNama?: string | null
+    createdAt?: Date | string
+  }
+
+  export type TarifPengrajinUpdateWithoutPengrajinInput = {
+    tarif?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    product?: ProductUpdateOneRequiredWithoutTarifPengrajinNestedInput
+  }
+
+  export type TarifPengrajinUncheckedUpdateWithoutPengrajinInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    productId?: IntFieldUpdateOperationsInput | number
+    tarif?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TarifPengrajinUncheckedUpdateManyWithoutPengrajinInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    productId?: IntFieldUpdateOperationsInput | number
+    tarif?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PenugasanUpdateWithoutPengrajinInput = {
+    jumlahDitugaskan?: IntFieldUpdateOperationsInput | number
+    tenggat?: DateTimeFieldUpdateOperationsInput | Date | string
+    catatan?: NullableStringFieldUpdateOperationsInput | string | null
+    pembuatId?: NullableIntFieldUpdateOperationsInput | number | null
+    pembuatNama?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    transactionItem?: TransactionItemUpdateOneRequiredWithoutPenugasanNestedInput
+    setoran?: SetoranUpdateManyWithoutPenugasanNestedInput
+  }
+
+  export type PenugasanUncheckedUpdateWithoutPengrajinInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    transactionItemId?: IntFieldUpdateOperationsInput | number
+    jumlahDitugaskan?: IntFieldUpdateOperationsInput | number
+    tenggat?: DateTimeFieldUpdateOperationsInput | Date | string
+    catatan?: NullableStringFieldUpdateOperationsInput | string | null
+    pembuatId?: NullableIntFieldUpdateOperationsInput | number | null
+    pembuatNama?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    setoran?: SetoranUncheckedUpdateManyWithoutPenugasanNestedInput
+  }
+
+  export type PenugasanUncheckedUpdateManyWithoutPengrajinInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    transactionItemId?: IntFieldUpdateOperationsInput | number
+    jumlahDitugaskan?: IntFieldUpdateOperationsInput | number
+    tenggat?: DateTimeFieldUpdateOperationsInput | Date | string
+    catatan?: NullableStringFieldUpdateOperationsInput | string | null
+    pembuatId?: NullableIntFieldUpdateOperationsInput | number | null
+    pembuatNama?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SetoranUpdateWithoutPengrajinInput = {
+    tanggal?: DateTimeFieldUpdateOperationsInput | Date | string
+    jumlah?: IntFieldUpdateOperationsInput | number
+    tarifSnapshot?: IntFieldUpdateOperationsInput | number
+    pakaiTarifCadangan?: BoolFieldUpdateOperationsInput | boolean
+    nilai?: IntFieldUpdateOperationsInput | number
+    catatan?: NullableStringFieldUpdateOperationsInput | string | null
+    pencatatId?: NullableIntFieldUpdateOperationsInput | number | null
+    pencatatNama?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    penugasan?: PenugasanUpdateOneRequiredWithoutSetoranNestedInput
+    penerima?: PengrajinUpdateOneRequiredWithoutSetoranTerimaNestedInput
+  }
+
+  export type SetoranUncheckedUpdateWithoutPengrajinInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    penugasanId?: IntFieldUpdateOperationsInput | number
+    penerimaId?: IntFieldUpdateOperationsInput | number
+    tanggal?: DateTimeFieldUpdateOperationsInput | Date | string
+    jumlah?: IntFieldUpdateOperationsInput | number
+    tarifSnapshot?: IntFieldUpdateOperationsInput | number
+    pakaiTarifCadangan?: BoolFieldUpdateOperationsInput | boolean
+    nilai?: IntFieldUpdateOperationsInput | number
+    catatan?: NullableStringFieldUpdateOperationsInput | string | null
+    pencatatId?: NullableIntFieldUpdateOperationsInput | number | null
+    pencatatNama?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SetoranUncheckedUpdateManyWithoutPengrajinInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    penugasanId?: IntFieldUpdateOperationsInput | number
+    penerimaId?: IntFieldUpdateOperationsInput | number
+    tanggal?: DateTimeFieldUpdateOperationsInput | Date | string
+    jumlah?: IntFieldUpdateOperationsInput | number
+    tarifSnapshot?: IntFieldUpdateOperationsInput | number
+    pakaiTarifCadangan?: BoolFieldUpdateOperationsInput | boolean
+    nilai?: IntFieldUpdateOperationsInput | number
+    catatan?: NullableStringFieldUpdateOperationsInput | string | null
+    pencatatId?: NullableIntFieldUpdateOperationsInput | number | null
+    pencatatNama?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SetoranUpdateWithoutPenerimaInput = {
+    tanggal?: DateTimeFieldUpdateOperationsInput | Date | string
+    jumlah?: IntFieldUpdateOperationsInput | number
+    tarifSnapshot?: IntFieldUpdateOperationsInput | number
+    pakaiTarifCadangan?: BoolFieldUpdateOperationsInput | boolean
+    nilai?: IntFieldUpdateOperationsInput | number
+    catatan?: NullableStringFieldUpdateOperationsInput | string | null
+    pencatatId?: NullableIntFieldUpdateOperationsInput | number | null
+    pencatatNama?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    penugasan?: PenugasanUpdateOneRequiredWithoutSetoranNestedInput
+    pengrajin?: PengrajinUpdateOneRequiredWithoutSetoranKerjaNestedInput
+  }
+
+  export type SetoranUncheckedUpdateWithoutPenerimaInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    penugasanId?: IntFieldUpdateOperationsInput | number
+    pengrajinId?: IntFieldUpdateOperationsInput | number
+    tanggal?: DateTimeFieldUpdateOperationsInput | Date | string
+    jumlah?: IntFieldUpdateOperationsInput | number
+    tarifSnapshot?: IntFieldUpdateOperationsInput | number
+    pakaiTarifCadangan?: BoolFieldUpdateOperationsInput | boolean
+    nilai?: IntFieldUpdateOperationsInput | number
+    catatan?: NullableStringFieldUpdateOperationsInput | string | null
+    pencatatId?: NullableIntFieldUpdateOperationsInput | number | null
+    pencatatNama?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SetoranUncheckedUpdateManyWithoutPenerimaInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    penugasanId?: IntFieldUpdateOperationsInput | number
+    pengrajinId?: IntFieldUpdateOperationsInput | number
+    tanggal?: DateTimeFieldUpdateOperationsInput | Date | string
+    jumlah?: IntFieldUpdateOperationsInput | number
+    tarifSnapshot?: IntFieldUpdateOperationsInput | number
+    pakaiTarifCadangan?: BoolFieldUpdateOperationsInput | boolean
+    nilai?: IntFieldUpdateOperationsInput | number
+    catatan?: NullableStringFieldUpdateOperationsInput | string | null
+    pencatatId?: NullableIntFieldUpdateOperationsInput | number | null
+    pencatatNama?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PenarikanUpdateWithoutPengrajinInput = {
+    tanggal?: DateTimeFieldUpdateOperationsInput | Date | string
+    nominal?: IntFieldUpdateOperationsInput | number
+    expenseId?: NullableIntFieldUpdateOperationsInput | number | null
+    catatan?: NullableStringFieldUpdateOperationsInput | string | null
+    pencatatId?: NullableIntFieldUpdateOperationsInput | number | null
+    pencatatNama?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PenarikanUncheckedUpdateWithoutPengrajinInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    tanggal?: DateTimeFieldUpdateOperationsInput | Date | string
+    nominal?: IntFieldUpdateOperationsInput | number
+    expenseId?: NullableIntFieldUpdateOperationsInput | number | null
+    catatan?: NullableStringFieldUpdateOperationsInput | string | null
+    pencatatId?: NullableIntFieldUpdateOperationsInput | number | null
+    pencatatNama?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PenarikanUncheckedUpdateManyWithoutPengrajinInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    tanggal?: DateTimeFieldUpdateOperationsInput | Date | string
+    nominal?: IntFieldUpdateOperationsInput | number
+    expenseId?: NullableIntFieldUpdateOperationsInput | number | null
+    catatan?: NullableStringFieldUpdateOperationsInput | string | null
+    pencatatId?: NullableIntFieldUpdateOperationsInput | number | null
+    pencatatNama?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SetoranCreateManyPenugasanInput = {
+    id?: number
+    pengrajinId: number
+    penerimaId: number
+    tanggal?: Date | string
+    jumlah: number
+    tarifSnapshot: number
+    pakaiTarifCadangan?: boolean
+    nilai: number
+    catatan?: string | null
+    pencatatId?: number | null
+    pencatatNama?: string | null
+    createdAt?: Date | string
+  }
+
+  export type SetoranUpdateWithoutPenugasanInput = {
+    tanggal?: DateTimeFieldUpdateOperationsInput | Date | string
+    jumlah?: IntFieldUpdateOperationsInput | number
+    tarifSnapshot?: IntFieldUpdateOperationsInput | number
+    pakaiTarifCadangan?: BoolFieldUpdateOperationsInput | boolean
+    nilai?: IntFieldUpdateOperationsInput | number
+    catatan?: NullableStringFieldUpdateOperationsInput | string | null
+    pencatatId?: NullableIntFieldUpdateOperationsInput | number | null
+    pencatatNama?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    pengrajin?: PengrajinUpdateOneRequiredWithoutSetoranKerjaNestedInput
+    penerima?: PengrajinUpdateOneRequiredWithoutSetoranTerimaNestedInput
+  }
+
+  export type SetoranUncheckedUpdateWithoutPenugasanInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    pengrajinId?: IntFieldUpdateOperationsInput | number
+    penerimaId?: IntFieldUpdateOperationsInput | number
+    tanggal?: DateTimeFieldUpdateOperationsInput | Date | string
+    jumlah?: IntFieldUpdateOperationsInput | number
+    tarifSnapshot?: IntFieldUpdateOperationsInput | number
+    pakaiTarifCadangan?: BoolFieldUpdateOperationsInput | boolean
+    nilai?: IntFieldUpdateOperationsInput | number
+    catatan?: NullableStringFieldUpdateOperationsInput | string | null
+    pencatatId?: NullableIntFieldUpdateOperationsInput | number | null
+    pencatatNama?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SetoranUncheckedUpdateManyWithoutPenugasanInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    pengrajinId?: IntFieldUpdateOperationsInput | number
+    penerimaId?: IntFieldUpdateOperationsInput | number
+    tanggal?: DateTimeFieldUpdateOperationsInput | Date | string
+    jumlah?: IntFieldUpdateOperationsInput | number
+    tarifSnapshot?: IntFieldUpdateOperationsInput | number
+    pakaiTarifCadangan?: BoolFieldUpdateOperationsInput | boolean
+    nilai?: IntFieldUpdateOperationsInput | number
     catatan?: NullableStringFieldUpdateOperationsInput | string | null
     pencatatId?: NullableIntFieldUpdateOperationsInput | number | null
     pencatatNama?: NullableStringFieldUpdateOperationsInput | string | null

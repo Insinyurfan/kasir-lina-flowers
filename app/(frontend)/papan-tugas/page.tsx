@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   AlertTriangle,
   Check,
@@ -84,8 +84,12 @@ const tanggalPendek = (iso: string) =>
     timeZone: "Asia/Jakarta",
   });
 
+// Format nomor nota disamakan dengan halaman Status Pesanan supaya kode yang
+// sama terbaca sama di dua halaman.
+const formatTrxCode = (id: number) => `TRX-${String(id).padStart(4, "0")}`;
+
 const namaNota = (t: { trxNumber: number | null; id: number }) =>
-  t.trxNumber ? `#${t.trxNumber}` : `ID ${t.id}`;
+  formatTrxCode(t.trxNumber ?? t.id);
 
 export default function PapanTugasPage() {
   const [user, setUser] = useState<{ role?: string } | null>(null);
@@ -271,6 +275,36 @@ export default function PapanTugasPage() {
     }
   };
 
+  // Kelompokkan "belum ditugaskan" PER NOTA. Sebelumnya daftarnya rata, sehingga
+  // 25 baris dari satu nota mengulang "KEKE · nota #115 · 28 Jul" dua puluh lima
+  // kali — mata harus membaca ulang keterangan yang sama terus-menerus.
+  const belumDitugaskanPerNota = useMemo(() => {
+    const peta = new Map<
+      number,
+      {
+        transaksi: BarisBelumDitugaskan["transaksi"];
+        baris: BarisBelumDitugaskan[];
+        totalUnit: number;
+      }
+    >();
+
+    for (const baris of data?.belumDitugaskan ?? []) {
+      const isi = peta.get(baris.transaksi.id) ?? {
+        transaksi: baris.transaksi,
+        baris: [],
+        totalUnit: 0,
+      };
+      isi.baris.push(baris);
+      isi.totalUnit += baris.sisa;
+      peta.set(baris.transaksi.id, isi);
+    }
+
+    // Nota terlama di atas — itu yang paling dekat hari kirimnya.
+    return Array.from(peta.values()).sort(
+      (a, b) => new Date(a.transaksi.tanggal).getTime() - new Date(b.transaksi.tanggal).getTime()
+    );
+  }, [data]);
+
   // Tampilan kedua: kelompokkan tugas aktif per toko, bukan per pengrajin.
   const perToko = () => {
     const peta = new Map<string, { nama: string; tugas: BarisTugas[] }>();
@@ -346,69 +380,102 @@ export default function PapanTugasPage() {
         </div>
       )}
 
-      {/* ---------- Blok 1: BELUM DITUGASKAN (jaring pengaman) ---------- */}
+      {/* ---------- Blok 1: BELUM DITUGASKAN (jaring pengaman) ----------
+          Dikelompokkan PER NOTA seperti halaman Status Pesanan: nama toko dan
+          nomor nota cukup ditulis sekali di kepala kartu, bukan diulang di
+          setiap baris barang. */}
       {!memuat && (
-        <section
-          className={`overflow-hidden rounded-2xl border-2 ${
-            (data?.belumDitugaskan.length ?? 0) > 0
-              ? "border-amber-300 bg-amber-50"
-              : "border-emerald-200 bg-emerald-50"
-          }`}
-        >
-          <div className="flex items-center gap-2 px-5 py-4">
-            {(data?.belumDitugaskan.length ?? 0) > 0 ? (
-              <AlertTriangle size={18} className="text-amber-600" />
+        <section className="space-y-4">
+          <div className="flex items-center gap-2">
+            {belumDitugaskanPerNota.length > 0 ? (
+              <AlertTriangle size={20} className="text-amber-600" />
             ) : (
-              <Check size={18} className="text-emerald-600" />
+              <Check size={20} className="text-emerald-600" />
             )}
-            <h2 className="text-base font-black text-slate-800">
+            <h2 className="text-lg font-black text-slate-800">
               Belum ditugaskan
-              {(data?.belumDitugaskan.length ?? 0) > 0 && ` (${data?.belumDitugaskan.length})`}
+              {belumDitugaskanPerNota.length > 0 && (
+                <span className="ml-1 font-normal text-slate-400">
+                  ({data?.belumDitugaskan.length} barang · {belumDitugaskanPerNota.length} nota)
+                </span>
+              )}
             </h2>
           </div>
 
-          {(data?.belumDitugaskan.length ?? 0) === 0 ? (
-            <p className="px-5 pb-5 text-xs text-emerald-700">
-              Semua pekerjaan sudah dibagi. Tidak ada orderan yang menggantung.
-            </p>
+          {belumDitugaskanPerNota.length === 0 ? (
+            <div className="rounded-2xl border-2 border-emerald-200 bg-emerald-50 p-8 text-center">
+              <p className="font-bold text-emerald-700">Semua pekerjaan sudah dibagi.</p>
+              <p className="mt-1 text-xs text-emerald-600">
+                Tidak ada orderan yang menggantung tanpa pengrajin.
+              </p>
+            </div>
           ) : (
-            <div className="space-y-2 px-4 pb-4">
-              {data?.belumDitugaskan.map((baris) => (
-                <div
-                  key={baris.transactionItemId}
-                  className="flex flex-wrap items-center gap-3 rounded-xl border border-amber-200 bg-white p-3"
+            <div className="grid gap-5 xl:grid-cols-2">
+              {belumDitugaskanPerNota.map((nota) => (
+                <article
+                  key={nota.transaksi.id}
+                  className="overflow-hidden rounded-2xl border-2 border-amber-300 bg-amber-50"
                 >
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-black text-slate-800">
-                      {baris.namaProduk}
-                      {baris.variantName && (
-                        <span className="ml-1 font-bold text-amber-600">({baris.variantName})</span>
-                      )}
-                    </p>
-                    <p className="text-[11px] text-slate-500">
-                      {baris.transaksi.nama_pembeli || "Tanpa nama"} · nota{" "}
-                      {namaNota(baris.transaksi)} · {tanggalPendek(baris.transaksi.tanggal)}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm font-black text-amber-700">
-                      {baris.sisa} {baris.satuan}
-                    </p>
-                    {baris.sisa < baris.jumlahDipesan && (
-                      <p className="text-[10px] text-slate-400">
-                        dari {baris.jumlahDipesan} {baris.satuan}
+                  <div className="flex flex-col justify-between gap-2 border-b border-amber-200 bg-amber-100/70 p-5 sm:flex-row sm:items-start">
+                    <div className="min-w-0">
+                      <p className="font-mono text-sm font-black text-amber-800">
+                        {namaNota(nota.transaksi)}
                       </p>
-                    )}
+                      <h3 className="mt-1 truncate text-lg font-black text-slate-800">
+                        {(nota.transaksi.nama_pembeli || "Tanpa nama").toUpperCase()}
+                      </h3>
+                      <p className="text-xs text-slate-500">
+                        {tanggalPendek(nota.transaksi.tanggal)} ·{" "}
+                        {nota.transaksi.status_pengiriman}
+                      </p>
+                    </div>
+                    <div className="shrink-0 text-left sm:text-right">
+                      <p className="text-[10px] font-black uppercase tracking-wide text-amber-700">
+                        Belum dibagi
+                      </p>
+                      <p className="text-lg font-black text-amber-800">
+                        {nota.baris.length} barang
+                      </p>
+                    </div>
                   </div>
-                  {bolehMenulis && (
-                    <button
-                      onClick={() => bukaTugaskan(baris)}
-                      className="flex items-center gap-1.5 rounded-lg bg-pink-600 px-3 py-2 text-[11px] font-black text-white hover:bg-pink-700"
-                    >
-                      <UserPlus size={13} /> Tugaskan
-                    </button>
-                  )}
-                </div>
+
+                  <div className="space-y-2 p-4">
+                    {nota.baris.map((baris) => (
+                      <div
+                        key={baris.transactionItemId}
+                        className="flex items-center gap-3 rounded-xl border border-amber-200 bg-white p-3"
+                      >
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate text-sm font-black text-slate-800">
+                            {baris.namaProduk}
+                            {baris.variantName && (
+                              <span className="ml-1 font-bold text-amber-600">
+                                ({baris.variantName})
+                              </span>
+                            )}
+                          </p>
+                          <p className="text-[11px] font-bold text-amber-700">
+                            {baris.sisa} {baris.satuan}
+                            {baris.sisa < baris.jumlahDipesan && (
+                              <span className="font-normal text-slate-400">
+                                {" "}
+                                dari {baris.jumlahDipesan}
+                              </span>
+                            )}
+                          </p>
+                        </div>
+                        {bolehMenulis && (
+                          <button
+                            onClick={() => bukaTugaskan(baris)}
+                            className="flex shrink-0 items-center gap-1.5 rounded-lg bg-pink-600 px-3 py-2 text-[11px] font-black text-white hover:bg-pink-700"
+                          >
+                            <UserPlus size={13} /> Tugaskan
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </article>
               ))}
             </div>
           )}
@@ -441,9 +508,9 @@ export default function PapanTugasPage() {
 
       {/* ---------- Blok 2: pekerjaan aktif ---------- */}
       {!memuat && tampilan === "pengrajin" && (
-        <section className="space-y-4">
+        <section className="grid gap-5 xl:grid-cols-2">
           {(data?.pekerjaanPerPengrajin.length ?? 0) === 0 && (
-            <div className="lina-panel rounded-2xl border p-12 text-center">
+            <div className="lina-panel rounded-2xl border p-12 text-center xl:col-span-2">
               <p className="font-bold text-slate-500">Belum ada pekerjaan yang sedang berjalan.</p>
             </div>
           )}
@@ -492,12 +559,12 @@ export default function PapanTugasPage() {
       )}
 
       {!memuat && tampilan === "toko" && (
-        <section className="space-y-4">
+        <section className="grid gap-5 xl:grid-cols-2">
           {perToko().map((grup) => (
             <article key={grup.nama} className="lina-panel overflow-hidden rounded-2xl border">
-              <div className="border-b border-pink-100 bg-pink-50 px-5 py-3">
-                <h2 className="text-base font-black text-slate-800">{grup.nama}</h2>
-                <p className="text-[10px] text-slate-500">{grup.tugas.length} pekerjaan berjalan</p>
+              <div className="border-b border-pink-100 bg-pink-50 px-5 py-4">
+                <h2 className="text-lg font-black text-slate-800">{grup.nama.toUpperCase()}</h2>
+                <p className="text-xs text-slate-500">{grup.tugas.length} pekerjaan berjalan</p>
               </div>
               <div className="space-y-2 p-4">
                 {grup.tugas.map((tugas) => (
@@ -530,30 +597,32 @@ export default function PapanTugasPage() {
             Diurutkan dari yang paling sedikit — ini jawaban &quot;siapa yang belum dapat
             kerjaan&quot;.
           </p>
-          <div className="mt-4 space-y-2">
+          <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
             {data?.bebanKerja.map((p) => (
               <div
                 key={p.pengrajinId}
-                className={`flex items-center gap-3 rounded-xl border p-3 ${
+                className={`rounded-xl border p-3 ${
                   p.masihKosong ? "border-emerald-200 bg-emerald-50" : "border-slate-100 bg-white"
                 }`}
               >
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-black text-slate-800">{p.nama}</p>
-                  {p.kelompok && <p className="text-[10px] text-slate-500">{p.kelompok}</p>}
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-black text-slate-800">{p.nama}</p>
+                    {p.kelompok && <p className="text-[10px] text-slate-500">{p.kelompok}</p>}
+                  </div>
+                  {p.adaTerlambat && (
+                    <span className="shrink-0 rounded-md border border-red-200 bg-red-50 px-1.5 py-0.5 text-[9px] font-black text-red-600">
+                      TELAT
+                    </span>
+                  )}
                 </div>
-                {p.adaTerlambat && (
-                  <span className="rounded-md border border-red-200 bg-red-50 px-1.5 py-0.5 text-[9px] font-black text-red-600">
-                    ADA TERLAMBAT
-                  </span>
-                )}
-                <span
-                  className={`text-xs font-black ${
+                <p
+                  className={`mt-1.5 text-xs font-black ${
                     p.masihKosong ? "text-emerald-700" : "text-slate-600"
                   }`}
                 >
                   {p.masihKosong ? "Masih kosong" : `${p.jumlahTugas} tugas · ${p.sisaUnit} unit`}
-                </span>
+                </p>
               </div>
             ))}
           </div>

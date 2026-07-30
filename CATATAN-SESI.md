@@ -1,158 +1,245 @@
-# Catatan Sesi — 27 Juli 2026
+# Catatan Sesi — 30 Juli 2026
 
-Rangkuman pekerjaan agar bisa dilanjutkan besok. Semua sudah di-push ke `main`
-(`Insinyurfan/kasir-lina-flowers`) kecuali satu perubahan kecil yang masih
-menggantung — lihat bagian **Belum di-commit**.
+Semua sudah di-push ke `main` (`Insinyurfan/kasir-lina-flowers`), dari `e5e8f3c`
+sampai **`7ad31ec`** — 12 commit. Tidak ada yang menggantung di working tree.
+
+Sesi ini membangun **tiga modul baru** sekaligus, dan seluruhnya sudah ada
+tabelnya di basis data produksi.
 
 ---
 
-## 1. Yang sudah selesai & ter-push
+## 0. Kenapa modul-modul ini yang dibangun
 
-### Commit `c3f7b81` — Centang packing tidak lagi tereset
+Sebelum menulis kode, kita menyepakati dulu tujuan bisnisnya: **usaha ini untung
+beneran atau cuma kelihatan untung?** Aplikasi lama hanya mencatat uang masuk —
+tidak ada satu pun angka biaya di basis data — sehingga "Total Pendapatan Lunas"
+di halaman Laporan itu sebenarnya **omzet**, bukan laba.
 
-**Masalah:** setiap kali orderan diedit di Riwayat Penjualan, seluruh centang di
-halaman Checklist Packing hilang, walaupun cuma menambah satu produk.
+Urutan roadmap 5 langkah yang disepakati:
 
-**Sebabnya:** API `PATCH /api/transaksi` menghapus SEMUA `TransactionItem` lalu
-membuatnya ulang (`deleteMany: {}` + `create`). Karena kolom `packed` menempel
-pada baris item, baris baru selalu lahir dengan `packed = false`.
+1. ~~Piutang + pengeluaran + laba rugi~~ ← **selesai sesi ini**
+2. ~~Papan tugas & upah pengrajin~~ ← **selesai sesi ini**
+3. Bahan baku + daftar belanja otomatis (`bom-inventory`) ← **berikutnya**
+4. Kirim sebagian & bukti serah terima (`split-invoice-backorder`)
+5. Jualan satuan/eceran
 
-**Perbaikannya:** item kini disinkronkan, bukan dibuang-dan-dibuat-ulang. Baris
-lama yang identitasnya masih ada dipakai ulang lewat `update`, sehingga id —
-dan centangnya — lestari.
+Di tengah sesi, pemilik meluruskan arah: **yang repot itu pekerjaan di rumah**
+(orderan masuk → packing → berangkat), bukan alur di luar rumah. Karena itu
+lahir modul ketiga di luar roadmap awal.
 
-- `lib/transactionItems.ts` (baru) — `diffTransactionItems()`, membagi item jadi
-  `update` / `create` / `removedIds`
-- `app/(backend)/api/transaksi/route.ts` — memakai helper itu
+---
 
-Identitas baris = **produk + varian + label (kode pelanggan) + satuan**. Harga
-dan jumlah sengaja tidak ikut jadi kunci, supaya mengubah harga/qty tidak
-menghapus centang.
+## 1. Modul keuangan — `pengeluaran-piutang-laba` (61/64)
 
-> **Catatan yang belum diputuskan:** kalau qty sebuah baris dinaikkan (misal
-> 2 → 5) dan baris itu sudah tercentang, centangnya tetap. Risikonya 3 pcs
-> tambahan bisa terlewat. Kalau mau, bisa diubah supaya centang dilepas khusus
-> saat qty **bertambah**.
+**Halaman baru:** `/pengeluaran`, `/piutang`, `/laba-rugi`
 
-### Commit `4ff7d12` — Katalog ultrawide, search/filter di header, halaman Unduh Nota
+- **Pengeluaran** — ramah-HP, diisi selagi di jalan. Kategori baku + foto struk
+  opsional yang tidak pernah memblokir penyimpanan.
+- **Ambilan Pribadi (prive)** — mengurangi kas, **TIDAK** mengurangi laba. Ini
+  pembagian keuntungan, bukan biaya usaha.
+- **Piutang** — `Payment` sebagai ledger, jadi satu nota bisa dicicil. Umur
+  tagihan, teks tagihan siap tempel ke WhatsApp, pelunasan massal.
+- **Laba Rugi** — menampilkan **dua angka berdampingan**:
 
-**Katalog (halaman utama publik):**
-- Lebar container 1024px → **1600px**, grid produk pakai `auto-fill`
-- Di bawah 768px kolom tetap memakai breakpoint lama — tampilan HP **tidak
-  berubah sama sekali** (sudah dicek di setiap lebar 300–767px, hasilnya identik)
-- Search + tombol urutan pindah ke header yang `sticky`, jadi tetap terjangkau
-  walau sudah scroll jauh
+      laba usaha − kenaikan piutang − ambilan pribadi = posisi kas
 
-Kelas gridnya: `.katalog-grid` di `app/globals.css`. Angka `220px` di situ
-adalah lebar minimum kartu — sudah dihitung untuk seluruh rentang layar; angka
-lebih besar (mis. 240px) bikin kartu melar sampai ~304px di laptop 1280px.
+  Justru **selisih** itulah gejala "kelihatan untung tapi uang habis". Kalau
+  hanya satu angka yang tampil, penjelasannya hilang.
 
-Kalau mau ubah lebar katalog: ganti `max-w-[1600px]` di **dua tempat** pada
-`app/(frontend)/page.tsx` (header + main) agar tetap sejajar.
+### Keputusan yang mengikat
 
-| ganti jadi | hasil di monitor ultrawide |
+- `Transaction.status` **tidak dihapus**, hanya berubah jadi cache yang ditulis
+  server. Alasannya: dashboard, laporan, dan ekspor menyaring `status === "Paid"`
+  di banyak tempat — mempertahankannya membuat kode lama tetap benar tanpa
+  disentuh. **Tidak ada jalur tulis dari klien ke kolom ini.**
+- Biaya diakui **berbasis kas** (bahan dibeli hari ini = beban hari ini).
+  Konsekuensinya laba bulanan bisa bergelombang; akan diperhalus oleh
+  `bom-inventory`.
+
+### Data lama
+
+`scripts/backfill-payments.cjs` sudah dijalankan: **118 nota** lama berstatus
+`Paid` dibuatkan bukti pembayaran, total **Rp565.551.012**. Skripnya idempoten
+(dijalankan dua kali, yang kedua melaporkan 0). Punya `--dry-run`.
+
+> **Temuan penting:** dari 118 nota, **tidak ada satu pun** yang berstatus belum
+> bayar. Padahal Mama rutin menagih lewat WA — artinya piutang itu nyata, cuma
+> tidak pernah tercatat. Jadi halaman Piutang akan **kosong** saat pertama
+> dibuka; itu bukan bug. Ia baru terisi saat kasir memilih **"Belum Bayar"** di
+> POS.
+
+---
+
+## 2. Modul pengrajin — `pengrajin-tugas-upah` (65/78)
+
+**Halaman baru:** `/papan-tugas`, `/pengrajin`
+
+Menjawab tiga dari empat keluhan operasional: orderan ke-skip, tidak tahu siapa
+mengerjakan apa, dan upah yang cuma dicatat di buku.
+
+### Temuan yang mengubah rancangan
+
+`Transaction.nama_pengrajin` adalah **satu kolom teks bebas untuk seluruh nota**.
+Secara struktural tidak mampu menyimpan kenyataan bahwa Bando Satin dan Bando
+Pompom dalam satu nota dikerjakan orang berbeda — sebagus apa pun tampilannya
+diperbaiki. Karena itu penugasan dipindah ke tingkat **`TransactionItem`**, dan
+satu baris pun boleh dibagi ke beberapa pengrajin.
+
+Kolom lamanya dipertahankan sebagai catatan sejarah; tidak ada fitur baru yang
+membacanya untuk mengambil keputusan.
+
+### Kenapa papan tugas & upah digabung satu modul
+
+Keduanya berputar pada **satu kejadian yang sama**: pengrajin menyetorkan barang
+jadi. Kejadian itu sekaligus menutup tugas di papan **dan** menambah saldo upah.
+Kalau dipisah, "barang sudah disetor" harus dicatat dua kali — dan begitu
+keduanya bisa berbeda, tidak ada lagi yang bisa dipercaya.
+
+### Keputusan yang mengikat
+
+- **Tarif per pasangan pengrajin × produk**, ditambah **tarif cadangan** per
+  orang. Tanpa cadangan, satu produk baru membuat setoran gagal dicatat tepat di
+  pagi tersibuk. Urutan: tarif produk → tarif cadangan → tolak.
+- **Tarif disimpan sebagai snapshot** pada tiap setoran. Menaikkan tarif tidak
+  boleh diam-diam mengubah nilai setoran yang mungkin sudah dibayar.
+- **Setoran mencatat dua pihak**: pekerja dan penerima saldo. Riwayat kerja tetap
+  menempel pada pekerjanya walau upahnya diteruskan ke ketua kelompok.
+- **Saldo dihitung dari buku besar**, bukan kolom yang bisa disunting. Ini utang
+  ke orang.
+- **Biaya diakui saat PENARIKAN**, bukan saat setoran (konsisten basis kas).
+  Konsekuensinya saldo terutang **belum masuk Laba Rugi** — karena itu
+  ditampilkan sebagai kartu tersendiri di Dashboard dan halaman Pengrajin.
+- Penarikan otomatis membuat `Expense` berkategori **Upah Pengrajin** dalam satu
+  transaksi basis data. `Expense` itu **dikunci** dari halaman Pengeluaran.
+
+### Penjaga validasi (urutan pengisian master penting!)
+
+- `KETUA` wajib punya kelompok yang **sudah berketua**, dan bukan dirinya sendiri
+- Pengrajin yang **menjadi** ketua wajib `SENDIRI` (cegah rantai berputar)
+
+Urutan isi master yang benar: **buat kelompok → isi pengrajin (semua SENDIRI) →
+tetapkan ketua tiap kelompok → baru ubah anggota jadi KETUA.** Kalau terbalik,
+validasinya menolak.
+
+---
+
+## 3. Rantai kerja di rumah — `label-packing-kesiapan-setoran` (27/35)
+
+Menutup tiga lubang terakhir di rentang **pukul 08.00 sampai mobil berangkat**.
+
+- **Label bungkus siap cetak** ([lib/labelPacking.ts](lib/labelPacking.ts)) —
+  menggantikan kertas kecil yang ditulis tangan Bibi. Bisa per nota atau per
+  baris (cetak ulang). **HTML A4 dua label per baris + garis potong**, bukan
+  format printer thermal: di rumah hanya ada printer biasa.
+- **Status setoran di Checklist Packing** — tiap baris menyebut pengrajin dan
+  jumlah setorannya; tiap nota ditandai siap dipacking.
+- **Tagih Setoran di Papan Tugas** — pekerjaan jatuh tempo/terlambat per
+  pengrajin, dengan teks siap salin.
+
+### Dua keputusan yang perlu diingat
+
+1. **Setoran TIDAK mengunci pencentangan packing.** Kenyataan lebih berantakan
+   daripada data — pengrajin bisa menyerahkan barang tanpa sempat dicatat.
+   Mengunci centang membuat orang berhenti memakai checklist sama sekali, dan
+   checklist yang tidak dipakai lebih buruk daripada checklist tanpa penjagaan.
+2. **Penilaian "siap dipacking" hanya menghitung baris yang punya penugasan.**
+   Kalau tidak, semua pesanan lama akan selamanya tampak menggantung dan
+   penandanya kehilangan arti sejak hari pertama. Penandanya menyebut dasarnya
+   ("8/8 baris bertugas sudah disetor"), bukan sekadar lencana hijau.
+
+---
+
+## 4. Perbaikan dari feedback pemilik
+
+Enam commit lahir dari koreksi langsung, dan semuanya menemukan masalah nyata:
+
+| Keluhan | Penyebab sebenarnya |
 |---|---|
-| `max-w-[1440px]` | 5 kolom × 262px |
-| `max-w-[1600px]` | 6 kolom × 243px ← sekarang |
-| `max-w-[1920px]` | 7 kolom × 251px |
-
-**Header & sidebar (setelah login):**
-- Header mobile: logo + nama toko (dulu foto profil + "Selamat datang")
-- Menekan **kotak logo saja** membuka pratinjau/ganti logo toko
-- Tombol keranjang naik ke header
-- Puncak sidebar: foto profil + nama + @username + label Role
-- Bottom nav: Dashboard · Produk · Pesanan · Checklist · Nota
-
-**Halaman baru `/unduh-nota`:**
-Pintasan mengunduh nota (PDF/JPG) tanpa melewati alur panjang Riwayat Penjualan
-→ Cetak → pilih nota → scroll → Download. Cari pakai nama pembeli atau nomor
-nota. Halaman ini hanya membaca, tidak menulis data.
-
-Pembuat dokumen A4 dipindah dari `app/(frontend)/penjualan/page.tsx` ke
-**`lib/notaDocument.ts`** dan dipakai bersama kedua halaman — jadi kalau tata
-letak nota diubah, keduanya ikut berubah dan tidak mungkin melenceng.
-
-### Commit `e291a7c` — Notifikasi (toast) global
-
-**Sistem baru:** `lib/toast.ts` + `components/ToastHost.tsx`, dipasang sekali di
-`app/layout.tsx`. Halaman mana pun cukup:
-
-```ts
-import { toast } from "@/lib/toast";
-toast.success("...");  // hijau, 3,5 detik
-toast.error("...");    // merah, 6 detik (lebih lama supaya alasan sempat dibaca)
-toast.info("...");     // pink, 4 detik
-```
-
-**31 `alert()` diganti seluruhnya.** `alert()` membekukan halaman sampai ditekan
-OK dan tidak bisa dipakai untuk pesan "berhasil".
-
-| Halaman | Notifikasi |
-|---|---|
-| Produk | tambah, edit, hapus, arsip, pulihkan |
-| Status Pesanan | ubah status (menyebut status barunya) |
-| Riwayat Penjualan | tambah/edit manual, hapus satuan & massal, simpan pengaturan, gagal buat PDF/JPG |
-| Laporan | unduh PDF, unduh Excel, hapus transaksi |
-| Unduh Nota | menyebut nomor nota + formatnya |
-| Pelanggan | `flash()` lama diteruskan ke toast + 4 kegagalan muat data yang tadinya didiamkan |
-
-**Sapaan "Selamat datang":** dulu hanya muncul kalau melewati halaman login.
-Sekarang juga muncul saat sesi masih aktif, **sekali per sesi browser**
-(penanda `welcomeShown` di `sessionStorage`).
-
-**Perbaikan tampilan lain:**
-- Header: hanya kotak logo yang bisa ditekan (sebelumnya `flex-1` bikin area
-  kosong header ikut tertekan)
-- Pelanggan: tombol edit & hapus tidak lagi disembunyikan di mobile — layar
-  sentuh tidak punya hover; efek hover tetap berlaku di desktop
-- Laporan: tombol PDF dari biru dongker → merah lembut (`bg-rose-500`)
+| Tampilan beda tema | Padding dobel (`<main>` sudah memberi padding), tidak pakai `lina-panel`, palet rose/emerald/violet acak |
+| Navbar kepotong | `min-h-0` tidak ada → flex item menolak menyusut, `overflow-y-auto` tidak pernah aktif |
+| Label menu terpotong 1 huruf | `scrollbar-gutter: stable` yang saya tambahkan memakan ~6px permanen |
+| Tampilan memanjang | 25 baris dari **satu** nota mengulang keterangan yang sama 25 kali |
+| Ada tulisan `setengah_gross` | Nilai mentah DB bocor ke layar — **dan** beban kerja menjumlahkan satuan berbeda (2 gross + 5 lusin = "7 unit"), sehingga urutan "siapa paling kosong" salah |
+| Barang hilang setelah ditugaskan | Kartu nota makin kosong, gambaran utuh notanya lenyap |
+| Jangan tampilkan pcs | Benar — pcs kini hanya dipakai server untuk mengurutkan, tidak pernah tampil |
 
 ---
 
-## 2. Belum di-commit
+## 5. Yang BELUM diverifikasi (perlu dicoba sendiri)
 
-`app/(frontend)/unduh-nota/page.tsx` — 1 baris, teks keterangan di bawah judul
-diubah jadi: *"Cari pesanan, lalu tekan PDF atau JPG. Akan Terdownload otomatis
-dan tersimpan pada Galeri HP."*
+Selama sesi ini tidak ada peramban dengan sesi login di sisi asisten. Yang sudah
+diverifikasi: typecheck bersih, ESLint tidak menambah error baru, **17 endpoint
+baru menolak 401 tanpa sesi**, seluruh halaman ter-render 200, dan
+`scripts/uji-perhitungan.mts` **21/21 lolos** (batas hari WIB + jembatan
+laba↔kas).
 
-Tinggal di-commit kalau sudah pas.
+Yang belum pernah benar-benar dilihat berjalan:
 
----
-
-## 3. Yang BELUM diverifikasi (perlu dicoba sendiri)
-
-Selama sesi ini tidak ada browser di sisi asisten, jadi verifikasi terbatas pada
-typecheck, ESLint, dan pengecekan rute/CSS. Yang belum pernah benar-benar
-dilihat berjalan:
-
-- [ ] **Toast** — coba satu aksi berhasil dan satu yang gagal (mis. simpan harga
-      pelanggan saat internet dimatikan) untuk memastikan pesannya tampil
-- [ ] **Unduhan PDF/JPG** di `/unduh-nota` — sudah dites user, **berhasil**
-- [ ] **Bottom nav 5 ikon** di layar sempit (~360px) — titik paling rawan sesak
-- [ ] **Header di 360px** — hamburger + logo + nama + keranjang + lonceng
-      berebut ruang
-
----
-
-## 4. Hal terbuka / keputusan yang menunggu
-
-1. **Logo toko tidak bisa diakses dari desktop.** Header tempat logo berada
-   hanya muncul di mobile (`desktop:hidden`). Di desktop sidebar selalu tampak
-   dan puncaknya kini foto profil, jadi tidak ada jalan untuk melihat/mengganti
-   logo toko. Kalau perlu, bisa ditambahkan logo kecil yang bisa diklik di
-   sidebar desktop, atau di halaman Manajemen Akun.
-
-2. **Centang packing saat qty bertambah** — lihat catatan di commit `c3f7b81`.
-
-3. **Kartu produk agak gemuk di jendela 900–1000px** (puncaknya ~298px di 975px,
-   dibanding 226px di versi lama). Sifat bawaan `auto-fill`: kartu meregang
-   mengisi sisa ruang tepat sebelum kolom berikutnya muat. Kalau mengganggu,
-   turunkan angka `220px` di `app/globals.css` — tapi itu juga mengecilkan kartu
-   di monitor besar.
+- [ ] **Alur pembayaran piutang** — bayar penuh, sebagian, cicil sampai lunas,
+      coba melebihi sisa (harus ditolak), hapus pembayaran (harus balik jadi
+      piutang)
+- [ ] **Alur pengrajin lengkap** — tugaskan → setor sebagian → tarik upah →
+      cek muncul di Laba Rugi dan hilang saat penarikan dibatalkan
+- [ ] **Bagi satu baris ke dua pengrajin** (5 gross → 3 ke A, 2 ke B)
+- [ ] **Penerusan upah ke ketua** — saldo masuk ke ketua, riwayat kerja tetap di
+      anggota, penarikan atas nama anggota ditolak
+- [ ] **Cetak sungguhan satu lembar label** lalu cocokkan ukurannya dengan
+      plastik — ukurannya masih tebakan, belum pernah melihat plastiknya
+- [ ] **Tampilan 360px** untuk Pengeluaran, Piutang, Papan Tugas, Pengrajin
+- [ ] **Admin ditolak** di halaman Laba Rugi & rekap upah (butuh login Admin)
 
 ---
 
-## 5. Cara melanjutkan besok
+## 6. Hal terbuka / keputusan yang menunggu
+
+### Mendesak
+
+1. **Isi tarif produk tiap pengrajin.** Saat ini hampir semua masih "belum ada
+   tarif produk". Tanpa ini setoran ditolak, dan itu baru ketahuan di pagi
+   tersibuk. Tarif cadangan sudah menolong, tapi angkanya jadi perkiraan.
+2. **Cek `SESSION_SECRET` sudah diset di Vercel** (tugas 6.4 di
+   `harden-api-auth`). Lima menit, tapi ini lubang keamanan kalau belum.
+3. **Agustus mulai 2 hari lagi dan itu bulan tersibuk** (17 Agustus). Dua modul
+   besar belum pernah dipakai sungguhan. Uji alur lengkapnya **sebelum** tanggal
+   1 — kalau ketahuan rusak pas orderan membanjir, itu waktu paling buruk.
+
+### Perlu diputuskan
+
+4. **Angka Juli abaikan saja.** Omzet besar tanpa satu pun biaya tercatat, jadi
+   labanya bohong. Pemilik sudah memutuskan fitur ini **mulai dipakai Agustus
+   dengan data baru**.
+5. **Bulan pertama akan bergelombang** — bahan dibeli 31 Juli tapi produknya
+   terjual Agustus. Jangan ambil kesimpulan dari satu bulan; baca dari bulan
+   kedua atau lihat total dua bulan.
+6. **Ukuran label** — dua per baris A4, tinggi ~34mm. Ubah di
+   [lib/labelPacking.ts](lib/labelPacking.ts) kalau tidak pas.
+7. **Satuan tarif vs satuan pesanan** — sekarang diasumsikan sama. Kalau ada
+   pengrajin dibayar per pcs meski pesanannya per gross, perlu konversi.
+8. **Barang cacat** — sekarang seluruh setoran dibayar penuh. Kalau perlu
+   dipotong, cara termudah: catat setoran sejumlah yang layak saja.
+
+### Warisan sesi 27 Juli (masih terbuka)
+
+9. **Logo toko tidak bisa diakses dari desktop** — header tempat logo hanya
+   muncul di mobile.
+10. **Centang packing saat qty bertambah** — kalau qty dinaikkan 2 → 5 dan sudah
+    tercentang, centangnya tetap. Risikonya 3 pcs tambahan terlewat.
+11. **Kartu produk agak gemuk di jendela 900–1000px** — sifat bawaan `auto-fill`.
+
+### Kerapian
+
+12. **Dua commit punya `@` nyasar di judulnya** (`75538d1`, `64763cc`) — akibat
+    sintaks here-string PowerShell dipakai di shell Bash. Isinya benar, hanya
+    judulnya jelek di `git log`. Merapikannya harus menulis ulang riwayat yang
+    sudah ter-push.
+13. **Draf usang** — `pengrajin-payroll` sudah **tergantikan penuh** oleh
+    `pengrajin-tugas-upah`, dan `petty-cash-hpp` tinggal separuh isinya (bagian
+    pengeluaran sudah dikerjakan). Sebaiknya diarsipkan supaya sesi berikutnya
+    tidak salah ambil rencana.
+
+---
+
+## 7. Cara melanjutkan besok
 
 ```bash
 npm run dev          # http://localhost:3000
@@ -161,18 +248,26 @@ npm run dev          # http://localhost:3000
 Perintah pemeriksaan yang dipakai sepanjang sesi:
 
 ```bash
-npx tsc --noEmit -p tsconfig.json      # typecheck
-npx eslint "app/(frontend)/nama/page.tsx"
+npx tsc --noEmit -p tsconfig.json                    # typecheck
+npx eslint "app/(frontend)/nama/page.tsx"            # lint satu berkas
+node --experimental-strip-types scripts/uji-perhitungan.mts   # 21 uji hitung
+node scripts/backfill-payments.cjs --dry-run         # cek migrasi (aman)
+openspec list                                         # progres semua change
 ```
 
-**Jebakan yang sempat memakan waktu:** mengubah `app/globals.css` kadang tidak
-terbaca oleh dev server (cache Turbopack). Kalau angka di CSS sudah diubah tapi
-browser tidak berubah, hentikan server → `rm -rf .next` → `npm run dev`.
+**Jebakan yang memakan waktu sesi ini:**
+
+- **Cache Turbopack menahan CSS rusak.** Setelah `app/globals.css` diubah dan
+  sempat salah, halaman terus 500 walau sumbernya sudah benar. Obatnya:
+  hentikan server → `rm -rf .next` → `npm run dev`.
+- **Jangan pakai sintaks here-string PowerShell (`@'...'@`) di Bash tool.**
+  Tanda `@`-nya masuk sebagai teks ke pesan commit. Pakai `git commit -F -` dengan
+  heredoc `<<'EOF'`.
 
 **Catatan lint:** repo ini sudah punya error/warning ESLint bawaan yang tidak
-berhubungan dengan pekerjaan sesi ini (`prefer-const`, `no-explicit-any`,
-`set-state-in-effect`, warning `<img>`). Jangan kaget kalau `npm run lint`
-merah — yang penting tidak ada tambahan baru.
+berhubungan (`prefer-const`, `no-explicit-any`, `set-state-in-effect`, warning
+`<img>`). Yang penting **tidak ada tambahan baru** — cara mengeceknya: salin
+versi `HEAD` berkas itu ke folder sementara, lint keduanya, bandingkan jumlahnya.
 
 ---
 
@@ -180,8 +275,13 @@ merah — yang penting tidak ada tambahan baru.
 
 | Berkas | Isi |
 |---|---|
-| `lib/transactionItems.ts` | Sinkronisasi item transaksi tanpa membuang centang packing |
-| `lib/notaDocument.ts` | Pembuat dokumen Nota/Surat Jalan A4 (dipakai bersama 2 halaman) |
-| `lib/toast.ts` | Sistem notifikasi global |
-| `components/ToastHost.tsx` | Penampil notifikasi, dipasang di layout |
-| `app/(frontend)/unduh-nota/page.tsx` | Halaman pintasan unduh nota |
+| `lib/waktu.ts` | Batas hari & bulan **WIB** dihitung eksplisit — server Vercel jalan UTC, tanpa ini transaksi pukul 00:00–07:00 WIB jatuh ke tanggal salah |
+| `lib/pengeluaran.ts` | Kategori pengeluaran + pemisahan biaya usaha vs prive |
+| `lib/piutang.ts` | Sisa tagihan, status pelunasan, umur piutang, teks penagihan |
+| `lib/pengrajin.ts` | Penentuan tarif, penerima upah, sisa penugasan, saldo, penjaga rantai berputar |
+| `lib/labelPacking.ts` | Pembuat label bungkus siap gunting |
+| `scripts/backfill-payments.cjs` | Migrasi bukti pembayaran nota lama (idempoten, punya `--dry-run`) |
+| `scripts/uji-perhitungan.mts` | 21 pemeriksaan batas WIB & jembatan laba↔kas |
+
+**Model basis data baru** (semua sudah ada di produksi): `Payment`, `Expense`,
+`Kelompok`, `Pengrajin`, `TarifPengrajin`, `Penugasan`, `Setoran`, `Penarikan`.

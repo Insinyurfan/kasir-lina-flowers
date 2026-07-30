@@ -90,11 +90,15 @@ body {
 
    Scrollbar-nya dibuat tipis dan nyaris tak terlihat sampai disentuh, karena
    di desktop sidebar menciut jadi 80px: batang gulung bawaan akan memakan
-   ruang ikon dan terlihat seperti cacat tampilan. */
+   ruang ikon dan terlihat seperti cacat tampilan.
+
+   JANGAN pakai `scrollbar-gutter: stable` di sini: ia mencadangkan ~6px secara
+   permanen, dan itu cukup untuk memotong satu huruf terakhir label terpanjang
+   ("Checklist Packing", "Riwayat Penjualan"). Batang gulungnya dibiarkan
+   menumpuk di atas konten saja. */
 .lina-sidebar-nav {
   scrollbar-width: thin;
   scrollbar-color: transparent transparent;
-  scrollbar-gutter: stable;
 }
 
 .lina-sidebar-nav:hover {

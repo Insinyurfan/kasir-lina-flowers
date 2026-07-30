@@ -972,21 +972,26 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   Desktop dulu dipaksa `overflow-y-visible`, itu sebabnya menu
                   terpotong begitu daftarnya bertambah panjang. */}
               <nav className="lina-sidebar-nav flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto overflow-x-hidden pr-1 short:gap-1">
+                {/* URUTAN LAMA — sengaja dipertahankan persis seperti sebelum ada
+                    modul keuangan & pengrajin, supaya otot ingatan pemakai lama
+                    tidak terganggu. Menu baru dikumpulkan di bawah Log Aktivitas. */}
                 {!isGuest && <NavItem href="/dashboard" icon={<House />} label="Dashboard" pathname={pathname} onClick={closeMobileMenu} />}
                 {!isGuest && <NavItem href="/pos" icon={<ShoppingCart />} label="Kasir (POS)" pathname={pathname} onClick={closeMobileMenu} />}
                 <NavItem href="/produk" icon={<Package />} label="Data Produk" pathname={pathname} onClick={closeMobileMenu} />
                 {!isGuest && <NavItem href="/status-pesanan" icon={<ClipboardCheck />} label="Status Pesanan" pathname={pathname} onClick={closeMobileMenu} />}
-                {!isGuest && <NavItem href="/papan-tugas" icon={<PapanTugasIcon />} label="Papan Tugas" pathname={pathname} onClick={closeMobileMenu} />}
                 {!isGuest && <NavItem href="/packing" icon={<PackageCheck />} label="Checklist Packing" pathname={pathname} onClick={closeMobileMenu} />}
-                {(user?.role === "Owner" || user?.role === "Admin") && <NavItem href="/pengrajin" icon={<PengrajinIcon />} label="Pengrajin" pathname={pathname} onClick={closeMobileMenu} />}
                 {!isGuest && <NavItem href="/pelanggan" icon={<Contact />} label="Pelanggan" pathname={pathname} onClick={closeMobileMenu} />}
                 {!isGuest && <NavItem href="/penjualan" icon={<ReceiptHistoryIcon />} label="Riwayat Penjualan" pathname={pathname} onClick={closeMobileMenu} />}
                 {!isGuest && <NavItem href="/unduh-nota" icon={<FileDown />} label="Unduh Nota" pathname={pathname} onClick={closeMobileMenu} />}
+                {user?.role === "Owner" && <NavItem href="/laporan" icon={<LineChart />} label="Laporan" pathname={pathname} onClick={closeMobileMenu} />}
+                {!isGuest && <NavItem href="/log-aktivitas" icon={<ClipboardList />} label="Log Aktivitas" pathname={pathname} onClick={closeMobileMenu} />}
+
+                {/* MENU BARU — operasional pengrajin & keuangan. */}
+                {!isGuest && <NavItem href="/papan-tugas" icon={<PapanTugasIcon />} label="Papan Tugas" pathname={pathname} onClick={closeMobileMenu} />}
+                {(user?.role === "Owner" || user?.role === "Admin") && <NavItem href="/pengrajin" icon={<PengrajinIcon />} label="Pengrajin" pathname={pathname} onClick={closeMobileMenu} />}
                 {!isGuest && <NavItem href="/piutang" icon={<HandCoins />} label="Piutang" pathname={pathname} onClick={closeMobileMenu} />}
                 {(user?.role === "Owner" || user?.role === "Admin") && <NavItem href="/pengeluaran" icon={<Wallet />} label="Pengeluaran" pathname={pathname} onClick={closeMobileMenu} />}
                 {user?.role === "Owner" && <NavItem href="/laba-rugi" icon={<Scale />} label="Laba Rugi" pathname={pathname} onClick={closeMobileMenu} />}
-                {user?.role === "Owner" && <NavItem href="/laporan" icon={<LineChart />} label="Laporan" pathname={pathname} onClick={closeMobileMenu} />}
-                {!isGuest && <NavItem href="/log-aktivitas" icon={<ClipboardList />} label="Log Aktivitas" pathname={pathname} onClick={closeMobileMenu} />}
 
                 {user?.role === "Owner" && (
                   <div className="mt-4 pt-4 border-t border-pink-100">
@@ -1073,7 +1078,9 @@ function NavItem({ href, icon, label, pathname, onClick }: { href: string, icon:
       className={`flex items-center desktop:justify-center desktop:group-hover/sidebar:justify-start gap-3 short:gap-2 px-4 py-3.5 short:py-2.5 rounded-xl transition-all duration-200 font-bold tracking-wide overflow-hidden ${isActive ? 'bg-pink-600 text-white shadow-lg shadow-pink-200 transform scale-[1.02]' : 'text-rose-900 hover:bg-pink-50 hover:text-pink-700'}`}
     >
       <span className="flex-shrink-0">{icon}</span>
-      <span className="whitespace-nowrap overflow-hidden transition-all duration-300 desktop:max-w-0 desktop:opacity-0 desktop:group-hover/sidebar:max-w-44 desktop:group-hover/sidebar:opacity-100">
+      {/* `text-ellipsis` supaya label yang kelewat panjang berakhir dengan "…"
+          — terbaca sebagai disengaja, bukan seperti tampilan yang rusak. */}
+      <span className="whitespace-nowrap overflow-hidden text-ellipsis transition-all duration-300 desktop:max-w-0 desktop:opacity-0 desktop:group-hover/sidebar:max-w-48 desktop:group-hover/sidebar:opacity-100">
         {label}
       </span>
     </Link>

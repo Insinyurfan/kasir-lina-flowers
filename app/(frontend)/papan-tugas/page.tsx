@@ -21,6 +21,14 @@ import { formatQtySatuan, SATUAN_LABELS } from "@/lib/satuan";
 // Label satuan untuk keterangan kolom isian, mis. "Jumlah (½ Gross)".
 const SATUAN_TAMPIL = (satuan: string) => SATUAN_LABELS[satuan] ?? satuan;
 
+// Beban kerja ditampilkan dalam satuan ASLINYA ("2 Gross · 3 Lusin"), bukan
+// dikonversi ke pcs. Konversi pcs tetap dipakai server untuk mengurutkan, tapi
+// tidak pernah muncul di layar — pemakainya berpikir dalam gross dan lusin.
+const rincianSatuanTeks = (rincian: { satuan: string; jumlah: number }[]) =>
+  rincian.length === 0
+    ? "-"
+    : rincian.map((r) => formatQtySatuan(r.jumlah, r.satuan)).join(" · ");
+
 type StatusBaris = "belum" | "sebagian" | "dikerjakan" | "selesai";
 
 type Pemegang = {
@@ -120,6 +128,7 @@ type DataPapan = {
     kelompok: string | null;
     jumlahTugas: number;
     sisaPcs: number;
+    rincianSatuan: { satuan: string; jumlah: number }[];
     adaTerlambat: boolean;
     masihKosong: boolean;
   }[];
@@ -725,7 +734,7 @@ export default function PapanTugasPage() {
                 >
                   {p.masihKosong
                     ? "Masih kosong"
-                    : `${p.jumlahTugas} tugas · ${formatQtySatuan(p.sisaPcs, "pcs")}`}
+                    : `${p.jumlahTugas} tugas · ${rincianSatuanTeks(p.rincianSatuan)}`}
                 </p>
               </div>
             ))}

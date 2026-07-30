@@ -253,9 +253,21 @@ export async function GET(request: NextRequest) {
           nama: p.nama,
           kelompok: p.kelompok?.nama ?? null,
           jumlahTugas: miliknya.length,
-          // Disamakan ke pcs agar bisa dibandingkan antar pengrajin yang
-          // pekerjaannya bersatuan berbeda.
+          // pcs HANYA untuk mengurutkan — supaya 2 gross tidak kalah "sibuk"
+          // dari 3 lusin. Angka ini tidak untuk ditampilkan: pemakainya
+          // berpikir dalam gross dan lusin, bukan pcs.
           sisaPcs: miliknya.reduce((total, t) => total + t.sisaPcs, 0),
+          // Yang DITAMPILKAN: rincian menurut satuan aslinya, mis.
+          // "2 Gross · 3 Lusin". Kalau semua pekerjaannya satu satuan, ia
+          // otomatis tampil sebagai satu angka saja.
+          rincianSatuan: Array.from(
+            miliknya
+              .reduce((peta, t) => {
+                peta.set(t.satuan, (peta.get(t.satuan) ?? 0) + t.sisa);
+                return peta;
+              }, new Map<string, number>())
+              .entries()
+          ).map(([satuan, jumlah]) => ({ satuan, jumlah })),
           adaTerlambat: miliknya.some((t) => t.terlambat),
           masihKosong: miliknya.length === 0,
         };

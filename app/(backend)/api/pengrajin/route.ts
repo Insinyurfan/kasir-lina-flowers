@@ -78,6 +78,9 @@ export async function GET(request: NextRequest) {
         upahMasukKe: ketuaId ? { id: ketuaId, nama: namaPerId.get(ketuaId) ?? null } : null,
         jumlahTarifProduk: p.tarif.length,
         pekerjaanAktif: pekerjaanAktif.length,
+        // pcs hanya untuk membandingkan/mengurutkan; yang ditampilkan adalah
+        // rincian per satuan asli, karena pemakainya berpikir dalam gross
+        // dan lusin — bukan pcs.
         sisaPcsAktif: pekerjaanAktif.reduce(
           (total, tugas) =>
             total +
@@ -85,6 +88,16 @@ export async function GET(request: NextRequest) {
               (PCS_PER_UNIT[tugas.transactionItem.satuanHarga] ?? 1),
           0
         ),
+        rincianSatuan: Array.from(
+          pekerjaanAktif
+            .reduce((peta, tugas) => {
+              const satuan = tugas.transactionItem.satuanHarga;
+              const sisa = sisaPenugasan(tugas.jumlahDitugaskan, tugas.setoran);
+              peta.set(satuan, (peta.get(satuan) ?? 0) + sisa);
+              return peta;
+            }, new Map<string, number>())
+            .entries()
+        ).map(([satuan, jumlah]) => ({ satuan, jumlah })),
         saldo: hitungSaldo(p.setoranTerima, p.penarikan),
       };
     });

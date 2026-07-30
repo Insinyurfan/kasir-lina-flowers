@@ -22,6 +22,12 @@ import { PENERIMA_UPAH, SATUAN_TARIF, type PenerimaUpah, type SatuanTarif } from
 // Beban kerja disamakan ke pcs di server; ditampilkan lewat pemformat yang sama
 // dengan nota supaya satuannya terbaca wajar.
 import { formatQtySatuan } from "@/lib/satuan";
+
+// Ditampilkan dalam satuan asli ("2 Gross · 3 Lusin"), bukan pcs.
+const rincianSatuanTeks = (rincian: { satuan: string; jumlah: number }[]) =>
+  rincian.length === 0
+    ? "-"
+    : rincian.map((r) => formatQtySatuan(r.jumlah, r.satuan)).join(" · ");
 import { tanggalWIBString } from "@/lib/waktu";
 
 type RingkasanPengrajin = {
@@ -37,6 +43,7 @@ type RingkasanPengrajin = {
   jumlahTarifProduk: number;
   pekerjaanAktif: number;
   sisaPcsAktif: number;
+  rincianSatuan: { satuan: string; jumlah: number }[];
   saldo: number;
 };
 
@@ -716,7 +723,7 @@ export default function PengrajinPage() {
                       </p>
                       <p className="text-[11px] text-slate-500">
                         {p.pekerjaanAktif > 0
-                          ? `${p.pekerjaanAktif} pekerjaan · sisa ${formatQtySatuan(p.sisaPcsAktif, "pcs")}`
+                          ? `${p.pekerjaanAktif} pekerjaan · sisa ${rincianSatuanTeks(p.rincianSatuan)}`
                           : "Belum ada pekerjaan aktif"}
                         {" · "}
                         {p.jumlahTarifProduk > 0

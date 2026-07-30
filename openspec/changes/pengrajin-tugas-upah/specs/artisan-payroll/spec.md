@@ -4,7 +4,9 @@
 
 Sistem SHALL mencatat setoran barang jadi dari pengrajin terhadap sebuah penugasan. Setiap setoran MUST memuat tanggal, jumlah fisik yang diserahkan, dan nilai upahnya.
 
-Nilai upah MUST dihitung sebagai `jumlah × tarif pengrajin saat itu`, dan tarif tersebut MUST disimpan sebagai snapshot pada setoran.
+Nilai upah MUST dihitung sebagai `jumlah × tarif yang berlaku untuk pasangan pengrajin dan produk tersebut`, dan tarif itu MUST disimpan sebagai snapshot pada setoran.
+
+Setiap setoran MUST mencatat dua pihak: **pekerja** (pengrajin yang mengerjakan) dan **penerima** (pengrajin yang saldonya bertambah). Penerima ditentukan dari penanda penerima upah pekerja — dirinya sendiri, atau ketua kelompoknya.
 
 Total setoran sebuah penugasan MUST NOT melebihi jumlah yang ditugaskan.
 
@@ -25,24 +27,41 @@ Tanggal setoran MUST memakai kalender WIB.
 - **WHEN** pengguna mencatat setoran 4 gross pada penugasan bersisa 2 gross
 - **THEN** sistem menolak dan memberitahukan sisa yang sebenarnya
 
-#### Scenario: Setoran menambah saldo upah
+#### Scenario: Setoran menambah saldo pekerja sendiri
 
-- **WHEN** setoran bernilai Rp45.000 tercatat untuk seorang pengrajin bersaldo Rp0
+- **WHEN** setoran bernilai Rp45.000 tercatat untuk pengrajin berpenanda `SENDIRI` yang bersaldo Rp0
 - **THEN** saldo upah pengrajin itu menjadi Rp45.000
+
+#### Scenario: Setoran menambah saldo ketua kelompok
+
+- **WHEN** "MAMA ARI" berpenanda `KETUA` menyetorkan barang bernilai Rp45.000, dan ketua kelompoknya "MAMA BUDI"
+- **THEN** saldo Mama Budi bertambah Rp45.000, saldo Mama Ari tetap Rp0, dan setoran itu tetap tercatat sebagai hasil kerja Mama Ari
+
+#### Scenario: Riwayat kerja tetap pada pekerjanya
+
+- **WHEN** pengguna membuka riwayat "MAMA ARI" yang upahnya lewat ketua
+- **THEN** seluruh setorannya tetap terlihat sebagai pekerjaannya, dengan keterangan bahwa upahnya masuk ke saldo Mama Budi
 
 #### Scenario: Koreksi setoran salah catat
 
 - **WHEN** sebuah setoran dihapus karena salah catat
-- **THEN** saldo upah pengrajin berkurang sebesar nilai setoran itu, sisa penugasan bertambah kembali, dan penghapusan tercatat di log aktivitas
+- **THEN** saldo upah **penerima** berkurang sebesar nilai setoran itu, sisa penugasan bertambah kembali, dan penghapusan tercatat di log aktivitas
 
 ### Requirement: Saldo upah sebagai buku besar
 
-Saldo upah seorang pengrajin SHALL dihitung sebagai `Σ nilai setoran − Σ nominal penarikan`. Saldo MUST NOT disimpan sebagai angka yang dapat disunting langsung, sehingga tidak bisa dimanipulasi tanpa jejak.
+Saldo upah seorang pengrajin SHALL dihitung sebagai `Σ nilai setoran yang penerimanya dia − Σ nominal penarikannya`. Saldo MUST NOT disimpan sebagai angka yang dapat disunting langsung, sehingga tidak bisa dimanipulasi tanpa jejak.
+
+Pengrajin yang upahnya diteruskan ke ketua SHALL selalu bersaldo nol, dan antarmuka MUST menyatakan ke siapa upahnya masuk agar tidak disalahpahami sebagai belum dibayar.
 
 #### Scenario: Saldo mengikuti setoran dan penarikan
 
 - **WHEN** seorang pengrajin punya setoran total Rp3.000.000 dan penarikan total Rp1.500.000
 - **THEN** saldonya Rp1.500.000
+
+#### Scenario: Saldo ketua menggabungkan kerja anggotanya
+
+- **WHEN** Mama Budi bekerja sendiri bernilai Rp500.000 dan menerima limpahan dua anggota masing-masing Rp300.000
+- **THEN** saldo Mama Budi Rp1.100.000
 
 #### Scenario: Saldo tidak dapat disunting langsung
 
@@ -52,6 +71,8 @@ Saldo upah seorang pengrajin SHALL dihitung sebagai `Σ nilai setoran − Σ nom
 ### Requirement: Penarikan upah penuh atau sebagian
 
 Sistem SHALL memungkinkan penarikan upah penuh maupun sebagian. Nominal penarikan MUST lebih besar dari nol dan MUST NOT melebihi saldo yang tersedia.
+
+Penarikan hanya dapat dilakukan oleh **penerima** saldo. Pengrajin yang upahnya diteruskan ke ketua MUST NOT dapat menarik sendiri.
 
 Setiap penarikan MUST tercatat dengan tanggal dan pencatatnya, dan MUST muncul di riwayat pengrajin bersangkutan.
 
@@ -64,6 +85,11 @@ Setiap penarikan MUST tercatat dengan tanggal dan pencatatnya, dan MUST muncul d
 
 - **WHEN** pengguna mencatat penarikan Rp4.000.000 atas saldo Rp3.000.000
 - **THEN** sistem menolak dan memberitahukan saldo yang tersedia
+
+#### Scenario: Anggota berpenanda KETUA tidak dapat menarik sendiri
+
+- **WHEN** pengguna mencoba mencatat penarikan atas nama pengrajin yang upahnya diteruskan ke ketua
+- **THEN** sistem menolak dan mengarahkan penarikan ke ketua kelompoknya
 
 #### Scenario: Riwayat lengkap per pengrajin
 

@@ -12,7 +12,9 @@ Selain itu, upah pengrajin adalah komponen biaya terbesar kedua setelah bahan ba
 
 ## What Changes
 
-- **Master Pengrajin & Kelompok**: struktur ketua → anggota (mis. Ketua Mama Budi → Mama Uri, Mama Ari), beserta tarif per unit.
+- **Master Pengrajin & Kelompok**: struktur ketua → anggota (mis. Ketua Mama Budi → Mama Uri, Mama Ari). Ketua adalah pengrajin biasa yang juga mengerjakan barang — sesuai kenyataan di lapangan.
+- **Tarif per pengrajin × produk**: Bando Pompom yang lebih rumit dibayar lebih tinggi daripada Bando Satin, dan besarannya bisa berbeda antar orang. Setiap pengrajin MAY punya **tarif cadangan** yang dipakai bila tarif untuk produk tertentu belum diisi, sehingga produk baru tidak pernah membuat setoran gagal dicatat.
+- **Penerima upah dapat berbeda dari pekerja**: sebagian pengrajin menerima upahnya sendiri, sebagian lewat ketua kelompoknya yang lalu membagi sendiri. Setoran mencatat keduanya — siapa yang mengerjakan, dan saldo siapa yang bertambah.
 - **Penugasan per baris barang**, bukan per nota. Satu `TransactionItem` dapat ditugaskan ke seorang pengrajin, sehingga Bando Satin dan Bando Pompom dalam satu nota bisa dipegang orang berbeda. **BREAKING (internal)**: `Transaction.nama_pengrajin` berhenti menjadi sumber kebenaran dan hanya dipertahankan sebagai catatan lama.
 - **Papan Tugas**: satu layar berisi seluruh pekerjaan yang belum disetor, dikelompokkan per pengrajin dan per toko, dengan **tanggal janji selesai**. Menjawab "siapa mengerjakan apa" dan "orderan mana yang belum dipegang siapa pun".
 - **Daftar belum ditugaskan**: baris barang yang belum punya pengrajin ditampilkan menonjol — ini jaring pengaman agar orderan tidak ke-skip.
@@ -26,9 +28,9 @@ Selain itu, upah pengrajin adalah komponen biaya terbesar kedua setelah bahan ba
 
 ### New Capabilities
 
-- `artisan-directory`: Pengrajin dan kelompok dikelola sebagai master data dengan struktur ketua → anggota dan tarif per unit.
+- `artisan-directory`: Pengrajin dan kelompok dikelola sebagai master data dengan struktur ketua → anggota, tarif upah per pengrajin × produk beserta tarif cadangan, dan penetapan penerima upah.
 - `work-assignment`: Setiap baris barang pada pesanan dapat ditugaskan ke seorang pengrajin dengan tanggal janji selesai; sistem menampilkan pekerjaan aktif per pengrajin, baris yang belum ditugaskan, dan siapa yang masih kosong.
-- `artisan-payroll`: Setoran fisik pengrajin menjadi saldo upah yang menumpuk otomatis dan dapat ditarik penuh atau sebagian, dengan riwayat lengkap dan tercatat sebagai biaya usaha.
+- `artisan-payroll`: Setoran fisik pengrajin menjadi saldo upah pada penerima yang ditetapkan (dirinya sendiri atau ketua kelompoknya), menumpuk otomatis, dapat ditarik penuh atau sebagian, dengan riwayat lengkap dan tercatat sebagai biaya usaha.
 
 ### Modified Capabilities
 
@@ -39,10 +41,11 @@ Selain itu, upah pengrajin adalah komponen biaya terbesar kedua setelah bahan ba
 ## Impact
 
 - **Model data**:
-  - `Kelompok` (nama, namaKetua) dan `Pengrajin` (nama, kelompokId, tarifPerUnit, aktif).
+  - `Kelompok` (nama, ketuaId → Pengrajin) dan `Pengrajin` (nama, kelompokId, tarifCadangan?, satuanTarif, penerimaUpah, aktif).
+  - `TarifPengrajin` (pengrajinId, productId, tarif) — unik per pasangan, inilah tarif per produk.
   - `Penugasan` (transactionItemId, pengrajinId, jumlahDitugaskan, tenggat, catatan) — kunci fitur ini.
-  - `Setoran` (penugasanId, pengrajinId, tanggal, jumlah, tarifSnapshot, nilai).
-  - `Penarikan` (pengrajinId, tanggal, nominal, expenseId) — tertaut ke `Expense` agar masuk Laba Rugi.
+  - `Setoran` (penugasanId, pengrajinId **pekerja**, penerimaId **pemilik saldo**, tanggal, jumlah, tarifSnapshot, nilai).
+  - `Penarikan` (pengrajinId **penerima**, tanggal, nominal, expenseId) — tertaut ke `Expense` agar masuk Laba Rugi.
 - **Keterkaitan dengan yang sudah ada**: `TransactionItem` sudah punya `packed`/`packedAt` untuk checklist packing. Penugasan dan setoran berdiri di sampingnya — barang boleh disetor pengrajin tetapi belum masuk mobil, dan keduanya perlu terlihat terpisah.
 - **API**: rute baru `pengrajin` (CRUD + daftar beban kerja), `penugasan` (tetapkan/ubah/hapus), `setoran` (catat, termasuk sebagian), `upah` (saldo, penarikan). Semuanya memakai `lib/apiAuth.ts`; tulis dibatasi Owner/Admin.
 - **UI**: halaman **Papan Tugas** (mobile-first — Bibi memakainya pagi-pagi sambil menyiapkan barang), halaman **Pengrajin** (master + saldo + tarik upah), dan tautan di sidebar.

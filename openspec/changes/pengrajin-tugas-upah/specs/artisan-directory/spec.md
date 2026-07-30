@@ -2,13 +2,13 @@
 
 ### Requirement: Master pengrajin
 
-Sistem SHALL menyimpan daftar pengrajin berisi nama, kelompok (opsional), tarif upah per unit, dan penanda aktif. Nama pengrajin MUST unik agar penugasan tidak pernah ambigu.
+Sistem SHALL menyimpan daftar pengrajin berisi nama, kelompok (opsional), tarif cadangan (opsional), penerima upah, dan penanda aktif. Nama pengrajin MUST unik agar penugasan tidak pernah ambigu.
 
 Pengrajin yang berhenti bekerja SHALL dapat ditandai tidak aktif alih-alih dihapus, sehingga riwayat setoran dan upahnya tetap utuh.
 
 #### Scenario: Menambah pengrajin baru
 
-- **WHEN** pengguna menyimpan pengrajin bernama "MAMA URI" dengan tarif Rp15.000 per gross
+- **WHEN** pengguna menyimpan pengrajin bernama "MAMA URI" dengan tarif cadangan Rp15.000 per gross
 - **THEN** pengrajin tersebut muncul di daftar dan dapat dipilih saat menugaskan pekerjaan
 
 #### Scenario: Nama ganda ditolak
@@ -30,31 +30,78 @@ Pengrajin yang berhenti bekerja SHALL dapat ditandai tidak aktif alih-alih dihap
 
 Sistem SHALL mendukung pengelompokan pengrajin di bawah seorang ketua (mis. Ketua Mama Budi → Mama Uri, Mama Ari). Kelompok bersifat OPTIONAL — pengrajin tanpa kelompok tetap sah.
 
+Ketua kelompok MUST merujuk ke sebuah pengrajin, bukan nama teks bebas, karena ketua juga mengerjakan barang dan dapat memegang saldo upah.
+
 #### Scenario: Mengelompokkan pengrajin
 
-- **WHEN** pengguna menempatkan "MAMA URI" dan "MAMA ARI" ke kelompok berketua "MAMA BUDI"
+- **WHEN** pengguna menempatkan "MAMA URI" dan "MAMA ARI" ke kelompok berketua pengrajin "MAMA BUDI"
 - **THEN** papan tugas dapat menampilkan pekerjaan mereka dikelompokkan di bawah ketua tersebut
+
+#### Scenario: Ketua juga mengerjakan barang
+
+- **WHEN** pekerjaan ditugaskan kepada "MAMA BUDI" yang merupakan ketua kelompok
+- **THEN** penugasan tersebut sah dan muncul di papan tugas seperti pengrajin lain
 
 #### Scenario: Pengrajin tanpa kelompok
 
 - **WHEN** pengguna menyimpan pengrajin tanpa memilih kelompok
 - **THEN** pengrajin tetap tersimpan dan muncul dalam kelompok "Tanpa Kelompok" di papan tugas
 
-### Requirement: Tarif upah per unit
+### Requirement: Tarif upah per pengrajin dan produk
 
-Setiap pengrajin SHALL memiliki tarif upah per unit yang dipakai untuk menghitung nilai setoran. Tarif MUST bilangan bulat rupiah lebih besar dari nol.
+Sistem SHALL menyimpan tarif upah per pasangan **pengrajin × produk**, karena produk yang lebih rumit dibayar lebih tinggi dan besarannya dapat berbeda antar orang. Pasangan pengrajin dan produk MUST unik.
 
-Nilai tarif MUST disimpan sebagai snapshot pada setiap setoran, sehingga perubahan tarif di kemudian hari TIDAK mengubah nilai setoran yang sudah tercatat.
+Setiap pengrajin MAY memiliki **tarif cadangan** yang dipakai bila tarif untuk produk tertentu belum diisi. Tanpa mekanisme ini, satu produk baru akan membuat setoran gagal dicatat tepat di jam tersibuk.
 
-#### Scenario: Perubahan tarif tidak mengubah riwayat
+Seluruh tarif MUST bilangan bulat rupiah lebih besar dari nol.
 
-- **WHEN** seorang pengrajin punya setoran lama bertarif Rp15.000 lalu tarifnya diubah menjadi Rp17.000
-- **THEN** nilai setoran lama tetap dihitung dengan Rp15.000, dan hanya setoran berikutnya memakai Rp17.000
+#### Scenario: Tarif berbeda antar produk
+
+- **WHEN** Mama Uri punya tarif Bando Satin Rp12.000 dan Bando Pompom Rp18.000 per gross
+- **THEN** setoran 3 gross Bando Satin bernilai Rp36.000 dan setoran 3 gross Bando Pompom bernilai Rp54.000
+
+#### Scenario: Tarif berbeda antar pengrajin untuk produk yang sama
+
+- **WHEN** Bando Pompom bertarif Rp18.000 untuk Mama Uri dan Rp20.000 untuk Mama Ari
+- **THEN** setoran masing-masing dihitung dengan tarifnya sendiri
+
+#### Scenario: Produk belum punya tarif khusus
+
+- **WHEN** setoran dicatat untuk produk yang belum punya tarif khusus, sementara pengrajinnya punya tarif cadangan Rp15.000
+- **THEN** sistem memakai Rp15.000 dan menandai pada setoran bahwa tarif cadangan yang dipakai
+
+#### Scenario: Tanpa tarif khusus maupun cadangan
+
+- **WHEN** setoran dicatat untuk produk tanpa tarif khusus dan pengrajinnya tidak punya tarif cadangan
+- **THEN** sistem menolak pencatatan dan menyebut nama pengrajin serta produk yang tarifnya belum diatur
 
 #### Scenario: Tarif tidak sah ditolak
 
-- **WHEN** pengguna menyimpan pengrajin dengan tarif 0 atau negatif
+- **WHEN** pengguna menyimpan tarif 0 atau negatif
 - **THEN** sistem menolak penyimpanan dan meminta tarif yang lebih besar dari nol
+
+### Requirement: Penetapan penerima upah
+
+Setiap pengrajin SHALL memiliki penanda penerima upah bernilai `SENDIRI` atau `KETUA`. Bawaannya `SENDIRI`.
+
+Pengrajin bernilai `KETUA` MUST tergabung dalam kelompok yang sudah punya ketua, dan ketuanya MUST NOT berupa dirinya sendiri.
+
+Pengrajin yang menjadi ketua kelompok MUST bernilai `SENDIRI`, agar tidak terbentuk rantai penerusan upah yang berputar.
+
+#### Scenario: Menetapkan upah lewat ketua
+
+- **WHEN** "MAMA ARI" ditetapkan `KETUA` dan ia anggota kelompok berketua "MAMA BUDI"
+- **THEN** penetapan tersimpan, dan setoran Mama Ari kelak menambah saldo Mama Budi
+
+#### Scenario: KETUA tanpa kelompok ditolak
+
+- **WHEN** pengguna menetapkan `KETUA` pada pengrajin yang tidak punya kelompok, atau kelompoknya belum punya ketua
+- **THEN** sistem menolak penyimpanan dan menjelaskan bahwa penerima upahnya belum jelas
+
+#### Scenario: Ketua tidak boleh meneruskan ke dirinya sendiri
+
+- **WHEN** pengguna menetapkan `KETUA` pada pengrajin yang justru menjadi ketua kelompok itu
+- **THEN** sistem menolak penyimpanan
 
 ### Requirement: Otorisasi master pengrajin
 

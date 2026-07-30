@@ -74,9 +74,37 @@ Satu baris `Setoran` sekaligus (a) mengurangi sisa penugasan di papan tugas dan 
 
 ### 6. Tarif disimpan sebagai snapshot pada setiap setoran
 
-`Setoran.tarifSnapshot` diisi dari tarif pengrajin saat setoran dicatat.
+`Setoran.tarifSnapshot` diisi dari tarif yang berlaku saat setoran dicatat.
 
 *Alasan:* tarif naik dari waktu ke waktu. Tanpa snapshot, menaikkan tarif akan diam-diam mengubah nilai setoran berbulan-bulan lalu — dan saldo yang sudah dibayar jadi tidak cocok. Pola ini sama dengan `basePrice`/`priceModifier` pada `TransactionItem` yang sudah ada di repo.
+
+### 6a. Tarif per pasangan pengrajin × produk, dengan tarif cadangan per orang
+
+Tabel `TarifPengrajin(pengrajinId, productId, tarif)` unik per pasangan, ditambah kolom opsional `Pengrajin.tarifCadangan`.
+
+Urutan penentuan tarif saat setoran dicatat:
+
+1. `TarifPengrajin` untuk pasangan pengrajin & produk itu, bila ada
+2. `Pengrajin.tarifCadangan`, bila ada
+3. bila keduanya kosong → **tolak** dengan pesan menyebut nama pengrajin dan produknya
+
+*Alasan pilihan ini (diputuskan pemilik):* produk yang lebih rumit memang dibayar lebih tinggi, dan besarannya berbeda antar orang. Satu angka per orang tidak mencerminkan kenyataan.
+
+*Alasan tarif cadangan:* tanpa langkah 2, satu produk baru akan membuat setoran tidak bisa dicatat tepat di pagi tersibuk — persis waktu ketika orang paling tidak punya kesabaran untuk membuka halaman master dan mengisi tarif. Tarif cadangan mengubah kegagalan keras menjadi perkiraan yang bisa dikoreksi belakangan.
+
+*Trade-off:* tabel tarif tumbuh sebesar (jumlah pengrajin × jumlah produk yang ia kerjakan) dan perlu dirawat. Halaman Pengrajin MUST memperlihatkan produk mana yang masih memakai tarif cadangan, supaya yang belum diisi tidak terlupakan diam-diam.
+
+### 6b. Setoran mencatat pekerja dan penerima secara terpisah
+
+`Setoran.pengrajinId` = yang mengerjakan. `Setoran.penerimaId` = yang saldonya bertambah. Penerima diturunkan dari `Pengrajin.penerimaUpah` (`SENDIRI` atau `KETUA`) saat setoran dibuat, lalu disimpan.
+
+*Alasan (diputuskan pemilik):* di lapangan campur — sebagian pengrajin dibayar langsung, sebagian lewat ketua kelompoknya yang lalu membagi sendiri. Kalau saldo hanya per individu, alur lewat ketua tidak terwakili; kalau hanya per kelompok, yang dibayar langsung jadi hilang jejaknya.
+
+*Konsekuensi yang disengaja:* riwayat kerja tetap menempel pada pekerjanya walau upahnya masuk ke ketua. Jadi pertanyaan "Mama Ari sudah mengerjakan apa saja bulan ini" tetap terjawab, sekalipun saldonya nol.
+
+*Aturan penjaga:* ketua kelompok MUST bernilai `SENDIRI`, dan `KETUA` MUST punya kelompok yang berketua — supaya tidak ada rantai penerusan berputar atau upah yang tidak jelas tujuannya. Ini divalidasi saat menyimpan master, bukan saat setoran, agar kesalahannya ketahuan lebih awal.
+
+*Alternatif yang ditolak:* menyimpan saldo di `Kelompok` alih-alih di ketua. Ketua juga bekerja sendiri (bibi pemilik adalah salah satu pengrajin), jadi saldonya akan bercampur antara upah pribadinya dan limpahan anggota tanpa cara memisahkan. Menaruh saldo pada pengrajin-yang-menjadi-ketua membuat keduanya satu kantong yang memang begitu kenyataannya.
 
 ### 7. Biaya diakui saat **penarikan**, bukan saat setoran
 
@@ -135,7 +163,8 @@ Bukan tab di dalam Status Pesanan.
 
 ## Open Questions
 
-1. **Tarif per pengrajin atau per produk?** Desain ini memilih tarif per pengrajin (satu angka per orang) karena paling sederhana untuk dirawat. Kalau kenyataannya membuat Bando Pompom dibayar lebih tinggi daripada Bando Satin, modelnya perlu `tarif per (pengrajin × produk)` — perubahan yang cukup besar. **Perlu dipastikan ke pemilik sebelum implementasi dimulai.**
-2. **Satuan setoran.** Penugasan memakai satuan pesanan (gross/lusin/pcs). Apakah tarif upah selalu mengikuti satuan yang sama, atau ada pengrajin yang dibayar per pcs meski pesanannya per gross?
-3. **Barang cacat.** Kalau dari 3 gross setoran ada yang tidak layak kirim, apakah upahnya dipotong? Desain saat ini menganggap seluruh setoran dibayar penuh.
-4. **Kelompok dan upah.** Apakah upah dibayar ke masing-masing anggota, atau ke ketua kelompok yang lalu membaginya sendiri? Desain saat ini mengasumsikan per individu.
+1. ~~Tarif per pengrajin atau per produk?~~ **Terjawab 30 Juli 2026:** per pasangan pengrajin × produk, dengan tarif cadangan per orang. Lihat keputusan 6a.
+2. ~~Kelompok dan upah.~~ **Terjawab 30 Juli 2026:** campur — sebagian dibayar langsung, sebagian lewat ketua. Lihat keputusan 6b.
+3. **Satuan setoran.** Penugasan memakai satuan pesanan (gross/lusin/pcs). Apakah tarif upah selalu mengikuti satuan yang sama, atau ada pengrajin yang dibayar per pcs meski pesanannya per gross? Desain saat ini mengasumsikan satuan tarif sama dengan satuan pesanan; kalau tidak, perlu konversi dan `satuanTarif` menjadi wajib dipakai dalam perhitungan, bukan sekadar label.
+4. **Barang cacat.** Kalau dari 3 gross setoran ada yang tidak layak kirim, apakah upahnya dipotong? Desain saat ini menganggap seluruh setoran dibayar penuh. Kalau perlu dipotong, cara paling sederhana adalah mencatat setoran sejumlah yang layak saja, lalu sisanya tetap menggantung di papan tugas sebagai pekerjaan ulang.
+5. **Perubahan tarif dan setoran yang belum ditarik.** Bila tarif naik sementara ada saldo dari setoran lama, saldo itu tetap memakai tarif lama (sesuai keputusan 6). Perlu dipastikan pemilik setuju bahwa kenaikan tarif tidak berlaku surut.

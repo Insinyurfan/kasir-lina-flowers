@@ -896,7 +896,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               {/* IDENTITAS PENGGUNA (dulu di bawah). Logo & nama toko sudah pindah
                   ke header depan, jadi posisi teratas ini diisi profil: foto, nama,
                   @username, dan label Role yang tetap dipertahankan. */}
-              <div className="flex items-start justify-between mb-6 short:mb-3 mt-2 short:mt-0 desktop:px-0">
+              {/* `shrink-0` menjaga blok profil tetap utuh di puncak sidebar:
+                  yang menggulung hanya daftar menunya, bukan identitas pengguna. */}
+              <div className="shrink-0 flex items-start justify-between mb-6 short:mb-3 mt-2 short:mt-0 desktop:px-0">
                 <div ref={accountMenuRef} className="relative flex-1 min-w-0">
                   <button
                     type="button"
@@ -964,7 +966,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 </button>
               </div>
 
-              <nav className="flex flex-col gap-2 short:gap-1 flex-1 overflow-y-auto desktop:overflow-y-visible overflow-x-hidden desktop:overflow-x-visible pr-1 desktop:pr-0">
+              {/* `min-h-0` WAJIB: flex item bawaannya `min-height: auto`, jadi ia
+                  menolak menyusut di bawah tinggi kontennya dan `overflow-y-auto`
+                  tidak pernah aktif — menunya terpotong, bukan bisa digulung.
+                  Desktop dulu dipaksa `overflow-y-visible`, itu sebabnya menu
+                  terpotong begitu daftarnya bertambah panjang. */}
+              <nav className="lina-sidebar-nav flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto overflow-x-hidden pr-1 short:gap-1">
                 {!isGuest && <NavItem href="/dashboard" icon={<House />} label="Dashboard" pathname={pathname} onClick={closeMobileMenu} />}
                 {!isGuest && <NavItem href="/pos" icon={<ShoppingCart />} label="Kasir (POS)" pathname={pathname} onClick={closeMobileMenu} />}
                 <NavItem href="/produk" icon={<Package />} label="Data Produk" pathname={pathname} onClick={closeMobileMenu} />

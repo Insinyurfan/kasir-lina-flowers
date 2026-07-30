@@ -85,6 +85,40 @@ body {
   animation: toast-masuk 0.22s ease-out;
 }
 
+/* Daftar menu sidebar. Menggulung sendiri saat menunya lebih panjang daripada
+   layar — blok profil di atasnya sengaja TIDAK ikut menggulung.
+
+   Scrollbar-nya dibuat tipis dan nyaris tak terlihat sampai disentuh, karena
+   di desktop sidebar menciut jadi 80px: batang gulung bawaan akan memakan
+   ruang ikon dan terlihat seperti cacat tampilan. */
+.lina-sidebar-nav {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+  scrollbar-gutter: stable;
+}
+
+.lina-sidebar-nav:hover {
+  scrollbar-color: var(--lina-blush-300) transparent;
+}
+
+.lina-sidebar-nav::-webkit-scrollbar {
+  width: 6px;
+}
+
+.lina-sidebar-nav::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.lina-sidebar-nav::-webkit-scrollbar-thumb {
+  background-color: transparent;
+  border-radius: 999px;
+  transition: background-color 0.2s ease;
+}
+
+.lina-sidebar-nav:hover::-webkit-scrollbar-thumb {
+  background-color: var(--lina-blush-300);
+}
+
 .lina-soft-field {
   border-color: var(--lina-blush-200) !important;
   background: var(--lina-blush-100) !important;

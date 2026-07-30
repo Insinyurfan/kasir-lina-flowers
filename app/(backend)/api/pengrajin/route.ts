@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { recordActivityLog } from "@/lib/activityLog";
 import { actorFromUser, requireRole, requireUser } from "@/lib/apiAuth";
+import { PCS_PER_UNIT } from "@/lib/satuan";
 import {
   hitungSaldo,
   isPenerimaUpah,
@@ -25,6 +26,9 @@ const pengrajinInclude = {
       id: true,
       jumlahDitugaskan: true,
       setoran: { select: { jumlah: true } },
+      // Satuan dibutuhkan untuk menyamakan beban kerja ke pcs — 2 gross dan
+      // 5 lusin tidak boleh dijumlahkan mentah-mentah.
+      transactionItem: { select: { satuanHarga: true } },
     },
   },
   setoranTerima: { select: { nilai: true } },
@@ -74,8 +78,11 @@ export async function GET(request: NextRequest) {
         upahMasukKe: ketuaId ? { id: ketuaId, nama: namaPerId.get(ketuaId) ?? null } : null,
         jumlahTarifProduk: p.tarif.length,
         pekerjaanAktif: pekerjaanAktif.length,
-        sisaUnitAktif: pekerjaanAktif.reduce(
-          (total, tugas) => total + sisaPenugasan(tugas.jumlahDitugaskan, tugas.setoran),
+        sisaPcsAktif: pekerjaanAktif.reduce(
+          (total, tugas) =>
+            total +
+            sisaPenugasan(tugas.jumlahDitugaskan, tugas.setoran) *
+              (PCS_PER_UNIT[tugas.transactionItem.satuanHarga] ?? 1),
           0
         ),
         saldo: hitungSaldo(p.setoranTerima, p.penarikan),

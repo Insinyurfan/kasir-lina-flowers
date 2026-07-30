@@ -19,6 +19,9 @@ import {
 import { getSavedUserSession } from "@/lib/userSession";
 import { toast } from "@/lib/toast";
 import { PENERIMA_UPAH, SATUAN_TARIF, type PenerimaUpah, type SatuanTarif } from "@/lib/pengrajin";
+// Beban kerja disamakan ke pcs di server; ditampilkan lewat pemformat yang sama
+// dengan nota supaya satuannya terbaca wajar.
+import { formatQtySatuan } from "@/lib/satuan";
 import { tanggalWIBString } from "@/lib/waktu";
 
 type RingkasanPengrajin = {
@@ -33,7 +36,7 @@ type RingkasanPengrajin = {
   upahMasukKe: { id: number; nama: string | null } | null;
   jumlahTarifProduk: number;
   pekerjaanAktif: number;
-  sisaUnitAktif: number;
+  sisaPcsAktif: number;
   saldo: number;
 };
 
@@ -713,7 +716,7 @@ export default function PengrajinPage() {
                       </p>
                       <p className="text-[11px] text-slate-500">
                         {p.pekerjaanAktif > 0
-                          ? `${p.pekerjaanAktif} pekerjaan · sisa ${p.sisaUnitAktif} ${p.satuanTarif}`
+                          ? `${p.pekerjaanAktif} pekerjaan · sisa ${formatQtySatuan(p.sisaPcsAktif, "pcs")}`
                           : "Belum ada pekerjaan aktif"}
                         {" · "}
                         {p.jumlahTarifProduk > 0

@@ -8,6 +8,11 @@ import {
   sisaPenugasan,
   terlambat,
 } from "@/lib/pengrajin";
+import { PCS_PER_UNIT } from "@/lib/satuan";
+
+// Membandingkan beban kerja lintas satuan hanya sah setelah disamakan ke pcs:
+// 2 gross dan 5 lusin tidak bisa dijumlahkan mentah-mentah menjadi "7 unit".
+const kePcs = (jumlah: number, satuan: string) => jumlah * (PCS_PER_UNIT[satuan] ?? 1);
 
 export const dynamic = "force-dynamic";
 
@@ -90,6 +95,7 @@ export async function GET(request: NextRequest) {
       jumlahDitugaskan: number;
       sudahDisetor: number;
       sisa: number;
+      sisaPcs: number;
       tenggat: Date;
       terlambat: boolean;
       hariKeTenggat: number;
@@ -116,6 +122,7 @@ export async function GET(request: NextRequest) {
           jumlahDitugaskan: tugas.jumlahDitugaskan,
           sudahDisetor: jumlahkanSetoran(tugas.setoran),
           sisa,
+          sisaPcs: kePcs(sisa, baris.satuanHarga),
           tenggat: tugas.tenggat,
           terlambat: terlambat(tugas.tenggat, sekarang),
           hariKeTenggat: hariKeTenggat(tugas.tenggat, sekarang),
@@ -175,13 +182,15 @@ export async function GET(request: NextRequest) {
           nama: p.nama,
           kelompok: p.kelompok?.nama ?? null,
           jumlahTugas: miliknya.length,
-          sisaUnit: miliknya.reduce((total, t) => total + t.sisa, 0),
+          // Disamakan ke pcs agar bisa dibandingkan antar pengrajin yang
+          // pekerjaannya bersatuan berbeda.
+          sisaPcs: miliknya.reduce((total, t) => total + t.sisaPcs, 0),
           adaTerlambat: miliknya.some((t) => t.terlambat),
           masihKosong: miliknya.length === 0,
         };
       })
       // Paling sedikit dulu — inilah jawaban "siapa yang belum dapat kerjaan".
-      .sort((a, b) => a.sisaUnit - b.sisaUnit || a.jumlahTugas - b.jumlahTugas);
+      .sort((a, b) => a.sisaPcs - b.sisaPcs || a.jumlahTugas - b.jumlahTugas);
 
     return NextResponse.json({
       belumDitugaskan,

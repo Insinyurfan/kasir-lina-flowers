@@ -14,6 +14,12 @@ import { getSavedUserSession } from "@/lib/userSession";
 import { toast } from "@/lib/toast";
 import { HARI_TENGGAT_BAWAAN } from "@/lib/pengrajin";
 import { tanggalWIBString } from "@/lib/waktu";
+// Menampilkan satuan mentah dari basis data ("setengah_gross") bocor ke layar.
+// Pemformat ini sudah dipakai nota & Status Pesanan: 5 setengah_gross -> "2½ Gross".
+import { formatQtySatuan, SATUAN_LABELS } from "@/lib/satuan";
+
+// Label satuan untuk keterangan kolom isian, mis. "Jumlah (½ Gross)".
+const SATUAN_TAMPIL = (satuan: string) => SATUAN_LABELS[satuan] ?? satuan;
 
 type BarisBelumDitugaskan = {
   transactionItemId: number;
@@ -42,6 +48,7 @@ type BarisTugas = {
   jumlahDitugaskan: number;
   sudahDisetor: number;
   sisa: number;
+  sisaPcs: number;
   tenggat: string;
   terlambat: boolean;
   hariKeTenggat: number;
@@ -63,7 +70,7 @@ type DataPapan = {
     nama: string;
     kelompok: string | null;
     jumlahTugas: number;
-    sisaUnit: number;
+    sisaPcs: number;
     adaTerlambat: boolean;
     masihKosong: boolean;
   }[];
@@ -182,7 +189,9 @@ export default function PapanTugasPage() {
       if (!res.ok) throw new Error(hasil.error || "Gagal menetapkan penugasan.");
 
       const nama = pengrajin.find((p) => p.id === Number(pilihPengrajin))?.nama ?? "pengrajin";
-      toast.success(`${jumlah} ${tugaskan.satuan} ${tugaskan.namaProduk} → ${nama}.`);
+      toast.success(
+        `${formatQtySatuan(jumlah, tugaskan.satuan)} ${tugaskan.namaProduk} → ${nama}.`
+      );
       setTugaskan(null);
       await muat();
     } catch (error) {
@@ -217,7 +226,7 @@ export default function PapanTugasPage() {
       toast.success(
         hasil.sisaPenugasan === 0
           ? `Tuntas! Setoran ${setor.namaPengrajin} tercatat${catatanTarif}.`
-          : `Setoran tercatat. Sisa ${hasil.sisaPenugasan} ${setor.satuan}${catatanTarif}.`
+          : `Setoran tercatat. Sisa ${formatQtySatuan(hasil.sisaPenugasan, setor.satuan)}${catatanTarif}.`
       );
       setSetor(null);
       await muat();
@@ -259,7 +268,7 @@ export default function PapanTugasPage() {
   const batalkanPenugasan = async (tugas: BarisTugas) => {
     if (
       !confirm(
-        `Batalkan penugasan ${tugas.jumlahDitugaskan} ${tugas.satuan} ${tugas.namaProduk} untuk ${tugas.namaPengrajin}?`
+        `Batalkan penugasan ${formatQtySatuan(tugas.jumlahDitugaskan, tugas.satuan)} ${tugas.namaProduk} untuk ${tugas.namaPengrajin}?`
       )
     )
       return;
@@ -455,11 +464,11 @@ export default function PapanTugasPage() {
                             )}
                           </p>
                           <p className="text-[11px] font-bold text-amber-700">
-                            {baris.sisa} {baris.satuan}
+                            {formatQtySatuan(baris.sisa, baris.satuan)}
                             {baris.sisa < baris.jumlahDipesan && (
                               <span className="font-normal text-slate-400">
                                 {" "}
-                                dari {baris.jumlahDipesan}
+                                dari {formatQtySatuan(baris.jumlahDipesan, baris.satuan)}
                               </span>
                             )}
                           </p>
@@ -621,7 +630,9 @@ export default function PapanTugasPage() {
                     p.masihKosong ? "text-emerald-700" : "text-slate-600"
                   }`}
                 >
-                  {p.masihKosong ? "Masih kosong" : `${p.jumlahTugas} tugas · ${p.sisaUnit} unit`}
+                  {p.masihKosong
+                    ? "Masih kosong"
+                    : `${p.jumlahTugas} tugas · ${formatQtySatuan(p.sisaPcs, "pcs")}`}
                 </p>
               </div>
             ))}
@@ -638,7 +649,7 @@ export default function PapanTugasPage() {
                 <h2 className="text-lg font-black text-slate-800">Tugaskan Pekerjaan</h2>
                 <p className="text-xs text-slate-500">
                   {tugaskan.namaProduk} · {tugaskan.transaksi.nama_pembeli || "Tanpa nama"} · sisa{" "}
-                  {tugaskan.sisa} {tugaskan.satuan}
+                  {formatQtySatuan(tugaskan.sisa, tugaskan.satuan)}
                 </p>
               </div>
               <button
@@ -670,7 +681,7 @@ export default function PapanTugasPage() {
             <div className="mt-4 grid grid-cols-2 gap-3">
               <div>
                 <label className="block text-[11px] font-black uppercase tracking-wide text-slate-400">
-                  Jumlah ({tugaskan.satuan})
+                  Jumlah ({SATUAN_TAMPIL(tugaskan.satuan)})
                 </label>
                 <input
                   value={jumlahTugas}
@@ -745,7 +756,7 @@ export default function PapanTugasPage() {
             </div>
 
             <label className="block text-[11px] font-black uppercase tracking-wide text-slate-400">
-              Jumlah disetor ({setor.satuan})
+              Jumlah disetor ({SATUAN_TAMPIL(setor.satuan)})
             </label>
             <input
               value={jumlahSetor}
@@ -825,9 +836,13 @@ function BarisTugasKartu({
           </p>
           <p className="mt-0.5 text-[11px]">
             <span className="font-bold text-slate-600">
-              {tugas.sudahDisetor}/{tugas.jumlahDitugaskan} {tugas.satuan}
+              {formatQtySatuan(tugas.sudahDisetor, tugas.satuan)} dari{" "}
+              {formatQtySatuan(tugas.jumlahDitugaskan, tugas.satuan)}
             </span>
-            <span className="text-slate-400"> · sisa {tugas.sisa}</span>
+            <span className="text-slate-400">
+              {" "}
+              · sisa {formatQtySatuan(tugas.sisa, tugas.satuan)}
+            </span>
           </p>
         </div>
 

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { PackageCheck, Printer, RefreshCw } from "lucide-react";
 import { clearSavedUserSession, getSavedUserSession } from "@/lib/userSession";
 import { formatQtySatuan } from "@/lib/satuan";
+import { JEDA_POLLING, useIntervalSaatTerlihat } from "@/lib/pollingHemat";
 import { toast } from "@/lib/toast";
 
 const statusOptions = ["Sedang Disiapkan", "Siap Dikirim", "Dikirim", "Selesai"];
@@ -122,13 +123,16 @@ export default function OrderStatusPage() {
 
   useEffect(() => {
     const timeoutId = window.setTimeout(() => void fetchOrders(), 0);
-    const interval = window.setInterval(fetchOrders, 5000);
     fetchSettings();
     return () => {
       window.clearTimeout(timeoutId);
-      window.clearInterval(interval);
     };
   }, [fetchOrders, fetchSettings]);
+
+  // Dulu tiap 5 detik tanpa henti — padahal halaman ini menarik SELURUH pesanan
+  // aktif beserta semua itemnya. Sekarang 30 detik dan berhenti saat tab tidak
+  // dilihat, lalu menyusul sekali begitu dilihat lagi.
+  useIntervalSaatTerlihat(() => void fetchOrders(), JEDA_POLLING.statusPesanan);
 
   const updateOrder = async (id: number, payload: { status?: string }) => {
     setSavingId(id);

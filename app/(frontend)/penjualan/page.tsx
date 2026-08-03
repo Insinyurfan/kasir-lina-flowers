@@ -8,6 +8,7 @@ import ManualTransactionModal, { type ManualTransaction } from "@/components/Man
 import { getSavedUserSession } from "@/lib/userSession";
 import { toast } from "@/lib/toast";
 import { formatQtySatuan, formatUnitPriceSatuan } from "@/lib/satuan";
+import { JEDA_POLLING, useIntervalSaatTerlihat } from "@/lib/pollingHemat";
 // Pembuat dokumen Nota/Surat Jalan dipindah ke lib supaya halaman pintasan
 // "Download Nota" memakai fungsi yang sama persis (lihat lib/notaDocument.ts).
 import {
@@ -353,14 +354,16 @@ export default function RiwayatPenjualanPage() {
     fetchTransaksi({ keepFilterOpen: true });
   }, [sortOrder, filterMetode, filterPelanggan, startDate, endDate]);
 
-  useEffect(() => {
-    const intervalId = window.setInterval(() => {
-      if (printModalOpen || manualModalOpen) return;
-      fetchTransaksi({ keepFilterOpen: true });
-    }, 5000);
-
-    return () => window.clearInterval(intervalId);
-  }, [sortOrder, filterMetode, filterPelanggan, startDate, endDate, printModalOpen, manualModalOpen]);
+  // Dulu tiap 5 detik. Ini payload TERBERAT di seluruh aplikasi — transaksi
+  // beserta seluruh item, notifikasi, dan pembayarannya. Sekarang 60 detik,
+  // berhenti saat tab tidak dilihat, dan tetap berhenti selama modal terbuka
+  // supaya data tidak berubah di tengah pekerjaan. Tombol muat ulang manual
+  // tetap ada untuk yang butuh segera.
+  useIntervalSaatTerlihat(
+    () => fetchTransaksi({ keepFilterOpen: true }),
+    JEDA_POLLING.riwayatPenjualan,
+    !printModalOpen && !manualModalOpen
+  );
 
   const applySavedStoreInfo = (data: StoreSettingResponse | null) => {
     if (!data) return;

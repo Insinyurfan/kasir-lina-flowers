@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import "./globals.css";
 import Link from "next/link";
 import { clearSavedUserSession, getSavedUserSession } from "@/lib/userSession";
+import { JEDA_POLLING, useIntervalSaatTerlihat } from "@/lib/pollingHemat";
 import SessionExpiryHandler from "@/components/SessionExpiryHandler";
 import ToastHost from "@/components/ToastHost";
 import {
@@ -46,6 +47,8 @@ import {
 } from "lucide-react";
 
 const inter = Inter({ subsets: ["latin"] });
+// Dipakai HANYA sebagai satuan backoff saat permintaan notifikasi gagal
+// berturut-turut. Jeda polling normalnya ada di JEDA_POLLING.notifikasi.
 const NOTIFICATION_POLL_INTERVAL = 5000;
 const NOTIFICATION_FETCH_TIMEOUT = 8000;
 const NOTIFICATION_MAX_BACKOFF = 60000;
@@ -334,18 +337,25 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     await fetchNotificationsForRole(user.role, force);
   }, [fetchNotificationsForRole, user]);
 
+  // Tarikan pertama saja; pengulangannya diurus useIntervalSaatTerlihat di bawah.
   useEffect(() => {
     if (!user?.role || user.role === "Tamu") return;
 
     const role = user.role;
-    const fetchLatest = (force = false) => fetchNotificationsForRole(role, force);
-    const timeoutId = window.setTimeout(fetchLatest, 0);
-    const intervalId = window.setInterval(fetchLatest, NOTIFICATION_POLL_INTERVAL);
-    return () => {
-      window.clearTimeout(timeoutId);
-      window.clearInterval(intervalId);
-    };
+    const timeoutId = window.setTimeout(() => void fetchNotificationsForRole(role), 0);
+    return () => window.clearTimeout(timeoutId);
   }, [fetchNotificationsForRole, user?.role]);
+
+  // Dulu setiap 5 detik tanpa henti, di SEMUA halaman, walau tabnya ditinggal
+  // seharian. Sekarang 30 detik dan berhenti saat tab tidak dilihat.
+  const bolehPolling = Boolean(user?.role) && user?.role !== "Tamu";
+  useIntervalSaatTerlihat(
+    () => {
+      if (user?.role) void fetchNotificationsForRole(user.role);
+    },
+    JEDA_POLLING.notifikasi,
+    bolehPolling
+  );
 
   useEffect(() => {
     if (!user?.role || user.role === "Tamu") return;

@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useCartStore, SATUAN_LABELS, computeCartRowId, hitungHargaSatuan, formatQtySatuan, formatUnitPriceSatuan, type CartItem } from "@/lib/store";
 import { Search, Plus, Minus, Trash2, ShoppingCart, Flower2, Wallet, User, UserCheck, LogOut, Camera, X, Pencil, Check } from "lucide-react";
+import Image from "next/image";
 import { getSavedUserSession } from "@/lib/userSession";
 
 type Variant = {
@@ -1323,14 +1324,12 @@ export default function PosPage() {
               {/* FOTO: Menggunakan aspect-square persis seperti halaman utama */}
               <div className="relative w-full aspect-square short:aspect-[3/2] bg-pink-50 overflow-hidden shrink-0">
   {p.gambar ? (
-    <img
+    <Image
       src={p.gambar}
       alt={p.nama_produk}
+      fill
+      sizes="(max-width: 640px) 50vw, 240px"
       className="
-        absolute
-        inset-0
-        w-full
-        h-full
         object-cover
         transition-transform
         duration-300

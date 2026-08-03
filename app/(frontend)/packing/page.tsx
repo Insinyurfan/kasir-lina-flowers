@@ -12,6 +12,7 @@ import {
   Truck,
   UserRound,
 } from "lucide-react";
+import Image from "next/image";
 import { getSavedUserSession } from "@/lib/userSession";
 import { formatQtySatuan } from "@/lib/satuan";
 import { cetakLabel, type BarisLabel } from "@/lib/labelPacking";
@@ -358,9 +359,11 @@ export default function PackingPage() {
                           {/* Thumbnail */}
                           <span className="h-11 w-11 flex-shrink-0 overflow-hidden rounded-lg border border-slate-200 bg-slate-50">
                             {item.gambar ? (
-                              <img
+                              <Image
                                 src={item.gambar}
                                 alt=""
+                                width={44}
+                                height={44}
                                 className="h-full w-full object-cover"
                                 style={{
                                   objectPosition: `${item.gambarPosX ?? 50}% ${item.gambarPosY ?? 50}%`,

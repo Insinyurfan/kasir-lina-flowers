@@ -4,6 +4,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Package, Plus, Edit, Trash2, X, Search, Camera, Flower2, ShoppingCart, Minus, MessageCircle, Archive, RotateCcw, ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
 import Barcode from "react-barcode";
+import Image from "next/image";
 import { getSavedUserSession } from "@/lib/userSession";
 import { compressProductImage } from "@/lib/compressProductImage";
 import { computeCartRowId } from "@/lib/satuan";
@@ -571,11 +572,17 @@ export default function ManajemenProdukPage() {
                   <button
                     type="button"
                     onClick={() => p.gambar && setZoomData({ type: 'foto', content: p.gambar, title: p.nama_produk })}
-                    className="flex aspect-square w-full items-center justify-center overflow-hidden bg-pink-50"
+                    className="relative flex aspect-square w-full items-center justify-center overflow-hidden bg-pink-50"
                     title={p.gambar ? "Lihat foto produk" : p.nama_produk}
                   >
                     {p.gambar ? (
-                      <img src={p.gambar} alt={p.nama_produk} className="w-full h-full object-cover" />
+                      <Image
+                        src={p.gambar}
+                        alt={p.nama_produk}
+                        fill
+                        sizes="(max-width: 640px) 50vw, 260px"
+                        className="object-cover"
+                      />
                     ) : (
                       <Camera size={34} className="text-pink-200" />
                     )}

@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Flower2, Search, LogIn, X, ArrowUpDown, ArrowUp, ArrowDown, Check } from "lucide-react";
 
 type Variant = {
@@ -49,8 +50,11 @@ export default function KatalogPage() {
 
   useEffect(() => {
     Promise.all([
-      fetch("/api/produk?public=1", { cache: "no-store" }).then((r) => r.json()),
-      fetch("/api/pengaturan", { cache: "no-store" }).then((r) => r.json()),
+      // Katalog publik tidak perlu segar tiap detik. `no-store` membuat setiap
+      // pemuatan halaman menembus ke database; 60 detik sudah lebih dari cukup
+      // untuk daftar produk yang jarang berubah.
+      fetch("/api/produk?public=1", { next: { revalidate: 60 } }).then((r) => r.json()),
+      fetch("/api/pengaturan", { next: { revalidate: 300 } }).then((r) => r.json()),
     ])
       .then(([prods, settings]) => {
         setProducts(Array.isArray(prods) ? prods : []);
@@ -204,10 +208,14 @@ export default function KatalogPage() {
                 >
                   <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-pink-50 to-rose-50">
                     {product.gambar ? (
-                      <img
+                      <Image
                         src={product.gambar}
                         alt={product.nama_produk}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        fill
+                        // Kartu katalog paling lebar ~300px; `sizes` mencegah
+                        // Vercel mengirim versi besar ke layar kecil.
+                        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 300px"
+                        className="object-cover group-hover:scale-105 transition-transform duration-300"
                         style={{ objectPosition: `${product.gambarPosX ?? 50}% ${product.gambarPosY ?? 50}%` }}
                       />
                     ) : (
@@ -248,10 +256,12 @@ export default function KatalogPage() {
           >
             <div className="relative aspect-square bg-gradient-to-br from-pink-50 to-rose-50 overflow-hidden">
               {selectedProduct.gambar ? (
-                <img
+                <Image
                   src={selectedProduct.gambar}
                   alt={selectedProduct.nama_produk}
-                  className="w-full h-full object-cover"
+                  fill
+                  sizes="(max-width: 640px) 100vw, 384px"
+                  className="object-cover"
                   style={{ objectPosition: `${selectedProduct.gambarPosX ?? 50}% ${selectedProduct.gambarPosY ?? 50}%` }}
                 />
               ) : (

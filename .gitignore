@@ -49,3 +49,7 @@ lib/generated/prisma/*.tmp*
 next-env.d.ts
 
 certificates
+
+# Hasil scripts/unduh-gambar-produk.cjs — salinan lokal gambar produk beserta
+# daftar & katalog offline-nya. Data turunan, tidak perlu masuk repo.
+gambar-produk/

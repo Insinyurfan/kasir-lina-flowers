@@ -192,7 +192,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     if (!user?.role || user.role === "Tamu" || hasLoadedSettingsRef.current) return;
 
     hasLoadedSettingsRef.current = true;
-    fetch("/api/pengaturan")
+    // `tampilan=1` melewatkan receiptLogo (2,8 MB) yang tidak dipakai di sini.
+    // Endpoint ini jalan di SETIAP halaman lewat root layout.
+    fetch("/api/pengaturan?tampilan=1")
       .then((res) => res.json())
       .then((data) => {
         if (data && data.logo) setLogo(data.logo);
@@ -244,7 +246,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       setIsStoreLogoPreviewOpen(true);
     } catch {
       alert("Gagal menyimpan logo toko.");
-      fetch("/api/pengaturan", { cache: "no-store" })
+      fetch("/api/pengaturan?tampilan=1", { cache: "no-store" })
         .then((res) => res.json())
         .then((data) => setLogo(data?.logo || null))
         .catch(() => setLogo(null));

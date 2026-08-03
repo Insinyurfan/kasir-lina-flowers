@@ -54,7 +54,7 @@ export default function KatalogPage() {
       // pemuatan halaman menembus ke database; 60 detik sudah lebih dari cukup
       // untuk daftar produk yang jarang berubah.
       fetch("/api/produk?public=1", { next: { revalidate: 60 } }).then((r) => r.json()),
-      fetch("/api/pengaturan", { next: { revalidate: 300 } }).then((r) => r.json()),
+      fetch("/api/pengaturan?tampilan=1", { next: { revalidate: 300 } }).then((r) => r.json()),
     ])
       .then(([prods, settings]) => {
         setProducts(Array.isArray(prods) ? prods : []);

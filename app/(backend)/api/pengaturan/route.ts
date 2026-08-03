@@ -69,9 +69,39 @@ const getStoreSetting = async () => {
   return defaultStoreSetting;
 };
 
-export async function GET() {
+// GET /api/pengaturan
+//   (tanpa parameter)   -> lengkap, termasuk logo & receiptLogo
+//   ?tampilan=1         -> logo saja, TANPA receiptLogo
+//   ?ringkas=1          -> tanpa gambar sama sekali
+//
+// KENAPA ADA PILIHAN INI: logo toko dan logo struk disimpan sebagai base64 di
+// dalam basis data — masing-masing 1,2 MB dan 2,8 MB. Endpoint ini dipanggil
+// dari app/layout.tsx, yang berarti SETIAP pemuatan halaman dulu menyeret ~4 MB
+// walau yang dipakai cuma nama toko dan logo kecil di header. Itu penyebab
+// terbesar kuota egress Supabase jebol sampai Storage diblokir.
+export async function GET(request: Request) {
   try {
+    const params = new URL(request.url).searchParams;
+    const ringkas = params.get("ringkas") === "1";
+    const tampilan = params.get("tampilan") === "1";
+
     const setting = await getStoreSetting();
+
+    if (ringkas || tampilan) {
+      return NextResponse.json(
+        {
+          id: setting.id,
+          brand: setting.brand,
+          address: setting.address,
+          footer: setting.footer,
+          // `tampilan` tetap membawa logo header; `ringkas` tidak membawa
+          // gambar sama sekali.
+          ...(tampilan ? { logo: setting.logo } : {}),
+        },
+        { headers: noStoreHeaders }
+      );
+    }
+
     return NextResponse.json(setting, { headers: noStoreHeaders });
   } catch (error) {
     return NextResponse.json(

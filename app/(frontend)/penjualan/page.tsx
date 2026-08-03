@@ -9,6 +9,7 @@ import { getSavedUserSession } from "@/lib/userSession";
 import { toast } from "@/lib/toast";
 import { formatQtySatuan, formatUnitPriceSatuan } from "@/lib/satuan";
 import { JEDA_POLLING, useIntervalSaatTerlihat } from "@/lib/pollingHemat";
+import { compressProductImage } from "@/lib/compressProductImage";
 // Pembuat dokumen Nota/Surat Jalan dipindah ke lib supaya halaman pintasan
 // "Download Nota" memakai fungsi yang sama persis (lihat lib/notaDocument.ts).
 import {
@@ -415,13 +416,24 @@ export default function RiwayatPenjualanPage() {
       return;
     }
 
-    const reader = new FileReader();
-    reader.onloadend = async () => {
-      const receiptLogo = reader.result as string;
-      setStoreInfo((prev) => ({ ...prev, receiptLogo }));
-      await saveStoreSettings({ receiptLogo }, "Logo struk berhasil disimpan ke database.");
-    };
-    reader.readAsDataURL(file);
+    // WAJIB dikompres dulu. Logo struk disimpan sebagai base64 DI DALAM basis
+    // data, dan ikut terkirim setiap kali /api/pengaturan dipanggil. Logo lama
+    // yang diunggah mentah-mentah berukuran 2,8 MB — itu penyebab terbesar
+    // kuota egress Supabase jebol sampai Storage diblokir.
+    try {
+      const dikompres = await compressProductImage(file);
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        const receiptLogo = reader.result as string;
+        setStoreInfo((prev) => ({ ...prev, receiptLogo }));
+        await saveStoreSettings({ receiptLogo }, "Logo struk berhasil disimpan ke database.");
+      };
+      reader.readAsDataURL(dikompres);
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Gagal memproses gambar logo struk."
+      );
+    }
     e.target.value = "";
   };
 

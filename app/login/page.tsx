@@ -40,7 +40,7 @@ export default function LoginPage() {
       };
     }
 
-    fetch("/api/pengaturan", { cache: "no-store" })
+    fetch("/api/pengaturan?tampilan=1", { cache: "no-store" })
       .then((res) => res.json())
       .then((data) => {
         if (isMounted && data?.logo) setLogo(data.logo);

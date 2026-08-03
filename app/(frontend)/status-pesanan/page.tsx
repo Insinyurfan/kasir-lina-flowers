@@ -106,7 +106,7 @@ export default function OrderStatusPage() {
   }, []);
 
   const fetchSettings = useCallback(async () => {
-    const res = await fetch("/api/pengaturan", { cache: "no-store" });
+    const res = await fetch("/api/pengaturan");
     if (res.ok) {
       const data = await res.json();
       if (data) {

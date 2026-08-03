@@ -29,6 +29,21 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  // /sw.js TIDAK BOLEH di-cache. Ini penjagaan terpenting pada service worker:
+  // kalau berkasnya sendiri ikut tersimpan, perangkat tidak akan pernah tahu ada
+  // versi baru — terkunci selamanya, dan tidak ada rilis yang bisa
+  // menyelamatkannya dari jarak jauh.
+  async headers() {
+    return [
+      {
+        source: "/sw.js",
+        headers: [
+          { key: "Cache-Control", value: "no-cache, no-store, must-revalidate" },
+          { key: "Service-Worker-Allowed", value: "/" },
+        ],
+      },
+    ];
+  },
 };
 
 export default nextConfig;

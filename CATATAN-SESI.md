@@ -255,6 +255,23 @@ node scripts/backfill-payments.cjs --dry-run         # cek migrasi (aman)
 openspec list                                         # progres semua change
 ```
 
+**Kalau perangkat tersangkut di versi lama (service worker):**
+
+Sejak change `cache-aset-offline`, aplikasi memasang service worker di produksi.
+Ia menetap di perangkat, jadi kalau suatu saat HP menyajikan versi lama walau
+server sudah diperbaiki:
+
+- **Chrome Android**: titik tiga → Setelan situs → cari `linaflowers.my.id` →
+  Hapus data
+- **PWA terpasang di layar**: hapus aplikasinya, lalu pasang ulang
+- **Desktop**: DevTools → Application → Service Workers → Unregister, lalu
+  Application → Storage → Clear site data
+
+Penjagaannya sudah dipasang (berkas `/sw.js` tidak pernah di-cache, nama cache
+berversi, pembaruan menunggu persetujuan), tapi jalan keluar ini tetap perlu
+diketahui. Setiap kali `public/sw.js` diubah, **naikkan konstanta `VERSI`** di
+puncak berkasnya supaya cache lama ikut dibersihkan.
+
 **Jebakan yang memakan waktu sesi ini:**
 
 - **Cache Turbopack menahan CSS rusak.** Setelah `app/globals.css` diubah dan

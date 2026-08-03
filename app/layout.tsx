@@ -9,6 +9,7 @@ import { clearSavedUserSession, getSavedUserSession } from "@/lib/userSession";
 import { JEDA_POLLING, useIntervalSaatTerlihat } from "@/lib/pollingHemat";
 import SessionExpiryHandler from "@/components/SessionExpiryHandler";
 import ToastHost from "@/components/ToastHost";
+import PendaftarServiceWorker from "@/components/PendaftarServiceWorker";
 import {
   ArrowDown,
   ArrowLeft,
@@ -714,6 +715,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* Penampil notifikasi global — dipanggil dari halaman mana pun
             lewat toast.success/error di "@/lib/toast". */}
         <ToastHost />
+        <PendaftarServiceWorker />
         <style>{`
           @keyframes lina-bell-ring {
             0%, 100% { transform: rotate(0deg); }

@@ -5,7 +5,9 @@
 ## 1. Cloudflare & DNS — dikerjakan pemilik akun
 
 - [ ] 1.1 Buat akun Cloudflare (gratis)
-- [ ] 1.2 **Add a site** → masukkan `linaflowers.my.id`. Cloudflare memindai catatan DNS yang ada
+- [ ] 1.2 Dashboard home → kartu **"Add a domain"** → ketik `linaflowers.my.id` (atau sidebar **Domains**). Dashboard baru tidak lagi menyebutnya "Add a site".
+      **Pilih jalur "bring your own", BUKAN "register a new domain"** — kamu hanya memindahkan pengelolaan DNS; kepemilikan domain tetap di anymhost dan diperpanjang di sana.
+      Setelah itu Cloudflare memindai catatan DNS yang ada — berhenti dulu di sini, lanjut ke 1.3
 - [ ] 1.3 **PERIKSA SATU PER SATU** hasil pindaian itu terhadap panel anymhost — terutama catatan yang mengarah ke Vercel (`A`, `CNAME`, `TXT` verifikasi). **Satu catatan terlewat = situs mati.** Screenshot panel lama sebelum menyentuh apa pun
 - [ ] 1.4 Setel catatan yang mengarah ke Vercel menjadi **DNS only (awan abu-abu)**, bukan Proxied. Vercel sudah punya CDN sendiri; menumpuknya dengan proxy Cloudflare kerap menimbulkan masalah SSL & pengalihan
 - [ ] 1.5 Ganti nameserver di **anymhost.id** ke nameserver dari Cloudflare

@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { recordActivityLog } from "@/lib/activityLog";
+// Masa transisi: gambar bisa berada di R2 (baru) ATAU Supabase (lama).
+// Keduanya dipanggil; masing-masing tidak melakukan apa-apa untuk URL yang
+// bukan miliknya.
+import { hapusGambarR2 } from "@/lib/r2Storage";
 import { deleteProductImageFromStorage } from "@/lib/supabaseStorage";
 import { actorFromUser, requireRole } from "@/lib/apiAuth";
 
@@ -8,6 +12,7 @@ export const dynamic = 'force-dynamic';
 
 const cleanupProductImage = async (imageUrl?: string | null) => {
   try {
+    await hapusGambarR2(imageUrl);
     await deleteProductImageFromStorage(imageUrl);
   } catch (error) {
     console.error("Gagal menghapus foto produk dari Supabase Storage", error);

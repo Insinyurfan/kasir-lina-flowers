@@ -7,6 +7,8 @@ import {
   isMetodePengeluaran,
   normalisasiNominal,
 } from "@/lib/pengeluaran";
+// Masa transisi: foto bisa di R2 (baru) ATAU Supabase (lama).
+import { hapusGambarR2 } from "@/lib/r2Storage";
 import { deleteReceiptImageFromStorage } from "@/lib/supabaseStorage";
 import { dariTanggalInputWIB } from "@/lib/waktu";
 
@@ -116,6 +118,7 @@ export async function PATCH(
 
     // Foto lama yang diganti tidak perlu ditahan di storage.
     if (data.fotoUrl !== undefined && sebelum.fotoUrl && sebelum.fotoUrl !== sesudah.fotoUrl) {
+      await hapusGambarR2(sebelum.fotoUrl);
       await deleteReceiptImageFromStorage(sebelum.fotoUrl).catch(() => {});
     }
 
@@ -170,6 +173,7 @@ export async function DELETE(
 
     await prisma.expense.delete({ where: { id } });
     if (pengeluaran.fotoUrl) {
+      await hapusGambarR2(pengeluaran.fotoUrl);
       await deleteReceiptImageFromStorage(pengeluaran.fotoUrl).catch(() => {});
     }
 

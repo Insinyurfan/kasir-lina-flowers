@@ -22,6 +22,16 @@ const nextConfig: NextConfig = {
   // diakses sekali per gambar, bukan sekali per pengunjung.
   images: {
     remotePatterns: [
+      // Rumah baru gambar produk: Cloudflare R2 lewat domain sendiri.
+      {
+        protocol: "https",
+        hostname: "img.linaflowers.my.id",
+        pathname: "/**",
+      },
+      // Supabase DIPERTAHANKAN selama masa transisi. Sebagian produk masih
+      // menunjuk ke URL lama sampai fotonya diunggah ulang; menghapus pola ini
+      // lebih awal akan mengubah "gambar rusak" menjadi "halaman galat".
+      // Boleh dihapus setelah seluruh foto pindah.
       {
         protocol: "https",
         hostname: "*.supabase.co",

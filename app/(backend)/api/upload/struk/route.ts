@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { uploadReceiptImage } from "@/lib/supabaseStorage";
+import { unggahGambarStruk } from "@/lib/r2Storage";
 import { requireRole } from "@/lib/apiAuth";
 
 export const runtime = "nodejs";
@@ -20,7 +20,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Foto struk belum dipilih." }, { status: 400 });
     }
 
-    const result = await uploadReceiptImage(
+    const result = await unggahGambarStruk(
       file,
       typeof kategori === "string" ? kategori : undefined
     );

@@ -175,6 +175,9 @@ export default function PosPage() {
   const [isCheckoutConfirmOpen, setIsCheckoutConfirmOpen] = useState(false);
   const [priceEditItem, setPriceEditItem] = useState<CartItem | null>(null); // item yang sedang disesuaikan harganya
   const [priceEditDraft, setPriceEditDraft] = useState("");
+  // Kode pelanggan baris yang sedang diedit (bisa diisi walau sebelumnya lupa diisi).
+  const [labelDraft, setLabelDraft] = useState("");
+  const [labelSuggestOpen, setLabelSuggestOpen] = useState(false);
   // Harga khusus tersimpan untuk pelanggan sesi ini: key `${productId}-${variantId}` -> harga dasar.
   const [rememberedPrices, setRememberedPrices] = useState<Record<string, number>>({});
   const [rememberForCustomer, setRememberForCustomer] = useState(true);
@@ -208,7 +211,7 @@ export default function PosPage() {
   // pilihan varian/harga yang barusan diubah tapi belum sempat tersinkron.
   const cartDirtyRef = useRef(false);
 
-  const { cart, addToCart, removeFromCart, updateQuantity, updateHargaBase, updateSatuanPesan, setCart, getTotal, clearCart } = useCartStore();
+  const { cart, addToCart, removeFromCart, updateQuantity, updateHargaBase, updateSatuanPesan, updateLabel, setCart, getTotal, clearCart } = useCartStore();
 
   // MENGHITUNG TOTAL BARANG DI KERANJANG UNTUK BADGE
   const totalBarang = cart.reduce((total, item) => total + item.quantity, 0);
@@ -558,6 +561,8 @@ export default function PosPage() {
   const openPriceEdit = (item: CartItem) => {
     setPriceEditItem(item);
     setPriceEditDraft(String(item.hargaBase ?? item.harga));
+    setLabelDraft(item.label ?? "");
+    setLabelSuggestOpen(false);
     setRememberForCustomer(true); // default aktif agar tak lupa dicentang
     setIsCartOpen(true);
   };
@@ -593,7 +598,8 @@ export default function PosPage() {
     }
   };
 
-  // Simpan penyesuaian → harga tersimpan di keranjang, kembali ke keranjang (tidak loncat ke checkout).
+  // Simpan penyesuaian → harga & kode pelanggan tersimpan di keranjang, kembali ke keranjang
+  // (tidak loncat ke checkout).
   const savePriceEdit = () => {
     if (!priceEditItem) return;
     const value = Number(priceEditDraft);
@@ -601,10 +607,15 @@ export default function PosPage() {
       alert(`Harga ${priceEditItem.nama_produk} belum valid.`);
       return;
     }
+    // Harga dulu (id baris belum berubah), baru kode pelanggan (kode ikut menentukan id baris).
     updateHargaBase(priceEditItem.id, value);
+    const nextLabel = sanitizeCode(labelDraft).trim() || null;
+    if ((priceEditItem.label ?? null) !== nextLabel) updateLabel(priceEditItem.id, nextLabel);
     if (rememberForCustomer) void persistCustomerPrice(priceEditItem, Math.round(value));
     setPriceEditItem(null);
     setPriceEditDraft("");
+    setLabelDraft("");
+    setLabelSuggestOpen(false);
     setRememberForCustomer(true);
     setIsCartOpen(true);
   };
@@ -896,7 +907,7 @@ export default function PosPage() {
                       {item.label}
                     </span>
                   )}
-                  <button onClick={() => openPriceEdit(item)} className="p-2.5 text-slate-400 hover:bg-pink-50 hover:text-pink-600 rounded-xl" title="Sesuaikan harga"><Pencil size={18} /></button>
+                  <button onClick={() => openPriceEdit(item)} className="p-2.5 text-slate-400 hover:bg-pink-50 hover:text-pink-600 rounded-xl" title="Sesuaikan harga & kode pelanggan"><Pencil size={18} /></button>
                   <button onClick={() => removeFromCart(item.id)} className="p-2.5 text-red-400 hover:bg-red-50 rounded-xl" title="Hapus"><Trash2 size={18} /></button>
                 </div>
               </div>
@@ -1161,7 +1172,7 @@ export default function PosPage() {
             </div>
 
             <p className="mt-3 text-center text-[11px] font-semibold text-slate-400">
-              Untuk mengubah harga, kembali ke keranjang lalu tekan ikon ✏️ pada produk yang ingin disesuaikan.
+              Untuk mengubah harga atau kode pelanggan, kembali ke keranjang lalu tekan ikon ✏️ pada produk yang ingin disesuaikan.
             </p>
           </div>
         </div>
@@ -1183,7 +1194,7 @@ export default function PosPage() {
             <div className="flex max-h-[88vh] w-full max-w-md flex-col overflow-hidden rounded-3xl bg-white shadow-2xl" onClick={(e) => e.stopPropagation()}>
               <div className="flex items-start justify-between border-b border-slate-100 p-5">
                 <div className="min-w-0">
-                  <h3 className="font-black text-slate-800">Sesuaikan Harga</h3>
+                  <h3 className="font-black text-slate-800">Sesuaikan Harga &amp; Kode</h3>
                   <p className="mt-1 truncate text-xs text-slate-500">
                     {liveItem.nama_produk}
                     {liveItem.variantName && <span className="text-amber-600"> ({liveItem.variantName})</span>}
@@ -1198,6 +1209,56 @@ export default function PosPage() {
                 <div className="flex items-center justify-between rounded-2xl bg-slate-50 px-4 py-3 text-xs font-semibold text-slate-500">
                   <span>Jumlah dipesan</span>
                   <span className="font-black text-slate-700">{formatQtySatuan(liveItem.quantity, satuanPesan)}</span>
+                </div>
+
+                {/* KODE PELANGGAN — bisa diisi/diubah di sini kalau tadi lupa, tanpa hapus & tambah ulang. */}
+                <div className="relative">
+                  <label className="mb-1.5 block text-[11px] font-black uppercase tracking-wide text-slate-400">
+                    Kode Pelanggan (opsional)
+                  </label>
+                  <input
+                    type="text"
+                    value={labelDraft}
+                    onChange={(e) => { setLabelDraft(sanitizeCode(e.target.value)); setLabelSuggestOpen(true); }}
+                    onFocus={() => setLabelSuggestOpen(true)}
+                    onBlur={() => window.setTimeout(() => setLabelSuggestOpen(false), 150)}
+                    onKeyDown={(e) => { if (e.key === "Enter") { setLabelSuggestOpen(false); savePriceEdit(); } }}
+                    placeholder="mis. AMN / SMT — kosongkan bila tanpa kode"
+                    autoComplete="off"
+                    className="w-full rounded-xl border-2 border-amber-200 bg-amber-50 px-4 py-3 text-sm font-black text-amber-800 outline-none focus:border-amber-400"
+                  />
+                  {labelDraft.trim() !== "" && (
+                    <button
+                      type="button"
+                      onMouseDown={(e) => { e.preventDefault(); setLabelDraft(""); setLabelSuggestOpen(false); }}
+                      className="absolute right-2 top-[30px] rounded-full p-2 text-amber-400 hover:bg-amber-100 hover:text-amber-600"
+                      title="Kosongkan kode"
+                    >
+                      <X size={16} />
+                    </button>
+                  )}
+                  {labelSuggestOpen && (() => {
+                    const q = labelDraft.trim().toUpperCase();
+                    const matches = customerCodes.filter((c) => c !== q && (q === "" || c.includes(q)));
+                    if (matches.length === 0) return null;
+                    return (
+                      <div className="absolute left-0 right-0 top-full mt-1 z-30 max-h-40 overflow-y-auto rounded-xl border-2 border-amber-100 bg-white shadow-xl">
+                        {matches.map((c) => (
+                          <button
+                            key={c}
+                            type="button"
+                            onMouseDown={(e) => { e.preventDefault(); setLabelDraft(c); setLabelSuggestOpen(false); }}
+                            className="block w-full px-3 py-2 text-left text-sm font-black text-amber-700 hover:bg-amber-50"
+                          >
+                            {c}
+                          </button>
+                        ))}
+                      </div>
+                    );
+                  })()}
+                  <p className="mt-1.5 text-[11px] font-semibold text-slate-400">
+                    Kode sekarang: <b className="text-slate-600">{liveItem.label || "belum diisi"}</b>
+                  </p>
                 </div>
 
                 <div>
@@ -1251,7 +1312,7 @@ export default function PosPage() {
                   onClick={savePriceEdit}
                   className="w-full rounded-2xl bg-pink-600 py-4 text-sm font-black text-white shadow-lg shadow-pink-200 transition-colors hover:bg-pink-700"
                 >
-                  Simpan Penyesuaian
+                  Simpan Perubahan
                 </button>
               </div>
             </div>
@@ -1462,7 +1523,7 @@ export default function PosPage() {
                               {item.label}
                             </span>
                           )}
-                          <button onClick={() => openPriceEdit(item)} className="p-2.5 text-slate-400 hover:bg-pink-50 hover:text-pink-600 rounded-xl" title="Sesuaikan harga"><Pencil size={18} /></button>
+                          <button onClick={() => openPriceEdit(item)} className="p-2.5 text-slate-400 hover:bg-pink-50 hover:text-pink-600 rounded-xl" title="Sesuaikan harga & kode pelanggan"><Pencil size={18} /></button>
                           <button onClick={() => removeFromCart(item.id)} className="p-2.5 text-red-400 hover:bg-red-50 rounded-xl" title="Hapus"><Trash2 size={18} /></button>
                         </div>
                       </div>

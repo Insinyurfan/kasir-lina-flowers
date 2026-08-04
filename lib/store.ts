@@ -40,6 +40,7 @@ interface CartState {
   updatePrice: (id: string, price: number) => void;
   updateHargaBase: (id: string, hargaBase: number) => void;
   updateSatuanPesan: (id: string, satuanPesan: string) => void;
+  updateLabel: (id: string, label: string | null) => void;
   setCart: (cart: CartItem[]) => void;
   clearCart: () => void;
   getTotal: () => number;
@@ -162,6 +163,33 @@ export const useCartStore = create<CartState>()(
             };
           }
           return { cart: state.cart.map((i) => (i.id === id ? updated : i)) };
+        }),
+      // Ubah KODE PELANGGAN baris (Aneka) tanpa perlu hapus & tambah ulang produknya.
+      // Id ikut kode → mengubahnya berarti id baris berubah, sama seperti ganti satuan.
+      updateLabel: (id, label) =>
+        set((state) => {
+          const item = state.cart.find((i) => i.id === id);
+          if (!item) return { cart: state.cart };
+          const labelBaru = (label ?? "").trim().toUpperCase() || null;
+          const newId = computeCartRowId(
+            item.productId ?? 0,
+            item.variantId,
+            item.satuanPesan ?? item.satuanHarga ?? "pcs",
+            labelBaru
+          );
+          if (newId === id) return { cart: state.cart.map((i) => (i.id === id ? { ...i, label: labelBaru } : i)) };
+          // Sudah ada baris lain dengan produk + varian + satuan + kode yang sama → gabungkan jumlahnya.
+          const clash = state.cart.find((i) => i.id !== id && i.id === newId);
+          if (clash) {
+            return {
+              cart: state.cart
+                .filter((i) => i.id !== id)
+                .map((i) => (i.id === newId ? { ...i, quantity: i.quantity + item.quantity } : i)),
+            };
+          }
+          return {
+            cart: state.cart.map((i) => (i.id === id ? { ...i, id: newId, label: labelBaru } : i)),
+          };
         }),
       setCart: (cart) => set({ cart }),
       clearCart: () => set({ cart: [] }),

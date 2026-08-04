@@ -20,7 +20,7 @@
  * versi baru aktif.
  */
 
-const VERSI = "v2"; // v2: kenali host gambar Cloudflare R2
+const VERSI = "v3"; // v3: kenali juga subdomain bawaan R2 (pub-*.r2.dev)
 const CACHE_ASET = `lina-${VERSI}-aset`;
 const CACHE_GAMBAR = `lina-${VERSI}-gambar`;
 const CACHE_HALAMAN = `lina-${VERSI}-halaman`;
@@ -60,12 +60,16 @@ self.addEventListener("message", (event) => {
 const adalahAsetNext = (url) => url.pathname.startsWith("/_next/static/");
 
 // Host gambar: R2 (baru) dan Supabase (lama, selama masa transisi).
-const HOST_GAMBAR = ["img.linaflowers.my.id"];
+// R2 bisa disajikan lewat subdomain bawaan `pub-<hash>.r2.dev` maupun domain
+// sendiri, jadi keduanya dikenali — tidak perlu menyunting berkas ini kalau
+// suatu saat pindah dari yang satu ke yang lain.
+const adalahHostR2 = (hostname) =>
+  hostname === "img.linaflowers.my.id" || hostname.endsWith(".r2.dev");
 
 const adalahGambar = (request, url) =>
   request.destination === "image" ||
   url.pathname.startsWith("/_next/image") ||
-  HOST_GAMBAR.includes(url.hostname) ||
+  adalahHostR2(url.hostname) ||
   url.pathname.includes("/storage/v1/object/public/");
 
 /** Cache dulu, permanen. Aman karena nama berkasnya sudah ber-hash isi. */

@@ -1,23 +1,39 @@
 > **Urutannya penting.** Kelompok 1 dikerjakan pemilik akun (tidak bisa diwakilkan),
 > kelompok 2–4 kode, kelompok 5 pengisian ulang foto bersama Mama.
-> **Kelompok 1 wajib dikerjakan saat sepi — bukan pagi hari kirim.**
 
-## 1. Cloudflare & DNS — dikerjakan pemilik akun
+## 1. Cloudflare R2 — dikerjakan pemilik akun
+
+> **DNS TIDAK DIPINDAHKAN.** Rencana awal memakai domain sendiri
+> (`img.linaflowers.my.id`), yang mensyaratkan nameserver `linaflowers.my.id`
+> pindah dari anymhost ke Cloudflare. Itu langkah paling berisiko dari seluruh
+> rencana ini — satu catatan DNS terlewat dan situsnya mati — dan ternyata tidak
+> perlu: R2 punya subdomain publik bawaan `pub-<hash>.r2.dev` yang aktif dalam
+> hitungan menit tanpa menyentuh DNS sama sekali.
+>
+> Konsekuensinya cuma dua: URL gambarnya jelek (tidak pernah dilihat pelanggan)
+> dan Cloudflare membatasi lajunya bila trafiknya besar — jauh di atas skala toko
+> ini. Pindah ke domain sendiri nanti tinggal mengganti `R2_PUBLIC_BASE_URL`;
+> kode dan `next.config.ts` sudah menerima keduanya.
 
 - [ ] 1.1 Buat akun Cloudflare (gratis)
-- [ ] 1.2 Dashboard home → kartu **"Add a domain"** → ketik `linaflowers.my.id` (atau sidebar **Domains**). Dashboard baru tidak lagi menyebutnya "Add a site".
-      **Pilih jalur "bring your own", BUKAN "register a new domain"** — kamu hanya memindahkan pengelolaan DNS; kepemilikan domain tetap di anymhost dan diperpanjang di sana.
-      Setelah itu Cloudflare memindai catatan DNS yang ada — berhenti dulu di sini, lanjut ke 1.3
-- [ ] 1.3 **PERIKSA SATU PER SATU** hasil pindaian itu terhadap panel anymhost — terutama catatan yang mengarah ke Vercel (`A`, `CNAME`, `TXT` verifikasi). **Satu catatan terlewat = situs mati.** Screenshot panel lama sebelum menyentuh apa pun
-- [ ] 1.4 Setel catatan yang mengarah ke Vercel menjadi **DNS only (awan abu-abu)**, bukan Proxied. Vercel sudah punya CDN sendiri; menumpuknya dengan proxy Cloudflare kerap menimbulkan masalah SSL & pengalihan
-- [ ] 1.5 Ganti nameserver di **anymhost.id** ke nameserver dari Cloudflare
-- [ ] 1.6 Tunggu propagasi. Verifikasi: `nslookup -type=NS linaflowers.my.id` menunjukkan nameserver Cloudflare, dan situs Vercel **masih terbuka normal**
-- [ ] 1.7 Aktifkan **R2** di dashboard Cloudflare (perlu kartu terdaftar meski pemakaiannya gratis)
-- [ ] 1.8 Buat bucket, mis. `lina-produk`
-- [ ] 1.9 Bucket → Settings → **Custom Domain** → `img.linaflowers.my.id`. Tunggu sampai statusnya aktif
-- [ ] 1.10 Buat **R2 API Token** dengan izin baca+tulis pada bucket itu. Simpan *Access Key ID* & *Secret Access Key* — secret hanya tampil sekali
-- [ ] 1.11 Isi env di Vercel (Production **dan** Preview): `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`, `R2_PUBLIC_BASE_URL=https://img.linaflowers.my.id`
-- [ ] 1.12 Salin env yang sama ke `.env` lokal untuk pengujian
+- [ ] 1.2 Sidebar → **Storage & databases** → **R2** → aktifkan. Perlu kartu terdaftar meski pemakaiannya gratis
+- [ ] 1.3 Buat bucket, mis. `lina-produk`. Lokasi: **Asia-Pacific (APAC)**
+- [ ] 1.4 Catat **Account ID** — tampil di halaman ringkasan R2, bukan di halaman bucket
+- [ ] 1.5 Bucket → **Settings** → **Public access** → bagian **r2.dev subdomain** → *Allow Access*. Cloudflare minta ketik `allow` sebagai konfirmasi. Salin URL `https://pub-xxxxxxxx.r2.dev` yang muncul
+- [ ] 1.6 R2 → **Manage API tokens** → buat token **Object Read & Write**, dibatasi pada bucket itu saja. Simpan *Access Key ID* & *Secret Access Key* — secret hanya tampil sekali
+- [ ] 1.7 Isi env di Vercel (Production **dan** Preview): `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`, `R2_PUBLIC_BASE_URL=https://pub-xxxxxxxx.r2.dev`
+- [ ] 1.8 Salin env yang sama ke `.env` lokal untuk pengujian
+- [ ] 1.9 Setelah subdomain bucket diketahui, persempit pola `**.r2.dev` di `next.config.ts` menjadi host persisnya — lihat catatan keamanan di berkas itu
+
+### Opsional, jauh di kemudian hari — domain sendiri
+
+Hanya kalau r2.dev benar-benar terasa membatasi. Kerjakan **saat sepi, bukan pagi
+hari kirim**: tambahkan `linaflowers.my.id` di Cloudflare lewat jalur *bring your
+own* (bukan beli domain baru), **periksa satu per satu** hasil pindaian DNS-nya
+terhadap panel anymhost — terutama catatan yang mengarah ke Vercel — setel
+catatan Vercel jadi **DNS only**, baru ganti nameserver di anymhost. Setelah itu
+bucket → Settings → Custom Domain → `img.linaflowers.my.id`, lalu ganti
+`R2_PUBLIC_BASE_URL`.
 
 ## 2. Lapisan penyimpanan
 
@@ -41,7 +57,7 @@
 ## 4. Verifikasi kode
 
 - [x] 4.1 `npx tsc --noEmit` bersih, ESLint tidak menambah error baru
-- [ ] 4.2 Unggah satu foto produk di lokal → berkas muncul di bucket R2, URL-nya berbasis `img.linaflowers.my.id`
+- [ ] 4.2 Unggah satu foto produk di lokal → berkas muncul di bucket R2, URL-nya berbasis `R2_PUBLIC_BASE_URL`
 - [ ] 4.3 Buka gambarnya langsung di peramban → tampil, dan header responsnya berasal dari Cloudflare
 - [ ] 4.4 Ganti foto produk yang sama → berkas lama terhapus dari bucket
 - [ ] 4.5 Unggah foto struk pada sebuah pengeluaran → masuk ke awalan `struk/`

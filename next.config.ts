@@ -22,10 +22,25 @@ const nextConfig: NextConfig = {
   // diakses sekali per gambar, bukan sekali per pengunjung.
   images: {
     remotePatterns: [
-      // Rumah baru gambar produk: Cloudflare R2 lewat domain sendiri.
+      // Rumah baru gambar produk: Cloudflare R2.
+      //
+      // Dua pola karena R2 punya dua cara menyajikan berkas ke publik:
+      //   1. subdomain bawaan `pub-<hash>.r2.dev` — aktif tanpa memindahkan DNS
+      //   2. domain sendiri `img.linaflowers.my.id` — perlu zona di Cloudflare
+      // Yang dipakai ditentukan env `R2_PUBLIC_BASE_URL`, jadi pindah dari (1)
+      // ke (2) nanti cukup mengganti satu env tanpa menyentuh berkas ini.
       {
         protocol: "https",
         hostname: "img.linaflowers.my.id",
+        pathname: "/**",
+      },
+      // CATATAN KEAMANAN: `**.r2.dev` juga mencakup bucket R2 milik orang lain,
+      // artinya pengoptimal gambar Vercel bisa dipakai memproksikan berkas asing.
+      // Dampaknya kecil untuk situs sekecil ini, tapi begitu subdomain bucket
+      // sendiri diketahui, ganti pola ini ke host persisnya.
+      {
+        protocol: "https",
+        hostname: "**.r2.dev",
         pathname: "/**",
       },
       // Supabase DIPERTAHANKAN selama masa transisi. Sebagian produk masih

@@ -48,13 +48,16 @@ const nextConfig: NextConfig = {
         hostname: "img.linaflowers.my.id",
         pathname: "/**",
       },
-      // CATATAN KEAMANAN: `**.r2.dev` juga mencakup bucket R2 milik orang lain,
-      // artinya pengoptimal gambar Vercel bisa dipakai memproksikan berkas asing.
-      // Dampaknya kecil untuk situs sekecil ini, tapi begitu subdomain bucket
-      // sendiri diketahui, ganti pola ini ke host persisnya.
+      // Host persis bucket `lina-produk`. Sebelumnya `**.r2.dev`, yang ikut
+      // mencakup bucket milik orang lain — pengoptimal gambar Vercel bisa
+      // dipakai memproksikan berkas asing. Sekarang dipersempit.
+      //
+      // Kalau subdomain ini pernah dibuat ulang di Cloudflare, gambar akan
+      // ditolak 400 dan nilainya harus diperbarui di sini bersama
+      // `R2_PUBLIC_BASE_URL`.
       {
         protocol: "https",
-        hostname: "**.r2.dev",
+        hostname: "pub-33bec4176b1b4bd1a21fbcb2c6d6cf44.r2.dev",
         pathname: "/**",
       },
       // Supabase DIPERTAHANKAN selama masa transisi. Sebagian produk masih

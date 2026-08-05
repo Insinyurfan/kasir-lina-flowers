@@ -21,9 +21,9 @@
 - [x] 1.4 Catat **Account ID** — tampil di halaman ringkasan R2, bukan di halaman bucket
 - [x] 1.5 Bucket → **Settings** → **Public access** → bagian **r2.dev subdomain** → *Allow Access*. Cloudflare minta ketik `allow` sebagai konfirmasi. Salin URL `https://pub-xxxxxxxx.r2.dev` yang muncul
 - [x] 1.6 R2 → **Manage API tokens** → buat token **Object Read & Write**, dibatasi pada bucket itu saja. Simpan *Access Key ID* & *Secret Access Key* — secret hanya tampil sekali
-- [ ] 1.7 Isi env di Vercel (Production **dan** Preview): `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`, `R2_PUBLIC_BASE_URL=https://pub-xxxxxxxx.r2.dev`
+- [x] 1.7 Isi env di Vercel (Production **dan** Preview): `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`, `R2_PUBLIC_BASE_URL=https://pub-xxxxxxxx.r2.dev`
 - [x] 1.8 Salin env yang sama ke `.env` lokal untuk pengujian
-- [ ] 1.9 Setelah subdomain bucket diketahui, persempit pola `**.r2.dev` di `next.config.ts` menjadi host persisnya — lihat catatan keamanan di berkas itu
+- [x] 1.9 Setelah subdomain bucket diketahui, persempit pola `**.r2.dev` di `next.config.ts` menjadi host persisnya — lihat catatan keamanan di berkas itu
 
 ### Opsional, jauh di kemudian hari — domain sendiri
 
@@ -58,14 +58,15 @@ bucket → Settings → Custom Domain → `img.linaflowers.my.id`, lalu ganti
 ## 4. Verifikasi kode
 
 - [x] 4.1 `npx tsc --noEmit` bersih, ESLint tidak menambah error baru
-- [ ] 4.2 Unggah satu foto produk di lokal → berkas muncul di bucket R2, URL-nya berbasis `R2_PUBLIC_BASE_URL`
-- [ ] 4.3 Buka gambarnya langsung di peramban → tampil, dan header responsnya berasal dari Cloudflare
+- [x] 4.2 Unggah satu foto produk di lokal → berkas muncul di bucket R2, URL-nya berbasis `R2_PUBLIC_BASE_URL`
+- [x] 4.3 Buka gambarnya langsung di peramban → tampil, dan header responsnya berasal dari Cloudflare
 - [ ] 4.4 Ganti foto produk yang sama → berkas lama terhapus dari bucket
 - [ ] 4.5 Unggah foto struk pada sebuah pengeluaran → masuk ke awalan `struk/`
 - [ ] 4.6 Uji env belum lengkap → pesan galatnya jelas, bukan galat mentah
-- [ ] 4.7 Pastikan `next/image` mengoptimasi gambar R2 tanpa galat host
+- [x] 4.7 Pastikan `next/image` mengoptimasi gambar R2 tanpa galat host
 - [ ] 4.8 Pastikan otorisasi rute unggah tidak berubah — tetap menolak 401 tanpa sesi
-- [x] 4.9 Kredensial diuji langsung ke S3 R2 di luar aplikasi: `PUT` 200, `LIST` jalan, `DELETE` jalan, bucket kembali kosong. Membuktikan env, token, dan nama bucket benar — **belum** membuktikan jalur unggah lewat halaman Produk (butuh sesi peramban) maupun akses publik `r2.dev`
+- [x] 4.9 Kredensial diuji langsung ke S3 R2 di luar aplikasi: `PUT` 200, `LIST` jalan, `DELETE` jalan, bucket kembali kosong
+- [x] 4.10 Diuji dari produksi: `linaflowers.my.id/_next/image` atas gambar R2 membalas `200 image/webp`, sedangkan gambar Supabase lama membalas `502`. Vercel berhasil mengambil dari `r2.dev`, jadi akses publiknya ikut terbukti aktif
 
 ## 5. Pengisian ulang foto — bersama Mama
 

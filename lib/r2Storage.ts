@@ -104,11 +104,28 @@ const unggah = async (file: File, awalan: string, namaFolder?: string) => {
   const folder = rapikanSegmen(namaFolder || awalan) || awalan;
   const objek = `${awalan}/${folder}/${Date.now()}-${crypto.randomUUID()}.${ekstensiBerkas(file)}`;
 
+  // Isi berkas dibaca lebih dulu, TIDAK dioper sebagai `File`, dan
+  // `Content-Length` dipasang sendiri.
+  //
+  // R2 menolak PUT tanpa `Content-Length` dengan `411 MissingContentLength`.
+  // Objek `File` bisa terkirim sebagai aliran yang panjangnya belum diketahui,
+  // sehingga headernya tidak pernah terpasang. Runtime Node di komputer masih
+  // menyimpulkan panjangnya sendiri — karena itu kegagalannya HANYA muncul di
+  // produksi, dan pengujian lokal tidak akan pernah menangkapnya.
+  //
+  // Header ini tidak ikut ditandatangani (SignedHeaders hanya berisi
+  // `host;x-amz-content-sha256;x-amz-date`), jadi memasangnya tidak berisiko
+  // memicu `SignatureDoesNotMatch`.
+  //
+  // Aman untuk memori: berkas sudah dikompres di peramban ke ~900 KB.
+  const isi = new Uint8Array(await file.arrayBuffer());
+
   const respons = await klien.fetch(`${endpointBucket}/${objek}`, {
     method: "PUT",
-    body: file,
+    body: isi,
     headers: {
       "Content-Type": file.type || "application/octet-stream",
+      "Content-Length": String(isi.byteLength),
       // Gambar tidak pernah berubah isinya (nama objek selalu baru), jadi aman
       // di-cache lama di CDN maupun peramban.
       "Cache-Control": "public, max-age=31536000, immutable",

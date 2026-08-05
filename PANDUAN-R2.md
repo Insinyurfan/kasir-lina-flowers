@@ -217,6 +217,26 @@ tengah. Produk yang sudah diunggah langsung aman.
 | Lokal jalan, produksi tidak | Env belum diisi di Vercel, atau belum deploy ulang |
 | Gambar lama masih rusak | Wajar — yang lama ada di Supabase yang sedang diblokir. Hilang setelah diunggah ulang di Tahap 5 |
 | `upstream image … resolved to private ip ["64:ff9b::…"]` | Bukan masalah R2. Lihat catatan di bawah |
+| `net::ERR_CERT_AUTHORITY_INVALID` pada `r2.dev` | Jaringan memblokir `r2.dev`. Sudah ditangani — lihat catatan di bawah |
+
+### Tentang `ERR_CERT_AUTHORITY_INVALID`
+
+Muncul di konsol peramban saat memuat foto produk, padahal berkasnya ada di
+bucket dan Vercel bisa mengambilnya.
+
+Ada penyaringan di tingkat jaringan yang menyadap HTTPS ke `*.r2.dev` dan
+menyodorkan sertifikat tak tepercaya. `r2.dev` kerap masuk daftar blokir karena
+banyak dipakai menumpang berkas sembarangan. Ini menimpa peramban, bukan server
+— karena itu gambar tampil di katalog publik (memakai `<Image>`, Vercel yang
+mengambil) tapi kosong di halaman Produk (memakai `<img>` langsung ke `r2.dev`).
+
+Sudah ditangani: seluruh alamat gambar disalurkan lewat `/gambar?url=…` pada
+domain sendiri, jadi peramban tidak pernah menyentuh `r2.dev`. Lihat
+`lib/gambar.ts`.
+
+**Jangan kembalikan `<img src={foto}>` menjadi alamat R2 langsung** — pelanggan
+yang ISP-nya ikut memblokir `r2.dev` juga akan kehilangan foto di katalog.
+Pakai `urlGambar(foto)`.
 
 ### Tentang `resolved to private ip`
 

@@ -53,6 +53,7 @@ bucket → Settings → Custom Domain → `img.linaflowers.my.id`, lalu ganti
 - [x] 3.4 `next.config.ts` → tambah `remotePatterns` untuk `img.linaflowers.my.id`; **pertahankan pola Supabase** supaya gambar lama tetap bisa dioptimasi selama masa transisi
 - [x] 3.5 `public/sw.js` → pencocok gambar mengenali host R2, dan **naikkan `VERSI`** supaya cache lama dibersihkan
 - [x] 3.6 Env didokumentasikan di tugas 1.7 (repo ini tidak punya `.env.example`)
+- [x] 3.8 `lib/gambar.ts` + `app/(backend)/gambar/route.ts` — antar gambar R2 lewat domain sendiri. Jaringan di sini menyadap HTTPS ke `*.r2.dev` dan menyodorkan sertifikat tak tepercaya (`ERR_CERT_AUTHORITY_INVALID`), jadi peramban tidak boleh menyentuh host itu. Rutenya sengaja **di luar `/api/`** supaya service worker tetap bisa menyimpan gambar untuk mode offline
 - [x] 3.7 `next.config.ts` → `dangerouslyAllowLocalIP` khusus `next dev`. Jaringan tethering di sini memakai DNS64/NAT64, dan Next 16 menolak host yang menghasilkan alamat `64:ff9b::…`. Hanya URL Supabase lama yang kena; host R2 menghasilkan IPv4 biasa
 
 ## 4. Verifikasi kode
@@ -66,6 +67,7 @@ bucket → Settings → Custom Domain → `img.linaflowers.my.id`, lalu ganti
 - [x] 4.7 Pastikan `next/image` mengoptimasi gambar R2 tanpa galat host
 - [ ] 4.8 Pastikan otorisasi rute unggah tidak berubah — tetap menolak 401 tanpa sesi
 - [x] 4.9 Kredensial diuji langsung ke S3 R2 di luar aplikasi: `PUT` 200, `LIST` jalan, `DELETE` jalan, bucket kembali kosong
+- [x] 4.11 Perantara `/gambar` diuji di produksi: bucket sendiri `200 image/webp` dengan `Cache-Control: immutable`; bucket R2 lain, serangan awalan `…r2.dev.penyerang.com`, host sembarangan, alamat internal `169.254.169.254`, dan permintaan tanpa parameter semuanya `400` — bukan perantara terbuka
 - [x] 4.10 Diuji dari produksi: `linaflowers.my.id/_next/image` atas gambar R2 membalas `200 image/webp`, sedangkan gambar Supabase lama membalas `502`. Vercel berhasil mengambil dari `r2.dev`, jadi akses publiknya ikut terbukti aktif
 
 ## 5. Pengisian ulang foto — bersama Mama

@@ -1,4 +1,4 @@
-// Unduh gambar produk dari Supabase Storage, DINAMAI MENURUT NAMA PRODUKNYA.
+// Unduh gambar produk, DINAMAI MENURUT NAMA PRODUKNYA.
 //
 // LATAR: pemilik punya salinan foto di komputer, tapi namanya nama bawaan
 // kamera (IMG_20260715_0842.jpg) sehingga tidak ketahuan itu produk apa.
@@ -10,11 +10,18 @@
 // Sekalian membuat `index.html` — buka di peramban untuk melihat semua gambar
 // beserta nama produknya berdampingan, tanpa perlu internet.
 //
+// GAMBAR R2 DIAMBIL LEWAT ENDPOINT S3 BERTANDA TANGAN, bukan alamat publiknya.
+// Alasannya bukan gaya-gayaan: jaringan di sini menyaring HTTPS ke `*.r2.dev`
+// dan menyodorkan sertifikat tak tepercaya, jadi mengunduh dari alamat publik
+// selalu gagal. Endpoint `<account>.r2.cloudflarestorage.com` tidak kena saring,
+// dan kita memegang kuncinya — inilah bedanya dengan Supabase dulu, yang begitu
+// diblokir tidak menyisakan jalan masuk apa pun.
+//
 // Pemakaian:
 //   node scripts/unduh-gambar-produk.cjs             # unduh ke ./gambar-produk
 //   node scripts/unduh-gambar-produk.cjs --peta-saja # HANYA buat daftar & index,
 //                                                     tanpa mengunduh (jalan walau
-//                                                     Storage sedang diblokir)
+//                                                     penyimpanan sedang diblokir)
 
 const fs = require("node:fs");
 const path = require("node:path");
@@ -57,6 +64,47 @@ const ekstensiDariUrl = (url) => {
   if (titik === -1) return "jpg";
   const ext = bersih.slice(titik + 1).toLowerCase();
   return /^[a-z0-9]{2,5}$/.test(ext) ? ext : "jpg";
+};
+
+// --- pengambilan berkas -----------------------------------------------------
+
+const buangGarisMiringAkhir = (nilai) => (nilai || "").replace(/\/+$/, "");
+
+/**
+ * Siapkan klien S3 R2 bila envnya lengkap. Dikembalikan `null` bila belum
+ * dikonfigurasi — skrip tetap jalan untuk URL Supabase lama.
+ */
+const siapkanKlienR2 = () => {
+  const akun = process.env.R2_ACCOUNT_ID;
+  const kunci = process.env.R2_ACCESS_KEY_ID;
+  const rahasia = process.env.R2_SECRET_ACCESS_KEY;
+  const bucket = process.env.R2_BUCKET;
+  const basis = buangGarisMiringAkhir(process.env.R2_PUBLIC_BASE_URL);
+  if (!akun || !kunci || !rahasia || !bucket || !basis) return null;
+
+  const { AwsClient } = require("aws4fetch");
+  return {
+    basis,
+    klien: new AwsClient({
+      accessKeyId: kunci,
+      secretAccessKey: rahasia,
+      service: "s3",
+      region: "auto",
+    }),
+    endpointBucket: `https://${akun}.r2.cloudflarestorage.com/${bucket}`,
+  };
+};
+
+/**
+ * Ambil satu gambar. URL R2 lewat endpoint S3 bertanda tangan; sisanya lewat
+ * fetch biasa.
+ */
+const ambilGambar = async (url, r2) => {
+  if (r2 && url.startsWith(`${r2.basis}/`)) {
+    const objek = url.slice(r2.basis.length + 1).split("?")[0];
+    return r2.klien.fetch(`${r2.endpointBucket}/${objek}`);
+  }
+  return fetch(url);
 };
 
 const escapeHtml = (nilai) =>
@@ -113,6 +161,7 @@ const buatIndexHtml = (baris) => `<!DOCTYPE html>
 
 const main = async () => {
   const petaSaja = process.argv.includes("--peta-saja");
+  const r2 = siapkanKlienR2();
   const prisma = new PrismaClient();
 
   try {
@@ -127,6 +176,7 @@ const main = async () => {
     console.log(`Punya gambar   : ${punyaGambar.length}`);
     console.log(`Tanpa gambar   : ${produk.length - punyaGambar.length}`);
     console.log(`Mode           : ${petaSaja ? "PETA SAJA (tidak mengunduh)" : "UNDUH"}`);
+    console.log(`Akses R2       : ${r2 ? "lewat S3 bertanda tangan" : "BELUM DIKONFIGURASI (env R2 kurang)"}`);
     console.log(`Tujuan         : ${FOLDER_TUJUAN}\n`);
 
     fs.mkdirSync(FOLDER_TUJUAN, { recursive: true });
@@ -157,7 +207,7 @@ const main = async () => {
       }
 
       try {
-        const res = await fetch(p.gambar);
+        const res = await ambilGambar(p.gambar, r2);
         if (!res.ok) {
           console.log(`  GAGAL ${res.status}        ${namaBerkas}`);
           gagal += 1;
@@ -195,8 +245,11 @@ const main = async () => {
 
     if (gagal > 0) {
       console.log(
-        "\nAda yang gagal diunduh. Kalau statusnya 402, Storage Supabase masih diblokir —" +
-          "\njalankan ulang skrip ini setelah restriksinya diangkat. Yang sudah terunduh dilewati."
+        "\nAda yang gagal diunduh." +
+          "\n  402 -> gambar lama di Supabase Storage yang masih diblokir. Tidak bisa" +
+          "\n         diselamatkan; produk itu perlu difoto ulang." +
+          "\n  403 -> token R2 tidak berizin baca. Buat ulang dengan Object Read & Write." +
+          "\nYang sudah terunduh dilewati saat skrip dijalankan ulang."
       );
     }
   } finally {

@@ -1,304 +1,367 @@
-# Catatan Sesi — 30 Juli 2026
+# Catatan Sesi — 3–5 Agustus 2026
 
-Semua sudah di-push ke `main` (`Insinyurfan/kasir-lina-flowers`), dari `e5e8f3c`
-sampai **`7ad31ec`** — 12 commit. Tidak ada yang menggantung di working tree.
+Semua sudah di-push ke `main` (`Insinyurfan/kasir-lina-flowers`), dari `b4a95a5`
+sampai **`18ee06f`** — 15 commit. Tidak ada yang menggantung di working tree.
 
-Sesi ini membangun **tiga modul baru** sekaligus, dan seluruhnya sudah ada
-tabelnya di basis data produksi.
+Sesi ini **tidak membangun modul bisnis baru**. Seluruhnya habis untuk satu
+kejadian: pada 3 Agustus, semua foto produk lenyap dari aplikasi sekaligus.
+Menelusuri sebabnya membongkar tiga masalah yang saling menutupi, dan berakhir
+dengan foto pindah rumah ke Cloudflare R2.
 
----
-
-## 0. Kenapa modul-modul ini yang dibangun
-
-Sebelum menulis kode, kita menyepakati dulu tujuan bisnisnya: **usaha ini untung
-beneran atau cuma kelihatan untung?** Aplikasi lama hanya mencatat uang masuk —
-tidak ada satu pun angka biaya di basis data — sehingga "Total Pendapatan Lunas"
-di halaman Laporan itu sebenarnya **omzet**, bukan laba.
-
-Urutan roadmap 5 langkah yang disepakati:
-
-1. ~~Piutang + pengeluaran + laba rugi~~ ← **selesai sesi ini**
-2. ~~Papan tugas & upah pengrajin~~ ← **selesai sesi ini**
-3. Bahan baku + daftar belanja otomatis (`bom-inventory`) ← **berikutnya**
-4. Kirim sebagian & bukti serah terima (`split-invoice-backorder`)
-5. Jualan satuan/eceran
-
-Di tengah sesi, pemilik meluruskan arah: **yang repot itu pekerjaan di rumah**
-(orderan masuk → packing → berangkat), bukan alur di luar rumah. Karena itu
-lahir modul ketiga di luar roadmap awal.
+Catatan sesi 30 Juli sudah digantikan berkas ini; hal-hal yang masih terbuka
+dari sana dibawa ke bagian 7.
 
 ---
 
-## 1. Modul keuangan — `pengeluaran-piutang-laba` (61/64)
+## 0. Kejadiannya, berurutan
 
-**Halaman baru:** `/pengeluaran`, `/piutang`, `/laba-rugi`
-
-- **Pengeluaran** — ramah-HP, diisi selagi di jalan. Kategori baku + foto struk
-  opsional yang tidak pernah memblokir penyimpanan.
-- **Ambilan Pribadi (prive)** — mengurangi kas, **TIDAK** mengurangi laba. Ini
-  pembagian keuntungan, bukan biaya usaha.
-- **Piutang** — `Payment` sebagai ledger, jadi satu nota bisa dicicil. Umur
-  tagihan, teks tagihan siap tempel ke WhatsApp, pelunasan massal.
-- **Laba Rugi** — menampilkan **dua angka berdampingan**:
-
-      laba usaha − kenaikan piutang − ambilan pribadi = posisi kas
-
-  Justru **selisih** itulah gejala "kelihatan untung tapi uang habis". Kalau
-  hanya satu angka yang tampil, penjelasannya hilang.
-
-### Keputusan yang mengikat
-
-- `Transaction.status` **tidak dihapus**, hanya berubah jadi cache yang ditulis
-  server. Alasannya: dashboard, laporan, dan ekspor menyaring `status === "Paid"`
-  di banyak tempat — mempertahankannya membuat kode lama tetap benar tanpa
-  disentuh. **Tidak ada jalur tulis dari klien ke kolom ini.**
-- Biaya diakui **berbasis kas** (bahan dibeli hari ini = beban hari ini).
-  Konsekuensinya laba bulanan bisa bergelombang; akan diperhalus oleh
-  `bom-inventory`.
-
-### Data lama
-
-`scripts/backfill-payments.cjs` sudah dijalankan: **118 nota** lama berstatus
-`Paid` dibuatkan bukti pembayaran, total **Rp565.551.012**. Skripnya idempoten
-(dijalankan dua kali, yang kedua melaporkan 0). Punya `--dry-run`.
-
-> **Temuan penting:** dari 118 nota, **tidak ada satu pun** yang berstatus belum
-> bayar. Padahal Mama rutin menagih lewat WA — artinya piutang itu nyata, cuma
-> tidak pernah tercatat. Jadi halaman Piutang akan **kosong** saat pertama
-> dibuka; itu bukan bug. Ia baru terisi saat kasir memilih **"Belum Bayar"** di
-> POS.
+1. Foto produk hilang serentak dari semua perangkat. Supabase Storage membalas
+   `402 exceed_egress_quota`.
+2. Dugaan pertama — gambar terlalu besar — **salah**. Dashboard menunjukkan
+   total penyimpanan cuma 0,01 GB, rata-rata 175 KB per gambar. Gambar bukan
+   penyebabnya.
+3. Ditemukan tiga perulangan polling **tiap 5 detik** yang tidak pernah berhenti
+   walau tab tidak dilihat.
+4. Pertanyaan pemilik — *"kenapa logo toko dan foto profil tetap ada?"* —
+   membuka penyebab sebenarnya: **logo disimpan base64 di basis data**, dan
+   `/api/pengaturan` dipanggil dari layout akar. Artinya **setiap** pemuatan
+   halaman mengirim ±4 MB. 184 MB egress pada 1 Agustus setara hanya ~46 kali
+   buka halaman.
+5. Empat perbaikan efisiensi dikerjakan, lalu service worker supaya gambar
+   bertahan walau sumbernya mati.
+6. Pemilik memutuskan pindah ke R2 dan memotret ulang. Migrasinya berjalan, dan
+   memunculkan **dua masalah jaringan** yang tidak ada hubungannya dengan R2.
 
 ---
 
-## 2. Modul pengrajin — `pengrajin-tugas-upah` (65/78)
+## 1. Kesalahan penalaran yang perlu diingat
 
-**Halaman baru:** `/papan-tugas`, `/pengrajin`
+Ini bagian terpenting dari sesi ini, karena kesalahannya berulang dari dua arah.
 
-Menjawab tiga dari empat keluhan operasional: orderan ke-skip, tidak tahu siapa
-mengerjakan apa, dan upah yang cuma dicatat di buku.
+**Ukuran gambar ditaksir dari plafon konfigurasi, bukan diukur.** Angka 900 KB
+yang sempat disebut itu batas unggah, bukan ukuran sungguhan. Yang benar 175 KB.
+Jangan menyimpulkan dari batas — ukur.
 
-### Temuan yang mengubah rancangan
+**Omzet kotor sempat dipakai sebagai alasan mampu berlangganan.** Pemilik yang
+mengoreksi: *"omzet kotor doang, uangnya juga diputar lagi beli bahan baku."*
+Itu persis kekeliruan yang membuat modul Laba Rugi dibangun. Omzet bukan uang
+yang bisa dibelanjakan.
 
-`Transaction.nama_pengrajin` adalah **satu kolom teks bebas untuk seluruh nota**.
-Secara struktural tidak mampu menyimpan kenyataan bahwa Bando Satin dan Bando
-Pompom dalam satu nota dikerjakan orang berbeda — sebagus apa pun tampilannya
-diperbaiki. Karena itu penugasan dipindah ke tingkat **`TransactionItem`**, dan
-satu baris pun boleh dibagi ke beberapa pengrajin.
-
-Kolom lamanya dipertahankan sebagai catatan sejarah; tidak ada fitur baru yang
-membacanya untuk mengambil keputusan.
-
-### Kenapa papan tugas & upah digabung satu modul
-
-Keduanya berputar pada **satu kejadian yang sama**: pengrajin menyetorkan barang
-jadi. Kejadian itu sekaligus menutup tugas di papan **dan** menambah saldo upah.
-Kalau dipisah, "barang sudah disetor" harus dicatat dua kali — dan begitu
-keduanya bisa berbeda, tidak ada lagi yang bisa dipercaya.
-
-### Keputusan yang mengikat
-
-- **Tarif per pasangan pengrajin × produk**, ditambah **tarif cadangan** per
-  orang. Tanpa cadangan, satu produk baru membuat setoran gagal dicatat tepat di
-  pagi tersibuk. Urutan: tarif produk → tarif cadangan → tolak.
-- **Tarif disimpan sebagai snapshot** pada tiap setoran. Menaikkan tarif tidak
-  boleh diam-diam mengubah nilai setoran yang mungkin sudah dibayar.
-- **Setoran mencatat dua pihak**: pekerja dan penerima saldo. Riwayat kerja tetap
-  menempel pada pekerjanya walau upahnya diteruskan ke ketua kelompok.
-- **Saldo dihitung dari buku besar**, bukan kolom yang bisa disunting. Ini utang
-  ke orang.
-- **Biaya diakui saat PENARIKAN**, bukan saat setoran (konsisten basis kas).
-  Konsekuensinya saldo terutang **belum masuk Laba Rugi** — karena itu
-  ditampilkan sebagai kartu tersendiri di Dashboard dan halaman Pengrajin.
-- Penarikan otomatis membuat `Expense` berkategori **Upah Pengrajin** dalam satu
-  transaksi basis data. `Expense` itu **dikunci** dari halaman Pengeluaran.
-
-### Penjaga validasi (urutan pengisian master penting!)
-
-- `KETUA` wajib punya kelompok yang **sudah berketua**, dan bukan dirinya sendiri
-- Pengrajin yang **menjadi** ketua wajib `SENDIRI` (cegah rantai berputar)
-
-Urutan isi master yang benar: **buat kelompok → isi pengrajin (semua SENDIRI) →
-tetapkan ketua tiap kelompok → baru ubah anggota jadi KETUA.** Kalau terbalik,
-validasinya menolak.
+**Egress diperbesar oleh perbaikan sendiri.** Menambahkan `payments` ke
+`transactionInclude` memperbesar muatan yang di-polling tiap 5 detik — jadi
+perbaikan itu justru memperburuk masalah yang sedang ditangani.
 
 ---
 
-## 3. Rantai kerja di rumah — `label-packing-kesiapan-setoran` (27/35)
+## 2. Empat perbaikan efisiensi
 
-Menutup tiga lubang terakhir di rentang **pukul 08.00 sampai mobil berangkat**.
-
-- **Label bungkus siap cetak** ([lib/labelPacking.ts](lib/labelPacking.ts)) —
-  menggantikan kertas kecil yang ditulis tangan Bibi. Bisa per nota atau per
-  baris (cetak ulang). **HTML A4 dua label per baris + garis potong**, bukan
-  format printer thermal: di rumah hanya ada printer biasa.
-- **Status setoran di Checklist Packing** — tiap baris menyebut pengrajin dan
-  jumlah setorannya; tiap nota ditandai siap dipacking.
-- **Tagih Setoran di Papan Tugas** — pekerjaan jatuh tempo/terlambat per
-  pengrajin, dengan teks siap salin.
-
-### Dua keputusan yang perlu diingat
-
-1. **Setoran TIDAK mengunci pencentangan packing.** Kenyataan lebih berantakan
-   daripada data — pengrajin bisa menyerahkan barang tanpa sempat dicatat.
-   Mengunci centang membuat orang berhenti memakai checklist sama sekali, dan
-   checklist yang tidak dipakai lebih buruk daripada checklist tanpa penjagaan.
-2. **Penilaian "siap dipacking" hanya menghitung baris yang punya penugasan.**
-   Kalau tidak, semua pesanan lama akan selamanya tampak menggantung dan
-   penandanya kehilangan arti sejak hari pertama. Penandanya menyebut dasarnya
-   ("8/8 baris bertugas sudah disetor"), bukan sekadar lencana hijau.
-
----
-
-## 4. Perbaikan dari feedback pemilik
-
-Enam commit lahir dari koreksi langsung, dan semuanya menemukan masalah nyata:
-
-| Keluhan | Penyebab sebenarnya |
+| Perbaikan | Hasil terukur |
 |---|---|
-| Tampilan beda tema | Padding dobel (`<main>` sudah memberi padding), tidak pakai `lina-panel`, palet rose/emerald/violet acak |
-| Navbar kepotong | `min-h-0` tidak ada → flex item menolak menyusut, `overflow-y-auto` tidak pernah aktif |
-| Label menu terpotong 1 huruf | `scrollbar-gutter: stable` yang saya tambahkan memakan ~6px permanen |
-| Tampilan memanjang | 25 baris dari **satu** nota mengulang keterangan yang sama 25 kali |
-| Ada tulisan `setengah_gross` | Nilai mentah DB bocor ke layar — **dan** beban kerja menjumlahkan satuan berbeda (2 gross + 5 lusin = "7 unit"), sehingga urutan "siapa paling kosong" salah |
-| Barang hilang setelah ditugaskan | Kartu nota makin kosong, gambaran utuh notanya lenyap |
-| Jangan tampilkan pcs | Benar — pcs kini hanya dipakai server untuk mengurutkan, tidak pernah tampil |
+| `lib/pollingHemat.ts` — jeda 30–60 dtk, **berhenti saat tab tak terlihat** | dari tiap 5 detik tanpa henti |
+| `/api/pengaturan?ringkas=1` & `?tampilan=1` | penuh 3.988 KB · `tampilan` 1.202 KB · `ringkas` **0 KB** |
+| Logo struk dikompres saat diunggah | logo 4 MB tidak lagi lahir |
+| `next/image` + `remotePatterns` | Vercel mengambil sekali, lalu dari CDN-nya sendiri |
+
+Yang terakhir itu yang belakangan menyelamatkan keadaan — lihat bagian 5.
 
 ---
 
-## 5. Yang BELUM diverifikasi (perlu dicoba sendiri)
+## 3. Service worker — `cache-aset-offline` (20/26)
 
-Selama sesi ini tidak ada peramban dengan sesi login di sisi asisten. Yang sudah
-diverifikasi: typecheck bersih, ESLint tidak menambah error baru, **17 endpoint
-baru menolak 401 tanpa sesi**, seluruh halaman ter-render 200, dan
-`scripts/uji-perhitungan.mts` **21/21 lolos** (batas hari WIB + jembatan
-laba↔kas).
+`public/sw.js` **ditulis tangan**, tanpa next-pwa/workbox/serwist. Alasannya:
+kalau service worker salah, salahnya **menetap di perangkat orang**, dan lapisan
+build justru menghalangi penelusuran.
 
-Yang belum pernah benar-benar dilihat berjalan:
+Aturan yang tidak boleh dilanggar:
 
-- [ ] **Alur pembayaran piutang** — bayar penuh, sebagian, cicil sampai lunas,
-      coba melebihi sisa (harus ditolak), hapus pembayaran (harus balik jadi
-      piutang)
-- [ ] **Alur pengrajin lengkap** — tugaskan → setor sebagian → tarik upah →
-      cek muncul di Laba Rugi dan hilang saat penarikan dibatalkan
-- [ ] **Bagi satu baris ke dua pengrajin** (5 gross → 3 ke A, 2 ke B)
-- [ ] **Penerusan upah ke ketua** — saldo masuk ke ketua, riwayat kerja tetap di
-      anggota, penarikan atas nama anggota ditolak
-- [ ] **Cetak sungguhan satu lembar label** lalu cocokkan ukurannya dengan
-      plastik — ukurannya masih tebakan, belum pernah melihat plastiknya
+```js
+// ATURAN PALING PENTING — data bisnis tidak pernah disentuh.
+if (url.pathname.startsWith("/api/")) return;
+```
+
+Aplikasi ini memegang harga, stok, piutang, dan saldo upah orang. **Angka basi
+yang tampak wajar jauh lebih berbahaya daripada gagal terang-terangan** —
+kegagalan yang kelihatan bisa ditangani manusia.
+
+Yang lain:
+
+- `install` **sengaja tidak** memanggil `skipWaiting()`. Versi baru menunggu
+  pengguna menekan "muat ulang". Mengambil alih di tengah sesi bisa membuat
+  halaman terbuka meminta potongan JavaScript yang sudah tidak ada — tepat saat
+  orang sedang membuat nota.
+- Respons galat **tidak pernah menimpa** salinan yang masih baik. Inilah yang
+  membuat gambar bertahan saat sumbernya membalas 402.
+- Setiap kali `public/sw.js` diubah, **naikkan konstanta `VERSI`**. Sekarang
+  `v3`.
+
+---
+
+## 4. Pindah ke Cloudflare R2 — `pindah-gambar-ke-r2`
+
+### Kenapa R2
+
+R2 **tidak menagih egress sama sekali**, dan yang lebih penting: ia memisahkan
+nasib gambar dari nasib basis data. Di Supabase keduanya berbagi satu jatah, jadi
+apa pun yang menjebolkan salah satunya mematikan keduanya.
+
+### Keputusan besar: DNS tidak jadi dipindahkan
+
+Rencana awal memakai `img.linaflowers.my.id`, yang mensyaratkan nameserver
+`linaflowers.my.id` pindah dari anymhost ke Cloudflare. **Itu dibatalkan.** Satu
+catatan DNS terlewat saat migrasi = situs jualan mati.
+
+Ternyata tidak perlu: R2 punya subdomain publik bawaan `pub-<hash>.r2.dev` yang
+aktif dalam hitungan menit tanpa menyentuh DNS. Konsekuensinya cuma URL yang
+jelek — tidak pernah dilihat pelanggan.
+
+Jalur domain sendiri disimpan sebagai lampiran opsional di `tasks.md`, lengkap
+dengan peringatannya. Kalau suatu hari dikerjakan, cukup ganti
+`R2_PUBLIC_BASE_URL`; kode dan `next.config.ts` sudah menerima keduanya.
+
+### Kenapa `aws4fetch`, bukan `@aws-sdk/client-s3`
+
+Yang dibutuhkan hanya tanda tangan SigV4 untuk PUT dan DELETE. aws4fetch ~84 KB;
+SDK resminya megabyte-an. Menulis SigV4 sendiri juga ditolak — salah sedikit
+menghasilkan 403 yang sulit ditelusuri.
+
+### `hapusGambarR2` sengaja tidak pernah melempar galat
+
+Berkas yatim jauh lebih ringan akibatnya daripada penghapusan pengeluaran atau
+penggantian foto yang batal gara-gara jaringan sedang bermasalah.
+
+---
+
+## 5. Dua masalah jaringan yang menyamar jadi masalah R2
+
+Keduanya memakan waktu panjang karena gejalanya persis seperti salah konfigurasi.
+
+### 5a. `resolved to private ip ["64:ff9b::…"]` — hanya di `next dev`
+
+Next 16 menolak mengoptimasi gambar bila nama hostnya menghasilkan alamat
+non-unicast, memakai `dns.lookup(hints: ALL)`. Jaringan tethering di sini
+memakai **DNS64/NAT64**, jadi `supabase.co` ikut mengembalikan bentuk
+`64:ff9b::6812:260a` — yang sebenarnya alamat Cloudflare publik `104.18.38.10`,
+tapi digolongkan `ipaddr.js` sebagai rentang `rfc6052`. Next menolak begitu **ada
+satu** yang tersaring, walau IPv4 yang sah juga ikut dikembalikan.
+
+Ditangani: `dangerouslyAllowLocalIP` menyala **hanya saat `next dev`**. Produksi
+tidak boleh, dan `remotePatterns` tetap berlaku saat opsi ini menyala.
+
+### 5b. `ERR_CERT_AUTHORITY_INVALID` — ini yang serius
+
+Setelah semuanya benar, foto tetap kosong. Konsol peramban menunjukkan
+sertifikat TLS untuk `*.r2.dev` **tidak tepercaya**. Ada penyaringan tingkat
+jaringan yang menyadap HTTPS ke host itu — `r2.dev` kerap masuk daftar blokir
+karena banyak dipakai menumpang berkas sembarangan.
+
+Yang membuatnya sulit dibaca: **gambar tampil di katalog publik tapi kosong di
+halaman Produk.** Sebabnya katalog memakai `<Image>` (Vercel yang mengambil)
+sedangkan halaman Produk memakai `<img>` mentah (peramban yang mengambil). Di
+seluruh aplikasi ada **35 `<img>` mentah berbanding 7 `<Image>`**.
+
+Ini bukan cuma masalah sendiri — **pelanggan yang ISP-nya ikut memblokir `r2.dev`
+juga tidak akan melihat foto di katalog.**
+
+Ditangani: seluruh alamat gambar disalurkan lewat `/gambar?url=…` pada domain
+sendiri (`lib/gambar.ts` + `app/(backend)/gambar/route.ts`).
+
+> **Jangan sederhanakan `urlGambar(foto)` kembali menjadi alamat R2 langsung.**
+> Gambar akan hilang lagi, dan hanya di sebagian jaringan — sulit ditelusuri.
+
+Dua rincian rancangan yang penting:
+
+- Rutenya **sengaja di luar `/api/`**. Service worker melewatkan seluruh
+  `/api/**`; menaruhnya di sana akan mencabut kemampuan gambar bertahan offline.
+- Pembatasan awalan memakai `` `${basis}/` `` **dengan garis miring**, supaya
+  `pub-xxx.r2.dev.penyerang.com` tidak lolos. Tanpa itu, rute ini jadi perantara
+  terbuka.
+
+---
+
+## 6. Keadaan sekarang
+
+### Sudah terbukti jalan (diuji di produksi)
+
+| | |
+|---|---|
+| Unggah lewat aplikasi → R2 | ✅ berkas masuk bucket, URL tersimpan benar |
+| `/_next/image` atas gambar R2 | ✅ `200 image/webp` |
+| `/_next/image` atas gambar Supabase | ❌ `502` — memang masih diblokir |
+| Perantara `/gambar` | ✅ `200`, `Cache-Control: immutable` |
+| Penjagaan perantara | ✅ bucket lain, serangan awalan, host asing, `169.254.169.254`, tanpa parameter → semua `400` |
+| Kredensial R2 langsung ke S3 | ✅ PUT / LIST / DELETE |
+
+### Sebaran gambar
+
+```
+71 produk →  1 di R2 (TESTING PRODUK — hapus kalau cuma uji coba)
+            57 di Supabase (rusak permanen, harus difoto ulang)
+            13 tanpa foto
+```
+
+### Cara mengambil kembali gambar dari R2
+
+Ini beda mendasar dari Supabase dulu. Ketika Supabase memblokir, **tidak ada
+jalan masuk sama sekali** — gambarnya hilang untuk selamanya. Di R2 kita
+memegang kredensial S3-nya, dan endpoint `<account>.r2.cloudflarestorage.com`
+**tidak ikut disaring** jaringan yang memblokir `r2.dev`.
+
+```bash
+node scripts/unduh-gambar-produk.cjs
+```
+
+Skripnya mengambil URL R2 lewat **S3 bertanda tangan**, bukan alamat publiknya,
+lalu menamai tiap berkas menurut nama produknya:
+
+```
+gambar-produk/074 - TESTING PRODUK.webp
+gambar-produk/daftar-produk.txt      ← daftar teks, gampang di-Ctrl+F
+gambar-produk/index.html             ← katalog offline, buka di peramban
+```
+
+Sudah diuji: gambar R2 terunduh, 57 gambar Supabase gagal `402` seperti yang
+diharapkan. Jalankan ulang setelah sesi foto ulang selesai — yang sudah ada
+dilewati.
+
+---
+
+## 7. Yang belum selesai
+
+### Mendesak — sisa pekerjaan tangan
+
+1. **Foto ulang ~70 produk bersama Mama.** Panduan namanya di
+   `gambar-produk/daftar-produk.txt`. Kerjakan langsung dari HP di
+   `linaflowers.my.id/produk` — **tidak perlu localhost**. Halaman Produk sendiri
+   jadi penanda progres: yang masih kosong berarti belum dikerjakan. Boleh
+   dicicil.
+2. **Unggah ulang logo toko & foto profil** lewat halaman Pengaturan. Keduanya
+   tersimpan di basis data, bukan storage, jadi urusannya terpisah.
+3. **Isi tarif produk tiap pengrajin.** Tanpa ini setoran ditolak, dan itu baru
+   ketahuan di pagi tersibuk.
+4. **Cek `SESSION_SECRET` sudah diset di Vercel** — lubang keamanan kalau belum.
+   (Terkonfirmasi ada di daftar env Vercel, tapi belum diverifikasi nilainya.)
+
+### Belum pernah dilihat berjalan
+
+Sesi ini tidak punya peramban dengan sesi login di sisi asisten, sama seperti
+sesi sebelumnya. Yang masih menunggu:
+
+- [ ] **Ganti foto produk yang sama** → berkas lama benar-benar terhapus dari
+      bucket
+- [ ] **Unggah foto struk** pada sebuah pengeluaran → masuk ke awalan `struk/`
+- [ ] **Alur pembayaran piutang** — bayar penuh, sebagian, cicil, melebihi sisa
+      (harus ditolak), hapus pembayaran
+- [ ] **Alur pengrajin lengkap** — tugaskan → setor sebagian → tarik upah → cek
+      di Laba Rugi
+- [ ] **Bagi satu baris ke dua pengrajin**, dan **penerusan upah ke ketua**
+- [ ] **Cetak sungguhan satu lembar label** lalu cocokkan dengan plastiknya
 - [ ] **Tampilan 360px** untuk Pengeluaran, Piutang, Papan Tugas, Pengrajin
-- [ ] **Admin ditolak** di halaman Laba Rugi & rekap upah (butuh login Admin)
-
----
-
-## 6. Hal terbuka / keputusan yang menunggu
-
-### Mendesak
-
-1. **Isi tarif produk tiap pengrajin.** Saat ini hampir semua masih "belum ada
-   tarif produk". Tanpa ini setoran ditolak, dan itu baru ketahuan di pagi
-   tersibuk. Tarif cadangan sudah menolong, tapi angkanya jadi perkiraan.
-2. **Cek `SESSION_SECRET` sudah diset di Vercel** (tugas 6.4 di
-   `harden-api-auth`). Lima menit, tapi ini lubang keamanan kalau belum.
-3. **Agustus mulai 2 hari lagi dan itu bulan tersibuk** (17 Agustus). Dua modul
-   besar belum pernah dipakai sungguhan. Uji alur lengkapnya **sebelum** tanggal
-   1 — kalau ketahuan rusak pas orderan membanjir, itu waktu paling buruk.
+- [ ] **Verifikasi service worker di peramban** — gambar bertahan saat jaringan
+      mati, `/api/**` benar-benar tidak di-cache, alur toast pembaruan
 
 ### Perlu diputuskan
 
-4. **Angka Juli abaikan saja.** Omzet besar tanpa satu pun biaya tercatat, jadi
-   labanya bohong. Pemilik sudah memutuskan fitur ini **mulai dipakai Agustus
-   dengan data baru**.
-5. **Bulan pertama akan bergelombang** — bahan dibeli 31 Juli tapi produknya
-   terjual Agustus. Jangan ambil kesimpulan dari satu bulan; baca dari bulan
-   kedua atau lihat total dua bulan.
-6. **Ukuran label** — dua per baris A4, tinggi ~34mm. Ubah di
-   [lib/labelPacking.ts](lib/labelPacking.ts) kalau tidak pas.
-7. **Satuan tarif vs satuan pesanan** — sekarang diasumsikan sama. Kalau ada
-   pengrajin dibayar per pcs meski pesanannya per gross, perlu konversi.
-8. **Barang cacat** — sekarang seluruh setoran dibayar penuh. Kalau perlu
-   dipotong, cara termudah: catat setoran sejumlah yang layak saja.
+5. **Angka Juli abaikan saja** — omzet besar tanpa biaya tercatat. Pemilik sudah
+   memutuskan fitur keuangan dipakai **mulai Agustus dengan data baru**.
+6. **Bulan pertama akan bergelombang** — bahan dibeli Juli, terjual Agustus.
+   Baca dari bulan kedua, atau lihat total dua bulan.
+7. **Satuan tarif vs satuan pesanan** — sekarang diasumsikan sama.
+8. **Barang cacat** — seluruh setoran dibayar penuh. Kalau perlu dipotong, catat
+   setoran sejumlah yang layak saja.
+9. **Ukuran label** — dua per baris A4, tinggi ~34mm, di `lib/labelPacking.ts`.
 
-### Warisan sesi 27 Juli (masih terbuka)
+### Warisan lama (masih terbuka)
 
-9. **Logo toko tidak bisa diakses dari desktop** — header tempat logo hanya
-   muncul di mobile.
-10. **Centang packing saat qty bertambah** — kalau qty dinaikkan 2 → 5 dan sudah
-    tercentang, centangnya tetap. Risikonya 3 pcs tambahan terlewat.
-11. **Kartu produk agak gemuk di jendela 900–1000px** — sifat bawaan `auto-fill`.
+10. **Logo toko tidak bisa diakses dari desktop** — headernya `desktop:hidden`.
+11. **Centang packing saat qty bertambah** — qty 2 → 5 tapi centang tetap.
+12. **Kartu produk agak gemuk di jendela 900–1000px** — sifat bawaan `auto-fill`.
 
 ### Kerapian
 
-12. **Dua commit punya `@` nyasar di judulnya** (`75538d1`, `64763cc`) — akibat
-    sintaks here-string PowerShell dipakai di shell Bash. Isinya benar, hanya
-    judulnya jelek di `git log`. Merapikannya harus menulis ulang riwayat yang
-    sudah ter-push.
-13. **Draf usang** — `pengrajin-payroll` sudah **tergantikan penuh** oleh
-    `pengrajin-tugas-upah`, dan `petty-cash-hpp` tinggal separuh isinya (bagian
-    pengeluaran sudah dikerjakan). Sebaiknya diarsipkan supaya sesi berikutnya
-    tidak salah ambil rencana.
+13. **Dua commit punya `@` nyasar di judulnya** (`75538d1`, `64763cc`) — akibat
+    sintaks here-string PowerShell dipakai di Bash tool. Isinya benar.
+    Merapikannya harus menulis ulang riwayat yang sudah ter-push.
+14. **Draf usang** — `pengrajin-payroll` sudah tergantikan penuh oleh
+    `pengrajin-tugas-upah`; `petty-cash-hpp` tinggal separuh. Sebaiknya
+    diarsipkan supaya sesi berikutnya tidak salah ambil rencana.
+15. **Persempit `**.r2.dev`** — sudah dikerjakan, kini menunjuk host bucket yang
+    persis. Kalau subdomain R2 pernah dibuat ulang, perbarui di `next.config.ts`
+    **dan** `R2_PUBLIC_BASE_URL`.
 
 ---
 
-## 7. Cara melanjutkan besok
+## 8. Cara melanjutkan
+
+> **JANGAN jalankan dua server dev sekaligus.** Sesi ini sempat membuat laptop
+> ngefreeze karena tiga instance Turbopack jalan bersamaan sampai muncul
+> `ENOMEM`. Untuk sesi foto ulang, localhost **tidak dibutuhkan sama sekali** —
+> kerjakan dari HP lewat produksi.
 
 ```bash
-npm run dev          # http://localhost:3000
+npm run dev          # http://localhost:3000  — satu saja
 ```
 
-Perintah pemeriksaan yang dipakai sepanjang sesi:
+Perintah pemeriksaan:
 
 ```bash
-npx tsc --noEmit -p tsconfig.json                    # typecheck
+npx tsc --noEmit                                     # typecheck
 npx eslint "app/(frontend)/nama/page.tsx"            # lint satu berkas
 node --experimental-strip-types scripts/uji-perhitungan.mts   # 21 uji hitung
-node scripts/backfill-payments.cjs --dry-run         # cek migrasi (aman)
-openspec list                                         # progres semua change
+node scripts/unduh-gambar-produk.cjs                 # arsip gambar bernama produk
+node scripts/unduh-gambar-produk.cjs --peta-saja     # daftar saja, tanpa unduh
+openspec list                                        # progres semua change
 ```
 
-**Kalau perangkat tersangkut di versi lama (service worker):**
+### Env yang wajib ada
 
-Sejak change `cache-aset-offline`, aplikasi memasang service worker di produksi.
-Ia menetap di perangkat, jadi kalau suatu saat HP menyajikan versi lama walau
-server sudah diperbaiki:
+`DATABASE_URL`, `DIRECT_URL`, `SESSION_SECRET`, `SUPABASE_URL`,
+`SUPABASE_SERVICE_ROLE_KEY`, `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`,
+`R2_SECRET_ACCESS_KEY`, `R2_BUCKET`, `R2_PUBLIC_BASE_URL`.
 
-- **Chrome Android**: titik tiga → Setelan situs → cari `linaflowers.my.id` →
-  Hapus data
-- **PWA terpasang di layar**: hapus aplikasinya, lalu pasang ulang
-- **Desktop**: DevTools → Application → Service Workers → Unregister, lalu
-  Application → Storage → Clear site data
+> **Env Supabase JANGAN dihapus** walau storage-nya ditinggalkan.
+> `DATABASE_URL`/`DIRECT_URL` adalah basis datanya sendiri, dan
+> `SUPABASE_SERVICE_ROLE_KEY` masih jadi cadangan secret sesi di
+> `lib/serverSession.ts` — dihapus berarti semua yang sedang login terlempar
+> keluar.
 
-Penjagaannya sudah dipasang (berkas `/sw.js` tidak pernah di-cache, nama cache
-berversi, pembaruan menunggu persetujuan), tapi jalan keluar ini tetap perlu
-diketahui. Setiap kali `public/sw.js` diubah, **naikkan konstanta `VERSI`** di
-puncak berkasnya supaya cache lama ikut dibersihkan.
+Kalau kredensial R2 diputar: buat token baru di R2 → Manage API tokens (Object
+Read & Write, dibatasi ke bucket `lina-produk`), perbarui env di Vercel
+**dan** `.env` lokal, lalu **Redeploy tanpa build cache**.
 
-**Jebakan yang memakan waktu sesi ini:**
+### Kalau perangkat tersangkut di versi lama (service worker)
 
-- **Cache Turbopack menahan CSS rusak.** Setelah `app/globals.css` diubah dan
-  sempat salah, halaman terus 500 walau sumbernya sudah benar. Obatnya:
-  hentikan server → `rm -rf .next` → `npm run dev`.
-- **Jangan pakai sintaks here-string PowerShell (`@'...'@`) di Bash tool.**
-  Tanda `@`-nya masuk sebagai teks ke pesan commit. Pakai `git commit -F -` dengan
-  heredoc `<<'EOF'`.
+- **Chrome Android**: titik tiga → Setelan situs → `linaflowers.my.id` → Hapus data
+- **PWA terpasang**: hapus aplikasinya, pasang ulang
+- **Desktop**: DevTools → Application → Service Workers → Unregister, lalu Clear
+  site data
 
-**Catatan lint:** repo ini sudah punya error/warning ESLint bawaan yang tidak
+### Jebakan yang memakan waktu
+
+- **Cache Turbopack menahan berkas rusak.** Kalau halaman terus 500 walau
+  sumbernya sudah benar: hentikan server → `rm -rf .next` → `npm run dev`.
+- **Jangan pakai here-string PowerShell (`@'...'@`) di Bash tool.** Pakai
+  `git commit -F -` dengan heredoc `<<'EOF'`.
+- **Env hanya dibaca saat server menyala.** Setelah mengubah `.env` atau
+  `next.config.ts`, jalankan ulang.
+- **Skrip di scratchpad tidak menemukan `node_modules`.** Rujuk dengan path
+  penuh: `await import("file:///D:/kasir/kasir-digital/node_modules/…")`.
+
+**Catatan lint:** repo ini sudah punya error/warning bawaan yang tidak
 berhubungan (`prefer-const`, `no-explicit-any`, `set-state-in-effect`, warning
-`<img>`). Yang penting **tidak ada tambahan baru** — cara mengeceknya: salin
-versi `HEAD` berkas itu ke folder sementara, lint keduanya, bandingkan jumlahnya.
+`<img>`). Yang penting **tidak ada tambahan baru** — cara tercepat mengecek:
+`git stash` → lint → `git stash pop` → lint, bandingkan jumlahnya.
 
 ---
 
-## Berkas penting yang lahir di sesi ini
+## Berkas yang lahir di sesi ini
 
 | Berkas | Isi |
 |---|---|
-| `lib/waktu.ts` | Batas hari & bulan **WIB** dihitung eksplisit — server Vercel jalan UTC, tanpa ini transaksi pukul 00:00–07:00 WIB jatuh ke tanggal salah |
-| `lib/pengeluaran.ts` | Kategori pengeluaran + pemisahan biaya usaha vs prive |
-| `lib/piutang.ts` | Sisa tagihan, status pelunasan, umur piutang, teks penagihan |
-| `lib/pengrajin.ts` | Penentuan tarif, penerima upah, sisa penugasan, saldo, penjaga rantai berputar |
-| `lib/labelPacking.ts` | Pembuat label bungkus siap gunting |
-| `scripts/backfill-payments.cjs` | Migrasi bukti pembayaran nota lama (idempoten, punya `--dry-run`) |
-| `scripts/uji-perhitungan.mts` | 21 pemeriksaan batas WIB & jembatan laba↔kas |
-
-**Model basis data baru** (semua sudah ada di produksi): `Payment`, `Expense`,
-`Kelompok`, `Pengrajin`, `TarifPengrajin`, `Penugasan`, `Setoran`, `Penarikan`.
+| `lib/r2Storage.ts` | Unggah/hapus gambar di R2 lewat SigV4; menolak dengan pesan jelas bila env kurang |
+| `lib/gambar.ts` | `urlGambar()` — salurkan alamat R2 lewat domain sendiri; aman untuk base64 & path relatif |
+| `app/(backend)/gambar/route.ts` | Perantara gambar, di luar `/api/` supaya tetap bisa di-cache offline |
+| `lib/pollingHemat.ts` | Jeda polling + berhenti saat tab tak terlihat |
+| `public/sw.js` | Service worker tulis tangan; `/api/**` tidak pernah disentuh |
+| `components/PendaftarServiceWorker.tsx` | Pendaftaran + toast pembaruan, hanya di produksi |
+| `PANDUAN-R2.md` | Panduan langkah demi langkah, dipakai sambil mengerjakan |
+| `scripts/unduh-gambar-produk.cjs` | Arsip gambar bernama produk + katalog offline; R2 lewat S3 bertanda tangan |

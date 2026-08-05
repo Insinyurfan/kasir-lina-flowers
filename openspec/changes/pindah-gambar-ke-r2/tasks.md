@@ -76,11 +76,11 @@ bucket → Settings → Custom Domain → `img.linaflowers.my.id`, lalu ganti
 - [ ] 5.2 Unggah ulang foto lewat halaman Produk, satu per satu
 - [ ] 5.3 Pantau progres lewat halaman Produk sendiri: yang gambarnya masih rusak = belum dikerjakan
 - [ ] 5.4 Setelah semua masuk, cek katalog publik — tidak ada lagi gambar rusak
-- [ ] 5.5 Jalankan `node scripts/unduh-gambar-produk.cjs` untuk membuat arsip lokal bernama produk
+- [x] 5.5 `scripts/unduh-gambar-produk.cjs` kini mengambil gambar R2 lewat **S3 bertanda tangan**, bukan alamat publiknya — jaringan di sini memblokir `r2.dev`, sedangkan endpoint S3 lolos. Diuji: gambar R2 terunduh, gambar Supabase lama gagal `402` seperti yang diharapkan. **Jalankan ulang setelah sesi foto ulang selesai**
 
 ## 6. Setelah semua beres
 
 - [ ] 6.1 Pantau **Egress** Supabase seminggu — seharusnya turun lagi karena gambar tidak lagi lewat sana
 - [ ] 6.2 Pantau dashboard R2 — pastikan operasi baca/tulis masih jauh di bawah batas gratis
 - [ ] 6.3 Setelah yakin, bucket `produk` & `struk` lama di Supabase boleh dikosongkan (opsional — ukurannya cuma 10 MB)
-- [ ] 6.4 Perbarui `CATATAN-SESI.md`: gambar sekarang di R2, dan cara menambah env bila kredensialnya diputar
+- [x] 6.4 `CATATAN-SESI.md` ditulis ulang untuk 3–5 Agustus 2026 — termasuk cara mengambil kembali gambar dari R2 dan cara memutar kredensial

@@ -21,6 +21,20 @@ const nextConfig: NextConfig = {
   // sendiri, sekaligus mengecilkan gambar sesuai ukuran tampil. Supabase jadi
   // diakses sekali per gambar, bukan sekali per pengunjung.
   images: {
+    // HANYA saat `next dev`. Next 16 menolak mengoptimasi gambar yang nama
+    // hostnya menghasilkan alamat non-unicast, dan jaringan tethering di sini
+    // memakai DNS64/NAT64: `supabase.co` ikut menghasilkan `64:ff9b::…`, yang
+    // oleh ipaddr.js dikenali sebagai rentang `rfc6052` alias bukan unicast.
+    // Alamat itu sebenarnya Cloudflare publik (`64:ff9b::6812:260a` =
+    // 104.18.38.10), tapi Next menolak begitu ADA SATU saja yang tersaring —
+    // walau alamat IPv4 yang sah juga ikut dikembalikan.
+    //
+    // Aman dimatikan di produksi dan tidak boleh dinyalakan di sana: Vercel
+    // tidak memakai NAT64, dan di jaringan sungguhan pemeriksaan ini yang
+    // mencegah pengoptimal gambar dipakai menjangkau alamat internal.
+    // `remotePatterns` di bawah tetap berlaku, jadi bahkan saat menyala hanya
+    // host yang terdaftar yang bisa diambil.
+    dangerouslyAllowLocalIP: process.env.NODE_ENV === "development",
     remotePatterns: [
       // Rumah baru gambar produk: Cloudflare R2.
       //

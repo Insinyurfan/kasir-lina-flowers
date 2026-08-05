@@ -15,14 +15,14 @@
 > ini. Pindah ke domain sendiri nanti tinggal mengganti `R2_PUBLIC_BASE_URL`;
 > kode dan `next.config.ts` sudah menerima keduanya.
 
-- [ ] 1.1 Buat akun Cloudflare (gratis)
-- [ ] 1.2 Sidebar → **Storage & databases** → **R2** → aktifkan. Perlu kartu terdaftar meski pemakaiannya gratis
-- [ ] 1.3 Buat bucket, mis. `lina-produk`. Lokasi: **Asia-Pacific (APAC)**
-- [ ] 1.4 Catat **Account ID** — tampil di halaman ringkasan R2, bukan di halaman bucket
-- [ ] 1.5 Bucket → **Settings** → **Public access** → bagian **r2.dev subdomain** → *Allow Access*. Cloudflare minta ketik `allow` sebagai konfirmasi. Salin URL `https://pub-xxxxxxxx.r2.dev` yang muncul
-- [ ] 1.6 R2 → **Manage API tokens** → buat token **Object Read & Write**, dibatasi pada bucket itu saja. Simpan *Access Key ID* & *Secret Access Key* — secret hanya tampil sekali
+- [x] 1.1 Buat akun Cloudflare (gratis)
+- [x] 1.2 Sidebar → **Storage & databases** → **R2** → aktifkan. Perlu kartu terdaftar meski pemakaiannya gratis
+- [x] 1.3 Buat bucket, mis. `lina-produk`. Lokasi: **Asia-Pacific (APAC)**
+- [x] 1.4 Catat **Account ID** — tampil di halaman ringkasan R2, bukan di halaman bucket
+- [x] 1.5 Bucket → **Settings** → **Public access** → bagian **r2.dev subdomain** → *Allow Access*. Cloudflare minta ketik `allow` sebagai konfirmasi. Salin URL `https://pub-xxxxxxxx.r2.dev` yang muncul
+- [x] 1.6 R2 → **Manage API tokens** → buat token **Object Read & Write**, dibatasi pada bucket itu saja. Simpan *Access Key ID* & *Secret Access Key* — secret hanya tampil sekali
 - [ ] 1.7 Isi env di Vercel (Production **dan** Preview): `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`, `R2_PUBLIC_BASE_URL=https://pub-xxxxxxxx.r2.dev`
-- [ ] 1.8 Salin env yang sama ke `.env` lokal untuk pengujian
+- [x] 1.8 Salin env yang sama ke `.env` lokal untuk pengujian
 - [ ] 1.9 Setelah subdomain bucket diketahui, persempit pola `**.r2.dev` di `next.config.ts` menjadi host persisnya — lihat catatan keamanan di berkas itu
 
 ### Opsional, jauh di kemudian hari — domain sendiri
@@ -52,7 +52,8 @@ bucket → Settings → Custom Domain → `img.linaflowers.my.id`, lalu ganti
 - [x] 3.3 Cari pemanggil `deleteProductImageFromStorage` & `deleteReceiptImageFromStorage`, arahkan ke `hapusGambarR2`
 - [x] 3.4 `next.config.ts` → tambah `remotePatterns` untuk `img.linaflowers.my.id`; **pertahankan pola Supabase** supaya gambar lama tetap bisa dioptimasi selama masa transisi
 - [x] 3.5 `public/sw.js` → pencocok gambar mengenali host R2, dan **naikkan `VERSI`** supaya cache lama dibersihkan
-- [x] 3.6 Env didokumentasikan di tugas 1.11 (repo ini tidak punya `.env.example`)
+- [x] 3.6 Env didokumentasikan di tugas 1.7 (repo ini tidak punya `.env.example`)
+- [x] 3.7 `next.config.ts` → `dangerouslyAllowLocalIP` khusus `next dev`. Jaringan tethering di sini memakai DNS64/NAT64, dan Next 16 menolak host yang menghasilkan alamat `64:ff9b::…`. Hanya URL Supabase lama yang kena; host R2 menghasilkan IPv4 biasa
 
 ## 4. Verifikasi kode
 
@@ -64,6 +65,7 @@ bucket → Settings → Custom Domain → `img.linaflowers.my.id`, lalu ganti
 - [ ] 4.6 Uji env belum lengkap → pesan galatnya jelas, bukan galat mentah
 - [ ] 4.7 Pastikan `next/image` mengoptimasi gambar R2 tanpa galat host
 - [ ] 4.8 Pastikan otorisasi rute unggah tidak berubah — tetap menolak 401 tanpa sesi
+- [x] 4.9 Kredensial diuji langsung ke S3 R2 di luar aplikasi: `PUT` 200, `LIST` jalan, `DELETE` jalan, bucket kembali kosong. Membuktikan env, token, dan nama bucket benar — **belum** membuktikan jalur unggah lewat halaman Produk (butuh sesi peramban) maupun akses publik `r2.dev`
 
 ## 5. Pengisian ulang foto — bersama Mama
 

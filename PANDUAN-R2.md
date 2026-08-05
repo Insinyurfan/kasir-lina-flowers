@@ -216,3 +216,22 @@ tengah. Produk yang sudah diunggah langsung aman.
 | Gambar 401/403 saat dibuka | Langkah 1.4 (*Allow Access*) belum tersimpan |
 | Lokal jalan, produksi tidak | Env belum diisi di Vercel, atau belum deploy ulang |
 | Gambar lama masih rusak | Wajar — yang lama ada di Supabase yang sedang diblokir. Hilang setelah diunggah ulang di Tahap 5 |
+| `upstream image … resolved to private ip ["64:ff9b::…"]` | Bukan masalah R2. Lihat catatan di bawah |
+
+### Tentang `resolved to private ip`
+
+Muncul saat `npm run dev` di jaringan tethering, isinya alamat `64:ff9b::…`.
+
+Next 16 menolak mengoptimasi gambar bila nama hostnya menghasilkan alamat
+non-unicast. Jaringan di sini memakai DNS64/NAT64, jadi `supabase.co` ikut
+mengembalikan bentuk `64:ff9b::6812:260a` — yang sebenarnya alamat Cloudflare
+publik `104.18.38.10`, tapi oleh Next dikenali sebagai rentang `rfc6052` dan
+langsung ditolak, walau alamat IPv4 yang sah juga ikut dikembalikan.
+
+Sudah ditangani: `next.config.ts` menyalakan `dangerouslyAllowLocalIP` **hanya
+saat `next dev`**. Produksi tidak terpengaruh dan tidak boleh dinyalakan di sana.
+
+Yang penting: **hanya URL Supabase lama yang kena.** Host R2
+(`pub-….r2.dev`) menghasilkan IPv4 biasa, jadi gambar baru tidak pernah
+tersangkut masalah ini. Galat itu akan hilang sendiri seiring foto diunggah
+ulang di Tahap 5.

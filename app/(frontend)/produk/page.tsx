@@ -1133,9 +1133,10 @@ export default function ManajemenProdukPage() {
                   type="text"
                   required
                   value={formData.nama_produk}
-                  onChange={(e) => setFormData({ ...formData, nama_produk: e.target.value })}
-                  className="w-full border border-slate-200 rounded-xl px-4 py-3 outline-none text-sm font-bold text-slate-700 focus:border-pink-500"
-                  placeholder="Contoh: Buket Mawar"
+                  // Nama produk dipaksa huruf besar saat diketik — tidak perlu Caps Lock.
+                  onChange={(e) => setFormData({ ...formData, nama_produk: e.target.value.toUpperCase() })}
+                  className="w-full border border-slate-200 rounded-xl px-4 py-3 outline-none text-sm font-bold text-slate-700 uppercase focus:border-pink-500"
+                  placeholder="CONTOH: BUKET MAWAR"
                 />
               </div>
 

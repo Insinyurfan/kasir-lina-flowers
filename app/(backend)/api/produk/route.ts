@@ -7,6 +7,7 @@ import { recordActivityLog } from "@/lib/activityLog";
 import { hapusGambarR2 } from "@/lib/r2Storage";
 import { deleteProductImageFromStorage } from "@/lib/supabaseStorage";
 import { actorFromUser, requireRole } from "@/lib/apiAuth";
+import { normalisasiNamaProduk } from "@/lib/namaProduk";
 
 export const dynamic = 'force-dynamic';
 
@@ -77,7 +78,7 @@ export async function POST(request: Request) {
 
     const newProduct = await prisma.product.create({
       data: {
-        nama_produk: data.nama_produk,
+        nama_produk: normalisasiNamaProduk(data.nama_produk),
         harga: Number(data.harga),
         satuanHarga: data.satuanHarga || "pcs",
         stok: Number(data.stok),
@@ -163,7 +164,7 @@ export async function PATCH(request: Request) {
     const updatedProduct = await prisma.product.update({
       where: { id: Number(data.id) },
       data: {
-        nama_produk: data.nama_produk,
+        nama_produk: normalisasiNamaProduk(data.nama_produk),
         // Non-Owner: harga & satuan dipertahankan dari data lama (tidak boleh diubah).
         harga: isOwner ? Number(data.harga) : (before?.harga ?? Number(data.harga)),
         satuanHarga: isOwner ? (data.satuanHarga || before?.satuanHarga || "pcs") : (before?.satuanHarga || "pcs"),

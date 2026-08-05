@@ -297,8 +297,18 @@ export default function ManajemenProdukPage() {
       } else {
         toast.error("Gagal menyimpan produk: " + (result.error || "Terjadi kesalahan server"));
       }
-    } catch {
-      toast.error("Gagal menyimpan produk: koneksi jaringan bermasalah.");
+    } catch (error) {
+      // JANGAN kembalikan ini menjadi `catch {}` dengan pesan tetap. Unggahan
+      // foto melempar galat dari sini (lihat uploadSelectedProductImage), dan
+      // pesannya menyebutkan sebab yang sesungguhnya — env R2 belum lengkap,
+      // token ditolak, dan seterusnya. Menggantinya dengan "koneksi jaringan
+      // bermasalah" pernah membuat kegagalan unggah tidak bisa ditelusuri sama
+      // sekali dari sisi pemakai.
+      toast.error(
+        error instanceof Error
+          ? `Gagal menyimpan produk: ${error.message}`
+          : "Gagal menyimpan produk: koneksi jaringan bermasalah."
+      );
     } finally {
       setIsSaving(false);
     }
@@ -1306,7 +1316,8 @@ export default function ManajemenProdukPage() {
             <div className="border-t border-slate-100 p-6 flex gap-3 flex-shrink-0 bg-white">
               <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 py-3.5 bg-slate-100 hover:bg-slate-200 rounded-xl font-bold text-sm text-slate-600 transition-colors">Batal</button>
               <button type="submit" form="produk-form" disabled={isSaving} className="flex-1 py-3.5 bg-pink-600 hover:bg-pink-700 text-white rounded-xl font-bold text-sm flex justify-center items-center gap-2 shadow-lg shadow-pink-200 transition-all disabled:opacity-50">
-                {isSaving ? <Flower2 size={18} className="animate-spin" /> : "Simpan"} {isSaving ? "Menyimpan..." : "Simpan Data"}
+                {isSaving && <Flower2 size={18} className="animate-spin" />}
+                {isSaving ? "Menyimpan..." : "Simpan Data"}
               </button>
             </div>
           </div>

@@ -116,7 +116,17 @@ const unggah = async (file: File, awalan: string, namaFolder?: string) => {
   });
 
   if (!respons.ok) {
-    throw new Error(`Gagal mengunggah gambar ke Cloudflare R2 (${respons.status}).`);
+    // Sertakan kode galat dari R2. Tanpa ini yang sampai ke pemakai cuma angka
+    // status, dan 403 karena kunci salah tidak bisa dibedakan dari 403 karena
+    // izin token kurang — dua hal dengan perbaikan yang berbeda.
+    // `<Code>` aman ditampilkan: isinya nama galat, bukan kredensial.
+    const kode = await respons
+      .text()
+      .then((teks) => teks.match(/<Code>([^<]+)<\/Code>/)?.[1] ?? "")
+      .catch(() => "");
+    throw new Error(
+      `Gagal mengunggah gambar ke Cloudflare R2 (${respons.status}${kode ? ` ${kode}` : ""}).`
+    );
   }
 
   return { path: objek, url: `${basisPublik}/${objek}` };

@@ -5,6 +5,7 @@ import { Plus, Save, Trash2, X } from "lucide-react";
 import { getSavedUserSession } from "@/lib/userSession";
 import { PCS_PER_UNIT, hitungHargaSatuan } from "@/lib/satuan";
 import { toast } from "@/lib/toast";
+import { urlGambar } from "@/lib/gambar";
 
 export type ManualVariant = {
   id: number;
@@ -601,7 +602,7 @@ export default function ManualTransactionModal({ open, transaction, title, onClo
                   <div key={item.rowId} className="grid grid-cols-1 lg:grid-cols-[72px_1fr_90px_110px_140px_44px] gap-3 p-4 items-center">
                     <div className="w-16 h-16 rounded-xl bg-slate-100 overflow-hidden flex items-center justify-center">
                       {product?.gambar ? (
-                        <img src={product.gambar} alt={product.nama_produk} className="w-full h-full object-cover" />
+                        <img src={urlGambar(product.gambar)} alt={product.nama_produk} className="w-full h-full object-cover" />
                       ) : (
                         <span className="text-xs text-slate-400">Foto</span>
                       )}

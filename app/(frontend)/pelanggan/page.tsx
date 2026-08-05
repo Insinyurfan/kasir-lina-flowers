@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { getSavedUserSession } from "@/lib/userSession";
 import { toast } from "@/lib/toast";
+import { urlGambar } from "@/lib/gambar";
 
 type Customer = {
   id: number;
@@ -501,7 +502,7 @@ export default function PelangganPage() {
                                 >
                                   {product.gambar ? (
                                     <img
-                                      src={product.gambar}
+                                      src={urlGambar(product.gambar)}
                                       alt={product.nama_produk}
                                       className="h-full w-full object-cover"
                                       style={{
@@ -607,7 +608,7 @@ export default function PelangganPage() {
             </div>
             <div className="bg-slate-50 p-5">
               <img
-                src={preview.src}
+                src={urlGambar(preview.src)}
                 alt={preview.name}
                 className="mx-auto max-h-[72vh] w-full rounded-xl border border-slate-100 bg-white object-contain"
               />

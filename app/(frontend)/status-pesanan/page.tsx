@@ -6,6 +6,7 @@ import { clearSavedUserSession, getSavedUserSession } from "@/lib/userSession";
 import { formatQtySatuan } from "@/lib/satuan";
 import { JEDA_POLLING, useIntervalSaatTerlihat } from "@/lib/pollingHemat";
 import { toast } from "@/lib/toast";
+import { urlGambar } from "@/lib/gambar";
 
 const statusOptions = ["Sedang Disiapkan", "Siap Dikirim", "Dikirim", "Selesai"];
 const normalizeStatus = (status: string) =>
@@ -299,7 +300,7 @@ export default function OrderStatusPage() {
                     <div className="h-14 w-14 overflow-hidden rounded-xl bg-pink-50">
                       {item.product.gambar && (
                         <img
-                          src={item.product.gambar}
+                          src={urlGambar(item.product.gambar)}
                           alt={item.product.nama_produk}
                           className="h-full w-full object-cover"
                         />

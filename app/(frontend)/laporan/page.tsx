@@ -23,6 +23,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import ManualTransactionModal, { type ManualTransaction } from "@/components/ManualTransactionModal";
 import { getSavedUserSession } from "@/lib/userSession";
 import { toast } from "@/lib/toast";
+import { urlGambar } from "@/lib/gambar";
 
 type Product = {
   id: number;
@@ -876,7 +877,7 @@ export default function LaporanPage() {
                     </span>
                     <div className="w-11 h-11 rounded-xl bg-slate-100 overflow-hidden shrink-0 flex items-center justify-center">
                       {product.gambar ? (
-                        <img src={product.gambar} alt={product.nama_produk} className="w-full h-full object-cover" />
+                        <img src={urlGambar(product.gambar)} alt={product.nama_produk} className="w-full h-full object-cover" />
                       ) : (
                         <Package size={18} className="text-slate-300" />
                       )}

@@ -5,6 +5,7 @@ import { useCartStore, SATUAN_LABELS, computeCartRowId, hitungHargaSatuan, forma
 import { Search, Plus, Minus, Trash2, ShoppingCart, Flower2, Wallet, User, UserCheck, LogOut, Camera, X, Pencil, Check } from "lucide-react";
 import Image from "next/image";
 import { getSavedUserSession } from "@/lib/userSession";
+import { urlGambar } from "@/lib/gambar";
 
 type Variant = {
   id: number;
@@ -74,7 +75,7 @@ const FlyingItem = ({ startX, startY, img }: { startX: number, startY: number, i
       style={style}
     >
       {img ? (
-        <img src={img} alt="" className="w-full h-full object-cover" />
+        <img src={urlGambar(img)} alt="" className="w-full h-full object-cover" />
       ) : (
         <Flower2 className="w-full h-full text-pink-300 p-4" />
       )}
@@ -865,7 +866,7 @@ export default function PosPage() {
                 {/* FOTO PRODUK DI KERANJANG — biar tahu bentukan barangnya */}
                 <div className="w-12 h-12 sm:w-14 sm:h-14 short:w-9! short:h-9! rounded-xl bg-pink-50 border border-pink-100 overflow-hidden shrink-0 flex items-center justify-center">
                   {item.gambar ? (
-                    <img src={item.gambar} alt={item.nama_produk} className="w-full h-full object-cover" />
+                    <img src={urlGambar(item.gambar)} alt={item.nama_produk} className="w-full h-full object-cover" />
                   ) : (
                     <Flower2 size={22} className="text-pink-200" />
                   )}
@@ -1481,7 +1482,7 @@ export default function PosPage() {
                         {/* FOTO PRODUK DI KERANJANG — biar tahu bentukan barangnya */}
                         <div className="w-12 h-12 sm:w-14 sm:h-14 short:w-9! short:h-9! rounded-xl bg-pink-50 border border-pink-100 overflow-hidden shrink-0 flex items-center justify-center">
                           {item.gambar ? (
-                            <img src={item.gambar} alt={item.nama_produk} className="w-full h-full object-cover" />
+                            <img src={urlGambar(item.gambar)} alt={item.nama_produk} className="w-full h-full object-cover" />
                           ) : (
                             <Flower2 size={22} className="text-pink-200" />
                           )}

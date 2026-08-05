@@ -9,6 +9,7 @@ import { getSavedUserSession } from "@/lib/userSession";
 import { compressProductImage } from "@/lib/compressProductImage";
 import { computeCartRowId } from "@/lib/satuan";
 import { toast } from "@/lib/toast";
+import { urlGambar } from "@/lib/gambar";
 
 type UserSession = {
   id: number;
@@ -631,7 +632,7 @@ export default function ManajemenProdukPage() {
                         <div className="flex gap-3">
                           <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-pink-50">
                             {item.gambar ? (
-                              <img src={item.gambar} alt={item.nama_produk} className="h-full w-full object-cover" />
+                              <img src={urlGambar(item.gambar)} alt={item.nama_produk} className="h-full w-full object-cover" />
                             ) : (
                               <Camera size={22} className="text-pink-200" />
                             )}
@@ -782,7 +783,7 @@ export default function ManajemenProdukPage() {
                           title={p.gambar ? "Lihat foto produk" : p.nama_produk}
                         >
                           {p.gambar ? (
-                            <img src={p.gambar} alt={p.nama_produk} className="h-full w-full object-cover" />
+                            <img src={urlGambar(p.gambar)} alt={p.nama_produk} className="h-full w-full object-cover" />
                           ) : (
                             <Camera size={28} className="text-pink-200" />
                           )}
@@ -876,7 +877,7 @@ export default function ManajemenProdukPage() {
                           <td className="p-4 text-center">
                             {p.gambar ? (
                               <img
-                                src={p.gambar}
+                                src={urlGambar(p.gambar)}
                                 alt={p.nama_produk}
                                 onClick={() => setZoomData({ type: 'foto', content: p.gambar || "", title: p.nama_produk })}
                                 className="w-12 h-12 rounded-xl object-cover border border-slate-200 mx-auto bg-white cursor-zoom-in hover:scale-105 transition-transform"
@@ -941,7 +942,7 @@ export default function ManajemenProdukPage() {
                       <div className="flex gap-3">
                         <div className="h-24 w-24 shrink-0 overflow-hidden rounded-2xl border border-slate-100 bg-pink-50 flex items-center justify-center grayscale">
                           {p.gambar ? (
-                            <img src={p.gambar} alt={p.nama_produk} className="h-full w-full object-cover" />
+                            <img src={urlGambar(p.gambar)} alt={p.nama_produk} className="h-full w-full object-cover" />
                           ) : (
                             <Camera size={28} className="text-pink-200" />
                           )}
@@ -1001,7 +1002,7 @@ export default function ManajemenProdukPage() {
                           <td className="p-4 text-center">
                             {p.gambar ? (
                               <img
-                                src={p.gambar}
+                                src={urlGambar(p.gambar)}
                                 alt={p.nama_produk}
                                 className="w-12 h-12 rounded-xl object-cover border border-slate-200 mx-auto bg-white grayscale"
                               />
@@ -1062,7 +1063,7 @@ export default function ManajemenProdukPage() {
                   fileInputRef.current?.click();
                 }}>
                   {formData.gambar ? (
-                    <img src={formData.gambar} alt="Preview" className="w-24 h-24 rounded-2xl object-cover border-2 border-pink-200 shadow-sm" />
+                    <img src={urlGambar(formData.gambar)} alt="Preview" className="w-24 h-24 rounded-2xl object-cover border-2 border-pink-200 shadow-sm" />
                   ) : (
                     <div className="w-24 h-24 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-300 flex flex-col items-center justify-center text-slate-400 group-hover:border-pink-400 group-hover:text-pink-500 transition-colors">
                       <Camera size={28} className="mb-1" />
@@ -1092,7 +1093,7 @@ export default function ManajemenProdukPage() {
                     }}
                   >
                     <img
-                      src={formData.gambar}
+                      src={urlGambar(formData.gambar)}
                       alt="Focal preview"
                       className="w-full h-full object-cover pointer-events-none"
                       style={{ objectPosition: `${formData.gambarPosX}% ${formData.gambarPosY}%` }}
@@ -1330,7 +1331,7 @@ export default function ManajemenProdukPage() {
             </div>
 
             {zoomData.type === 'foto' ? (
-              <img src={zoomData.content} alt={zoomData.title} className="w-full max-h-[60vh] object-contain rounded-2xl bg-slate-50 border border-slate-100" />
+              <img src={urlGambar(zoomData.content)} alt={zoomData.title} className="w-full max-h-[60vh] object-contain rounded-2xl bg-slate-50 border border-slate-100" />
             ) : (
               <div className="bg-white p-6 md:p-10 rounded-2xl w-full flex flex-col items-center justify-center border border-slate-200">
                 <Barcode value={zoomData.content} width={2.5} height={120} displayValue={false} background="transparent" />

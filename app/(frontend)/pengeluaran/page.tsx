@@ -24,6 +24,7 @@ import {
   type MetodePengeluaran,
 } from "@/lib/pengeluaran";
 import { rentangBulanWIB, tanggalWIBString } from "@/lib/waktu";
+import { urlGambar } from "@/lib/gambar";
 
 type Pengeluaran = {
   id: number;
@@ -389,7 +390,7 @@ export default function PengeluaranPage() {
               <button type="button" onClick={() => setFotoDibuka(fotoUrl)}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={fotoUrl}
+                  src={urlGambar(fotoUrl)}
                   alt="Struk"
                   className="h-10 w-10 rounded-lg border border-slate-200 object-cover"
                 />
@@ -511,7 +512,7 @@ export default function PengeluaranPage() {
                       <button onClick={() => setFotoDibuka(baris.fotoUrl)}>
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
-                          src={baris.fotoUrl}
+                          src={urlGambar(baris.fotoUrl)}
                           alt="Struk"
                           className="h-10 w-10 rounded-lg border border-slate-200 object-cover"
                         />
@@ -552,7 +553,7 @@ export default function PengeluaranPage() {
           onClick={() => setFotoDibuka(null)}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={fotoDibuka} alt="Foto struk" className="max-h-full max-w-full rounded-xl" />
+          <img src={urlGambar(fotoDibuka)} alt="Foto struk" className="max-h-full max-w-full rounded-xl" />
         </div>
       )}
     </div>

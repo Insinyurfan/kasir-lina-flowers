@@ -448,7 +448,7 @@ export const createA4DocumentBlob = async (
     ctx.stroke();
     y += 16;
     ctx.fillStyle = "#64748b";
-    ctx.font = "italic 15px Arial, sans-serif";
+    ctx.font = "15px Arial, sans-serif";
     y = wrapCanvasText(ctx, storeInfo.footer, MARGIN, y, CW, 22, "center");
     y += 16;
   }

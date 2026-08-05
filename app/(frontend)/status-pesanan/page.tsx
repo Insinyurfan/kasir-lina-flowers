@@ -199,7 +199,7 @@ export default function OrderStatusPage() {
         .total-row{display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding:13px 16px;background:#fdf2f8;border:1px solid #fbcfe8;border-radius:10px;color:#be185d;font-size:18px;font-weight:800}
         .notes{margin-top:24px;border:1px dashed #cbd5e1;padding:14px 16px;min-height:72px;border-radius:10px}
         .notes b{color:#475569;font-size:12px;display:block;margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em}
-        .footer-text{margin-top:24px;text-align:center;color:#64748b;white-space:pre-line;font-style:italic;line-height:1.55;font-size:12px;border-top:1px solid #f1f5f9;padding-top:14px}
+        .footer-text{margin-top:24px;text-align:center;color:#64748b;white-space:pre-line;line-height:1.55;font-size:12px;border-top:1px solid #f1f5f9;padding-top:14px}
         @media print{body{background:#fff}.sheet{width:auto;min-height:auto;margin:0;padding:10mm 14mm}@page{size:A4;margin:0}}
       </style>
     </head><body>

@@ -318,7 +318,6 @@ export default function ReceiptPage() {
 
         .footer {
           text-align: center;
-          font-style: italic;
           margin-top: 10px;
         }
 

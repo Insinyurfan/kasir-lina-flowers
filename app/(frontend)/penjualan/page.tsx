@@ -656,7 +656,7 @@ export default function RiwayatPenjualanPage() {
       y += isThermal ? 19 : 28;
     }
 
-    ctx.font = `italic ${bodyFont}px 'Courier New', monospace`;
+    ctx.font = `${bodyFont}px 'Courier New', monospace`;
     y = wrapCanvasText(ctx, storeInfo.footer || "", margin, y, contentWidth, bodyLineHeight + 1, "center");
 
     const finalCanvas = document.createElement("canvas");
@@ -762,7 +762,7 @@ export default function RiwayatPenjualanPage() {
       .total-row{display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding:13px 16px;background:#fdf2f8;border:1px solid #fbcfe8;border-radius:10px;color:#be185d;font-size:18px;font-weight:800}
       .notes{margin-top:24px;border:1px dashed #cbd5e1;padding:14px 16px;min-height:72px;border-radius:10px}
       .notes b{color:#475569;font-size:12px;display:block;margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em}
-      .footer-text{margin-top:24px;text-align:center;color:#64748b;white-space:pre-line;font-style:italic;line-height:1.55;font-size:12px;border-top:1px solid #f1f5f9;padding-top:14px}
+      .footer-text{margin-top:24px;text-align:center;color:#64748b;white-space:pre-line;line-height:1.55;font-size:12px;border-top:1px solid #f1f5f9;padding-top:14px}
       @media print{body{background:#fff}.sheet{width:auto;min-height:auto;margin:0;padding:10mm 14mm}@page{size:A4;margin:0}}
     </style></head><body>
       <main class="sheet">
@@ -1850,7 +1850,7 @@ export default function RiwayatPenjualanPage() {
                       </div>
                     )}
                     <div style={{ borderTop: "1.5px dashed #000", margin: "12px 0" }}></div>
-                    <div className="text-center mt-4 italic whitespace-pre-wrap">{storeInfo.footer}</div>
+                    <div className="text-center mt-4 whitespace-pre-wrap">{storeInfo.footer}</div>
                   </div>
                 ) : (
                   /* PREVIEW DOKUMEN A4 */
@@ -1944,7 +1944,7 @@ export default function RiwayatPenjualanPage() {
 
                     {/* FOOTER */}
                     {storeInfo.footer && (
-                      <div className="border-t border-slate-100 px-4 py-3 text-center text-[10px] italic leading-snug text-slate-500 whitespace-pre-wrap">
+                      <div className="border-t border-slate-100 px-4 py-3 text-center text-[10px] leading-snug text-slate-500 whitespace-pre-wrap">
                         {storeInfo.footer}
                       </div>
                     )}

@@ -118,6 +118,9 @@ const parseISODateTimeLocal = (isoString: string) => {
 
 const newRowId = () => `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 
+// Kunci harga khusus pelanggan: per produk + variasi (0 = level produk).
+const priceKey = (productId: number, variantId: number) => `${productId}-${variantId}`;
+
 const createEmptyItem = (): ManualItem => ({
   rowId: newRowId(),
   productId: "",
@@ -154,7 +157,8 @@ export default function ManualTransactionModal({ open, transaction, title, onClo
   // Simpan harga hasil edit sebagai harga khusus pelanggan (dipakai pesanan berikutnya). Default aktif.
   const [rememberPrice, setRememberPrice] = useState(true);
   // Harga khusus pelanggan terpilih (per productId, level produk) + peta nama→customerId.
-  const [rememberedPrices, setRememberedPrices] = useState<Record<number, number>>({});
+  // Dikunci per "produk-variasi" (variasi 0 = level produk), seperti di POS.
+  const [rememberedPrices, setRememberedPrices] = useState<Record<string, number>>({});
   const [customerIdByName, setCustomerIdByName] = useState<Record<string, number>>({});
 
   useEffect(() => {
@@ -317,10 +321,11 @@ export default function ManualTransactionModal({ open, transaction, title, onClo
       .then((res) => res.json())
       .then((rows) => {
         if (cancelled || !Array.isArray(rows)) return;
-        const map: Record<number, number> = {};
+        // Harga khusus disimpan per variasi (variantId 0 = level produk),
+        // sama seperti di POS — supaya variasi yang harganya beda ikut terbawa.
+        const map: Record<string, number> = {};
         for (const row of rows) {
-          // Harga level produk (variantId 0) sebagai acuan tunggal.
-          if (Number(row.variantId) === 0) map[Number(row.productId)] = Number(row.price);
+          map[priceKey(Number(row.productId), Number(row.variantId) || 0)] = Number(row.price);
         }
         setRememberedPrices(map);
       })
@@ -332,11 +337,24 @@ export default function ManualTransactionModal({ open, transaction, title, onClo
     };
   }, [open, namaPembeli, customerIdByName]);
 
-  // Harga dasar untuk produk: pakai harga khusus pelanggan bila ada, jika tidak → harga katalog.
+  // Harga dasar: harga khusus pelanggan untuk variasi itu → harga khusus level
+  // produk → harga katalog. Urutannya sama persis dengan POS.
   const resolveRememberedBase = useCallback(
-    (productId: number, fallback: number) => rememberedPrices[productId] ?? fallback,
+    (productId: number, variantId: number | null | undefined, fallback: number) =>
+      rememberedPrices[priceKey(productId, variantId ?? 0)] ??
+      rememberedPrices[priceKey(productId, 0)] ??
+      fallback,
     [rememberedPrices]
   );
+
+  // Harga katalog yang berlaku: variasi punya harganya sendiri (priceModifier
+  // berisi harga penuh, bukan selisih). Produk bervariasi kadang harga
+  // produknya 0 karena harga sesungguhnya memang menempel di tiap variasi.
+  const hargaKatalog = useCallback((product: ManualProduct | undefined, variantId: string) => {
+    if (!product) return 0;
+    const variant = product.variants?.find((v) => String(v.id) === variantId);
+    return variant?.priceModifier ?? product.harga;
+  }, []);
 
   const total = items.reduce((sum, item) => sum + Number(item.harga || 0) * Number(item.quantity || 0), 0);
 
@@ -367,7 +385,7 @@ export default function ManualTransactionModal({ open, transaction, title, onClo
           const selected = productsById[value];
           const prodSatuan = selected?.satuanHarga || "pcs";
           // Harga default = harga khusus pelanggan (bila ada) atau harga katalog.
-          const base = selected ? resolveRememberedBase(selected.id, selected.harga) : Number(item.hargaBase) || 0;
+          const base = selected ? resolveRememberedBase(selected.id, 0, selected.harga) : Number(item.hargaBase) || 0;
           return {
             ...item,
             productId: value,
@@ -376,6 +394,22 @@ export default function ManualTransactionModal({ open, transaction, title, onClo
             satuan: prodSatuan,
             hargaBase: selected ? String(base) : item.hargaBase,
             harga: selected ? String(base) : item.harga,
+          };
+        }
+        if (field === "variantId") {
+          // Tiap variasi punya harganya sendiri — ikuti perilaku POS, jangan
+          // biarkan harga tertinggal (atau tetap 0 untuk produk yang harga
+          // sesungguhnya hanya ada di variasinya).
+          const selected = productsById[item.productId];
+          if (!selected) return { ...item, variantId: value };
+          const variant = selected.variants?.find((v) => String(v.id) === value);
+          const base = resolveRememberedBase(selected.id, variant?.id ?? 0, hargaKatalog(selected, value));
+          const satuanHarga = item.satuanHarga || selected.satuanHarga || "pcs";
+          return {
+            ...item,
+            variantId: value,
+            hargaBase: String(base),
+            harga: String(hitungHargaSatuan(base, satuanHarga, item.satuan || satuanHarga)),
           };
         }
         if (field === "satuan") {
@@ -448,12 +482,13 @@ export default function ManualTransactionModal({ open, transaction, title, onClo
         return;
       }
 
-      // Ingat harga khusus pelanggan (level produk) dari harga yang di-edit, agar
-      // dipakai otomatis pada pesanan berikutnya. Hanya untuk harga yang BERBEDA
+      // Ingat harga khusus pelanggan dari harga yang di-edit, agar dipakai
+      // otomatis pada pesanan berikutnya. Disimpan per variasi karena tiap
+      // variasi punya harga katalognya sendiri. Hanya untuk harga yang BERBEDA
       // dari harga katalog (benar-benar disesuaikan).
       const buyer = namaPembeli?.trim();
       if (rememberPrice && buyer) {
-        const seen = new Set<number>();
+        const seen = new Set<string>();
         await Promise.all(
           items
             .filter((item) => item.productId && Number(item.quantity) > 0)
@@ -461,15 +496,17 @@ export default function ManualTransactionModal({ open, transaction, title, onClo
               const productId = Number(item.productId);
               const product = productsById[item.productId];
               const base = Number(item.hargaBase);
-              if (!product || !Number.isFinite(base) || seen.has(productId)) return;
-              if (base === product.harga) return; // sama dengan harga katalog → tak perlu disimpan
-              seen.add(productId);
+              const variantId = Number(item.variantId) || 0;
+              const kunci = priceKey(productId, variantId);
+              if (!product || !Number.isFinite(base) || seen.has(kunci)) return;
+              if (base === hargaKatalog(product, item.variantId)) return; // sama dengan katalog → tak perlu disimpan
+              seen.add(kunci);
               try {
                 const customerId = customerIdByName[buyer.toUpperCase()];
                 await fetch("/api/harga-pelanggan", {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ customerId, customerName: buyer, productId, variantId: 0, price: Math.round(base) }),
+                  body: JSON.stringify({ customerId, customerName: buyer, productId, variantId, price: Math.round(base) }),
                 });
               } catch {
                 /* best-effort; jangan gagalkan penyimpanan transaksi */
@@ -591,7 +628,7 @@ export default function ManualTransactionModal({ open, transaction, title, onClo
                 const product = productsById[item.productId];
                 // Harga universal (katalog) pada satuan pesan saat ini, untuk pembanding (dicoret).
                 const catalogUnit = product
-                  ? hitungHargaSatuan(product.harga, product.satuanHarga || "pcs", item.satuan || "pcs")
+                  ? hitungHargaSatuan(hargaKatalog(product, item.variantId), product.satuanHarga || "pcs", item.satuan || "pcs")
                   : 0;
                 const hargaNum = Number(item.harga) || 0;
                 const qtyNum = Number(item.quantity) || 0;

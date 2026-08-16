@@ -470,6 +470,32 @@ export default function KatalogPage() {
     setOrderCode("");
   };
 
+  // Esc menutup lapisan PALING ATAS saja, bukan semuanya sekaligus. Urutannya
+  // mengikuti apa yang terlihat: penampil foto menimpa modal produk, sedangkan
+  // panel keranjang berdiri sendiri. Penampil foto sudah menangani Esc-nya
+  // sendiri, jadi di sini sengaja dilewati — tanpa itu, sekali tekan akan
+  // menutup foto DAN modal produknya sekaligus.
+  //
+  // Ditempatkan setelah handleFinish karena memanggilnya; `const` tidak
+  // terangkat, jadi menaruh efek ini lebih dulu membuatnya gagal dikompilasi.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "Escape") return;
+      if (fotoLayarPenuh) return;
+      if (isCartOpen) {
+        // Menyamakan perilaku dengan tombol X di panel: setelah orderan
+        // tersimpan, menutup berarti sekalian membereskan keranjangnya.
+        if (step === "selesai") handleFinish();
+        else setIsCartOpen(false);
+        return;
+      }
+      if (selectedProduct) setSelectedProduct(null);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fotoLayarPenuh, isCartOpen, selectedProduct, step]);
+
   const modalHasVariants = Boolean(selectedProduct?.variants && selectedProduct.variants.length > 0);
   const canAddFromModal = Boolean(selectedProduct?.tersedia) && (!modalHasVariants || selectedVariantId > 0);
 
@@ -784,43 +810,47 @@ export default function KatalogPage() {
                   <Flower2 size={72} className="text-pink-200" />
                 </div>
               )}
-              <button
-                type="button"
-                onClick={() => setSelectedProduct(null)}
-                className="absolute top-3 right-3 p-2 rounded-full bg-black/40 text-white hover:bg-black/60 transition-colors"
-              >
-                <X size={18} />
-              </button>
-              {/* Seluruh foto bisa diketuk untuk membuka layar penuh, tapi
-                  tombolnya tetap ditampilkan terpisah — tanpa penanda yang
-                  terlihat, hampir tidak ada yang menebak fotonya bisa diketuk. */}
+              {/* URUTAN LAPISAN penting di sini. Lapisan ketuk-untuk-perbesar
+                  menutupi seluruh foto, jadi tanpa z-index yang tegas ia akan
+                  menimpa tombol X dan Perbesar yang ditulis lebih dulu —
+                  menekan X justru membuka foto. Tanda "Stok Habis" dibuat
+                  tembus-klik supaya produk yang habis pun fotonya tetap bisa
+                  diperbesar. */}
               {selectedProduct.gambar && (
-                <>
-                  <button
-                    type="button"
-                    aria-label="Perbesar foto"
-                    onClick={() =>
-                      setFotoLayarPenuh({ src: selectedProduct.gambar!, judul: selectedProduct.nama_produk })
-                    }
-                    className="absolute inset-0 cursor-zoom-in"
-                  />
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setFotoLayarPenuh({ src: selectedProduct.gambar!, judul: selectedProduct.nama_produk })
-                    }
-                    className="absolute bottom-3 right-3 flex items-center gap-1.5 rounded-full bg-black/55 px-3 py-2 text-[11px] font-bold text-white backdrop-blur-sm transition-colors hover:bg-black/75"
-                  >
-                    <Maximize2 size={14} /> Perbesar
-                  </button>
-                </>
+                <button
+                  type="button"
+                  aria-label="Perbesar foto"
+                  onClick={() =>
+                    setFotoLayarPenuh({ src: selectedProduct.gambar!, judul: selectedProduct.nama_produk })
+                  }
+                  className="absolute inset-0 z-10 cursor-zoom-in"
+                />
               )}
               {!selectedProduct.tersedia && (
-                <div className="absolute inset-0 bg-white/70 backdrop-blur-[1px] flex items-center justify-center">
+                <div className="pointer-events-none absolute inset-0 z-[5] flex items-center justify-center bg-white/70 backdrop-blur-[1px]">
                   <span className="rounded-full bg-slate-800/85 px-4 py-1.5 text-xs font-black text-white">
                     Stok Habis
                   </span>
                 </div>
+              )}
+              <button
+                type="button"
+                aria-label="Tutup"
+                onClick={() => setSelectedProduct(null)}
+                className="absolute top-3 right-3 z-20 p-2 rounded-full bg-black/40 text-white hover:bg-black/60 transition-colors"
+              >
+                <X size={18} />
+              </button>
+              {selectedProduct.gambar && (
+                <button
+                  type="button"
+                  onClick={() =>
+                    setFotoLayarPenuh({ src: selectedProduct.gambar!, judul: selectedProduct.nama_produk })
+                  }
+                  className="absolute bottom-3 right-3 z-20 flex items-center gap-1.5 rounded-full bg-black/55 px-3 py-2 text-[11px] font-bold text-white backdrop-blur-sm transition-colors hover:bg-black/75"
+                >
+                  <Maximize2 size={14} /> Perbesar
+                </button>
               )}
             </div>
             <div className="p-5">

@@ -1368,15 +1368,6 @@ export default function RiwayatPenjualanPage() {
                       <p className="text-lg font-black text-pink-600">Rp {t.total_harga.toLocaleString("id-ID")}</p>
                     </div>
                     <div className="flex items-center gap-2">
-                      {t.orderRequest?.code && (
-                        <button
-                          type="button"
-                          onClick={() => printOrderDocument(t, "nota")}
-                          className="inline-flex items-center gap-2 rounded-xl bg-violet-50 px-3 py-2 text-xs font-bold text-violet-700 border border-violet-200 shadow-sm active:scale-95"
-                        >
-                          <FileText size={16} /> Nota
-                        </button>
-                      )}
                       <button
                         type="button"
                         onClick={() => {
@@ -1643,16 +1634,6 @@ export default function RiwayatPenjualanPage() {
                     </td>}
                     <td className="p-4 text-center">
                       <div className="flex items-center justify-center gap-2">
-                        {t.orderRequest?.code && (
-                          <button
-                            type="button"
-                            onClick={() => printOrderDocument(t, "nota")}
-                            title="Cetak Nota Produksi"
-                            className="inline-flex items-center justify-center bg-violet-50 border border-violet-200 p-2 rounded-lg hover:bg-violet-100 shadow-sm transition-all cursor-pointer"
-                          >
-                            <FileText size={18} className="text-violet-600" />
-                          </button>
-                        )}
                         <button
                           type="button"
                           onClick={() => {

@@ -285,6 +285,10 @@ model StoreSetting {
   footer      String
   logo        String? @db.Text
   receiptLogo String? @db.Text
+  // Nomor WhatsApp tujuan pesanan katalog publik, format internasional tanpa
+  // tanda plus (mis. 6281247000600). Kosong = tombol pesan disembunyikan,
+  // sehingga katalog otomatis kembali jadi "lihat-lihat saja" bila belum diisi.
+  whatsapp    String?
 }
 
 // Harga khusus per pelanggan (mis. Toko Aneka punya harga berbeda dari harga
@@ -435,6 +439,13 @@ model OrderRequestItem {
   productId      Int
   product        Product      @relation(fields: [productId], references: [id])
   productName    String
+  // Varian yang dipilih pembeli. Mengikuti pola CustomerPrice: variantId 0 =
+  // produk tanpa varian, jadi tidak perlu nullable. Sengaja TANPA relasi ke
+  // ProductVariant — `variantName` adalah snapshot nama saat pesanan dibuat,
+  // supaya pesanan lama tetap terbaca utuh walau variannya kelak dihapus atau
+  // diganti nama (sama alasannya dengan `productName` di atas).
+  variantId      Int          @default(0)
+  variantName    String?
   quantity       Int
   unitPrice      Int
   subtotal       Int

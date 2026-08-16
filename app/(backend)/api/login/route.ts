@@ -3,6 +3,34 @@ import prisma from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { recordActivityLog } from "@/lib/activityLog";
 import { createServerSessionToken, serverSessionCookie } from "@/lib/serverSession";
+import {
+  checkRateLimit,
+  clearRateLimit,
+  getClientIp,
+  recordHit,
+  tooManyRequests,
+  type RateLimitRule,
+} from "@/lib/rateLimit";
+
+// Dua batas berlapis, dan keduanya hanya menghitung percobaan GAGAL:
+//   - per IP       : menahan satu penyerang yang menyapu banyak username.
+//   - per username : menahan penyerang tersebar (banyak IP) yang membidik satu akun.
+// Angkanya sengaja longgar supaya kasir yang salah ketik beberapa kali tidak
+// ikut terkunci; yang dipangkas adalah percobaan otomatis berskala ribuan.
+const LOGIN_IP_RULE: RateLimitRule = { limit: 20, windowMs: 10 * 60 * 1000 };
+const LOGIN_USERNAME_RULE: RateLimitRule = { limit: 8, windowMs: 10 * 60 * 1000 };
+
+// Balasan gagal yang SATU-SATUNYA. Membedakan "username tidak ada" dari
+// "password salah" akan memberi tahu penyerang username mana yang valid,
+// sehingga ia tinggal fokus menebak passwordnya saja.
+const invalidCredentials = () =>
+  NextResponse.json({ error: "Username atau password salah!" }, { status: 401 });
+
+// Hash buatan untuk username yang tidak ditemukan. Tanpa ini, balasan untuk
+// username tak dikenal datang seketika sementara username valid tertunda ~100ms
+// oleh bcrypt — selisih waktu itu sendiri sudah membocorkan username yang ada.
+// Hasil perbandingannya tidak pernah dipakai, hanya waktunya yang disamakan.
+const DUMMY_PASSWORD_HASH = "$2b$10$X4LNyGkZKAo2/0A/HiygSOmHSg492LK9X/3V4p88pmozDI2TC6zLm";
 
 type LoginUserRow = {
   id: number;
@@ -22,6 +50,27 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Username dan password wajib diisi!" }, { status: 400 });
     }
 
+    // Kunci username disamakan huruf kecilnya, mengikuti pencarian yang
+    // case-insensitive di bawah — supaya "Lina" dan "lina" berbagi satu jatah.
+    const ipKey = `login:ip:${getClientIp(request)}`;
+    const usernameKey = `login:user:${cleanUsername.toLowerCase()}`;
+
+    // Diperiksa sebelum query & bcrypt, supaya percobaan yang sudah melewati
+    // batas tidak lagi membebani database maupun CPU.
+    for (const [key, rule] of [
+      [ipKey, LOGIN_IP_RULE],
+      [usernameKey, LOGIN_USERNAME_RULE],
+    ] as const) {
+      const status = checkRateLimit(key, rule);
+      if (status.limited) {
+        const minutes = Math.ceil(status.retryAfterSeconds / 60);
+        return tooManyRequests(
+          `Terlalu banyak percobaan login. Coba lagi dalam ${minutes} menit.`,
+          status.retryAfterSeconds
+        );
+      }
+    }
+
     const rows = await prisma.$queryRaw<LoginUserRow[]>`
       SELECT id, username, "fullName", "profilePhoto", password, role
       FROM "User"
@@ -31,27 +80,42 @@ export async function POST(request: Request) {
     const user = rows[0];
 
     if (!user) {
-      return NextResponse.json({ error: "Username tidak ditemukan!" }, { status: 404 });
+      await bcrypt.compare(String(password), DUMMY_PASSWORD_HASH);
+      recordHit(ipKey, LOGIN_IP_RULE);
+      recordHit(usernameKey, LOGIN_USERNAME_RULE);
+      return invalidCredentials();
     }
 
-    const isBcryptHash = /^\$2[aby]\$\d{2}\$/.test(user.password);
-    const isPasswordValid = isBcryptHash
-      ? await bcrypt.compare(password, user.password)
-      : password === user.password;
+    // Password wajib tersimpan sebagai hash bcrypt — nilai lain DITOLAK, bukan
+    // dibandingkan apa adanya. Membandingkan langsung berarti password mentah
+    // di database tetap bisa dipakai login, dan itu tak akan pernah ketahuan
+    // justru karena loginnya berhasil. Semua jalur penulisan password
+    // (POST & PATCH /api/akun) sudah mem-bcrypt, jadi nilai non-hash hanya bisa
+    // lahir dari sunting manual di database atau kode baru yang lupa mem-hash;
+    // keduanya memang harus gagal dengan berisik, bukan diterima diam-diam.
+    if (!/^\$2[aby]\$\d{2}\$/.test(user.password)) {
+      console.error(
+        `Login ditolak: password akun "${user.username}" tidak tersimpan sebagai hash bcrypt. ` +
+          `Setel ulang lewat halaman Akun, jangan menulis password langsung ke database.`
+      );
+      recordHit(ipKey, LOGIN_IP_RULE);
+      recordHit(usernameKey, LOGIN_USERNAME_RULE);
+      return invalidCredentials();
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
-      return NextResponse.json({ error: "Password salah!" }, { status: 401 });
+      recordHit(ipKey, LOGIN_IP_RULE);
+      recordHit(usernameKey, LOGIN_USERNAME_RULE);
+      return invalidCredentials();
     }
 
-    if (!isBcryptHash) {
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(password, salt);
-      await prisma.$executeRaw`
-        UPDATE "User"
-        SET password = ${hashedPassword}
-        WHERE id = ${user.id}
-      `;
-    }
+    // Login sah menghapus jatah gagal, jadi kasir yang sempat salah ketik
+    // tidak menyeret sisa hitungan itu ke sesi berikutnya.
+    clearRateLimit(ipKey);
+    clearRateLimit(usernameKey);
+
     await recordActivityLog({
       action: "LOGIN",
       entity: "Akun",

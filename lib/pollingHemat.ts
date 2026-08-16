@@ -24,6 +24,9 @@ export const JEDA_POLLING = {
   statusPesanan: 30_000,
   /** Riwayat Penjualan: payload terberat, dan jarang berubah sendiri. */
   riwayatPenjualan: 60_000,
+  /** Request Pesanan: datang dari pembeli luar, jadi tak terduga waktunya —
+   *  tapi notifikasi lonceng sudah lebih dulu memberi tahu, jadi tak perlu rapat. */
+  requestPesanan: 30_000,
 } as const;
 
 /**

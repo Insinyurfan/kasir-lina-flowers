@@ -12,6 +12,7 @@ type StoreSettingRow = {
   footer: string;
   logo: string | null;
   receiptLogo: string | null;
+  whatsapp: string | null;
 };
 
 type StoreSettingPayload = Partial<Omit<StoreSettingRow, "id">>;
@@ -28,24 +29,41 @@ const defaultStoreSetting: StoreSettingRow = {
   footer: "Terima Kasih Atas Kunjungan Anda",
   logo: null,
   receiptLogo: null,
+  whatsapp: null,
 };
 
 const noStoreHeaders = { "Cache-Control": "no-store" };
 
-const ensureReceiptLogoColumn = async () => {
+// Nomor WhatsApp hanya boleh angka; format internasional tanpa tanda plus.
+// "+62 812-4700-0600" dan "0812 4700 0600" sama-sama dinormalkan ke
+// 6281247000600 supaya tautan wa.me selalu terbentuk benar.
+const cleanWhatsapp = (value: string) => {
+  const digits = value.replace(/\D/g, "");
+  if (!digits) return null;
+  if (digits.startsWith("0")) return `62${digits.slice(1)}`;
+  if (digits.startsWith("62")) return digits;
+  if (digits.startsWith("8")) return `62${digits}`;
+  return digits;
+};
+
+const ensureOptionalColumns = async () => {
   await prisma.$executeRawUnsafe(`
     ALTER TABLE "StoreSetting"
     ADD COLUMN IF NOT EXISTS "receiptLogo" TEXT
+  `);
+  await prisma.$executeRawUnsafe(`
+    ALTER TABLE "StoreSetting"
+    ADD COLUMN IF NOT EXISTS "whatsapp" TEXT
   `);
 };
 
 const getErrorMessage = (error: unknown) => (error instanceof Error ? error.message : "Error tidak diketahui");
 
 const getStoreSetting = async () => {
-  await ensureReceiptLogoColumn();
+  await ensureOptionalColumns();
 
   const rows = await prisma.$queryRaw<StoreSettingRow[]>`
-    SELECT id, brand, address, footer, logo, "receiptLogo"
+    SELECT id, brand, address, footer, logo, "receiptLogo", whatsapp
     FROM "StoreSetting"
     ORDER BY id ASC
     LIMIT 1
@@ -54,14 +72,15 @@ const getStoreSetting = async () => {
   if (rows[0]) return rows[0];
 
   await prisma.$executeRaw`
-    INSERT INTO "StoreSetting" (id, brand, address, footer, logo, "receiptLogo")
+    INSERT INTO "StoreSetting" (id, brand, address, footer, logo, "receiptLogo", whatsapp)
     VALUES (
       ${defaultStoreSetting.id},
       ${defaultStoreSetting.brand},
       ${defaultStoreSetting.address},
       ${defaultStoreSetting.footer},
       ${defaultStoreSetting.logo},
-      ${defaultStoreSetting.receiptLogo}
+      ${defaultStoreSetting.receiptLogo},
+      ${defaultStoreSetting.whatsapp}
     )
     ON CONFLICT (id) DO NOTHING
   `;
@@ -94,6 +113,9 @@ export async function GET(request: Request) {
           brand: setting.brand,
           address: setting.address,
           footer: setting.footer,
+          // Dipakai katalog publik untuk memutuskan apakah tombol pesan
+          // ditampilkan; ringan (sekadar deretan angka), jadi ikut di keduanya.
+          whatsapp: setting.whatsapp,
           // `tampilan` tetap membawa logo header; `ringkas` tidak membawa
           // gambar sama sekali.
           ...(tampilan ? { logo: setting.logo } : {}),
@@ -125,6 +147,7 @@ export async function POST(request: Request) {
       footer: body.footer !== undefined ? body.footer : current.footer,
       logo: body.logo !== undefined ? body.logo || null : current.logo,
       receiptLogo: body.receiptLogo !== undefined ? body.receiptLogo || null : current.receiptLogo,
+      whatsapp: body.whatsapp !== undefined ? cleanWhatsapp(String(body.whatsapp || "")) : current.whatsapp,
     };
 
     await prisma.$executeRaw`
@@ -134,12 +157,13 @@ export async function POST(request: Request) {
         address = ${next.address},
         footer = ${next.footer},
         logo = ${next.logo},
-        "receiptLogo" = ${next.receiptLogo}
+        "receiptLogo" = ${next.receiptLogo},
+        whatsapp = ${next.whatsapp}
       WHERE id = ${current.id}
     `;
 
     const updated = await getStoreSetting();
-    const changedFields = (["brand", "address", "footer", "logo", "receiptLogo"] as const).filter(
+    const changedFields = (["brand", "address", "footer", "logo", "receiptLogo", "whatsapp"] as const).filter(
       (field) => body[field] !== undefined && current[field] !== updated[field]
     );
     if (changedFields.length > 0) {
@@ -156,6 +180,7 @@ export async function POST(request: Request) {
             brand: current.brand,
             address: current.address,
             footer: current.footer,
+            whatsapp: current.whatsapp,
             punyaLogoNavbar: Boolean(current.logo),
             punyaLogoStruk: Boolean(current.receiptLogo),
           },
@@ -163,6 +188,7 @@ export async function POST(request: Request) {
             brand: updated.brand,
             address: updated.address,
             footer: updated.footer,
+            whatsapp: updated.whatsapp,
             punyaLogoNavbar: Boolean(updated.logo),
             punyaLogoStruk: Boolean(updated.receiptLogo),
           },

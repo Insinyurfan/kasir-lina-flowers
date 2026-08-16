@@ -6,6 +6,7 @@ import { Search, Plus, Minus, Trash2, ShoppingCart, Flower2, Wallet, User, UserC
 import Image from "next/image";
 import { getSavedUserSession } from "@/lib/userSession";
 import { urlGambar } from "@/lib/gambar";
+import { useTampilBertahap } from "@/lib/tampilBertahap";
 
 type Variant = {
   id: number;
@@ -767,9 +768,15 @@ export default function PosPage() {
   };
 
   const filteredProduk = produk.filter(p =>
-    p.nama_produk.toLowerCase().includes(search.toLowerCase()) || 
+    p.nama_produk.toLowerCase().includes(search.toLowerCase()) ||
     (p.barcode && p.barcode.includes(search))
   );
+
+  // Kartu produk dirender bertahap mengikuti gulungan. Batchnya lebih besar
+  // daripada katalog publik karena kasir memindai daftar dengan cepat dan
+  // grid ini hidup di dalam panel yang bisa digulung sendiri.
+  const { tampil: produkTampil, adaLagi: adaProdukLagi, penandaRef: penandaProdukRef } =
+    useTampilBertahap(filteredProduk, 24);
 
   // TAMPILAN AWAL: INPUT NAMA PELANGGAN
   if (!isSessionStarted) {
@@ -1361,7 +1368,7 @@ export default function PosPage() {
     items-start
     pb-36 short:pb-6
   "
->          {filteredProduk.map((p) => (
+>          {produkTampil.map((p) => (
            <article
   key={p.id}
   onClick={(e) => handleProductClick(e, p)}
@@ -1433,6 +1440,14 @@ export default function PosPage() {
 </div>
             </article>
           ))}
+
+          {/* Penanda pemuat potongan berikutnya. `col-span-full` supaya tidak
+              menempati satu sel grid dan membuat kartu terakhir terlihat pincang. */}
+          {adaProdukLagi && (
+            <div ref={penandaProdukRef} className="col-span-full py-6 text-center" aria-hidden="true">
+              <span className="text-xs font-bold text-slate-400">Memuat produk lainnya...</span>
+            </div>
+          )}
         </div>
       </div>
 

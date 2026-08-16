@@ -10,6 +10,7 @@ import { compressProductImage } from "@/lib/compressProductImage";
 import { computeCartRowId } from "@/lib/satuan";
 import { toast } from "@/lib/toast";
 import { urlGambar } from "@/lib/gambar";
+import { useTampilBertahap } from "@/lib/tampilBertahap";
 
 type UserSession = {
   id: number;
@@ -509,6 +510,14 @@ export default function ManajemenProdukPage() {
     [arsipList, search, sortField, sortDir]
   );
 
+  // Daftar produk dirender bertahap mengikuti gulungan, bukan sekaligus. Baris
+  // tabel memang lebih ringan daripada kartu, tapi tiap baris tetap membawa
+  // satu foto — dan itulah yang menumpuk saat produk bertambah banyak.
+  const { tampil: produkTampil, adaLagi: adaProdukLagi, penandaRef: penandaProdukRef } =
+    useTampilBertahap(filteredProduk, 24);
+  const { tampil: arsipTampil, adaLagi: adaArsipLagi, penandaRef: penandaArsipRef } =
+    useTampilBertahap(filteredArsip, 24);
+
   return (
     <div className="lina-panel rounded-2xl p-6 min-h-[80vh] border text-slate-800 relative">
 
@@ -575,7 +584,7 @@ export default function ManajemenProdukPage() {
             </div>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
-              {filteredProduk.map((p) => (
+              {produkTampil.map((p) => (
                 <div
                   key={p.id}
                   className="overflow-hidden rounded-2xl border border-pink-100 bg-white text-left shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
@@ -614,6 +623,15 @@ export default function ManajemenProdukPage() {
                   </div>
                 </div>
               ))}
+            </div>
+          )}
+
+          {/* Aman memakai penanda yang sama dengan tampilan admin: keduanya ada
+              di cabang `isGuest ? … : …` yang saling meniadakan, jadi hanya satu
+              yang pernah terpasang di DOM. */}
+          {adaProdukLagi && (
+            <div ref={penandaProdukRef} className="py-6 text-center" aria-hidden="true">
+              <span className="text-xs font-bold text-slate-400">Memuat produk lainnya...</span>
             </div>
           )}
 
@@ -783,7 +801,7 @@ export default function ManajemenProdukPage() {
                     Pencarian tidak ditemukan...
                   </div>
                 ) : (
-                  filteredProduk.map((p) => (
+                  produkTampil.map((p) => (
                     <div key={p.id} className="rounded-2xl border border-pink-100 bg-white p-3 shadow-sm">
                       <div className="flex gap-3">
                         <button
@@ -882,7 +900,7 @@ export default function ManajemenProdukPage() {
                     {filteredProduk.length === 0 && !isLoading ? (
                       <tr><td colSpan={6} className="text-center py-10 text-slate-400">Pencarian tidak ditemukan...</td></tr>
                     ) : (
-                      filteredProduk.map((p) => (
+                      produkTampil.map((p) => (
                         <tr key={p.id} className="border-b border-pink-50 hover:bg-pink-50/40 transition-colors">
                           <td className="p-4 text-center">
                             {p.gambar ? (
@@ -928,6 +946,17 @@ export default function ManajemenProdukPage() {
                   </tbody>
                 </table>
               </div>
+
+              {/* Satu penanda untuk KEDUA tata letak di atas (daftar HP dan
+                  tabel desktop). Cukup satu karena hanya satu yang terlihat
+                  pada satu waktu — penanda di dalam tata letak yang sedang
+                  `display:none` tidak akan pernah dianggap terlihat oleh
+                  IntersectionObserver, jadi pemuatannya akan macet. */}
+              {adaProdukLagi && (
+                <div ref={penandaProdukRef} className="py-6 text-center" aria-hidden="true">
+                  <span className="text-xs font-bold text-slate-400">Memuat produk lainnya...</span>
+                </div>
+              )}
             </>
           ) : (
             <>
@@ -947,7 +976,7 @@ export default function ManajemenProdukPage() {
                     Tidak ada produk yang diarsipkan.
                   </div>
                 ) : (
-                  filteredArsip.map((p) => (
+                  arsipTampil.map((p) => (
                     <div key={p.id} className="rounded-2xl border border-amber-100 bg-white p-3 shadow-sm opacity-80">
                       <div className="flex gap-3">
                         <div className="h-24 w-24 shrink-0 overflow-hidden rounded-2xl border border-slate-100 bg-pink-50 flex items-center justify-center grayscale">
@@ -1007,7 +1036,7 @@ export default function ManajemenProdukPage() {
                     {filteredArsip.length === 0 && !isLoading ? (
                       <tr><td colSpan={6} className="text-center py-10 text-slate-400">Tidak ada produk yang diarsipkan.</td></tr>
                     ) : (
-                      filteredArsip.map((p) => (
+                      arsipTampil.map((p) => (
                         <tr key={p.id} className="border-b border-amber-50 bg-amber-50/20 opacity-80">
                           <td className="p-4 text-center">
                             {p.gambar ? (
@@ -1050,6 +1079,12 @@ export default function ManajemenProdukPage() {
                   </tbody>
                 </table>
               </div>
+
+              {adaArsipLagi && (
+                <div ref={penandaArsipRef} className="py-6 text-center" aria-hidden="true">
+                  <span className="text-xs font-bold text-slate-400">Memuat arsip lainnya...</span>
+                </div>
+              )}
             </>
           )}
         </>

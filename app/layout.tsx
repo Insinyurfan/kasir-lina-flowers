@@ -43,6 +43,7 @@ import {
   Wallet,
   HandCoins,
   Scale,
+  Inbox,
   ClipboardList as PapanTugasIcon,
   Users as PengrajinIcon
 } from "lucide-react";
@@ -58,7 +59,10 @@ const DISMISSED_NOTIFICATION_POPUPS_KEY = "lina_dismissed_notification_popups";
 // memunculkan modal yang mengganggu (mis. spam saat akun baru/lama login karena
 // banyak notifikasi order lama belum terbaca).
 const POPUP_NOTIFICATION_STATUSES = new Set(["Request Pesanan", "Siap Kirim", "Siap Dikirim"]);
-const PUBLIC_ROUTES = ["/", "/login"];
+// `/lacak` dan `/orderan` wajib ada di sini: pembeli yang melacak atau membuka
+// kembali orderannya tidak punya akun, dan tanpa pengecualian ini mereka
+// langsung dilempar ke /login.
+const PUBLIC_ROUTES = ["/", "/login", "/lacak", "/orderan"];
 
 type UserSession = {
   id: number;
@@ -465,9 +469,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
     rememberDismissedNewOrderPopup(newOrderPopup.id);
     markNotificationsRead([newOrderPopup.id]);
-    const targetUrl = newOrderPopup.transactionId
-      ? `/status-pesanan?highlight=${newOrderPopup.transactionId}`
-      : "/status-pesanan";
+    // Request pesanan belum punya transaksi (baru lahir saat pemilik menerima
+    // dan mengisi harganya), jadi mengarahkannya ke Status Pesanan hanya
+    // menampilkan halaman kosong. Hulunya ada di Request Pesanan.
+    const targetUrl =
+      newOrderPopup.statusPengiriman === "Request Pesanan"
+        ? "/request-pesanan"
+        : newOrderPopup.transactionId
+          ? `/status-pesanan?highlight=${newOrderPopup.transactionId}`
+          : "/status-pesanan";
     setNewOrderPopup(null);
     router.push(targetUrl);
   };
@@ -992,6 +1002,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 {!isGuest && <NavItem href="/dashboard" icon={<House />} label="Dashboard" pathname={pathname} onClick={closeMobileMenu} />}
                 {!isGuest && <NavItem href="/pos" icon={<ShoppingCart />} label="Kasir (POS)" pathname={pathname} onClick={closeMobileMenu} />}
                 <NavItem href="/produk" icon={<Package />} label="Data Produk" pathname={pathname} onClick={closeMobileMenu} />
+                {/* Ditaruh tepat sebelum Status Pesanan karena inilah hulunya:
+                    request dari katalog publik diterima di sini, lalu berubah
+                    jadi transaksi yang dipantau di Status Pesanan. */}
+                {(user?.role === "Owner" || user?.role === "Admin") && <NavItem href="/request-pesanan" icon={<Inbox />} label="Request Pesanan" pathname={pathname} onClick={closeMobileMenu} />}
                 {!isGuest && <NavItem href="/status-pesanan" icon={<ClipboardCheck />} label="Status Pesanan" pathname={pathname} onClick={closeMobileMenu} />}
                 {!isGuest && <NavItem href="/packing" icon={<PackageCheck />} label="Checklist Packing" pathname={pathname} onClick={closeMobileMenu} />}
                 {!isGuest && <NavItem href="/pelanggan" icon={<Contact />} label="Pelanggan" pathname={pathname} onClick={closeMobileMenu} />}

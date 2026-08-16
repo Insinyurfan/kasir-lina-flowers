@@ -1,12 +1,21 @@
+import { randomBytes } from "node:crypto";
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getActorFromPayload, recordActivityLog } from "@/lib/activityLog";
 import { getServerSessionUser } from "@/lib/serverSession";
+import { checkRateLimit, getClientIp, recordHit, tooManyRequests, type RateLimitRule } from "@/lib/rateLimit";
 
 export const dynamic = "force-dynamic";
 
+// POST di rute ini terbuka untuk tamu, dan tiap pesanan yang masuk membuat
+// notifikasi ke seluruh Owner/Admin — tanpa batas, satu skrip bisa membanjiri
+// tabel pesanan sekaligus notifikasi. Batasnya dipasang longgar: pelanggan
+// sungguhan mengirim 1–3 kali, bukan belasan.
+const ORDER_IP_RULE: RateLimitRule = { limit: 10, windowMs: 10 * 60 * 1000 };
+
 type RequestItemPayload = {
   productId?: number;
+  variantId?: number;
   quantity?: number;
 };
 
@@ -17,6 +26,7 @@ type RequestPricePayload = {
 
 type RequestPayload = {
   id?: number;
+  code?: string;
   customerName?: string;
   phone?: string;
   items?: RequestItemPayload[];
@@ -27,6 +37,12 @@ type RequestPayload = {
   actorName?: string;
   actorRole?: string;
 };
+
+// Kesalahan yang berasal dari isian pembeli (varian belum dipilih, stok tak
+// cukup), bukan kegagalan server. Dipisahkan supaya balasannya 400: sebelumnya
+// semuanya lolos ke catch terakhir dan jadi 500, sehingga "pilih dulu
+// variasinya" ikut tercatat sebagai kerusakan server di log dan pemantauan.
+class ValidationError extends Error {}
 
 const cleanPhone = (value = "") => value.replace(/[^\d+]/g, "").slice(0, 20);
 const getStatusDescription = (status: string, fallback?: string | null) => {
@@ -48,10 +64,33 @@ const normalizeHistoryStatus = (status: string) => {
   return status;
 };
 
+// Alfabet kode orderan. Karakter yang gampang tertukar SENGAJA dibuang:
+// huruf O (mirip angka 0), serta I dan L (mirip angka 1). Kode ini ditempel di
+// chat lalu diketik ulang di halaman "Buka Kode Orderan", dan salah baca satu
+// karakter cuma menghasilkan "kode tidak ditemukan" — pembeli tidak punya cara
+// menebak mana yang keliru. Sisa 31 karakter tetap memberi 31^8 ≈ 850 miliar
+// kemungkinan, jauh lebih dari cukup.
+const KODE_ALFABET = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
+const KODE_PANJANG = 8;
+
+// Kode pendek tanpa awalan maupun tanggal, mis. "K7QMD4XP" — sependek mungkin
+// karena memang untuk dibaca dan diketik manusia.
 const makeRequestCode = () => {
-  const datePart = new Date().toISOString().slice(2, 10).replaceAll("-", "");
-  const randomPart = crypto.randomUUID().replaceAll("-", "").slice(0, 6).toUpperCase();
-  return `REQ-${datePart}-${randomPart}`;
+  // Pengambilan-ulang (rejection sampling), bukan sekadar `byte % 31`: 256
+  // tidak habis dibagi 31, jadi sisa pembagian polos membuat 8 karakter awal
+  // alfabet muncul lebih sering. Kode ini satu-satunya kunci untuk membuka dan
+  // mengubah orderan, jadi sebarannya harus benar-benar rata — bukan sekadar
+  // "terlihat acak".
+  const batasAman = Math.floor(256 / KODE_ALFABET.length) * KODE_ALFABET.length;
+  let kode = "";
+  while (kode.length < KODE_PANJANG) {
+    for (const byte of randomBytes(KODE_PANJANG)) {
+      if (byte >= batasAman) continue;
+      kode += KODE_ALFABET[byte % KODE_ALFABET.length];
+      if (kode.length === KODE_PANJANG) break;
+    }
+  }
+  return kode;
 };
 
 const getTargetRoles = async () => {
@@ -81,25 +120,88 @@ const createRequestNotifications = async (code: string, customerName: string) =>
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-    const code = searchParams.get("code")?.trim().toUpperCase();
+    const kodeOrderan = searchParams.get("orderan")?.trim().toUpperCase();
+    const trxParam = searchParams.get("trx")?.trim().toUpperCase();
 
-    if (code) {
+    // ── BUKA KODE ORDERAN ────────────────────────────────────────────────
+    // Cukup kodenya saja, TANPA nomor HP. Kodenya 8 karakter acak dari 31
+    // kemungkinan per posisi, jadi tidak bisa disisir berurutan seperti nomor
+    // TRX yang menaik satu per satu.
+    //
+    // Balasannya SENGAJA tidak memuat nama maupun nomor HP. Kode ini dibuat
+    // untuk dibagikan (ditempel di chat, diteruskan ke teman), jadi harus aman
+    // bila sampai ke tangan orang lain: yang terlihat hanya daftar belanjanya,
+    // bukan siapa pemesannya.
+    if (kodeOrderan) {
+      const tersimpan = await prisma.orderRequest.findUnique({
+        where: { code: kodeOrderan },
+        include: {
+          items: { orderBy: { id: "asc" } },
+          transaction: { select: { id: true, trxNumber: true } },
+        },
+      });
+
+      if (!tersimpan) {
+        return NextResponse.json({ error: "Kode orderan tidak ditemukan." }, { status: 404 });
+      }
+
+      // Harga baru dibuka setelah pemilik menetapkannya. Selama masih
+      // "Menunggu", angka yang tersimpan barulah harga acuan produk — bukan
+      // harga yang berlaku untuk pembeli ini — sehingga menampilkannya justru
+      // menyesatkan dan mengunci negosiasi sebelum dimulai.
+      const sudahDihargai = tersimpan.status !== "Menunggu";
+
+      return NextResponse.json({
+        code: tersimpan.code,
+        status: tersimpan.status,
+        rejectionReason: tersimpan.rejectionReason,
+        createdAt: tersimpan.createdAt,
+        // Selama masih menunggu, pembeli boleh mengubah isinya sendiri.
+        bisaDiubah: tersimpan.status === "Menunggu",
+        // Nomor TRX diberitahukan di sini supaya pembeli tahu apa yang harus
+        // dimasukkan di halaman lacak — tanpa perlu menanyakannya lewat chat.
+        trxNumber: tersimpan.transaction
+          ? tersimpan.transaction.trxNumber ?? tersimpan.transaction.id
+          : null,
+        totalPrice: sudahDihargai ? tersimpan.totalPrice : null,
+        items: tersimpan.items.map((item) => ({
+          id: item.id,
+          productId: item.productId,
+          variantId: item.variantId,
+          productName: item.productName,
+          variantName: item.variantName,
+          quantity: item.quantity,
+          unitPrice: sudahDihargai ? item.unitPrice : null,
+          subtotal: sudahDihargai ? item.subtotal : null,
+        })),
+      });
+    }
+
+    // ── LACAK PESANAN ────────────────────────────────────────────────────
+    // WAJIB disertai nomor HP. Nomor TRX berurutan (TRX-0205, 0206, 0207…),
+    // jadi tanpa kunci kedua siapa pun bisa menyisirnya dari 1 ke atas dan
+    // membaca seluruh pesanan pelanggan beserta nama dan nomor HP-nya.
+    if (trxParam) {
       const phone = cleanPhone(searchParams.get("phone") || "");
       if (phone.length < 8) {
         return NextResponse.json({ error: "Nomor HP wajib diisi untuk melacak pesanan." }, { status: 400 });
       }
-      const transactionMatch = code.match(/^TRX-?(\d+)$/);
-      const trxNum = transactionMatch ? Number(transactionMatch[1]) : null;
-      let resolvedTransactionId: number | null = null;
-      if (trxNum !== null) {
-        const trx = await prisma.transaction.findFirst({
-          where: { OR: [{ trxNumber: trxNum }, { trxNumber: null, id: trxNum }] },
-          select: { id: true },
-        });
-        resolvedTransactionId = trx?.id ?? null;
+
+      const trxNum = Number(trxParam.replace(/^TRX-?/, ""));
+      if (!Number.isInteger(trxNum) || trxNum <= 0) {
+        return NextResponse.json({ error: "Nomor transaksi tidak valid." }, { status: 400 });
       }
+
+      const trx = await prisma.transaction.findFirst({
+        where: { OR: [{ trxNumber: trxNum }, { trxNumber: null, id: trxNum }] },
+        select: { id: true },
+      });
+      if (!trx) {
+        return NextResponse.json({ error: "Nomor transaksi atau nomor HP tidak sesuai." }, { status: 404 });
+      }
+
       const orderRequest = await prisma.orderRequest.findUnique({
-        where: resolvedTransactionId !== null ? { transactionId: resolvedTransactionId } : { code },
+        where: { transactionId: trx.id },
         include: {
           items: { orderBy: { id: "asc" } },
           statusHistory: { orderBy: { createdAt: "asc" } },
@@ -114,11 +216,14 @@ export async function GET(request: Request) {
         },
       });
 
+      // Pesan galat sengaja sama persis untuk "transaksi tidak ada" dan
+      // "nomor HP tidak cocok". Membedakannya akan memberi tahu penebak nomor
+      // TRX mana yang sungguh ada, dan itu separuh jalan menuju penyisiran.
       if (!orderRequest) {
-        return NextResponse.json({ error: "Kode pesanan atau nomor HP tidak sesuai." }, { status: 404 });
+        return NextResponse.json({ error: "Nomor transaksi atau nomor HP tidak sesuai." }, { status: 404 });
       }
       if (cleanPhone(orderRequest.phone) !== phone) {
-        return NextResponse.json({ error: "Kode pesanan atau nomor HP tidak sesuai." }, { status: 404 });
+        return NextResponse.json({ error: "Nomor transaksi atau nomor HP tidak sesuai." }, { status: 404 });
       }
 
       const storedStatuses = new Set(orderRequest.statusHistory.map((item) => normalizeHistoryStatus(item.status)));
@@ -191,9 +296,13 @@ export async function GET(request: Request) {
             }
           : null,
         statusHistory: history,
+        // Harga sengaja tidak ikut: saat pesanan masih "Menunggu", harganya
+        // memang belum dikonfirmasi pemilik, dan lacak publik ini hanya butuh
+        // menjawab "pesanan saya apa saja dan sudah sampai mana".
         items: orderRequest.items.map((item) => ({
           id: item.id,
           productName: item.productName,
+          variantName: item.variantName,
           quantity: item.quantity,
         })),
       });
@@ -232,55 +341,129 @@ export async function GET(request: Request) {
   }
 }
 
+// Ubah item mentah dari pembeli menjadi baris pesanan yang sudah tervalidasi
+// dan berharga.
+//
+// Dipakai bersama oleh POST (menyimpan orderan baru) dan PUT (mengubah orderan
+// tersimpan). Disatukan dengan sengaja: kalau aturan varian dan stok ditulis
+// dua kali, cepat atau lambat salah satunya tertinggal saat aturannya berubah —
+// dan yang bocor justru jalur edit yang lebih jarang diuji.
+const siapkanItemPesanan = async (items: RequestItemPayload[] | undefined) => {
+  const rawItems = (items || [])
+    .map((item) => ({
+      productId: Number(item.productId),
+      // 0 = produk tanpa varian, mengikuti konvensi CustomerPrice di skema.
+      variantId: Math.max(0, Math.floor(Number(item.variantId) || 0)),
+      quantity: Math.max(0, Math.floor(Number(item.quantity))),
+    }))
+    .filter((item) => Number.isInteger(item.productId) && item.productId > 0 && item.quantity > 0);
+
+  // Digabung per kombinasi produk+varian: dua baris "Mawar / Merah" menyatu
+  // jadi satu, tapi "Mawar / Merah" dan "Mawar / Putih" tetap dua baris.
+  const requestedItems = [
+    ...rawItems
+      .reduce<Map<string, { productId: number; variantId: number; quantity: number }>>((result, item) => {
+        const key = `${item.productId}:${item.variantId}`;
+        const existing = result.get(key);
+        if (existing) existing.quantity += item.quantity;
+        else result.set(key, { ...item });
+        return result;
+      }, new Map())
+      .values(),
+  ];
+
+  if (requestedItems.length === 0 || requestedItems.length > 50) {
+    throw new ValidationError("Pesanan harus memiliki produk.");
+  }
+
+  const productIds = [...new Set(requestedItems.map((item) => item.productId))];
+  const products = await prisma.product.findMany({
+    where: { id: { in: productIds } },
+    select: {
+      id: true,
+      nama_produk: true,
+      harga: true,
+      stok: true,
+      variants: { select: { id: true, name: true, priceModifier: true } },
+    },
+  });
+  const productById = new Map(products.map((product) => [product.id, product]));
+
+  // Stok disimpan di level produk, bukan per varian. Karena satu produk bisa
+  // muncul di beberapa baris (varian berbeda), stok harus diuji terhadap TOTAL
+  // seluruh barisnya — menguji per baris akan meloloskan pesanan 3 Merah +
+  // 3 Putih padahal stoknya tinggal 4.
+  const quantityByProduct = new Map<number, number>();
+  for (const item of requestedItems) {
+    quantityByProduct.set(item.productId, (quantityByProduct.get(item.productId) || 0) + item.quantity);
+  }
+  for (const [productId, quantity] of quantityByProduct) {
+    const product = productById.get(productId);
+    if (!product) throw new ValidationError("Produk tidak ditemukan.");
+    if (quantity > product.stok) {
+      throw new ValidationError(`Stok ${product.nama_produk} hanya ${product.stok}.`);
+    }
+  }
+
+  return requestedItems.map((item) => {
+    const product = productById.get(item.productId);
+    if (!product) throw new ValidationError("Produk tidak ditemukan.");
+
+    const variant = item.variantId > 0 ? product.variants.find((v) => v.id === item.variantId) : undefined;
+    // Varian dicari di dalam produknya sendiri, jadi id varian milik produk
+    // lain otomatis ditolak — bukan cuma dicek keberadaannya di tabel.
+    if (item.variantId > 0 && !variant) {
+      throw new ValidationError(`Variasi untuk ${product.nama_produk} tidak ditemukan.`);
+    }
+    // Produk yang punya varian WAJIB disebutkan variasinya. Tanpa ini pesanan
+    // jadi ambigu dan pemilik harus bertanya balik lewat WhatsApp — persis
+    // masalah yang ingin dihilangkan oleh alur pemesanan ini.
+    if (item.variantId === 0 && product.variants.length > 0) {
+      throw new ValidationError(`Pilih dulu variasi untuk ${product.nama_produk}.`);
+    }
+
+    // `priceModifier` menyimpan harga ABSOLUT varian, bukan selisih —
+    // mengikuti pola yang sudah dipakai POS dan keranjang kasir.
+    const unitPrice = variant?.priceModifier ?? product.harga;
+
+    return {
+      productId: product.id,
+      productName: product.nama_produk,
+      variantId: variant ? variant.id : 0,
+      variantName: variant ? variant.name : null,
+      quantity: item.quantity,
+      unitPrice,
+      subtotal: unitPrice * item.quantity,
+    };
+  });
+};
+
 export async function POST(request: Request) {
   try {
+    const orderKey = `pesanan:ip:${getClientIp(request)}`;
+    const orderLimit = checkRateLimit(orderKey, ORDER_IP_RULE);
+    if (orderLimit.limited) {
+      const minutes = Math.ceil(orderLimit.retryAfterSeconds / 60);
+      return tooManyRequests(
+        `Terlalu banyak pesanan dikirim dari perangkat ini. Coba lagi dalam ${minutes} menit.`,
+        orderLimit.retryAfterSeconds
+      );
+    }
+    // Dihitung di awal, bukan hanya saat pesanan berhasil dibuat: kiriman yang
+    // ditolak validasi pun tetap menyentuh database, jadi tetap perlu dibatasi.
+    recordHit(orderKey, ORDER_IP_RULE);
+
     const payload = (await request.json()) as RequestPayload;
     const customerName = payload.customerName?.trim().slice(0, 100) || "";
     const phone = cleanPhone(payload.phone);
-    const rawItems = (payload.items || [])
-      .map((item) => ({
-        productId: Number(item.productId),
-        quantity: Math.max(0, Math.floor(Number(item.quantity))),
-      }))
-      .filter((item) => Number.isInteger(item.productId) && item.productId > 0 && item.quantity > 0);
-    const requestedItems = Array.from(
-      rawItems.reduce<Map<number, number>>((result, item) => {
-        result.set(item.productId, (result.get(item.productId) || 0) + item.quantity);
-        return result;
-      }, new Map())
-    ).map(([productId, quantity]) => ({ productId, quantity }));
-
     if (customerName.length < 2) {
       return NextResponse.json({ error: "Nama wajib diisi minimal 2 karakter." }, { status: 400 });
     }
     if (phone.length < 8) {
       return NextResponse.json({ error: "Nomor HP belum valid." }, { status: 400 });
     }
-    if (requestedItems.length === 0 || requestedItems.length > 50) {
-      return NextResponse.json({ error: "Pesanan harus memiliki produk." }, { status: 400 });
-    }
 
-    const productIds = [...new Set(requestedItems.map((item) => item.productId))];
-    const products = await prisma.product.findMany({
-      where: { id: { in: productIds } },
-      select: { id: true, nama_produk: true, harga: true, stok: true },
-    });
-    const productById = new Map(products.map((product) => [product.id, product]));
-
-    const normalizedItems = requestedItems.map((item) => {
-      const product = productById.get(item.productId);
-      if (!product) throw new Error("Produk tidak ditemukan.");
-      if (item.quantity > product.stok) {
-        throw new Error(`Stok ${product.nama_produk} hanya ${product.stok}.`);
-      }
-      return {
-        productId: product.id,
-        productName: product.nama_produk,
-        quantity: item.quantity,
-        unitPrice: product.harga,
-        subtotal: product.harga * item.quantity,
-      };
-    });
+    const normalizedItems = await siapkanItemPesanan(payload.items);
     const totalPrice = normalizedItems.reduce((total, item) => total + item.subtotal, 0);
 
     let created;
@@ -308,6 +491,8 @@ export async function POST(request: Request) {
       }
     }
 
+    // Ini kegagalan server (tiga kali tabrakan kode acak), bukan salah isian
+    // pembeli — biarkan jatuh ke 500, jangan 400.
     if (!created) throw new Error("Gagal membuat kode pesanan.");
     await createRequestNotifications(created.code, created.customerName);
 
@@ -320,7 +505,96 @@ export async function POST(request: Request) {
       { status: 201 }
     );
   } catch (error) {
+    if (error instanceof ValidationError) {
+      return NextResponse.json({ error: error.message }, { status: 400 });
+    }
     const message = error instanceof Error ? error.message : "Gagal mengirim request pesanan.";
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
+}
+
+// Perbarui isi orderan yang sudah tersimpan, dibuka kembali lewat kode orderan.
+//
+// Kunci akses satu-satunya adalah kodenya sendiri — memang begitu rancangannya,
+// sama seperti kode simulasi: yang memegang kode boleh mengubah isinya. Yang
+// menjaganya tetap aman adalah kodenya acak dan balasan GET-nya tidak pernah
+// memuat nama atau nomor HP, jadi kode yang bocor tidak membocorkan identitas.
+export async function PUT(request: Request) {
+  try {
+    const editKey = `pesanan:ubah:${getClientIp(request)}`;
+    const editLimit = checkRateLimit(editKey, ORDER_IP_RULE);
+    if (editLimit.limited) {
+      const minutes = Math.ceil(editLimit.retryAfterSeconds / 60);
+      return tooManyRequests(
+        `Terlalu banyak perubahan dari perangkat ini. Coba lagi dalam ${minutes} menit.`,
+        editLimit.retryAfterSeconds
+      );
+    }
+    recordHit(editKey, ORDER_IP_RULE);
+
+    const payload = (await request.json()) as RequestPayload;
+    const code = payload.code?.trim().toUpperCase() || "";
+    if (!code) {
+      return NextResponse.json({ error: "Kode orderan wajib diisi." }, { status: 400 });
+    }
+
+    const tersimpan = await prisma.orderRequest.findUnique({
+      where: { code },
+      select: { id: true, code: true, status: true, customerName: true },
+    });
+    if (!tersimpan) {
+      return NextResponse.json({ error: "Kode orderan tidak ditemukan." }, { status: 404 });
+    }
+    // Sesudah pemilik menerima atau menolak, isinya dikunci. Membiarkannya
+    // berubah berarti pemilik sudah menetapkan harga (bahkan mungkin sudah
+    // memotong stok dan membuat transaksi) untuk daftar yang kemudian diam-diam
+    // berganti — dan tidak ada yang tahu sampai barangnya salah.
+    if (tersimpan.status !== "Menunggu") {
+      return NextResponse.json(
+        { error: `Orderan ini sudah ${tersimpan.status.toLowerCase()} dan tidak bisa diubah lagi.` },
+        { status: 409 }
+      );
+    }
+
+    const normalizedItems = await siapkanItemPesanan(payload.items);
+    const totalPrice = normalizedItems.reduce((total, item) => total + item.subtotal, 0);
+
+    const diperbarui = await prisma.$transaction(async (tx) => {
+      // Baris lama dihapus lalu ditulis ulang, bukan dicocokkan satu per satu.
+      // Kombinasi produk+varian bisa berubah bebas (varian diganti, produk
+      // dibuang, produk baru masuk), jadi mencocokkan per baris justru lebih
+      // rumit dan lebih mudah salah daripada menulis ulang seluruhnya.
+      await tx.orderRequestItem.deleteMany({ where: { orderRequestId: tersimpan.id } });
+      return tx.orderRequest.update({
+        where: { id: tersimpan.id },
+        data: {
+          totalPrice,
+          items: { create: normalizedItems },
+          statusHistory: {
+            create: {
+              // Diberi label sendiri, bukan "Menunggu" lagi. Memakai label yang
+              // sama membuat linimasa menampilkan "Menunggu" dua kali berturut-
+              // turut dan pembeli mengira ada yang salah. Status pesanannya
+              // sendiri tetap "Menunggu" — yang berubah hanya catatan riwayat.
+              status: "Diubah",
+              description: "Pembeli mengubah isi orderan.",
+            },
+          },
+        },
+        select: { code: true, status: true },
+      });
+    });
+
+    // Pemilik harus diberi tahu. Tanpa ini, daftar yang sedang dia hargai bisa
+    // sudah berubah tanpa jejak apa pun di layarnya.
+    await createRequestNotifications(diperbarui.code, `${tersimpan.customerName} (diubah)`);
+
+    return NextResponse.json({ code: diperbarui.code, status: diperbarui.status });
+  } catch (error) {
+    if (error instanceof ValidationError) {
+      return NextResponse.json({ error: error.message }, { status: 400 });
+    }
+    const message = error instanceof Error ? error.message : "Gagal memperbarui orderan.";
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
@@ -455,6 +729,18 @@ export async function PATCH(request: Request) {
           items: {
             create: confirmedItems.map((item) => ({
               productId: item.productId,
+              // Varian ikut disalin ke transaksi. Tanpa ini, variasi yang sudah
+              // susah payah dipilih pembeli lenyap begitu request diterima —
+              // checklist packing, nota, dan Status Pesanan hanya menampilkan
+              // nama produknya saja.
+              variantId: item.variantId > 0 ? item.variantId : null,
+              variantName: item.variantName,
+              // Harga yang dikonfirmasi pemilik sudah harga akhir per satuan,
+              // jadi disimpan sebagai basePrice tanpa modifier. Ini menjaga
+              // invarian skema `subtotal = (basePrice + priceModifier) × jumlah`
+              // tetap benar; sebelumnya basePrice tertinggal 0 padahal
+              // subtotalnya terisi.
+              basePrice: item.unitPrice,
               jumlah: item.quantity,
               subtotal: item.subtotal,
             })),

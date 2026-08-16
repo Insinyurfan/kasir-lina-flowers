@@ -19002,6 +19002,7 @@ export namespace Prisma {
     footer: string | null
     logo: string | null
     receiptLogo: string | null
+    whatsapp: string | null
   }
 
   export type StoreSettingMaxAggregateOutputType = {
@@ -19011,6 +19012,7 @@ export namespace Prisma {
     footer: string | null
     logo: string | null
     receiptLogo: string | null
+    whatsapp: string | null
   }
 
   export type StoreSettingCountAggregateOutputType = {
@@ -19020,6 +19022,7 @@ export namespace Prisma {
     footer: number
     logo: number
     receiptLogo: number
+    whatsapp: number
     _all: number
   }
 
@@ -19039,6 +19042,7 @@ export namespace Prisma {
     footer?: true
     logo?: true
     receiptLogo?: true
+    whatsapp?: true
   }
 
   export type StoreSettingMaxAggregateInputType = {
@@ -19048,6 +19052,7 @@ export namespace Prisma {
     footer?: true
     logo?: true
     receiptLogo?: true
+    whatsapp?: true
   }
 
   export type StoreSettingCountAggregateInputType = {
@@ -19057,6 +19062,7 @@ export namespace Prisma {
     footer?: true
     logo?: true
     receiptLogo?: true
+    whatsapp?: true
     _all?: true
   }
 
@@ -19153,6 +19159,7 @@ export namespace Prisma {
     footer: string
     logo: string | null
     receiptLogo: string | null
+    whatsapp: string | null
     _count: StoreSettingCountAggregateOutputType | null
     _avg: StoreSettingAvgAggregateOutputType | null
     _sum: StoreSettingSumAggregateOutputType | null
@@ -19181,6 +19188,7 @@ export namespace Prisma {
     footer?: boolean
     logo?: boolean
     receiptLogo?: boolean
+    whatsapp?: boolean
   }, ExtArgs["result"]["storeSetting"]>
 
   export type StoreSettingSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -19190,6 +19198,7 @@ export namespace Prisma {
     footer?: boolean
     logo?: boolean
     receiptLogo?: boolean
+    whatsapp?: boolean
   }, ExtArgs["result"]["storeSetting"]>
 
   export type StoreSettingSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -19199,6 +19208,7 @@ export namespace Prisma {
     footer?: boolean
     logo?: boolean
     receiptLogo?: boolean
+    whatsapp?: boolean
   }, ExtArgs["result"]["storeSetting"]>
 
   export type StoreSettingSelectScalar = {
@@ -19208,9 +19218,10 @@ export namespace Prisma {
     footer?: boolean
     logo?: boolean
     receiptLogo?: boolean
+    whatsapp?: boolean
   }
 
-  export type StoreSettingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "brand" | "address" | "footer" | "logo" | "receiptLogo", ExtArgs["result"]["storeSetting"]>
+  export type StoreSettingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "brand" | "address" | "footer" | "logo" | "receiptLogo" | "whatsapp", ExtArgs["result"]["storeSetting"]>
 
   export type $StoreSettingPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "StoreSetting"
@@ -19222,6 +19233,7 @@ export namespace Prisma {
       footer: string
       logo: string | null
       receiptLogo: string | null
+      whatsapp: string | null
     }, ExtArgs["result"]["storeSetting"]>
     composites: {}
   }
@@ -19651,6 +19663,7 @@ export namespace Prisma {
     readonly footer: FieldRef<"StoreSetting", 'String'>
     readonly logo: FieldRef<"StoreSetting", 'String'>
     readonly receiptLogo: FieldRef<"StoreSetting", 'String'>
+    readonly whatsapp: FieldRef<"StoreSetting", 'String'>
   }
     
 
@@ -30322,6 +30335,7 @@ export namespace Prisma {
     id: number | null
     orderRequestId: number | null
     productId: number | null
+    variantId: number | null
     quantity: number | null
     unitPrice: number | null
     subtotal: number | null
@@ -30331,6 +30345,7 @@ export namespace Prisma {
     id: number | null
     orderRequestId: number | null
     productId: number | null
+    variantId: number | null
     quantity: number | null
     unitPrice: number | null
     subtotal: number | null
@@ -30341,6 +30356,8 @@ export namespace Prisma {
     orderRequestId: number | null
     productId: number | null
     productName: string | null
+    variantId: number | null
+    variantName: string | null
     quantity: number | null
     unitPrice: number | null
     subtotal: number | null
@@ -30351,6 +30368,8 @@ export namespace Prisma {
     orderRequestId: number | null
     productId: number | null
     productName: string | null
+    variantId: number | null
+    variantName: string | null
     quantity: number | null
     unitPrice: number | null
     subtotal: number | null
@@ -30361,6 +30380,8 @@ export namespace Prisma {
     orderRequestId: number
     productId: number
     productName: number
+    variantId: number
+    variantName: number
     quantity: number
     unitPrice: number
     subtotal: number
@@ -30372,6 +30393,7 @@ export namespace Prisma {
     id?: true
     orderRequestId?: true
     productId?: true
+    variantId?: true
     quantity?: true
     unitPrice?: true
     subtotal?: true
@@ -30381,6 +30403,7 @@ export namespace Prisma {
     id?: true
     orderRequestId?: true
     productId?: true
+    variantId?: true
     quantity?: true
     unitPrice?: true
     subtotal?: true
@@ -30391,6 +30414,8 @@ export namespace Prisma {
     orderRequestId?: true
     productId?: true
     productName?: true
+    variantId?: true
+    variantName?: true
     quantity?: true
     unitPrice?: true
     subtotal?: true
@@ -30401,6 +30426,8 @@ export namespace Prisma {
     orderRequestId?: true
     productId?: true
     productName?: true
+    variantId?: true
+    variantName?: true
     quantity?: true
     unitPrice?: true
     subtotal?: true
@@ -30411,6 +30438,8 @@ export namespace Prisma {
     orderRequestId?: true
     productId?: true
     productName?: true
+    variantId?: true
+    variantName?: true
     quantity?: true
     unitPrice?: true
     subtotal?: true
@@ -30508,6 +30537,8 @@ export namespace Prisma {
     orderRequestId: number
     productId: number
     productName: string
+    variantId: number
+    variantName: string | null
     quantity: number
     unitPrice: number
     subtotal: number
@@ -30537,6 +30568,8 @@ export namespace Prisma {
     orderRequestId?: boolean
     productId?: boolean
     productName?: boolean
+    variantId?: boolean
+    variantName?: boolean
     quantity?: boolean
     unitPrice?: boolean
     subtotal?: boolean
@@ -30549,6 +30582,8 @@ export namespace Prisma {
     orderRequestId?: boolean
     productId?: boolean
     productName?: boolean
+    variantId?: boolean
+    variantName?: boolean
     quantity?: boolean
     unitPrice?: boolean
     subtotal?: boolean
@@ -30561,6 +30596,8 @@ export namespace Prisma {
     orderRequestId?: boolean
     productId?: boolean
     productName?: boolean
+    variantId?: boolean
+    variantName?: boolean
     quantity?: boolean
     unitPrice?: boolean
     subtotal?: boolean
@@ -30573,12 +30610,14 @@ export namespace Prisma {
     orderRequestId?: boolean
     productId?: boolean
     productName?: boolean
+    variantId?: boolean
+    variantName?: boolean
     quantity?: boolean
     unitPrice?: boolean
     subtotal?: boolean
   }
 
-  export type OrderRequestItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "orderRequestId" | "productId" | "productName" | "quantity" | "unitPrice" | "subtotal", ExtArgs["result"]["orderRequestItem"]>
+  export type OrderRequestItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "orderRequestId" | "productId" | "productName" | "variantId" | "variantName" | "quantity" | "unitPrice" | "subtotal", ExtArgs["result"]["orderRequestItem"]>
   export type OrderRequestItemInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     orderRequest?: boolean | OrderRequestDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
@@ -30603,6 +30642,8 @@ export namespace Prisma {
       orderRequestId: number
       productId: number
       productName: string
+      variantId: number
+      variantName: string | null
       quantity: number
       unitPrice: number
       subtotal: number
@@ -31035,6 +31076,8 @@ export namespace Prisma {
     readonly orderRequestId: FieldRef<"OrderRequestItem", 'Int'>
     readonly productId: FieldRef<"OrderRequestItem", 'Int'>
     readonly productName: FieldRef<"OrderRequestItem", 'String'>
+    readonly variantId: FieldRef<"OrderRequestItem", 'Int'>
+    readonly variantName: FieldRef<"OrderRequestItem", 'String'>
     readonly quantity: FieldRef<"OrderRequestItem", 'Int'>
     readonly unitPrice: FieldRef<"OrderRequestItem", 'Int'>
     readonly subtotal: FieldRef<"OrderRequestItem", 'Int'>
@@ -31669,7 +31712,8 @@ export namespace Prisma {
     address: 'address',
     footer: 'footer',
     logo: 'logo',
-    receiptLogo: 'receiptLogo'
+    receiptLogo: 'receiptLogo',
+    whatsapp: 'whatsapp'
   };
 
   export type StoreSettingScalarFieldEnum = (typeof StoreSettingScalarFieldEnum)[keyof typeof StoreSettingScalarFieldEnum]
@@ -31805,6 +31849,8 @@ export namespace Prisma {
     orderRequestId: 'orderRequestId',
     productId: 'productId',
     productName: 'productName',
+    variantId: 'variantId',
+    variantName: 'variantName',
     quantity: 'quantity',
     unitPrice: 'unitPrice',
     subtotal: 'subtotal'
@@ -33025,6 +33071,7 @@ export namespace Prisma {
     footer?: StringFilter<"StoreSetting"> | string
     logo?: StringNullableFilter<"StoreSetting"> | string | null
     receiptLogo?: StringNullableFilter<"StoreSetting"> | string | null
+    whatsapp?: StringNullableFilter<"StoreSetting"> | string | null
   }
 
   export type StoreSettingOrderByWithRelationInput = {
@@ -33034,6 +33081,7 @@ export namespace Prisma {
     footer?: SortOrder
     logo?: SortOrderInput | SortOrder
     receiptLogo?: SortOrderInput | SortOrder
+    whatsapp?: SortOrderInput | SortOrder
   }
 
   export type StoreSettingWhereUniqueInput = Prisma.AtLeast<{
@@ -33046,6 +33094,7 @@ export namespace Prisma {
     footer?: StringFilter<"StoreSetting"> | string
     logo?: StringNullableFilter<"StoreSetting"> | string | null
     receiptLogo?: StringNullableFilter<"StoreSetting"> | string | null
+    whatsapp?: StringNullableFilter<"StoreSetting"> | string | null
   }, "id">
 
   export type StoreSettingOrderByWithAggregationInput = {
@@ -33055,6 +33104,7 @@ export namespace Prisma {
     footer?: SortOrder
     logo?: SortOrderInput | SortOrder
     receiptLogo?: SortOrderInput | SortOrder
+    whatsapp?: SortOrderInput | SortOrder
     _count?: StoreSettingCountOrderByAggregateInput
     _avg?: StoreSettingAvgOrderByAggregateInput
     _max?: StoreSettingMaxOrderByAggregateInput
@@ -33072,6 +33122,7 @@ export namespace Prisma {
     footer?: StringWithAggregatesFilter<"StoreSetting"> | string
     logo?: StringNullableWithAggregatesFilter<"StoreSetting"> | string | null
     receiptLogo?: StringNullableWithAggregatesFilter<"StoreSetting"> | string | null
+    whatsapp?: StringNullableWithAggregatesFilter<"StoreSetting"> | string | null
   }
 
   export type CustomerPriceWhereInput = {
@@ -33737,6 +33788,8 @@ export namespace Prisma {
     orderRequestId?: IntFilter<"OrderRequestItem"> | number
     productId?: IntFilter<"OrderRequestItem"> | number
     productName?: StringFilter<"OrderRequestItem"> | string
+    variantId?: IntFilter<"OrderRequestItem"> | number
+    variantName?: StringNullableFilter<"OrderRequestItem"> | string | null
     quantity?: IntFilter<"OrderRequestItem"> | number
     unitPrice?: IntFilter<"OrderRequestItem"> | number
     subtotal?: IntFilter<"OrderRequestItem"> | number
@@ -33749,6 +33802,8 @@ export namespace Prisma {
     orderRequestId?: SortOrder
     productId?: SortOrder
     productName?: SortOrder
+    variantId?: SortOrder
+    variantName?: SortOrderInput | SortOrder
     quantity?: SortOrder
     unitPrice?: SortOrder
     subtotal?: SortOrder
@@ -33764,6 +33819,8 @@ export namespace Prisma {
     orderRequestId?: IntFilter<"OrderRequestItem"> | number
     productId?: IntFilter<"OrderRequestItem"> | number
     productName?: StringFilter<"OrderRequestItem"> | string
+    variantId?: IntFilter<"OrderRequestItem"> | number
+    variantName?: StringNullableFilter<"OrderRequestItem"> | string | null
     quantity?: IntFilter<"OrderRequestItem"> | number
     unitPrice?: IntFilter<"OrderRequestItem"> | number
     subtotal?: IntFilter<"OrderRequestItem"> | number
@@ -33776,6 +33833,8 @@ export namespace Prisma {
     orderRequestId?: SortOrder
     productId?: SortOrder
     productName?: SortOrder
+    variantId?: SortOrder
+    variantName?: SortOrderInput | SortOrder
     quantity?: SortOrder
     unitPrice?: SortOrder
     subtotal?: SortOrder
@@ -33794,6 +33853,8 @@ export namespace Prisma {
     orderRequestId?: IntWithAggregatesFilter<"OrderRequestItem"> | number
     productId?: IntWithAggregatesFilter<"OrderRequestItem"> | number
     productName?: StringWithAggregatesFilter<"OrderRequestItem"> | string
+    variantId?: IntWithAggregatesFilter<"OrderRequestItem"> | number
+    variantName?: StringNullableWithAggregatesFilter<"OrderRequestItem"> | string | null
     quantity?: IntWithAggregatesFilter<"OrderRequestItem"> | number
     unitPrice?: IntWithAggregatesFilter<"OrderRequestItem"> | number
     subtotal?: IntWithAggregatesFilter<"OrderRequestItem"> | number
@@ -34934,6 +34995,7 @@ export namespace Prisma {
     footer: string
     logo?: string | null
     receiptLogo?: string | null
+    whatsapp?: string | null
   }
 
   export type StoreSettingUncheckedCreateInput = {
@@ -34943,6 +35005,7 @@ export namespace Prisma {
     footer: string
     logo?: string | null
     receiptLogo?: string | null
+    whatsapp?: string | null
   }
 
   export type StoreSettingUpdateInput = {
@@ -34952,6 +35015,7 @@ export namespace Prisma {
     footer?: StringFieldUpdateOperationsInput | string
     logo?: NullableStringFieldUpdateOperationsInput | string | null
     receiptLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    whatsapp?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type StoreSettingUncheckedUpdateInput = {
@@ -34961,6 +35025,7 @@ export namespace Prisma {
     footer?: StringFieldUpdateOperationsInput | string
     logo?: NullableStringFieldUpdateOperationsInput | string | null
     receiptLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    whatsapp?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type StoreSettingCreateManyInput = {
@@ -34970,6 +35035,7 @@ export namespace Prisma {
     footer: string
     logo?: string | null
     receiptLogo?: string | null
+    whatsapp?: string | null
   }
 
   export type StoreSettingUpdateManyMutationInput = {
@@ -34979,6 +35045,7 @@ export namespace Prisma {
     footer?: StringFieldUpdateOperationsInput | string
     logo?: NullableStringFieldUpdateOperationsInput | string | null
     receiptLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    whatsapp?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type StoreSettingUncheckedUpdateManyInput = {
@@ -34988,6 +35055,7 @@ export namespace Prisma {
     footer?: StringFieldUpdateOperationsInput | string
     logo?: NullableStringFieldUpdateOperationsInput | string | null
     receiptLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    whatsapp?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type CustomerPriceCreateInput = {
@@ -35664,6 +35732,8 @@ export namespace Prisma {
 
   export type OrderRequestItemCreateInput = {
     productName: string
+    variantId?: number
+    variantName?: string | null
     quantity: number
     unitPrice: number
     subtotal: number
@@ -35676,6 +35746,8 @@ export namespace Prisma {
     orderRequestId: number
     productId: number
     productName: string
+    variantId?: number
+    variantName?: string | null
     quantity: number
     unitPrice: number
     subtotal: number
@@ -35683,6 +35755,8 @@ export namespace Prisma {
 
   export type OrderRequestItemUpdateInput = {
     productName?: StringFieldUpdateOperationsInput | string
+    variantId?: IntFieldUpdateOperationsInput | number
+    variantName?: NullableStringFieldUpdateOperationsInput | string | null
     quantity?: IntFieldUpdateOperationsInput | number
     unitPrice?: IntFieldUpdateOperationsInput | number
     subtotal?: IntFieldUpdateOperationsInput | number
@@ -35695,6 +35769,8 @@ export namespace Prisma {
     orderRequestId?: IntFieldUpdateOperationsInput | number
     productId?: IntFieldUpdateOperationsInput | number
     productName?: StringFieldUpdateOperationsInput | string
+    variantId?: IntFieldUpdateOperationsInput | number
+    variantName?: NullableStringFieldUpdateOperationsInput | string | null
     quantity?: IntFieldUpdateOperationsInput | number
     unitPrice?: IntFieldUpdateOperationsInput | number
     subtotal?: IntFieldUpdateOperationsInput | number
@@ -35705,6 +35781,8 @@ export namespace Prisma {
     orderRequestId: number
     productId: number
     productName: string
+    variantId?: number
+    variantName?: string | null
     quantity: number
     unitPrice: number
     subtotal: number
@@ -35712,6 +35790,8 @@ export namespace Prisma {
 
   export type OrderRequestItemUpdateManyMutationInput = {
     productName?: StringFieldUpdateOperationsInput | string
+    variantId?: IntFieldUpdateOperationsInput | number
+    variantName?: NullableStringFieldUpdateOperationsInput | string | null
     quantity?: IntFieldUpdateOperationsInput | number
     unitPrice?: IntFieldUpdateOperationsInput | number
     subtotal?: IntFieldUpdateOperationsInput | number
@@ -35722,6 +35802,8 @@ export namespace Prisma {
     orderRequestId?: IntFieldUpdateOperationsInput | number
     productId?: IntFieldUpdateOperationsInput | number
     productName?: StringFieldUpdateOperationsInput | string
+    variantId?: IntFieldUpdateOperationsInput | number
+    variantName?: NullableStringFieldUpdateOperationsInput | string | null
     quantity?: IntFieldUpdateOperationsInput | number
     unitPrice?: IntFieldUpdateOperationsInput | number
     subtotal?: IntFieldUpdateOperationsInput | number
@@ -36761,6 +36843,7 @@ export namespace Prisma {
     footer?: SortOrder
     logo?: SortOrder
     receiptLogo?: SortOrder
+    whatsapp?: SortOrder
   }
 
   export type StoreSettingAvgOrderByAggregateInput = {
@@ -36774,6 +36857,7 @@ export namespace Prisma {
     footer?: SortOrder
     logo?: SortOrder
     receiptLogo?: SortOrder
+    whatsapp?: SortOrder
   }
 
   export type StoreSettingMinOrderByAggregateInput = {
@@ -36783,6 +36867,7 @@ export namespace Prisma {
     footer?: SortOrder
     logo?: SortOrder
     receiptLogo?: SortOrder
+    whatsapp?: SortOrder
   }
 
   export type StoreSettingSumOrderByAggregateInput = {
@@ -37305,6 +37390,8 @@ export namespace Prisma {
     orderRequestId?: SortOrder
     productId?: SortOrder
     productName?: SortOrder
+    variantId?: SortOrder
+    variantName?: SortOrder
     quantity?: SortOrder
     unitPrice?: SortOrder
     subtotal?: SortOrder
@@ -37314,6 +37401,7 @@ export namespace Prisma {
     id?: SortOrder
     orderRequestId?: SortOrder
     productId?: SortOrder
+    variantId?: SortOrder
     quantity?: SortOrder
     unitPrice?: SortOrder
     subtotal?: SortOrder
@@ -37324,6 +37412,8 @@ export namespace Prisma {
     orderRequestId?: SortOrder
     productId?: SortOrder
     productName?: SortOrder
+    variantId?: SortOrder
+    variantName?: SortOrder
     quantity?: SortOrder
     unitPrice?: SortOrder
     subtotal?: SortOrder
@@ -37334,6 +37424,8 @@ export namespace Prisma {
     orderRequestId?: SortOrder
     productId?: SortOrder
     productName?: SortOrder
+    variantId?: SortOrder
+    variantName?: SortOrder
     quantity?: SortOrder
     unitPrice?: SortOrder
     subtotal?: SortOrder
@@ -37343,6 +37435,7 @@ export namespace Prisma {
     id?: SortOrder
     orderRequestId?: SortOrder
     productId?: SortOrder
+    variantId?: SortOrder
     quantity?: SortOrder
     unitPrice?: SortOrder
     subtotal?: SortOrder
@@ -39081,6 +39174,8 @@ export namespace Prisma {
 
   export type OrderRequestItemCreateWithoutProductInput = {
     productName: string
+    variantId?: number
+    variantName?: string | null
     quantity: number
     unitPrice: number
     subtotal: number
@@ -39091,6 +39186,8 @@ export namespace Prisma {
     id?: number
     orderRequestId: number
     productName: string
+    variantId?: number
+    variantName?: string | null
     quantity: number
     unitPrice: number
     subtotal: number
@@ -39249,6 +39346,8 @@ export namespace Prisma {
     orderRequestId?: IntFilter<"OrderRequestItem"> | number
     productId?: IntFilter<"OrderRequestItem"> | number
     productName?: StringFilter<"OrderRequestItem"> | string
+    variantId?: IntFilter<"OrderRequestItem"> | number
+    variantName?: StringNullableFilter<"OrderRequestItem"> | string | null
     quantity?: IntFilter<"OrderRequestItem"> | number
     unitPrice?: IntFilter<"OrderRequestItem"> | number
     subtotal?: IntFilter<"OrderRequestItem"> | number
@@ -41786,6 +41885,8 @@ export namespace Prisma {
 
   export type OrderRequestItemCreateWithoutOrderRequestInput = {
     productName: string
+    variantId?: number
+    variantName?: string | null
     quantity: number
     unitPrice: number
     subtotal: number
@@ -41796,6 +41897,8 @@ export namespace Prisma {
     id?: number
     productId: number
     productName: string
+    variantId?: number
+    variantName?: string | null
     quantity: number
     unitPrice: number
     subtotal: number
@@ -42215,6 +42318,8 @@ export namespace Prisma {
     id?: number
     orderRequestId: number
     productName: string
+    variantId?: number
+    variantName?: string | null
     quantity: number
     unitPrice: number
     subtotal: number
@@ -42320,6 +42425,8 @@ export namespace Prisma {
 
   export type OrderRequestItemUpdateWithoutProductInput = {
     productName?: StringFieldUpdateOperationsInput | string
+    variantId?: IntFieldUpdateOperationsInput | number
+    variantName?: NullableStringFieldUpdateOperationsInput | string | null
     quantity?: IntFieldUpdateOperationsInput | number
     unitPrice?: IntFieldUpdateOperationsInput | number
     subtotal?: IntFieldUpdateOperationsInput | number
@@ -42330,6 +42437,8 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     orderRequestId?: IntFieldUpdateOperationsInput | number
     productName?: StringFieldUpdateOperationsInput | string
+    variantId?: IntFieldUpdateOperationsInput | number
+    variantName?: NullableStringFieldUpdateOperationsInput | string | null
     quantity?: IntFieldUpdateOperationsInput | number
     unitPrice?: IntFieldUpdateOperationsInput | number
     subtotal?: IntFieldUpdateOperationsInput | number
@@ -42339,6 +42448,8 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     orderRequestId?: IntFieldUpdateOperationsInput | number
     productName?: StringFieldUpdateOperationsInput | string
+    variantId?: IntFieldUpdateOperationsInput | number
+    variantName?: NullableStringFieldUpdateOperationsInput | string | null
     quantity?: IntFieldUpdateOperationsInput | number
     unitPrice?: IntFieldUpdateOperationsInput | number
     subtotal?: IntFieldUpdateOperationsInput | number
@@ -43097,6 +43208,8 @@ export namespace Prisma {
     id?: number
     productId: number
     productName: string
+    variantId?: number
+    variantName?: string | null
     quantity: number
     unitPrice: number
     subtotal: number
@@ -43111,6 +43224,8 @@ export namespace Prisma {
 
   export type OrderRequestItemUpdateWithoutOrderRequestInput = {
     productName?: StringFieldUpdateOperationsInput | string
+    variantId?: IntFieldUpdateOperationsInput | number
+    variantName?: NullableStringFieldUpdateOperationsInput | string | null
     quantity?: IntFieldUpdateOperationsInput | number
     unitPrice?: IntFieldUpdateOperationsInput | number
     subtotal?: IntFieldUpdateOperationsInput | number
@@ -43121,6 +43236,8 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     productId?: IntFieldUpdateOperationsInput | number
     productName?: StringFieldUpdateOperationsInput | string
+    variantId?: IntFieldUpdateOperationsInput | number
+    variantName?: NullableStringFieldUpdateOperationsInput | string | null
     quantity?: IntFieldUpdateOperationsInput | number
     unitPrice?: IntFieldUpdateOperationsInput | number
     subtotal?: IntFieldUpdateOperationsInput | number
@@ -43130,6 +43247,8 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     productId?: IntFieldUpdateOperationsInput | number
     productName?: StringFieldUpdateOperationsInput | string
+    variantId?: IntFieldUpdateOperationsInput | number
+    variantName?: NullableStringFieldUpdateOperationsInput | string | null
     quantity?: IntFieldUpdateOperationsInput | number
     unitPrice?: IntFieldUpdateOperationsInput | number
     subtotal?: IntFieldUpdateOperationsInput | number

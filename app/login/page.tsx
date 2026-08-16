@@ -74,7 +74,10 @@ export default function LoginPage() {
       try { sessionStorage.setItem("welcomeToast", displayName); } catch {}
       router.push("/dashboard");
     } else {
-      showToast("error", "Username atau password salah!");
+      // Pesan bawaan tetap digeneralisasi supaya tidak membocorkan username
+      // mana yang ada; hanya penolakan karena batas laju (429) yang perlu
+      // dijelaskan apa adanya, agar pemakai tahu ini soal menunggu.
+      showToast("error", res.status === 429 && data?.error ? data.error : "Username atau password salah!");
     }
   };
 

@@ -33,18 +33,28 @@ export async function GET(request: Request) {
         select: {
           id: true,
           nama_produk: true,
-          harga: true,
           stok: true,
           gambar: true,
           gambarPosX: true,
           gambarPosY: true,
           variants: {
-            select: { id: true, name: true, priceModifier: true },
+            select: { id: true, name: true },
             orderBy: { order: "asc" }
           },
         },
       });
-      return NextResponse.json(products);
+
+      // Katalog publik sengaja TIDAK membawa harga, `priceModifier`, maupun
+      // angka stok. Harga di toko ini ditentukan per pelanggan lewat negosiasi,
+      // jadi mengirimnya ke browser sama saja membocorkannya — tidak menampilkan
+      // di layar tidak menolong bila datanya tetap ada di respons dan bisa
+      // dibaca lewat DevTools. Yang dibagikan hanya `tersedia`, secukupnya
+      // untuk menandai produk habis tanpa mengungkap jumlahnya.
+      // Harga tetap dihitung server saat pesanan masuk (POST /api/request-pesanan),
+      // jadi menghapusnya di sini tidak memutus alur pemesanan.
+      return NextResponse.json(
+        products.map(({ stok, ...product }) => ({ ...product, tersedia: stok > 0 }))
+      );
     }
 
     const products = await prisma.product.findMany({

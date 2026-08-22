@@ -175,7 +175,7 @@ export default function RequestPesananPage() {
         <div className="flex items-center justify-between gap-4">
           <div>
             <h1 className="flex items-center gap-2 text-2xl font-black text-slate-800">
-              <ClipboardList className="text-pink-500" /> Request Pesanan
+              <ClipboardList className="text-pink-500" /> Orderan Manual
             </h1>
             <p className="mt-1 text-sm text-slate-500">
               Pesanan dari katalog publik. Isi harga tiap produk, lalu terima untuk menjadikannya transaksi.

@@ -11,25 +11,35 @@ import SessionExpiryHandler from "@/components/SessionExpiryHandler";
 import ToastHost from "@/components/ToastHost";
 import PendaftarServiceWorker from "@/components/PendaftarServiceWorker";
 import {
+  LACI_HP_DIKELOMPOKKAN,
+  MENU_AKUN_LACI_HP,
+  MENU_DASHBOARD,
+  MENU_KASIR,
+  MENU_LUAR_KELOMPOK,
+  URUTAN_LACI_HP,
+  bolehLihat,
+  kelompokAktif,
+  menuAktif,
+  saringKelompok,
+  saringMenu,
+  type KelompokMenu,
+} from "@/lib/menuNavigasi";
+import {
   ArrowDown,
   ArrowLeft,
   ArrowRight,
   ArrowUp,
-  History,
   House,
   Package,
   ShoppingCart,
   ReceiptText,
-  LineChart,
   Flower2,
   Camera,
-  Users,
   LogOut,
   Menu,
   X,
   Bell,
-  Contact,
-  ClipboardList,
+  ChevronDown,
   ClipboardCheck,
   PackageCheck,
   FileDown,
@@ -39,13 +49,7 @@ import {
   Settings,
   UserRound,
   Trash2,
-  ZoomIn,
-  Wallet,
-  HandCoins,
-  Scale,
-  Inbox,
-  ClipboardList as PapanTugasIcon,
-  Users as PengrajinIcon
+  ZoomIn
 } from "lucide-react";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -144,11 +148,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobileMenuRendered, setIsMobileMenuRendered] = useState(false);
 
+  // TARIKAN-BAWAH HEADER DESKTOP. Disimpan sebagai satu id, bukan boolean per
+  // kelompok, supaya "hanya satu terbuka pada satu waktu" berlaku dengan
+  // sendirinya alih-alih harus dijaga manual.
+  const [kelompokTerbuka, setKelompokTerbuka] = useState<string | null>(null);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const accountMenuRef = useRef<HTMLDivElement>(null);
+  const accountMenuDesktopRef = useRef<HTMLDivElement>(null);
   const readQueuedIdsRef = useRef<Set<number>>(new Set());
   const visibleNotificationReadIdsRef = useRef<Set<number>>(new Set());
   const mobileMenuTimerRef = useRef<number | null>(null);
+  const tutupKelompokTimerRef = useRef<number | null>(null);
   const hasLoadedSettingsRef = useRef(false);
   const notificationFetchInFlightRef = useRef(false);
   const notificationFailureCountRef = useRef(0);
@@ -160,6 +171,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     actorName: user?.fullName || user?.username,
     actorRole: user?.role,
   }), [user?.fullName, user?.id, user?.role, user?.username]);
+
+  // Kedua daftar ini berasal dari definisi menu yang sama; yang berbeda hanya
+  // urutan dan cara menampilkannya. Kelompok yang habis tersaring oleh peran
+  // tidak ikut dikembalikan `saringKelompok`, jadi tidak ada kepala kelompok
+  // yang membuka ke ruang kosong.
+  const kelompokTampil = useMemo(() => saringKelompok(user?.role), [user?.role]);
+  const menuLaciHp = useMemo(() => saringMenu(URUTAN_LACI_HP, user?.role), [user?.role]);
+  const menuLuarKelompokHp = useMemo(() => saringMenu(MENU_LUAR_KELOMPOK, user?.role), [user?.role]);
 
   useEffect(() => {
     let loadingTimer: number | null = null;
@@ -291,8 +310,49 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   useEffect(() => {
     return () => {
       if (mobileMenuTimerRef.current) window.clearTimeout(mobileMenuTimerRef.current);
+      if (tutupKelompokTimerRef.current) window.clearTimeout(tutupKelompokTimerRef.current);
     };
   }, []);
+
+  const batalTutupKelompok = useCallback(() => {
+    if (tutupKelompokTimerRef.current) {
+      window.clearTimeout(tutupKelompokTimerRef.current);
+      tutupKelompokTimerRef.current = null;
+    }
+  }, []);
+
+  const bukaKelompok = useCallback((id: string) => {
+    batalTutupKelompok();
+    setKelompokTerbuka(id);
+  }, [batalTutupKelompok]);
+
+  const tutupKelompok = useCallback(() => {
+    batalTutupKelompok();
+    setKelompokTerbuka(null);
+  }, [batalTutupKelompok]);
+
+  // Tenggang sebelum benar-benar menutup. Tanpa ini, tarikan-bawah tertutup di
+  // tengah jalan saat kursor bergerak menyerong dari kepala kelompok menuju
+  // isinya — celah antara keduanya cukup untuk memicu `mouseleave`.
+  const tutupKelompokTertunda = useCallback(() => {
+    batalTutupKelompok();
+    tutupKelompokTimerRef.current = window.setTimeout(() => {
+      setKelompokTerbuka(null);
+      tutupKelompokTimerRef.current = null;
+    }, 220);
+  }, [batalTutupKelompok]);
+
+  // `Esc` menutup — mengikuti pola yang sudah dipakai modal katalog.
+  useEffect(() => {
+    if (!kelompokTerbuka) return;
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") tutupKelompok();
+    };
+
+    document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
+  }, [kelompokTerbuka, tutupKelompok]);
 
   useEffect(() => {
     try {
@@ -306,8 +366,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   useEffect(() => {
     if (!isAccountMenuOpen) return;
 
+    // Dua rujukan karena blok profil ada di dua tempat — header desktop dan laci
+    // HP. Keduanya tidak pernah tampil bersamaan, tetapi keduanya harus dianggap
+    // "di dalam" supaya menu tidak tertutup saat isinya sendiri diklik.
     const handleClickOutside = (event: MouseEvent) => {
-      if (!accountMenuRef.current?.contains(event.target as Node)) {
+      const target = event.target as Node;
+      const diDalam =
+        accountMenuRef.current?.contains(target) || accountMenuDesktopRef.current?.contains(target);
+      if (!diDalam) {
         setIsAccountMenuOpen(false);
       }
     };
@@ -596,6 +662,44 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const shouldHoldAuthCheck = !isPublicPage && !isStandaloneReceipt && !user;
   const shouldHoldGuestRedirect = isGuest && pathname !== "/produk" && pathname !== "/login" && !isStandaloneReceipt;
 
+  // Isi menu akun sama persis di header desktop dan laci HP; hanya penempatannya
+  // yang berbeda. Ditarik ke satu tempat supaya keduanya tidak menyimpang.
+  const renderMenuAkun = (className: string) => (
+    <div className={className}>
+      {user?.profilePhoto && (
+        <button
+          type="button"
+          onClick={() => {
+            setIsProfilePreviewOpen(true);
+            setIsAccountMenuOpen(false);
+          }}
+          className="w-full flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-bold hover:bg-pink-50 hover:text-pink-600 transition-colors"
+        >
+          <Eye size={18} /> Lihat Foto
+        </button>
+      )}
+      {!isGuest && (
+        <Link
+          href="/akun?edit=me"
+          onClick={() => {
+            setIsAccountMenuOpen(false);
+            closeMobileMenu();
+          }}
+          className="flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-bold hover:bg-pink-50 hover:text-pink-600 transition-colors"
+        >
+          <Settings size={18} /> Pengaturan Akun
+        </Link>
+      )}
+      <button
+        type="button"
+        onClick={handleLogout}
+        className="w-full flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-bold text-red-600 hover:bg-red-50 transition-colors"
+      >
+        <LogOut size={18} /> Logout
+      </button>
+    </div>
+  );
+
   const renderNotificationPanel = (className: string) => (
     <div className={className}>
       <div className="p-4 border-b border-slate-100">
@@ -747,41 +851,137 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         ) : isPublicPage || isStandaloneReceipt ? (
           children
         ) : (
-          <div className="lina-app-shell flex h-screen flex-col desktop:flex-row overflow-hidden relative w-full">
-            {!isGuest && <div className="hidden desktop:block fixed top-4 right-4 z-50">
-              <div className="relative">
-                <button
-                  type="button"
-                  onClick={() => setIsNotifOpen(!isNotifOpen)}
-                  className={`group relative h-11 rounded-xl bg-white text-pink-600 border border-pink-100 shadow-lg shadow-pink-100 flex items-center justify-center gap-2 font-bold overflow-hidden transition-all duration-300 ease-out desktop:bg-pink-50 desktop:shadow-sm desktop:hover:w-36 desktop:hover:px-4 ${
-                    isNotifOpen ? "w-36 px-4" : "w-11 px-0"
-                  }`}
-                >
-                  <Bell
-                    size={20}
-                    className={`shrink-0 origin-top transition-transform duration-300 ${
-                      isNotifOpen || unreadNotifications > 0
-                        ? "animate-[lina-bell-ring_1.6s_ease-in-out_infinite]"
-                        : "desktop:group-hover:animate-[lina-bell-ring_1.6s_ease-in-out_infinite]"
-                    }`}
-                  />
-                  <span
-                    className={`text-sm whitespace-nowrap transition-all duration-300 ${
-                      isNotifOpen
-                        ? "opacity-100 max-w-24 translate-x-0"
-                        : "opacity-0 max-w-0 translate-x-2 desktop:group-hover:opacity-100 desktop:group-hover:max-w-24 desktop:group-hover:translate-x-0"
+          // `flex-col` untuk kedua ukuran: sejak sidebar desktop diganti header,
+          // tidak ada lagi kolom kiri yang perlu disandingkan dengan konten.
+          <div className="lina-app-shell flex h-screen flex-col overflow-hidden relative w-full">
+            {/* HEADER DESKTOP — menggantikan sidebar ikon-tanpa-label.
+                Berada di dalam arus tata letak (bukan `fixed`), jadi konten
+                mengalir di bawahnya tanpa perlu `scroll-padding-top` maupun
+                padding atas penyeimbang. */}
+            <header className="hidden desktop:flex shrink-0 h-16 items-center gap-2 border-b border-pink-100 bg-white/90 px-4 backdrop-blur-md shadow-sm z-50">
+              <button
+                type="button"
+                onClick={() => setIsStoreLogoPreviewOpen(true)}
+                aria-label="Lihat logo toko"
+                title="Lihat Logo Toko"
+                className="w-11 h-11 rounded-xl bg-white border-2 border-pink-200 flex items-center justify-center overflow-hidden text-pink-500 flex-shrink-0 shadow-sm transition-colors hover:border-pink-400"
+              >
+                {logo ? (
+                  <img src={logo} alt="Logo" className="w-full h-full object-contain p-0.5" />
+                ) : (
+                  <Flower2 size={22} />
+                )}
+              </button>
+              {/* Nama toko adalah yang PERTAMA dikorbankan saat ruang menyempit —
+                  logonya sudah cukup sebagai penanda. Teks kepala kelompok tidak
+                  boleh ikut menyusut; itu justru masalah yang sedang diperbaiki. */}
+              <span className="hidden lg:block min-w-0 max-w-40 truncate text-sm font-black text-rose-950 leading-tight">
+                {brand}
+              </span>
+
+              <nav aria-label="Navigasi utama" className="flex min-w-0 items-center gap-0.5 ml-1">
+                {bolehLihat(MENU_DASHBOARD.syarat, user?.role) && (
+                  <Link
+                    href={MENU_DASHBOARD.href}
+                    onClick={tutupKelompok}
+                    className={`flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-bold whitespace-nowrap transition-colors ${
+                      menuAktif(MENU_DASHBOARD.href, pathname)
+                        ? "bg-pink-600 text-white shadow-md shadow-pink-200"
+                        : "text-rose-900 hover:bg-pink-50 hover:text-pink-700"
                     }`}
                   >
-                    Notifikasi
-                  </span>
-                </button>
-                {unreadNotifications > 0 && (
-                  <span className="absolute -top-2 -right-2 min-w-6 h-6 px-1.5 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center shadow-md ring-2 ring-white z-10">
-                    {unreadNotifications}
-                  </span>
+                    <MENU_DASHBOARD.Ikon size={18} />
+                    {MENU_DASHBOARD.label}
+                  </Link>
                 )}
+
+                {kelompokTampil.map((kelompok) => (
+                  <KelompokHeaderDesktop
+                    key={kelompok.id}
+                    kelompok={kelompok}
+                    pathname={pathname}
+                    terbuka={kelompokTerbuka === kelompok.id}
+                    onBuka={() => bukaKelompok(kelompok.id)}
+                    onTutup={tutupKelompok}
+                    onTutupTertunda={tutupKelompokTertunda}
+                    onBatalTutup={batalTutupKelompok}
+                  />
+                ))}
+              </nav>
+
+              <div className="ml-auto flex flex-shrink-0 items-center gap-2 pl-2">
+                {bolehLihat(MENU_KASIR.syarat, user?.role) && (
+                  <Link
+                    href={MENU_KASIR.href}
+                    aria-label={MENU_KASIR.label}
+                    title={MENU_KASIR.label}
+                    className={`flex h-11 items-center gap-2 rounded-xl border px-3 font-bold transition-colors ${
+                      menuAktif(MENU_KASIR.href, pathname)
+                        ? "bg-pink-600 border-pink-600 text-white shadow-md shadow-pink-200"
+                        : "bg-pink-50 border-pink-100 text-pink-600 hover:bg-pink-100"
+                    }`}
+                  >
+                    <ShoppingCart size={22} />
+                    {/* Label menyusut jadi ikon saja sebelum apa pun yang lain di
+                        navigasi dikorbankan — ikonnya sudah dikenal dari HP. */}
+                    <span className="hidden xl:inline text-sm whitespace-nowrap">Kasir</span>
+                  </Link>
+                )}
+
+                {!isGuest && (
+                  <div className="relative flex-shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => setIsNotifOpen(!isNotifOpen)}
+                      aria-label="Notifikasi"
+                      title="Notifikasi"
+                      className="w-11 h-11 rounded-xl bg-pink-50 text-pink-600 border border-pink-100 flex items-center justify-center transition-colors hover:bg-pink-100"
+                    >
+                      <Bell
+                        size={22}
+                        className={unreadNotifications > 0 ? "animate-[lina-bell-ring_1.6s_ease-in-out_infinite]" : ""}
+                      />
+                    </button>
+                    {unreadNotifications > 0 && (
+                      <span className="absolute -top-1.5 -right-1.5 min-w-5 h-5 px-1 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center ring-2 ring-white z-10">
+                        {unreadNotifications}
+                      </span>
+                    )}
+                  </div>
+                )}
+
+                <div ref={accountMenuDesktopRef} className="relative flex-shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => setIsAccountMenuOpen((current) => !current)}
+                    title="Menu akun"
+                    aria-label="Menu akun"
+                    aria-haspopup="menu"
+                    aria-expanded={isAccountMenuOpen}
+                    className="flex items-center gap-2 rounded-xl p-0.5 pr-2 transition-colors hover:bg-pink-50"
+                  >
+                    <span className="w-10 h-10 rounded-full bg-white border-2 border-pink-200 flex items-center justify-center overflow-hidden text-pink-500 flex-shrink-0 shadow-sm">
+                      {user?.profilePhoto ? (
+                        <img src={user.profilePhoto} alt={user?.fullName || user?.username || "Akun"} className="w-full h-full object-cover" />
+                      ) : (
+                        <UserRound size={22} />
+                      )}
+                    </span>
+                    <span className="hidden xl:block min-w-0 max-w-36 text-left">
+                      <span className="block text-xs font-bold leading-tight text-rose-950 truncate">{user?.fullName || user?.username || "Pengguna"}</span>
+                      <span className="block text-[10px] text-pink-600 truncate">{user?.role}</span>
+                    </span>
+                    <ChevronDown size={16} className={`text-pink-500 transition-transform ${isAccountMenuOpen ? "rotate-180" : ""}`} />
+                  </button>
+
+                  {isAccountMenuOpen &&
+                    renderMenuAkun(
+                      "absolute top-full right-0 mt-2 w-60 rounded-xl border border-pink-100 bg-white p-2 text-slate-700 shadow-2xl z-[90]"
+                    )}
+                </div>
               </div>
-            </div>}
+            </header>
+
 
             {!isGuest && isNotifOpen &&
               <>
@@ -911,23 +1111,27 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               />
             )}
 
-            {/* SIDEBAR */}
+            {/* LACI MENU — KHUSUS HP.
+                Dulu berkelakuan ganda: laci geser di HP, sekaligus sidebar
+                selebar 80px yang melebar saat disentuh kursor di desktop.
+                Peran keduanya itulah yang membuat labelnya harus disembunyikan.
+                Sejak ada header desktop, ia murni laci HP — `desktop:hidden`. */}
             <aside className={`
-              group/sidebar fixed desktop:static inset-y-0 left-0 z-[70] w-72 desktop:w-20 desktop:hover:w-64 flex flex-col bg-white/90 text-rose-950 p-4 shadow-xl desktop:shadow-[14px_0_40px_rgba(219,39,119,0.10)] border-r border-pink-100 backdrop-blur-md transition-[width,transform] duration-300 ease-in-out overflow-visible
-              ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full desktop:translate-x-0"}
+              desktop:hidden fixed inset-y-0 left-0 z-[70] w-72 flex flex-col bg-white/90 text-rose-950 p-4 shadow-xl border-r border-pink-100 backdrop-blur-md transition-transform duration-300 ease-in-out overflow-visible
+              ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"}
             `}>
 
               {/* IDENTITAS PENGGUNA (dulu di bawah). Logo & nama toko sudah pindah
                   ke header depan, jadi posisi teratas ini diisi profil: foto, nama,
                   @username, dan label Role yang tetap dipertahankan. */}
-              {/* `shrink-0` menjaga blok profil tetap utuh di puncak sidebar:
+              {/* `shrink-0` menjaga blok profil tetap utuh di puncak laci:
                   yang menggulung hanya daftar menunya, bukan identitas pengguna. */}
-              <div className="shrink-0 flex items-start justify-between mb-6 short:mb-3 mt-2 short:mt-0 desktop:px-0">
+              <div className="shrink-0 flex items-start justify-between mb-6 short:mb-3 mt-2 short:mt-0">
                 <div ref={accountMenuRef} className="relative flex-1 min-w-0">
                   <button
                     type="button"
                     onClick={() => setIsAccountMenuOpen((current) => !current)}
-                    className="w-full flex items-center gap-3 min-w-0 text-left desktop:justify-center desktop:group-hover/sidebar:justify-start"
+                    className="w-full flex items-center gap-3 min-w-0 text-left"
                     title="Menu akun"
                   >
                     <span className="w-12 h-12 rounded-full bg-white border-2 border-pink-200 flex items-center justify-center overflow-hidden text-pink-500 flex-shrink-0 shadow-md shadow-pink-100">
@@ -937,54 +1141,23 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                         <UserRound size={24} />
                       )}
                     </span>
-                    <span className="min-w-0 block overflow-hidden transition-all duration-300 desktop:max-w-0 desktop:opacity-0 desktop:group-hover/sidebar:max-w-40 desktop:group-hover/sidebar:opacity-100">
+                    <span className="min-w-0 block overflow-hidden">
                       <span className="block text-base font-bold leading-tight text-rose-950 truncate">{user?.fullName || user?.username || "Pengguna"}</span>
                       <span className="block text-[11px] text-pink-600 truncate">@{user?.username || "user"}</span>
                       <span className="text-[10px] text-pink-700 bg-pink-50 border border-pink-100 px-2 py-0.5 rounded inline-block mt-1 font-medium tracking-wide">Role: {user?.role}</span>
                     </span>
                   </button>
 
-                  {isAccountMenuOpen && (
-                    <div className="absolute top-full left-0 mt-2 w-60 rounded-xl border border-pink-100 bg-white p-2 text-slate-700 shadow-2xl z-[90]">
-                      {user?.profilePhoto && (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setIsProfilePreviewOpen(true);
-                            setIsAccountMenuOpen(false);
-                          }}
-                          className="w-full flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-bold hover:bg-pink-50 hover:text-pink-600 transition-colors"
-                        >
-                          <Eye size={18} /> Lihat Foto
-                        </button>
-                      )}
-                      {!isGuest && (
-                        <Link
-                          href="/akun?edit=me"
-                          onClick={() => {
-                            setIsAccountMenuOpen(false);
-                            closeMobileMenu();
-                          }}
-                          className="flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-bold hover:bg-pink-50 hover:text-pink-600 transition-colors"
-                        >
-                          <Settings size={18} /> Pengaturan Akun
-                        </Link>
-                      )}
-                      <button
-                        type="button"
-                        onClick={handleLogout}
-                        className="w-full flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-bold text-red-600 hover:bg-red-50 transition-colors"
-                      >
-                        <LogOut size={18} /> Logout
-                      </button>
-                    </div>
-                  )}
+                  {isAccountMenuOpen &&
+                    renderMenuAkun(
+                      "absolute top-full left-0 mt-2 w-60 rounded-xl border border-pink-100 bg-white p-2 text-slate-700 shadow-2xl z-[90]"
+                    )}
                 </div>
 
-                {/* TOMBOL TUTUP SIDEBAR DI MOBILE */}
+                {/* TOMBOL TUTUP LACI DI MOBILE */}
               <button
                   onClick={closeMobileMenu}
-                  className="desktop:hidden text-pink-500 hover:text-pink-700 p-1 flex-shrink-0"
+                  className="text-pink-500 hover:text-pink-700 p-1 flex-shrink-0"
                 >
                   <X size={24} />
                 </button>
@@ -996,34 +1169,67 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   Desktop dulu dipaksa `overflow-y-visible`, itu sebabnya menu
                   terpotong begitu daftarnya bertambah panjang. */}
               <nav className="lina-sidebar-nav flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto overflow-x-hidden pr-1 short:gap-1">
-                {/* URUTAN LAMA — sengaja dipertahankan persis seperti sebelum ada
-                    modul keuangan & pengrajin, supaya otot ingatan pemakai lama
-                    tidak terganggu. Menu baru dikumpulkan di bawah Log Aktivitas. */}
-                {!isGuest && <NavItem href="/dashboard" icon={<House />} label="Dashboard" pathname={pathname} onClick={closeMobileMenu} />}
-                {!isGuest && <NavItem href="/pos" icon={<ShoppingCart />} label="Kasir (POS)" pathname={pathname} onClick={closeMobileMenu} />}
-                <NavItem href="/produk" icon={<Package />} label="Data Produk" pathname={pathname} onClick={closeMobileMenu} />
-                {/* Ditaruh tepat sebelum Status Pesanan karena inilah hulunya:
-                    request dari katalog publik diterima di sini, lalu berubah
-                    jadi transaksi yang dipantau di Status Pesanan. */}
-                {(user?.role === "Owner" || user?.role === "Admin") && <NavItem href="/request-pesanan" icon={<Inbox />} label="Request Pesanan" pathname={pathname} onClick={closeMobileMenu} />}
-                {!isGuest && <NavItem href="/status-pesanan" icon={<ClipboardCheck />} label="Status Pesanan" pathname={pathname} onClick={closeMobileMenu} />}
-                {!isGuest && <NavItem href="/packing" icon={<PackageCheck />} label="Checklist Packing" pathname={pathname} onClick={closeMobileMenu} />}
-                {!isGuest && <NavItem href="/pelanggan" icon={<Contact />} label="Pelanggan" pathname={pathname} onClick={closeMobileMenu} />}
-                {!isGuest && <NavItem href="/penjualan" icon={<ReceiptHistoryIcon />} label="Riwayat Penjualan" pathname={pathname} onClick={closeMobileMenu} />}
-                {!isGuest && <NavItem href="/unduh-nota" icon={<FileDown />} label="Unduh Nota" pathname={pathname} onClick={closeMobileMenu} />}
-                {user?.role === "Owner" && <NavItem href="/laporan" icon={<LineChart />} label="Laporan" pathname={pathname} onClick={closeMobileMenu} />}
-                {!isGuest && <NavItem href="/log-aktivitas" icon={<ClipboardList />} label="Log Aktivitas" pathname={pathname} onClick={closeMobileMenu} />}
+                {/* Dua wujud, satu sumber. Saklarnya `LACI_HP_DIKELOMPOKKAN` di
+                    `lib/menuNavigasi.ts` — percobaan yang masih ditimbang
+                    pemilik, dan dibalikkan cukup dengan mengubah nilainya.
 
-                {/* MENU BARU — operasional pengrajin & keuangan. */}
-                {!isGuest && <NavItem href="/papan-tugas" icon={<PapanTugasIcon />} label="Papan Tugas" pathname={pathname} onClick={closeMobileMenu} />}
-                {(user?.role === "Owner" || user?.role === "Admin") && <NavItem href="/pengrajin" icon={<PengrajinIcon />} label="Pengrajin" pathname={pathname} onClick={closeMobileMenu} />}
-                {!isGuest && <NavItem href="/piutang" icon={<HandCoins />} label="Piutang" pathname={pathname} onClick={closeMobileMenu} />}
-                {(user?.role === "Owner" || user?.role === "Admin") && <NavItem href="/pengeluaran" icon={<Wallet />} label="Pengeluaran" pathname={pathname} onClick={closeMobileMenu} />}
-                {user?.role === "Owner" && <NavItem href="/laba-rugi" icon={<Scale />} label="Laba Rugi" pathname={pathname} onClick={closeMobileMenu} />}
+                    MATI  → urutan lama `URUTAN_LACI_HP`, persis seperti semula.
+                    NYALA → judul kelompok, urutan mengikuti `KELOMPOK_MENU`. */}
+                {LACI_HP_DIKELOMPOKKAN ? (
+                  <>
+                    {menuLuarKelompokHp.map((item) => (
+                      <NavItem
+                        key={item.href}
+                        href={item.href}
+                        icon={<item.Ikon />}
+                        label={item.label}
+                        pathname={pathname}
+                        onClick={closeMobileMenu}
+                      />
+                    ))}
+                    {kelompokTampil.map((kelompok) => (
+                      <div key={kelompok.id} className="flex flex-col gap-2 short:gap-1">
+                        <span className="px-4 pt-3 short:pt-1.5 text-[11px] font-black uppercase tracking-widest text-pink-400">
+                          {kelompok.label}
+                        </span>
+                        {kelompok.menu.map((item) => (
+                          <NavItem
+                            key={item.href}
+                            href={item.href}
+                            icon={<item.Ikon />}
+                            label={item.label}
+                            pathname={pathname}
+                            onClick={closeMobileMenu}
+                          />
+                        ))}
+                      </div>
+                    ))}
+                  </>
+                ) : (
+                  menuLaciHp.map((item) => (
+                    <NavItem
+                      key={item.href}
+                      href={item.href}
+                      icon={<item.Ikon />}
+                      label={item.label}
+                      pathname={pathname}
+                      onClick={closeMobileMenu}
+                    />
+                  ))
+                )}
 
-                {user?.role === "Owner" && (
+                {/* Hanya pada mode urutan lama. Saat berkelompok, Manajemen Akun
+                    sudah berada di dalam kelompok Sistem — merendernya lagi di
+                    sini akan menampilkannya dua kali. */}
+                {!LACI_HP_DIKELOMPOKKAN && bolehLihat(MENU_AKUN_LACI_HP.syarat, user?.role) && (
                   <div className="mt-4 pt-4 border-t border-pink-100">
-                    <NavItem href="/akun" icon={<Users />} label="Manajemen Akun" pathname={pathname} onClick={closeMobileMenu} />
+                    <NavItem
+                      href={MENU_AKUN_LACI_HP.href}
+                      icon={<MENU_AKUN_LACI_HP.Ikon />}
+                      label={MENU_AKUN_LACI_HP.label}
+                      pathname={pathname}
+                      onClick={closeMobileMenu}
+                    />
                   </div>
                 )}
               </nav>
@@ -1096,19 +1302,108 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 }
 
 // Komponen NavItem dimodifikasi untuk menerima fungsi onClick (Tutup menu mobile)
+// Satu kepala kelompok di header desktop beserta tarikan-bawahnya.
+//
+// Keadaan buka/tutup TIDAK disimpan di sini melainkan diangkat ke induk: hanya
+// satu tarikan-bawah boleh terbuka pada satu waktu, dan itu mustahil dijamin
+// bila tiap kelompok memegang keadaannya sendiri.
+function KelompokHeaderDesktop({
+  kelompok,
+  pathname,
+  terbuka,
+  onBuka,
+  onTutup,
+  onTutupTertunda,
+  onBatalTutup,
+}: {
+  kelompok: KelompokMenu;
+  pathname: string;
+  terbuka: boolean;
+  onBuka: () => void;
+  onTutup: () => void;
+  onTutupTertunda: () => void;
+  onBatalTutup: () => void;
+}) {
+  // Penanda naik ke kepala kelompok: tanpa ini, pengguna kehilangan jejak
+  // posisinya begitu tarikan-bawah tertutup.
+  const aktif = kelompokAktif(kelompok, pathname);
+
+  return (
+    <div
+      className="relative"
+      onMouseEnter={onBuka}
+      onMouseLeave={onTutupTertunda}
+      // `onFocus` menggelembung dari tombol MAUPUN tautan di dalamnya, jadi
+      // tarikan-bawah tetap terbuka selama pengguna menyusurinya dengan Tab.
+      onFocus={onBuka}
+    >
+      <button
+        type="button"
+        aria-haspopup="menu"
+        aria-expanded={terbuka}
+        // Klik/sentuh ikut membuka: pada perangkat tanpa kursor, `mouseenter`
+        // tidak pernah terjadi dan menunya mustahil dibuka tanpa ini.
+        onClick={() => (terbuka ? onTutup() : onBuka())}
+        className={`flex items-center gap-1.5 rounded-xl px-3 py-2 text-sm font-bold whitespace-nowrap transition-colors ${
+          aktif
+            ? "bg-pink-600 text-white shadow-md shadow-pink-200"
+            : "text-rose-900 hover:bg-pink-50 hover:text-pink-700"
+        }`}
+      >
+        {kelompok.label}
+        <ChevronDown size={15} className={`transition-transform duration-200 ${terbuka ? "rotate-180" : ""}`} />
+      </button>
+
+      {terbuka && (
+        <div
+          role="menu"
+          onMouseEnter={onBatalTutup}
+          onMouseLeave={onTutupTertunda}
+          className="absolute left-0 top-full mt-1.5 w-64 rounded-xl border border-pink-100 bg-white p-2 shadow-2xl z-[90]"
+        >
+          {kelompok.menu.map((item) => {
+            const itemAktif = menuAktif(item.href, pathname);
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                role="menuitem"
+                onClick={onTutup}
+                className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-bold transition-colors ${
+                  itemAktif
+                    ? "bg-pink-600 text-white shadow-sm"
+                    : "text-rose-900 hover:bg-pink-50 hover:text-pink-700"
+                }`}
+              >
+                <span className="flex-shrink-0">
+                  <item.Ikon size={18} />
+                </span>
+                <span className="truncate">{item.label}</span>
+              </Link>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Baris menu di laci HP. Kelas `desktop:*` yang dulu menyembunyikan labelnya
+// sudah dibuang: laci ini tidak pernah tampil di desktop lagi, jadi label boleh
+// terbaca apa adanya.
 function NavItem({ href, icon, label, pathname, onClick }: { href: string, icon: React.ReactNode, label: string, pathname: string, onClick?: () => void }) {
-  const isActive = pathname === href;
+  const isActive = menuAktif(href, pathname);
   return (
     <Link
       href={href}
       onClick={onClick}
       title={label}
-      className={`flex items-center desktop:justify-center desktop:group-hover/sidebar:justify-start gap-3 short:gap-2 px-4 py-3.5 short:py-2.5 rounded-xl transition-all duration-200 font-bold tracking-wide overflow-hidden ${isActive ? 'bg-pink-600 text-white shadow-lg shadow-pink-200 transform scale-[1.02]' : 'text-rose-900 hover:bg-pink-50 hover:text-pink-700'}`}
+      className={`flex items-center gap-3 short:gap-2 px-4 py-3.5 short:py-2.5 rounded-xl transition-all duration-200 font-bold tracking-wide overflow-hidden ${isActive ? 'bg-pink-600 text-white shadow-lg shadow-pink-200 transform scale-[1.02]' : 'text-rose-900 hover:bg-pink-50 hover:text-pink-700'}`}
     >
       <span className="flex-shrink-0">{icon}</span>
       {/* `text-ellipsis` supaya label yang kelewat panjang berakhir dengan "…"
           — terbaca sebagai disengaja, bukan seperti tampilan yang rusak. */}
-      <span className="whitespace-nowrap overflow-hidden text-ellipsis transition-all duration-300 desktop:max-w-0 desktop:opacity-0 desktop:group-hover/sidebar:max-w-48 desktop:group-hover/sidebar:opacity-100">
+      <span className="whitespace-nowrap overflow-hidden text-ellipsis">
         {label}
       </span>
     </Link>
@@ -1116,7 +1411,7 @@ function NavItem({ href, icon, label, pathname, onClick }: { href: string, icon:
 }
 
 function BottomNavItem({ href, icon, label, pathname }: { href: string, icon: React.ReactNode, label: string, pathname: string }) {
-  const isActive = pathname === href;
+  const isActive = menuAktif(href, pathname);
   return (
     <Link
       href={href}
@@ -1125,17 +1420,6 @@ function BottomNavItem({ href, icon, label, pathname }: { href: string, icon: Re
       <span className="flex-shrink-0">{icon}</span>
       <span className={`text-[9px] font-bold leading-none ${isActive ? 'text-pink-600' : ''}`}>{label}</span>
     </Link>
-  );
-}
-
-function ReceiptHistoryIcon() {
-  return (
-    <span className="relative block w-6 h-6">
-      <ReceiptText size={24} />
-      <span className="absolute -right-1 -bottom-1 rounded-full bg-current text-pink-600">
-        <History size={13} className="text-white" />
-      </span>
-    </span>
   );
 }
 

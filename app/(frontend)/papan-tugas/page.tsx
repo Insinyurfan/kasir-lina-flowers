@@ -405,7 +405,7 @@ export default function PapanTugasPage() {
     <div className="lina-page-stack space-y-6">
       <header className="lina-panel rounded-2xl border p-6">
         <h1 className="flex items-center gap-2 text-2xl font-black text-slate-800">
-          <ClipboardList className="text-pink-500" /> Papan Tugas
+          <ClipboardList className="text-pink-500" /> Tugas Pengrajin
         </h1>
         <p className="mt-1 text-sm text-slate-500">
           Siapa mengerjakan apa hari ini, dan pekerjaan mana yang belum dipegang siapa pun.

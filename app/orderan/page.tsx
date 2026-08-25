@@ -133,7 +133,7 @@ export default function OrderanPage() {
             <ArrowLeft size={19} />
           </Link>
           <div className="min-w-0">
-            <h1 className="font-black text-rose-950 leading-tight text-base">Buka Kode Orderan</h1>
+            <h1 className="font-black text-rose-950 leading-tight text-base">Lacak Pesanan</h1>
             <p className="text-[11px] text-pink-500 font-semibold">Lihat & ubah orderan yang sudah kamu simpan</p>
           </div>
         </div>

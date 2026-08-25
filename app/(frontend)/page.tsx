@@ -25,6 +25,7 @@ import {
   RotateCcw,
   ShoppingCart,
   Eye,
+  Menu,
 } from "lucide-react";
 import { useTampilBertahap } from "@/lib/tampilBertahap";
 import { urlGambar } from "@/lib/gambar";
@@ -133,6 +134,9 @@ export default function KatalogPage() {
   // Menu urutan sekarang tinggal di header (sticky), jadi tidak perlu scroll
   // ke atas dulu untuk ganti urutan produk.
   const [isSortOpen, setIsSortOpen] = useState(false);
+  // Laci nav khusus layar sempit. Lacak Pesanan dan Login tidak muat
+  // berdampingan di bawah 640px, jadi keduanya dikumpulkan di sini.
+  const [isNavOpen, setIsNavOpen] = useState(false);
 
   // Varian & jumlah yang sedang dipilih di dalam modal produk.
   const [selectedVariantId, setSelectedVariantId] = useState(0);
@@ -536,7 +540,7 @@ export default function KatalogPage() {
             <div className="flex items-center gap-2 flex-shrink-0 ml-auto md:ml-0">
               {/* Sakelar mode pesan. Teksnya disembunyikan di layar sempit dan
                   menyisakan ikon saja, supaya header tetap muat bersama tombol
-                  Kode Orderan dan Login tanpa berdesakan. Saat sedang menyunting
+                  Lacak Pesanan dan Login tanpa berdesakan. Saat sedang menyunting
                   orderan tersimpan, sakelarnya disembunyikan — mode pesan wajib
                   menyala di situ dan mematikannya hanya membingungkan. */}
               {canOrder && !kodeEdit && (
@@ -571,19 +575,78 @@ export default function KatalogPage() {
                 <Link
                   href="/orderan"
                   className="hidden sm:flex items-center gap-2 bg-white border border-pink-200 text-pink-600 hover:bg-pink-50 text-sm font-bold px-3.5 py-2.5 rounded-xl transition-colors shadow-sm"
-                  title="Buka orderan yang sudah kamu simpan"
+                  title="Lacak orderan yang sudah kamu simpan"
                 >
                   <PackageSearch size={16} />
-                  <span className="hidden lg:inline">Kode Orderan</span>
+                  <span className="hidden lg:inline">Lacak Pesanan</span>
                 </Link>
               )}
+
+              {/* Login berdiri sendiri mulai 640px ke atas. Di bawah itu ia
+                  pindah ke dalam laci — lihat blok berikutnya. */}
               <Link
                 href="/login"
-                className="flex items-center gap-2 bg-pink-600 hover:bg-pink-700 text-white text-sm font-bold px-4 py-2.5 rounded-xl transition-colors shadow-md shadow-pink-200"
+                className="hidden sm:flex items-center gap-2 bg-pink-600 hover:bg-pink-700 text-white text-sm font-bold px-4 py-2.5 rounded-xl transition-colors shadow-md shadow-pink-200"
               >
                 <LogIn size={16} />
                 <span>Login</span>
               </Link>
+
+              {/* LACI NAV — HANYA LAYAR SEMPIT.
+                  Di bawah 640px tombol Lacak Pesanan sebelumnya hilang sama
+                  sekali (`hidden sm:flex`) karena headernya tidak muat, jadi
+                  pembeli yang sudah menyimpan orderan tidak punya jalan masuk
+                  dari HP. Keduanya dikumpulkan di sini. Polanya menyalin
+                  SortButton yang sudah ada: lapisan tak terlihat untuk menutup
+                  saat diketuk di luar. */}
+              <div className="relative flex-shrink-0 sm:hidden">
+                <button
+                  type="button"
+                  onClick={() => setIsNavOpen(!isNavOpen)}
+                  aria-haspopup="menu"
+                  aria-expanded={isNavOpen}
+                  aria-label="Menu"
+                  title="Menu"
+                  className={`flex items-center justify-center rounded-xl border p-2.5 transition-colors ${
+                    isNavOpen
+                      ? "bg-pink-600 border-pink-600 text-white shadow-md shadow-pink-200"
+                      : "bg-white border-pink-200 text-pink-600 shadow-sm hover:bg-pink-50"
+                  }`}
+                >
+                  <Menu size={20} />
+                </button>
+
+                {isNavOpen && (
+                  <>
+                    <div className="fixed inset-0 z-40" onClick={() => setIsNavOpen(false)} />
+                    <div
+                      role="menu"
+                      className="absolute right-0 top-full mt-2 z-50 w-52 rounded-2xl border border-pink-100 bg-white p-1.5 shadow-xl shadow-pink-100"
+                    >
+                      {canOrder && (
+                        <Link
+                          href="/orderan"
+                          role="menuitem"
+                          onClick={() => setIsNavOpen(false)}
+                          className="flex items-center gap-2.5 rounded-xl px-3 py-3 text-sm font-bold text-slate-600 transition-colors hover:bg-pink-50 hover:text-pink-600"
+                        >
+                          <PackageSearch size={17} />
+                          Lacak Pesanan
+                        </Link>
+                      )}
+                      <Link
+                        href="/login"
+                        role="menuitem"
+                        onClick={() => setIsNavOpen(false)}
+                        className="flex items-center gap-2.5 rounded-xl px-3 py-3 text-sm font-bold text-pink-600 transition-colors hover:bg-pink-50"
+                      >
+                        <LogIn size={17} />
+                        Login
+                      </Link>
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
           </div>
 

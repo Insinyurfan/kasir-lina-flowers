@@ -15,6 +15,7 @@ import {
   MENU_AKUN_LACI_HP,
   MENU_DASHBOARD,
   MENU_KASIR,
+  MENU_KATALOG,
   MENU_LUAR_KELOMPOK,
   URUTAN_LACI_HP,
   bolehLihat,
@@ -910,6 +911,23 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </nav>
 
               <div className="ml-auto flex flex-shrink-0 items-center gap-2 pl-2">
+                {/* Pintu keluar ke katalog publik. Sebelum ini satu-satunya cara
+                    ke sana dari dalam aplikasi adalah membuka ulang webnya —
+                    dan di HP yang sudah dipasang sebagai aplikasi, berarti
+                    menutup aplikasinya dulu. Sengaja tombol tersendiri, bukan
+                    isi tarikan-bawah, supaya benar-benar jadi jalan cepat. */}
+                {bolehLihat(MENU_KATALOG.syarat, user?.role) && (
+                  <Link
+                    href={MENU_KATALOG.href}
+                    aria-label={MENU_KATALOG.label}
+                    title="Buka katalog yang dilihat pembeli"
+                    className="flex h-11 items-center gap-2 rounded-xl border border-pink-100 bg-white px-3 font-bold text-pink-600 transition-colors hover:bg-pink-50"
+                  >
+                    <MENU_KATALOG.Ikon size={20} />
+                    <span className="hidden xl:inline text-sm whitespace-nowrap">{MENU_KATALOG.label}</span>
+                  </Link>
+                )}
+
                 {bolehLihat(MENU_KASIR.syarat, user?.role) && (
                   <Link
                     href={MENU_KASIR.href}

@@ -30,6 +30,7 @@ import {
   PackageCheck,
   Scale,
   ShoppingCart,
+  Store,
   Users,
   Wallet,
 } from "lucide-react";
@@ -86,13 +87,20 @@ const LAPORAN: MenuNavigasi = { href: "/laporan", label: "Laporan", Ikon: LineCh
 const LOG_AKTIVITAS: MenuNavigasi = { href: "/log-aktivitas", label: "Log Aktivitas", Ikon: ClipboardList, syarat: "kecualiTamu" };
 const MANAJEMEN_AKUN: MenuNavigasi = { href: "/akun", label: "Manajemen Akun", Ikon: Users, syarat: "ownerSaja" };
 
-// Dua menu yang berdiri di luar kelompok mana pun, dengan alasan berbeda:
-// Dashboard bukan salah satu pekerjaan melainkan titik berangkat, dan Kasir
-// adalah tindakan yang paling sering dipakai — menyembunyikannya di dalam
-// tarikan-bawah berarti menambah satu klik pada pekerjaan yang diulang
-// puluhan kali sehari.
+// Katalog publik — halaman yang dilihat pembeli. Selama ini satu-satunya cara
+// ke sana dari dalam aplikasi adalah menutup lalu membuka ulang webnya, dan di
+// HP yang sudah dipasang sebagai aplikasi itu berarti menutup aplikasinya dulu.
+// `syarat: "semua"` karena katalog memang halaman publik: tidak ada peran yang
+// perlu dilarang melihatnya.
+const KATALOG: MenuNavigasi = { href: "/", label: "Katalog", Ikon: Store, syarat: "semua" };
+
+// Tiga menu yang berdiri di luar kelompok mana pun, dengan alasan berbeda:
+// Dashboard bukan salah satu pekerjaan melainkan titik berangkat, Kasir adalah
+// tindakan yang paling sering dipakai, dan Katalog adalah pintu keluar ke sisi
+// publik — ketiganya rugi kalau disembunyikan di dalam tarikan-bawah.
 export const MENU_DASHBOARD = DASHBOARD;
 export const MENU_KASIR = KASIR;
+export const MENU_KATALOG = KATALOG;
 
 // ── Susunan untuk header desktop ───────────────────────────────────────────
 // Dikelompokkan menurut PEKERJAAN yang sedang dilakukan, bukan kemiripan
@@ -134,6 +142,7 @@ export const KELOMPOK_MENU: KelompokMenu[] = [
 export const URUTAN_LACI_HP: MenuNavigasi[] = [
   DASHBOARD,
   KASIR,
+  KATALOG,
   PRODUK,
   REQUEST_PESANAN,
   STATUS_PESANAN,
@@ -166,7 +175,7 @@ export const LACI_HP_DIKELOMPOKKAN: boolean = true;
 // Dua menu yang berdiri di luar kelompok tetap muncul paling atas di laci HP
 // saat mode berkelompok menyala — Dashboard sebagai titik berangkat, Kasir
 // sebagai tindakan yang paling sering dipakai.
-export const MENU_LUAR_KELOMPOK: MenuNavigasi[] = [DASHBOARD, KASIR];
+export const MENU_LUAR_KELOMPOK: MenuNavigasi[] = [DASHBOARD, KASIR, KATALOG];
 
 // ── Penapisan peran ────────────────────────────────────────────────────────
 // Aturannya disalin apa adanya dari kondisi JSX yang lama; tidak ada satu pun

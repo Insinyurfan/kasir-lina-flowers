@@ -58,3 +58,15 @@
 - [x] 7.1 Sisipkan judul kelompok di antara menu pada laci HP, tanpa mengubah urutan atau isi menu · **dipasang di balik saklar `LACI_HP_DIKELOMPOKKAN`; urutan memang ikut berubah mengikuti kelompok, itulah yang akan dinilai pemilik**
 - [ ] 7.2 Uji di lebar 360px: judul tidak membuat daftar jadi terlalu panjang atau perlu digulung berlebihan
 - [ ] 7.3 Tunjukkan ke pemilik; putuskan lanjut atau kembalikan ke perataan datar
+
+## 8. Tombol Katalog — pintu keluar ke halaman publik
+
+> Ditambahkan atas permintaan pemilik, 25 Agustus 2026. Sebelum ini satu-satunya
+> cara ke katalog publik dari dalam aplikasi adalah membuka ulang webnya; pada HP
+> yang sudah dipasang sebagai aplikasi, berarti menutup aplikasinya lebih dulu.
+
+- [x] 8.1 Tambah `MENU_KATALOG` (href `/`, ikon `Store`, syarat `semua`) di sumber susunan menu
+- [x] 8.2 Tombol tersendiri di header desktop, di sebelah Kasir — bukan isi tarikan-bawah, supaya benar-benar jalan cepat
+- [x] 8.3 Ikut muncul di laci HP pada kedua mode (`MENU_LUAR_KELOMPOK` dan `URUTAN_LACI_HP`)
+- [ ] 8.4 Uji: dari halaman mana pun, satu klik sampai di katalog; tombol kembali peramban mengembalikan ke halaman semula
+- [ ] 8.5 Putuskan apakah katalog perlu menampilkan "Dashboard" alih-alih "Login" bagi yang sudah punya sesi — sekarang pengguna yang sudah masuk tetap disuguhi tombol Login di sana

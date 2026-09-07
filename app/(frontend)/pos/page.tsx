@@ -559,10 +559,19 @@ export default function PosPage() {
     setPriceEditDraft("");
   };
 
-  // Buka penyesuaian harga untuk SATU item saja (berbasis harga dasar / per satuanHarga).
+  // Buka penyesuaian harga untuk SATU item saja. Kasir mengetik harga dalam
+  // SATUAN PESAN baris itu (lusin/gross/pcs); konversi ke harga dasar per
+  // satuanHarga dilakukan saat menyimpan.
   const openPriceEdit = (item: CartItem) => {
     setPriceEditItem(item);
-    setPriceEditDraft(String(item.hargaBase ?? item.harga));
+    // Draft diisi harga per SATUAN PESAN (yang dipilih di keranjang), bukan per
+    // satuan katalog. Kalau keranjang memesan per Lusin, kasir mengetik harga
+    // lusin — tidak perlu mengonversi dari Gross di kepala.
+    setPriceEditDraft(String(hitungHargaSatuan(
+      item.hargaBase ?? item.harga,
+      item.satuanHarga ?? "pcs",
+      item.satuanPesan ?? "pcs",
+    )));
     setLabelDraft(item.label ?? "");
     setLabelSuggestOpen(false);
     setRememberForCustomer(true); // default aktif agar tak lupa dicentang
@@ -609,11 +618,23 @@ export default function PosPage() {
       alert(`Harga ${priceEditItem.nama_produk} belum valid.`);
       return;
     }
+    // Input berisi harga per SATUAN PESAN, sedangkan store & harga-ingatan
+    // pelanggan menyimpan harga dasar per SATUAN KATALOG (dipakai ulang untuk
+    // pesanan bersatuan lain), jadi dikonversi balik dulu.
+    const liveItem = cart.find((i) => i.id === priceEditItem.id) ?? priceEditItem;
+    const satuanHargaItem = liveItem.satuanHarga ?? "pcs";
+    const satuanPesanItem = liveItem.satuanPesan ?? "pcs";
+    const baseSekarang = liveItem.hargaBase ?? liveItem.harga;
+    // Konversi bolak-balik membulatkan (mis. gross→pcs). Kalau angkanya tidak
+    // diubah sama sekali, pertahankan base lama supaya buka-lalu-simpan tidak
+    // menggeser harga walau sedikit.
+    const takBerubah = value === hitungHargaSatuan(baseSekarang, satuanHargaItem, satuanPesanItem);
+    const baseBaru = takBerubah ? baseSekarang : hitungHargaSatuan(value, satuanPesanItem, satuanHargaItem);
     // Harga dulu (id baris belum berubah), baru kode pelanggan (kode ikut menentukan id baris).
-    updateHargaBase(priceEditItem.id, value);
+    updateHargaBase(priceEditItem.id, baseBaru);
     const nextLabel = sanitizeCode(labelDraft).trim() || null;
     if ((priceEditItem.label ?? null) !== nextLabel) updateLabel(priceEditItem.id, nextLabel);
-    if (rememberForCustomer) void persistCustomerPrice(priceEditItem, Math.round(value));
+    if (rememberForCustomer) void persistCustomerPrice(priceEditItem, Math.round(baseBaru));
     setPriceEditItem(null);
     setPriceEditDraft("");
     setLabelDraft("");
@@ -1191,11 +1212,16 @@ export default function PosPage() {
         const liveItem = cart.find((i) => i.id === priceEditItem.id) ?? priceEditItem;
         const satuanHarga = liveItem.satuanHarga ?? "pcs";
         const satuanPesan = liveItem.satuanPesan ?? "pcs";
-        const draftBase = Number(priceEditDraft || 0);
-        const hargaPerPesan = hitungHargaSatuan(draftBase, satuanHarga, satuanPesan);
+        // Angka di input = harga per SATUAN PESAN (satuan yang dipilih di keranjang).
+        const hargaPerPesan = Number(priceEditDraft || 0);
         const subtotalBaru = hargaPerPesan * liveItem.quantity;
         const beda = satuanPesan !== satuanHarga;
         const baseAsli = liveItem.hargaBaseAsli ?? liveItem.hargaBase ?? liveItem.harga;
+        // Harga katalog ikut ditampilkan dalam satuan pesan agar bisa langsung
+        // dibandingkan dengan angka yang diketik; padanan per satuan katalog
+        // tetap ditunjukkan untuk dicocokkan dengan daftar harga.
+        const katalogPerPesan = hitungHargaSatuan(baseAsli, satuanHarga, satuanPesan);
+        const setaraPerKatalog = hitungHargaSatuan(hargaPerPesan, satuanPesan, satuanHarga);
 
         return (
           <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm" onClick={() => setPriceEditItem(null)}>
@@ -1271,7 +1297,7 @@ export default function PosPage() {
 
                 <div>
                   <label className="mb-1.5 block text-[11px] font-black uppercase tracking-wide text-slate-400">
-                    Harga per {SATUAN_LABELS[satuanHarga] ?? satuanHarga}
+                    Harga per {SATUAN_LABELS[satuanPesan] ?? satuanPesan}
                   </label>
                   <input
                     type="number"
@@ -1284,15 +1310,18 @@ export default function PosPage() {
                     className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-base font-black text-slate-700 outline-none focus:border-pink-500"
                   />
                   <p className="mt-1.5 text-[11px] font-semibold text-slate-400">
-                    Harga katalog: Rp {baseAsli.toLocaleString("id-ID")} / {SATUAN_LABELS[satuanHarga] ?? satuanHarga}
+                    Harga katalog: Rp {katalogPerPesan.toLocaleString("id-ID")} / {SATUAN_LABELS[satuanPesan] ?? satuanPesan}
+                    {beda && (
+                      <span className="text-slate-300"> · Rp {baseAsli.toLocaleString("id-ID")}/{SATUAN_LABELS[satuanHarga] ?? satuanHarga}</span>
+                    )}
                   </p>
                 </div>
 
                 <div className="space-y-1.5 rounded-2xl border border-pink-100 bg-pink-50/60 p-4">
                   {beda && (
                     <div className="flex items-center justify-between text-xs font-semibold text-slate-500">
-                      <span>Harga per {SATUAN_LABELS[satuanPesan] ?? satuanPesan}</span>
-                      <span className="font-black text-slate-700">Rp {hargaPerPesan.toLocaleString("id-ID")}</span>
+                      <span>Setara per {SATUAN_LABELS[satuanHarga] ?? satuanHarga}</span>
+                      <span className="font-black text-slate-700">Rp {setaraPerKatalog.toLocaleString("id-ID")}</span>
                     </div>
                   )}
                   <div className="flex items-center justify-between">
